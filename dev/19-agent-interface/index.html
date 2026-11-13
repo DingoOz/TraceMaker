@@ -1819,7 +1819,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -1863,7 +1863,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -1888,7 +1888,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -2084,6 +2084,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-the-daemon-and-the-kicad-action-route-selected-nets-2026-11-13-d180" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. The daemon and the KiCad action "route selected nets" (2026-11-13, D180)
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2535,6 +2546,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#10-the-daemon-and-the-kicad-action-route-selected-nets-2026-11-13-d180" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. The daemon and the KiCad action "route selected nets" (2026-11-13, D180)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2561,15 +2583,11 @@
 
 
 <h1 id="19-a-board-session-and-an-agent-interface-m18">19 — A board session and an agent interface (M18)<a class="headerlink" href="#19-a-board-session-and-an-agent-interface-m18" title="Permanent link">&para;</a></h1>
-<div class="admonition info">
-<p class="admonition-title">Status: Partly built</p>
-<p>Part of this page describes code that exists; the rest is a plan. The page says which is which.</p>
-</div>
 <blockquote>
 <p>Part of the TraceMaker plan. Start at <a href="https://github.com/DingoOz/TraceMaker/blob/main/PLAN.md"><code>../PLAN.md</code></a>. Written 2026-10-15. Milestone <strong>M18</strong> (<a href="../11-roadmap/">11-roadmap.md</a>), candidate D2 of
 <a href="../18-next-features/">18-next-features.md</a>. Decision D119.
 Status: stage A (session, tools, two transports) and stage B (evaluation harness, scripted baseline agent) are what this note specifies; §9 says
-what is built and what was measured.</p>
+what is built and what was measured. The daemon and the plugin action that uses it were built on 2026-11-13 (§10, D180).</p>
 </blockquote>
 <h2 id="1-what-it-is-and-how-it-differs-from-the-advisor">1. What it is, and how it differs from the advisor<a class="headerlink" href="#1-what-it-is-and-how-it-differs-from-the-advisor" title="Permanent link">&para;</a></h2>
 <p><a href="../17-llm-advisor/">Doc 17</a> lets the <strong>engine consult</strong> an advisor: the plain route runs, a stuck report goes out, an advice file comes back, the route
@@ -2713,8 +2731,8 @@ cannot be worse" guard of doc 17 §4 is not needed; the transaction rule above t
 <h2 id="5-session-state-and-the-log">5. Session state and the log<a class="headerlink" href="#5-session-state-and-the-log" title="Permanent link">&para;</a></h2>
 <p>State = the input board, plus a list of session copper (tracks and vias, in commit order), plus the open-connection reasons of the last route. A state is
 immutable; each change makes a new one. A router run gets the board with the session copper added and marked locked. The first listing of the open
-connections of a state costs one router set-up (the planner needs the obstacle model); it is cached per state. A long-running daemon that keeps the set-up
-between calls is the other half of M18 and is not built.</p>
+connections of a state costs one router set-up (the planner needs the obstacle model); it is cached per state. The daemon (§10) keeps sessions, their
+states and these caches between processes.</p>
 <p>The log is a JSON-lines file (<code>--log FILE</code>): per call, the tool, the arguments, a digest of the result and the state's digest (FNV-1a 64 of the session copper
 in canonical order: a digest to compare a session with its replay, not a cryptographic hash). <code>tracemaker session --replay LOG BOARD --out FILE</code> runs the calls again and stops at the first digest that differs. Replay is the
 determinism test, and it is how a session that went well is reproduced without an agent.</p>
@@ -2893,9 +2911,72 @@ tell an agent more than it does now (below). What the agents asked of the tools,
 <li>What the agents asked for and the router cannot yet say: which end of a boxed-in connection is fenced and which lanes and via sites are free; a dry run that names the
   minimal set of nets to remove to free a pin; "stopped at net X" and a reason with blockers for every open connection of a multi-net call. These are router
   questions (escape analysis per pad, doc 05 §14), not session ones; they are the thing to build if agents are worth another try.</li>
-<li>The daemon (<code>tracemakerd</code>) and the KiCad assistant that uses it (the other half of M18).</li>
+<li>The daemon and the KiCad action that uses it were built afterwards (§10).</li>
 <li>Redaction in the session, <code>propose_path</code>, placement moves (§8).</li>
 </ul>
+<h2 id="10-the-daemon-and-the-kicad-action-route-selected-nets-2026-11-13-d180">10. The daemon and the KiCad action "route selected nets" (2026-11-13, D180)<a class="headerlink" href="#10-the-daemon-and-the-kicad-action-route-selected-nets-2026-11-13-d180" title="Permanent link">&para;</a></h2>
+<p>The other half of M18. A KiCad action is a new process each time, so on its own it would read the board, the rules and plan the open
+connections again for every net the user routes. <code>tracemaker daemon</code> (<code>src/session/daemon.hpp</code>; the roadmap's <code>tracemakerd</code>) holds
+sessions between processes.</p>
+<p><strong>The daemon.</strong> A Unix-domain socket that only its owner can reach (directory 0700, socket 0600), default
+<code>$XDG_RUNTIME_DIR/tracemaker/daemon.sock</code> (<code>tracemaker daemon --print-socket</code>); JSON lines, one request and one answer per line; clients
+are served one at a time. Requests: <code>status</code>; <code>open</code> (<code>board</code>, <code>key</code>, <code>fingerprint</code>, <code>out</code>, <code>work_limit</code>, <code>seed</code>); <code>call</code> (<code>session</code>,
+<code>tool</code>, <code>args</code>: exactly <code>Session::call</code>, §4); <code>diff</code> (<code>session</code>, <code>from</code>: the session copper added since that state and, under <code>removed</code>,
+what it lost, in the <code>--emit-items</code> layout); <code>mark</code> (<code>session</code>, <code>fingerprint</code>); <code>close</code>; <code>shutdown</code>. It exits after <code>--idle-exit</code>
+seconds without a client (default 1800) and holds at most <code>--max-sessions</code> sessions (default 4, least recently used closed first). A
+session reads its own copy of the board and its project files, so the client may delete what it sent.</p>
+<p><strong>Reuse by fingerprint.</strong> <code>open</code> with a <code>key</code> (the client's name for the board) and a <code>fingerprint</code> returns the session whose <em>current
+state</em> was marked with that fingerprint, without reading the board; otherwise it starts a new session from <code>board</code> (a newer board for the
+same key replaces the older session). The fingerprint is the client's, and the daemon only compares strings: the client must change it
+whenever anything the router reads changes. A stale match would route on an out-of-date board; every route is still the session's own
+transaction behind the exact check and <code>verify: refuse</code> (§4), and the client applies only the copper the daemon returns.</p>
+<p><strong>The action</strong> (<code>kicad_plugin/tracemaker_route_nets.py</code>, "Route selected nets with TraceMaker"). It takes the nets of the selected pads,
+tracks, vias, zones and footprints; fingerprints the open board (SHA-256 over KiCad's own serialisation of every track, via, footprint
+and zone with its fills, sorted, and the <code>.kicad_pro</code>/<code>.kicad_dru</code> files on disk); starts the daemon if none answers; opens the session
+for that fingerprint, or saves a copy of the board and starts one; calls <code>route</code> for the nets (work <code>TRACEMAKER_NET_WORK</code>, default 2 M);
+adds the <code>diff</code> to the open board in <strong>one commit</strong>; and marks the session's new state with the fingerprint of the board as it now is.
+Any change in KiCad between two actions (an edit, an undo, a refill) changes the fingerprint, and the next action starts a fresh session
+from the board as it is. Unsaved changes to the board setup that are not in the project files on disk are not in the fingerprint: save
+the board after changing the rules.</p>
+<p><strong>Checked in a running KiCad 10.0.6</strong> (<code>scripts/kicad_gui_roundtrip.py --nets</code>, pcbnew from the Docker image under Xvfb, the action
+through the IPC API; <code>bench/records/m18-daemon</code>), on <code>multichannel_mixer-unrouted</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Result</th>
+<th style="text-align: right;">Wall time of the action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>select a pad of <code>Net-(R14-Pad1)</code>, route selected nets</td>
+<td>3 tracks, 2/2 routed; new session</td>
+<td style="text-align: right;">1.75 s</td>
+</tr>
+<tr>
+<td>select a pad of <code>vbias</code>, route selected nets</td>
+<td>48 tracks, 6 vias, 9/11 routed; <strong>warm session</strong> (the board was not read again)</td>
+<td style="text-align: right;">3.78 s</td>
+</tr>
+<tr>
+<td>Ctrl+Z</td>
+<td>removes only <code>vbias</code>'s copper (143 tracks, 19 vias, as before it); Ctrl+Y brings it back</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr>
+<td>KiCad DRC of the board saved from the GUI</td>
+<td>unconnected 148 → 134, no new error</td>
+<td style="text-align: right;"></td>
+</tr>
+</tbody>
+</table>
+<p>The wall time includes the action's start, the fingerprint, the save of a copy when the session is new, the route with its exact check and
+DRC verification, and the commit. In the session alone (no KiCad), a 2-connection net costs 0.86 s, of which about 0.8 s is the router
+set-up every <code>route</code> call pays; a session that kept a router between calls is the next step if that matters, and it is not built.</p>
+<p>What the gate of M18 asked for: a single-net route from the plugin within a stated latency on <code>multichannel_mixer</code>, one undo step. Both
+hold: 1.75 s for a two-pad net (3.8 s for an 11-connection one), one undo. The stop rule of §7 is unchanged: no agent loop is built on the
+daemon.</p>
 
 
 

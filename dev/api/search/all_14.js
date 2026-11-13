@@ -30,13 +30,14 @@ var searchData=
   ['url_27',['url',['../structtmk_1_1analysis_1_1FootprintResult.html#a4843b9c0f64b354ad985be9171425438',1,'tmk::analysis::FootprintResult::url'],['../structtmk_1_1analysis_1_1FootprintRef.html#a55b51d53a11de3d4f5fff0da1dab68ae',1,'tmk::analysis::FootprintRef::url'],['../classtmk_1_1server_1_1ViewerServer.html#a9de2f57fb7ed1f2b03db737d4d32750f',1,'tmk::server::ViewerServer::url()']]],
   ['usable_28',['usable',['../structtmk_1_1place_1_1CongestionOptions.html#affc99a2c06d627e4bce26bc737314a63',1,'tmk::place::CongestionOptions']]],
   ['usb_5fpairs_29',['usb_pairs',['../namespacetmk_1_1crules.html#a535b94b11147dfb8d4bfa0ae0bac4e22',1,'tmk::crules']]],
-  ['use_5fheight_5ffor_5flength_30',['use_height_for_length',['../structtmk_1_1model_1_1DesignRules.html#a030271b817f79539d0cafa3f913416a5',1,'tmk::model::DesignRules']]],
-  ['use_5fkind_5ftables_31',['use_kind_tables',['../classtmk_1_1drc_1_1RuleEngine.html#a44392ca7a8aeb894f2d730c36d74a0de',1,'tmk::drc::RuleEngine']]],
-  ['use_5fzone_5fclearance_5foverrides_32',['use_zone_clearance_overrides',['../classtmk_1_1drc_1_1RuleEngine.html#a3473da7b23b1069db07c8db9e9082257',1,'tmk::drc::RuleEngine']]],
-  ['user_5fname_33',['user_name',['../structtmk_1_1model_1_1LayerDef.html#a37199c31c37135e760cc2548f1a03a84',1,'tmk::model::LayerDef']]],
-  ['util_34',['util',['../structtmk_1_1route_1_1GlobalResult.html#ae568a7c4bdddf24aa8ea759a13028d68',1,'tmk::route::GlobalResult']]],
-  ['utilisation_35',['utilisation',['../structtmk_1_1place_1_1PlaceReport.html#a2dafd495c4b165a6de6bf39eaf87867a',1,'tmk::place::PlaceReport::utilisation'],['../namespacetmk_1_1place.html#a634264f154cf45669b6227063290e372',1,'tmk::place::utilisation()']]],
-  ['uuid_36',['uuid',['../structtmk_1_1gpu_1_1DeviceInfo.html#a6e1960c196d787d7ff66f1672843eb92',1,'tmk::gpu::DeviceInfo::uuid'],['../structtmk_1_1model_1_1Footprint.html#a5c03c164639b6229e23bca1fe396d049',1,'tmk::model::Footprint::uuid'],['../structtmk_1_1model_1_1Zone.html#a2fb778dfb5e92a17c5331bfc53f21e66',1,'tmk::model::Zone::uuid']]],
-  ['uvia_5fdiameter_37',['uvia_diameter',['../structtmk_1_1model_1_1NetClass.html#a65725f21f5f2955f431560ecc2d94922',1,'tmk::model::NetClass']]],
-  ['uvia_5fdrill_38',['uvia_drill',['../structtmk_1_1model_1_1NetClass.html#a4d3f9b6452e8fb6d7241b66d9fd3ecc1',1,'tmk::model::NetClass']]]
+  ['use_5fgpu_30',['use_gpu',['../structtmk_1_1session_1_1DaemonOptions.html#a121f547a6f4c06bede59949a6d905a59',1,'tmk::session::DaemonOptions']]],
+  ['use_5fheight_5ffor_5flength_31',['use_height_for_length',['../structtmk_1_1model_1_1DesignRules.html#a030271b817f79539d0cafa3f913416a5',1,'tmk::model::DesignRules']]],
+  ['use_5fkind_5ftables_32',['use_kind_tables',['../classtmk_1_1drc_1_1RuleEngine.html#a44392ca7a8aeb894f2d730c36d74a0de',1,'tmk::drc::RuleEngine']]],
+  ['use_5fzone_5fclearance_5foverrides_33',['use_zone_clearance_overrides',['../classtmk_1_1drc_1_1RuleEngine.html#a3473da7b23b1069db07c8db9e9082257',1,'tmk::drc::RuleEngine']]],
+  ['user_5fname_34',['user_name',['../structtmk_1_1model_1_1LayerDef.html#a37199c31c37135e760cc2548f1a03a84',1,'tmk::model::LayerDef']]],
+  ['util_35',['util',['../structtmk_1_1route_1_1GlobalResult.html#ae568a7c4bdddf24aa8ea759a13028d68',1,'tmk::route::GlobalResult']]],
+  ['utilisation_36',['utilisation',['../structtmk_1_1place_1_1PlaceReport.html#a2dafd495c4b165a6de6bf39eaf87867a',1,'tmk::place::PlaceReport::utilisation'],['../namespacetmk_1_1place.html#a634264f154cf45669b6227063290e372',1,'tmk::place::utilisation()']]],
+  ['uuid_37',['uuid',['../structtmk_1_1gpu_1_1DeviceInfo.html#a6e1960c196d787d7ff66f1672843eb92',1,'tmk::gpu::DeviceInfo::uuid'],['../structtmk_1_1model_1_1Footprint.html#a5c03c164639b6229e23bca1fe396d049',1,'tmk::model::Footprint::uuid'],['../structtmk_1_1model_1_1Zone.html#a2fb778dfb5e92a17c5331bfc53f21e66',1,'tmk::model::Zone::uuid']]],
+  ['uvia_5fdiameter_38',['uvia_diameter',['../structtmk_1_1model_1_1NetClass.html#a65725f21f5f2955f431560ecc2d94922',1,'tmk::model::NetClass']]],
+  ['uvia_5fdrill_39',['uvia_drill',['../structtmk_1_1model_1_1NetClass.html#a4d3f9b6452e8fb6d7241b66d9fd3ecc1',1,'tmk::model::NetClass']]]
 ];

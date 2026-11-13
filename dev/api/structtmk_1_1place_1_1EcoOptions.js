@@ -1,5 +1,6 @@
 var structtmk_1_1place_1_1EcoOptions =
 [
+    [ "advised", "structtmk_1_1place_1_1EcoOptions.html#a3890a6960050f61c0cefbacc138687dc", null ],
     [ "alpha_cross_mm", "structtmk_1_1place_1_1EcoOptions.html#ac406652558dcb2337369575637d922a2", null ],
     [ "beta", "structtmk_1_1place_1_1EcoOptions.html#a930fecdec1d51080dfc5978c3ef0e8b3", null ],
     [ "candidates", "structtmk_1_1place_1_1EcoOptions.html#ad499cb0e34f51d682ce63685c7bf68f3", null ],

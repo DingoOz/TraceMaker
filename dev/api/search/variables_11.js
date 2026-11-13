@@ -103,7 +103,7 @@ var searchData=
   ['room_100',['room',['../structtmk_1_1place_1_1EcoOptions.html#a4686a65d4365670871f9bda80ad8d7f3',1,'tmk::place::EcoOptions']]],
   ['room_5fgain_101',['room_gain',['../structtmk_1_1place_1_1EcoOptions.html#a3d8adfd5013027f3e59c1a3adbac6114',1,'tmk::place::EcoOptions']]],
   ['root_102',['root',['../structtmk_1_1drc_1_1Connectivity.html#ac7e0955883ffa97f32dc9c3b6977e025',1,'tmk::drc::Connectivity']]],
-  ['rot_103',['rot',['../structtmk_1_1place_1_1detail_1_1Move.html#a79778d5757c689d80326ee5506a50abb',1,'tmk::place::detail::Move::rot'],['../structtmk_1_1place_1_1Placement.html#a3d163ab79ef5c7d8d0296e07b53323f7',1,'tmk::place::Placement::rot']]],
+  ['rot_103',['rot',['../structtmk_1_1place_1_1detail_1_1Move.html#a79778d5757c689d80326ee5506a50abb',1,'tmk::place::detail::Move::rot'],['../structtmk_1_1place_1_1Placement.html#a3d163ab79ef5c7d8d0296e07b53323f7',1,'tmk::place::Placement::rot'],['../structtmk_1_1place_1_1AdvisedMove.html#a2a0168d6b5eed7c0e0b60d2485a62988',1,'tmk::place::AdvisedMove::rot']]],
   ['rotation_104',['rotation',['../structtmk_1_1analysis_1_1FootprintResult.html#ad6b90bf7cde143f7126387635c84ad6a',1,'tmk::analysis::FootprintResult::rotation'],['../structtmk_1_1io_1_1SrjObstacle.html#afb4b0de717e0efbaafb141201d595315',1,'tmk::io::SrjObstacle::rotation']]],
   ['rotation_5fchanges_105',['rotation_changes',['../structtmk_1_1place_1_1PlaceReport.html#a9a593e560d2eff854480ee9aa2794b1d',1,'tmk::place::PlaceReport']]],
   ['round_5fwork_106',['round_work',['../structtmk_1_1route_1_1RouterOptions.html#aee90e743a1dfd091b44078047f3d64d8',1,'tmk::route::RouterOptions']]],

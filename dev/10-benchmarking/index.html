@@ -1907,6 +1907,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#114-txn-1-at-equal-wall-time-on-tiers-a-d-2026-11-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.4 --txn 1 at equal wall time on tiers A-D (2026-11-13)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2050,7 +2061,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -2085,7 +2096,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -2524,6 +2535,17 @@
     <span class="md-ellipsis">
       
         11.3 --txn and --relax on the failing tier B-D boards (C1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#114-txn-1-at-equal-wall-time-on-tiers-a-d-2026-11-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11.4 --txn 1 at equal wall time on tiers A-D (2026-11-13)
       
     </span>
   </a>
@@ -3511,6 +3533,78 @@ clean boards (<code>bench/records/d159-thin-cut</code>).</p>
 <p><strong>With the relax rescue by default (D160, doc 05 §68).</strong> The same set routed with the default options, so a board left open is
 routed again with relax and the better result kept: 16,208 routed (+42 against the plain run), 8 boards better and none worse, five
 clean, no DRC error added, 73 % more CPU (<code>bench/records/d160-rescue</code>).</p>
+<h3 id="114-txn-1-at-equal-wall-time-on-tiers-a-d-2026-11-13">11.4 <code>--txn 1</code> at equal wall time on tiers A-D (2026-11-13)<a class="headerlink" href="#114-txn-1-at-equal-wall-time-on-tiers-a-d-2026-11-13" title="Permanent link">&para;</a></h3>
+<p>What §11.3 left open. Both arms ran at the same time on the same machine (<code>bench/run.py --tier X --limit 40/40/30/40 --time 120
+--threads 8 --jobs 3</code>, one seed), the second with <code>--route-args=--txn 1</code>, so every portfolio variant used transactions. KiCad-judged.
+"Judged in both arms" leaves out the boards where either arm hit the harness's stop (3 × 120 s + 60 s) and has no result.</p>
+<table>
+<thead>
+<tr>
+<th>tier</th>
+<th style="text-align: right;">boards run</th>
+<th style="text-align: right;">judged in both arms</th>
+<th style="text-align: right;">clean, base → <code>--txn 1</code></th>
+<th style="text-align: right;">routed on those boards</th>
+<th style="text-align: right;">harness timeouts, base / <code>--txn 1</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">40 → 40</td>
+<td style="text-align: right;">2,637 → 2,637 / 2,637</td>
+<td style="text-align: right;">0 / 0</td>
+</tr>
+<tr>
+<td>B</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">30 → 30</td>
+<td style="text-align: right;">3,972 → 3,987 / 4,029</td>
+<td style="text-align: right;">4 / 5</td>
+</tr>
+<tr>
+<td>C</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">16 → 16</td>
+<td style="text-align: right;">5,981 → 5,995 / 6,025</td>
+<td style="text-align: right;">7 / 9</td>
+</tr>
+<tr>
+<td>D</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">9 → 8</td>
+<td style="text-align: right;">10,035 → 10,040 / 10,246</td>
+<td style="text-align: right;">6 / 6</td>
+</tr>
+<tr>
+<td>all</td>
+<td style="text-align: right;">132</td>
+<td style="text-align: right;">108</td>
+<td style="text-align: right;"><strong>95 → 94</strong></td>
+<td style="text-align: right;">22,625 → 22,659 / 22,937</td>
+<td style="text-align: right;">17 / 20</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>No board becomes clean. One board is lost: <code>m2-electronics_m2fc</code> is clean in the base and leaves one connection open with <code>--txn 1</code>
+  (and runs 412 s against 120 s). Routed connections on the boards both arms finished: +34 of 22,937, mostly on boards that stay open
+  (<code>poncho_fpga_fpga-dongle</code> +15, <code>zx-sizif-512-ext_sizif512ext</code> +14, <code>Aleste-520EX_aleste</code> +8).</li>
+<li><code>--txn 1</code> hit the harness's stop on 20 boards and the base on 17. Not an engine overrun: a board left open gets <code>--time</code> for the plain
+  portfolio and again for each of the two relax rescue passes (D160, D163), so 3 × 120 s before the post-route stages, while the harness
+  stopped it at 3 × 120 + 60 s (<code>fifogfx_c64cart</code> alone on an idle machine: 400 s). The harness now allows 4 × <code>--time</code> + 120 s (D182).
+  A board times out only if it was left open (the rescue ran). Two boards clean in the base timed out with <code>--txn 1</code> only
+  (<code>Hardware_Playground_serial_gw_ATMEGA328P</code>, <code>mechkeys_58r-mxalps</code>), so <code>--txn 1</code> very probably lost them too: not in the table, which counts
+  boards judged in both arms.</li>
+<li>Tier A: all 40 clean in both, 33 of 40 boards byte-identical, route CPU −5.7 %.</li>
+<li><strong>Decision (D181):</strong> <code>--txn 1</code> stays where D100 put it (breakout boards only). The gain is a few connections on boards that stay open, the
+  cost is one clean board and more overruns. Records: <code>bench/records/m17/README.md</code> §5.</li>
+</ul>
 
 
 

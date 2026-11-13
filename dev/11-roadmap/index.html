@@ -1814,7 +1814,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -1849,7 +1849,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -2325,13 +2325,13 @@ every later milestone can be watched while it is built.</p>
 </tr>
 <tr>
 <td>M13</td>
-<td><strong>Component-aware layout rules</strong> (in progress: P0–P2 built, P3 USB pairs; doc 15 §14)</td>
+<td><strong>Component-aware layout rules</strong> (done: P0–P4 built, net classes from rules, user overrides; held-out detection precision 1.00 in every category after the CAN fix, recall ≥ 0.8 not met for usb2, connector_general, mounting_hole; doc 15 §14; the row said "in progress" until 2026-11-13)</td>
 <td>Category detection from the BOM/netlist (USB, Ethernet, crystals, regulators, RF, …), role binding, rule catalogue (<code>docs/component_rules.yaml</code>) compiled into net classes, a sidecar <code>.kicad_dru</code>, keep-out areas and placer pseudo-nets; stackup-based impedance; detection/rule report</td>
 <td>Detection precision/recall on a labelled PCBench subset; every applied rule met or reported; no regression on the quick tier</td>
 </tr>
 <tr>
 <td>M16</td>
-<td><strong>Advice files and a pluggable advisor</strong> (stages 0–3 built; stage 4 placement not; doc 17, issue #26)</td>
+<td><strong>Advice files and a pluggable advisor</strong> (stages 0–4 built; stage 4, placement advice, 2026-11-13, D178: no gain shown; doc 17, issue #26)</td>
 <td>Structured unrouted list and stuck report (<code>--stuck-report</code>); strict advice file (<code>--advice</code>: nets first, connection priority, layer costs, net-scoped regions as rule areas) run as extra portfolio variants; <code>--advisor CMD</code> consulted only when connections are left, with redaction, time limit and failure containment; reference advisors (<code>advisors/</code>)</td>
 <td>Options off: <code>quick</code>/<code>mid</code>/<code>planes</code> byte-identical; same advice twice and at 1/2/4 threads identical; bad advice refused; advisor absent/slow/invalid leaves the run unadvised; advised result never fewer than unadvised; the hint channel proven without a model before a model is connected (doc 17 §8)</td>
 </tr>
@@ -2339,11 +2339,11 @@ every later milestone can be watched while it is built.</p>
 <td>M17</td>
 <td><strong>Installable and measured</strong> (built 2026-10-16, gate partly met; doc 18 §5, D121, D122)</td>
 <td>CI-built CPU-only Linux release tarball and KiCad plugin archive on a tag (macOS arm64 if the runner allows); PCBWorld-Bench fetched and run with failure classes against its published baselines; <code>--relax</code> / <code>--txn</code> on the PCBench tier B–D failures</td>
-<td>A machine without a compiler installs the plugin and routes <code>plane_smd</code> in under five minutes (CI does the same in a clean container); the PCBWorld report states boards lost to each baseline; <code>--relax</code> gains and losses counted at equal work, KiCad-judged. <strong>Result:</strong> release files built and installed in clean Ubuntu 24.04, Debian 13 and Fedora containers in 5 s, and the unpacked plugin run in a live KiCad 10.0.6 (glibc 2.38 floor; Debian 12 fails; the workflow's package and install jobs passed on GitHub in the pull request, and on the <code>v0.10.0</code> tag (2026-10-18) all three jobs passed and the publish step attached the two files and <code>SHA256SUMS</code> to a draft release; no macOS build). PCBWorld's D3 turned out to be a PCBench subset: 119 test boards run (97/99, 10/10, 9/10 clean), Freerouting 2.1.0 re-run with the paper's settings under this judge (73.7 %, 50 %, 30 % best of 3), one board lost to Freerouting's nightly run, no "better than" claim against the paper's own rows (other judge). <code>--txn 1</code>: +118 connections on the 33 failing tier B-D boards at eight variants and equal work, none completed; <code>--relax</code>: -509 overall, two boards completed (doc 10 section 11, <code>bench/records/m17</code>)</td>
+<td>A machine without a compiler installs the plugin and routes <code>plane_smd</code> in under five minutes (CI does the same in a clean container); the PCBWorld report states boards lost to each baseline; <code>--relax</code> gains and losses counted at equal work, KiCad-judged. <strong>Result:</strong> release files built and installed in clean Ubuntu 24.04, Debian 13 and Fedora containers in 5 s, and the unpacked plugin run in a live KiCad 10.0.6 (glibc 2.38 floor; Debian 12 fails; the workflow's package and install jobs passed on GitHub in the pull request, and on the <code>v0.10.0</code> tag (2026-10-18) all three jobs passed and the publish step attached the two files and <code>SHA256SUMS</code> to a draft release; no macOS build). PCBWorld's D3 turned out to be a PCBench subset: 119 test boards run (97/99, 10/10, 9/10 clean), Freerouting 2.1.0 re-run with the paper's settings under this judge (73.7 %, 50 %, 30 % best of 3), one board lost to Freerouting's nightly run, no "better than" claim against the paper's own rows (other judge). <code>--txn 1</code>: +118 connections on the 33 failing tier B-D boards at eight variants and equal work, none completed; <code>--relax</code>: -509 overall, two boards completed; <code>--txn 1</code> on tiers A-D at equal wall time: 95 → 94 clean, stays off by default (D181) (doc 10 section 11, <code>bench/records/m17</code>)</td>
 </tr>
 <tr>
 <td>M18</td>
-<td><strong>Session server and agent interface</strong> (stages A–B built 2026-10-15, doc 19: the session, MCP and JSON-lines transports, a scripted baseline agent and the evaluation; <strong>the stop rule is not met</strong>: the scripted agent routes 967 and a model-driven arm 968 of the control's 968 on 16 fresh boards, §9.3; the daemon and the KiCad assistant are not built)</td>
+<td><strong>Session server and agent interface</strong> (stages A–B built 2026-10-15, doc 19: the session, MCP and JSON-lines transports, a scripted baseline agent and the evaluation; <strong>the stop rule is not met</strong>: the scripted agent routes 967 and a model-driven arm 968 of the control's 968 on 16 fresh boards, §9.3; the daemon and the KiCad action "route selected nets" built 2026-11-13, D180, doc 19 §10: 1.75 s for a 2-pad net in a running KiCad, one undo)</td>
 <td>A long-running board session (<code>tracemakerd</code>) holding the board and caches; a tool interface over transactions (list open connections, route a connection, rip a net, check, score, undo, save), each commit behind the exact check, with a replayable session log; the plugin routes selected nets through it</td>
 <td>Single-net route from the plugin within a stated latency on <code>multichannel_mixer</code>, one undo step; <strong>stop rule:</strong> an agent loop must route more than the plain run at the same compute on a held-out half, or the interface stays a library and nothing further is built</td>
 </tr>
@@ -2367,7 +2367,7 @@ every later milestone can be watched while it is built.</p>
 </tr>
 <tr>
 <td>M22</td>
-<td><strong>Finish the last connections</strong> (planned 2026-10-29, doc 18 §18, D155)</td>
+<td><strong>Finish the last connections</strong> (planned 2026-10-29, doc 18 §18, D155; all eight items built and off by 2026-11-13, D179; gate not met: 3.5 % fewer open against 15 %)</td>
 <td>Proof-triggered pin rescue (rip the copper around a pin proved boxed in, route it first, re-route the victims; seeded, widening radius); retry of every unattempted or ripped connection at the end; a whole-board attempt for window misses; informed pad-to-plane searches; the D153 via retry gated on budget misses; escape plan and a via cost near dense pins; tight and off-lattice vias; a via-site planner only if fan-out remains the largest class</td>
 <td>At least 15 % fewer open connections on <code>pcbench-bd-fail</code> at 10 M work (KiCad judge), no clean board lost, <code>quick</code> and <code>mid</code> byte-identical with the options off</td>
 </tr>

@@ -2,6 +2,7 @@ var structtmk_1_1place_1_1LoopOptions =
 [
     [ "absolute_seed_legality", "structtmk_1_1place_1_1LoopOptions.html#a17146a36aa549b43ac95c1a5e6ec25fc", null ],
     [ "accept_first_seed_conflicts", "structtmk_1_1place_1_1LoopOptions.html#acac8a09c1872ff32924acf100116248c", null ],
+    [ "advised_eco", "structtmk_1_1place_1_1LoopOptions.html#ab21881a581f84c2e4b581a4d03c47da0", null ],
     [ "beta", "structtmk_1_1place_1_1LoopOptions.html#a2476f969ed8a4b4ed2b911362ea2a0c9", null ],
     [ "eco_candidates", "structtmk_1_1place_1_1LoopOptions.html#a2a39b4e843ef9da3b5e40e3252754f75", null ],
     [ "log", "structtmk_1_1place_1_1LoopOptions.html#a87dea6bbd0c1d23f06456cb6747cdab9", null ],

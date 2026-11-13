@@ -110,6 +110,10 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ad168b96b3806d568fa21470efc3db7f3" id="r_ad168b96b3806d568fa21470efc3db7f3"><td class="memItemLeft" align="right" valign="top">std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad168b96b3806d568fa21470efc3db7f3">seed</a> = 1</td></tr>
 <tr class="memitem:ab8c89d3131774a904ef5ce00a227c118" id="r_ab8c89d3131774a904ef5ce00a227c118"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8c89d3131774a904ef5ce00a227c118">baseline_only</a> = false</td></tr>
 <tr class="memdesc:ab8c89d3131774a904ef5ce00a227c118"><td class="mdescLeft">&#160;</td><td class="mdescRight">only the run on the board as it is (the layer test: run it on a copy with more layers)  <br /></td></tr>
+<tr class="memitem:a2c0a8b36763fa049bece7450cd90d701" id="r_a2c0a8b36763fa049bece7450cd90d701"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c0a8b36763fa049bece7450cd90d701">fill_planes</a> = true</td></tr>
+<tr class="memdesc:a2c0a8b36763fa049bece7450cd90d701"><td class="mdescLeft">&#160;</td><td class="mdescRight">zones with no fill are filled in memory and routed soft, as <span class="tt"><a class="el" href="namespacetmk_1_1route.html">route</a></span> does (D155 item 4)  <br /></td></tr>
+<tr class="memitem:ab390374da2fa0f47edc2d9252bdee3e8" id="r_ab390374da2fa0f47edc2d9252bdee3e8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab390374da2fa0f47edc2d9252bdee3e8">soft_zones</a> = false</td></tr>
+<tr class="memdesc:ab390374da2fa0f47edc2d9252bdee3e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">zone fills do not block other nets (as route &ndash;soft-zones); set by fill_planes when it fills one  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
@@ -148,6 +152,24 @@ Public Attributes</h2></td></tr>
 <p>work of the run on the board as it is (connections it routes were left by the budget or the order) </p>
 
 <p class="definition">Definition at line <a class="el" href="causes_8hpp_source.html#l00017">17</a> of file <a class="el" href="causes_8hpp_source.html">causes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a2c0a8b36763fa049bece7450cd90d701" name="a2c0a8b36763fa049bece7450cd90d701"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c0a8b36763fa049bece7450cd90d701">&#9670;&#160;</a></span>fill_planes</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::app::CausesOptions::fill_planes = true</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>zones with no fill are filled in memory and routed soft, as <span class="tt"><a class="el" href="namespacetmk_1_1route.html">route</a></span> does (D155 item 4) </p>
+
+<p class="definition">Definition at line <a class="el" href="causes_8hpp_source.html#l00023">23</a> of file <a class="el" href="causes_8hpp_source.html">causes.hpp</a>.</p>
 
 </div>
 </div>
@@ -200,6 +222,24 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="causes_8hpp_source.html#l00021">21</a> of file <a class="el" href="causes_8hpp_source.html">causes.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab390374da2fa0f47edc2d9252bdee3e8" name="ab390374da2fa0f47edc2d9252bdee3e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab390374da2fa0f47edc2d9252bdee3e8">&#9670;&#160;</a></span>soft_zones</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::app::CausesOptions::soft_zones = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>zone fills do not block other nets (as route &ndash;soft-zones); set by fill_planes when it fills one </p>
+
+<p class="definition">Definition at line <a class="el" href="causes_8hpp_source.html#l00024">24</a> of file <a class="el" href="causes_8hpp_source.html">causes.hpp</a>.</p>
 
 </div>
 </div>

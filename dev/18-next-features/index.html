@@ -1814,7 +1814,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -1849,7 +1849,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -3392,7 +3392,9 @@ Item 8 remains: on mini_mass the open pins are boxed in by their neighbours' tra
 millimetres of their routes as the designer lays them, straight or in staggered 45-degree bundles. mini_mass goes from 986 to 989
 (the designer's own heads give 990). On the ten boards it nets zero (7,175, as the base) and stays off. On CoreOne even the designer's own heads do not help (785
 against 787), so a better rule for the heads was not pursued.</p>
-<p>State of M22: items 1-3 and 5-8 are built and off by default, and item 4 is partly built (<code>--plane-informed</code>). The best arm,
+<p>Item 4 was finished on 2026-11-13 (D179, doc 05 §78): the bound pays a via off the plane's layer and <code>causes</code> fills zones as <code>route</code>
+does. On the 33 gate boards at 10 M work <code>--plane-informed</code> gives byte-identical boards to the base.</p>
+<p>State of M22: all eight items are built and off by default. The best arm,
 <code>--via-shove --escape-all</code>, cuts open connections by 3.5 % against the 15 % gate. Every repair so far lands within a few connections
 of the base given about 10 % more work, so more search per second is the stronger lever.</p>
 <h2 id="19-a3-done-the-kookabus-boards-2026-11-08-m21">19. A3 done: the Kookabus boards (2026-11-08, M21)<a class="headerlink" href="#19-a3-done-the-kookabus-boards-2026-11-08-m21" title="Permanent link">&para;</a></h2>

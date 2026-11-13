@@ -95,11 +95,16 @@ $(function(){initNavTree('namespacetmk_1_1session.html','',''); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:DaemonOptions" id="r_DaemonOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1session_1_1DaemonOptions.html">DaemonOptions</a></td></tr>
 <tr class="memitem:SessionOptions" id="r_SessionOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1session_1_1SessionOptions.html">SessionOptions</a></td></tr>
 <tr class="memitem:Session" id="r_Session"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmk_1_1session_1_1Session.html">Session</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a3fc46eae12e6c56dac1a107afb405e19" id="r_a3fc46eae12e6c56dac1a107afb405e19"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3fc46eae12e6c56dac1a107afb405e19">default_socket_path</a> ()</td></tr>
+<tr class="memdesc:a3fc46eae12e6c56dac1a107afb405e19"><td class="mdescLeft">&#160;</td><td class="mdescRight">$XDG_RUNTIME_DIR/tracemaker/daemon.sock, else /tmp/tracemaker-&lt;uid&gt;/daemon.sock.  <br /></td></tr>
+<tr class="memitem:aab78d7a88568da048b378240b5a8d51c" id="r_aab78d7a88568da048b378240b5a8d51c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab78d7a88568da048b378240b5a8d51c">run_daemon</a> (const <a class="el" href="structtmk_1_1session_1_1DaemonOptions.html">DaemonOptions</a> &amp;opt)</td></tr>
+<tr class="memdesc:aab78d7a88568da048b378240b5a8d51c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serves until <span class="tt">shutdown</span> or the idle limit. Returns 0, or 1 when the socket cannot be created (another daemon holds it: the message says so).  <br /></td></tr>
 <tr class="memitem:aeb5ab755c05de800db1ed6c0ad4683fc" id="r_aeb5ab755c05de800db1ed6c0ad4683fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb5ab755c05de800db1ed6c0ad4683fc">run_mcp</a> (<a class="el" href="classtmk_1_1session_1_1Session.html">Session</a> &amp;s, std::istream &amp;in, std::ostream &amp;out)</td></tr>
 <tr class="memdesc:aeb5ab755c05de800db1ed6c0ad4683fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return when the input ends. Never throw for a bad request: it is answered.  <br /></td></tr>
 <tr class="memitem:a3c0f4c8fd0b2fa77e2c69a9ddb100162" id="r_a3c0f4c8fd0b2fa77e2c69a9ddb100162"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c0f4c8fd0b2fa77e2c69a9ddb100162">run_jsonl</a> (<a class="el" href="classtmk_1_1session_1_1Session.html">Session</a> &amp;s, std::istream &amp;in, std::ostream &amp;out)</td></tr>
@@ -110,6 +115,44 @@ Variables</h2></td></tr>
 <tr class="memdesc:a6dcb7792d7bd4c513c33cda59be15051"><td class="mdescLeft">&#160;</td><td class="mdescRight">a line longer than this is refused (the rest of the line is skipped)  <br /></td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="a3fc46eae12e6c56dac1a107afb405e19" name="a3fc46eae12e6c56dac1a107afb405e19"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3fc46eae12e6c56dac1a107afb405e19">&#9670;&#160;</a></span>default_socket_path()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string tmk::session::default_socket_path </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>$XDG_RUNTIME_DIR/tracemaker/daemon.sock, else /tmp/tracemaker-&lt;uid&gt;/daemon.sock. </p>
+
+</div>
+</div>
+<a id="aab78d7a88568da048b378240b5a8d51c" name="aab78d7a88568da048b378240b5a8d51c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab78d7a88568da048b378240b5a8d51c">&#9670;&#160;</a></span>run_daemon()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::session::run_daemon </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1session_1_1DaemonOptions.html">DaemonOptions</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>opt</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Serves until <span class="tt">shutdown</span> or the idle limit. Returns 0, or 1 when the socket cannot be created (another daemon holds it: the message says so). </p>
+
+</div>
+</div>
 <a id="a3c0f4c8fd0b2fa77e2c69a9ddb100162" name="a3c0f4c8fd0b2fa77e2c69a9ddb100162"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3c0f4c8fd0b2fa77e2c69a9ddb100162">&#9670;&#160;</a></span>run_jsonl()</h2>
 

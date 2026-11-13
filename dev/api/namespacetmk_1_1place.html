@@ -117,6 +117,10 @@ Classes</h2></td></tr>
 <tr class="memitem:LegaliseStats" id="r_LegaliseStats"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1LegaliseStats.html">LegaliseStats</a></td></tr>
 <tr class="memitem:MinCostFlow" id="r_MinCostFlow"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmk_1_1place_1_1MinCostFlow.html">MinCostFlow</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Min-cost flow on a small graph (exposed for tests).  <a href="classtmk_1_1place_1_1MinCostFlow.html#details">More...</a><br /></td></tr>
+<tr class="memitem:AdvisedMove" id="r_AdvisedMove"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1AdvisedMove.html">AdvisedMove</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One proposed part position, resolved against the problem.  <a href="structtmk_1_1place_1_1AdvisedMove.html#details">More...</a><br /></td></tr>
+<tr class="memitem:AdvisedSeed" id="r_AdvisedSeed"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1AdvisedSeed.html">AdvisedSeed</a></td></tr>
+<tr class="memitem:PlaceAdvice" id="r_PlaceAdvice"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1PlaceAdvice.html">PlaceAdvice</a></td></tr>
 <tr class="memitem:PlaceOptions" id="r_PlaceOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1PlaceOptions.html">PlaceOptions</a></td></tr>
 <tr class="memitem:Metrics" id="r_Metrics"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1Metrics.html">Metrics</a></td></tr>
 <tr class="memitem:PlaceReport" id="r_PlaceReport"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1PlaceReport.html">PlaceReport</a></td></tr>
@@ -203,6 +207,12 @@ Functions</h2></td></tr>
 <tr class="memdesc:a6fb6f8124b9b09e9977134d7b01f331a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">only_illegal</span>: parts that are already legal (inside the board, conflict-free) stay where they are and only the others are re-placed (refine mode).  <br /></td></tr>
 <tr class="memitem:ac9abcfb7c989d49b8bad7ab167fc0d07" id="r_ac9abcfb7c989d49b8bad7ab167fc0d07"><td class="memItemLeft" align="right" valign="top">std::int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9abcfb7c989d49b8bad7ab167fc0d07">hpwl_lower_bound</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;pl, <a class="el" href="#a402b743aad4c77535fff84c378e3b4e1">RotationModel</a> <a class="el" href="namespacetmk_1_1model.html">model</a>)</td></tr>
 <tr class="memdesc:ac9abcfb7c989d49b8bad7ab167fc0d07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimum weighted HPWL (Σ weight · HPWL, nm) over all positions of the movable parts with overlaps and the board outline ignored.  <br /></td></tr>
+<tr class="memitem:a1a7c727ad1f8190b8188d93cabfb984c" id="r_a1a7c727ad1f8190b8188d93cabfb984c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1place_1_1PlaceAdvice.html">PlaceAdvice</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a7c727ad1f8190b8188d93cabfb984c">parse_place_advice</a> (std::string_view json_text, const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, const std::string &amp;source=&quot;placement advice&quot;)</td></tr>
+<tr class="memdesc:a1a7c727ad1f8190b8188d93cabfb984c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses the text of a placement advice file and resolves its references against <span class="tt">p</span>.  <br /></td></tr>
+<tr class="memitem:a4a9c896f559e2e12a6fbaa8a5c7e4ab4" id="r_a4a9c896f559e2e12a6fbaa8a5c7e4ab4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1place_1_1PlaceAdvice.html">PlaceAdvice</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4a9c896f559e2e12a6fbaa8a5c7e4ab4">read_place_advice</a> (const std::string &amp;path, const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p)</td></tr>
+<tr class="memdesc:a4a9c896f559e2e12a6fbaa8a5c7e4ab4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads and parses a file (as above).  <br /></td></tr>
+<tr class="memitem:a736a0a597e82049cb53c780e31f5b305" id="r_a736a0a597e82049cb53c780e31f5b305"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a736a0a597e82049cb53c780e31f5b305">apply_seed</a> (const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;base, const <a class="el" href="structtmk_1_1place_1_1AdvisedSeed.html">AdvisedSeed</a> &amp;s)</td></tr>
+<tr class="memdesc:a736a0a597e82049cb53c780e31f5b305"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">base</span> with the seed's moves applied.  <br /></td></tr>
 <tr class="memitem:addda33111579fab316704c3db3425071" id="r_addda33111579fab316704c3db3425071"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1place_1_1Metrics.html">Metrics</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#addda33111579fab316704c3db3425071">measure</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;pl, const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> *reference=nullptr)</td></tr>
 <tr class="memitem:a0a7fd87b83fb80755ded7be9ca715ac3" id="r_a0a7fd87b83fb80755ded7be9ca715ac3"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a7fd87b83fb80755ded7be9ca715ac3">repaired</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;pl, int *moved=nullptr)</td></tr>
 <tr class="memdesc:a0a7fd87b83fb80755ded7be9ca715ac3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimal repair: re-place only conflicting movable parts at the nearest legal spot (refine's legaliser).  <br /></td></tr>
@@ -261,6 +271,9 @@ Variables</h2></td></tr>
 <tr class="memdesc:ac16bc7eeaec13ab5baab03b20e9d1086"><td class="mdescLeft">&#160;</td><td class="mdescRight">through obstacle vs courtyard on the other side  <br /></td></tr>
 <tr class="memitem:ae57dfaec4cfbc6ecc7cb779a96da521e" id="r_ae57dfaec4cfbc6ecc7cb779a96da521e"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae57dfaec4cfbc6ecc7cb779a96da521e">kThroughThrough</a> = 250'000</td></tr>
 <tr class="memdesc:ae57dfaec4cfbc6ecc7cb779a96da521e"><td class="mdescLeft">&#160;</td><td class="mdescRight">through obstacle vs through obstacle  <br /></td></tr>
+<tr class="memitem:a55e381ee95c1c3423203f3c416cdfc8d" id="r_a55e381ee95c1c3423203f3c416cdfc8d"><td class="memItemLeft" align="right" valign="top">constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55e381ee95c1c3423203f3c416cdfc8d">kMaxAdviceSeeds</a> = 8</td></tr>
+<tr class="memitem:abbb5d710886b9762ae898abedfdbbeb9" id="r_abbb5d710886b9762ae898abedfdbbeb9"><td class="memItemLeft" align="right" valign="top">constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abbb5d710886b9762ae898abedfdbbeb9">kMaxSeedMoves</a> = 64</td></tr>
+<tr class="memitem:ade364a385b9cdf5eeef062298f4f1a22" id="r_ade364a385b9cdf5eeef062298f4f1a22"><td class="memItemLeft" align="right" valign="top">constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade364a385b9cdf5eeef062298f4f1a22">kMaxEcoMoves</a> = 32</td></tr>
 <tr class="memitem:a1646579961770bd9b7fee841b2d0ef29" id="r_a1646579961770bd9b7fee841b2d0ef29"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1646579961770bd9b7fee841b2d0ef29">kSignalWeight</a> = 10</td></tr>
 <tr class="memdesc:a1646579961770bd9b7fee841b2d0ef29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Net weights are small integers so every cost is an exact integer (CLAUDE.md rule 2).  <br /></td></tr>
 <tr class="memitem:a8b7fa2dcf624aba0b36db673a20c28a6" id="r_a8b7fa2dcf624aba0b36db673a20c28a6"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8b7fa2dcf624aba0b36db673a20c28a6">kPowerWeight</a> = 1</td></tr>
@@ -285,7 +298,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00032">32</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00033">33</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -456,6 +469,29 @@ template&lt;class Touch&gt; </div>
 </div><div class="memdoc">
 
 <p>Cost used by the annealer, from scratch (reference path): weighted HPWL + α·crossings + β·RUDY overflow, all in the annealer's integer units. </p>
+
+</div>
+</div>
+<a id="a736a0a597e82049cb53c780e31f5b305" name="a736a0a597e82049cb53c780e31f5b305"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a736a0a597e82049cb53c780e31f5b305">&#9670;&#160;</a></span>apply_seed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> tmk::place::apply_seed </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>base</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1place_1_1AdvisedSeed.html">AdvisedSeed</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>s</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><span class="tt">base</span> with the seed's moves applied. </p>
 
 </div>
 </div>
@@ -1135,6 +1171,35 @@ template&lt;class Touch&gt; </div>
 
 </div>
 </div>
+<a id="a1a7c727ad1f8190b8188d93cabfb984c" name="a1a7c727ad1f8190b8188d93cabfb984c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a7c727ad1f8190b8188d93cabfb984c">&#9670;&#160;</a></span>parse_place_advice()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1place_1_1PlaceAdvice.html">PlaceAdvice</a> tmk::place::parse_place_advice </td>
+          <td>(</td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>json_text</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>source</em></span><span class="paramdefsep"> = </span><span class="paramdefval">&quot;placement&#160;advice&quot;</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Parses the text of a placement advice file and resolves its references against <span class="tt">p</span>. </p>
+<p>Throws std::runtime_error naming <span class="tt">source</span> and the entry ("seeds[1].moves[0].ref"). </p>
+
+</div>
+</div>
 <a id="a93d0aab254b1af26324e6e8a959a898f" name="a93d0aab254b1af26324e6e8a959a898f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a93d0aab254b1af26324e6e8a959a898f">&#9670;&#160;</a></span>part_nets()</h2>
 
@@ -1256,6 +1321,29 @@ template&lt;class Touch&gt; </div>
 
 <p>(A) Solves the B2B quadratic program for the movable parts (rotations taken from <span class="tt">pl</span>), <span class="tt">relinearise</span> times. </p>
 <p>Optional anchors pull part i towards anchor[i] with weight anchor_w[i] × (the part's net weight in the current linearisation); 0 = no anchor. </p>
+
+</div>
+</div>
+<a id="a4a9c896f559e2e12a6fbaa8a5c7e4ab4" name="a4a9c896f559e2e12a6fbaa8a5c7e4ab4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a9c896f559e2e12a6fbaa8a5c7e4ab4">&#9670;&#160;</a></span>read_place_advice()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1place_1_1PlaceAdvice.html">PlaceAdvice</a> tmk::place::read_place_advice </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>path</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>p</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads and parses a file (as above). </p>
 
 </div>
 </div>
@@ -1918,6 +2006,78 @@ template&lt;class Touch&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00055">55</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a55e381ee95c1c3423203f3c416cdfc8d" name="a55e381ee95c1c3423203f3c416cdfc8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55e381ee95c1c3423203f3c416cdfc8d">&#9670;&#160;</a></span>kMaxAdviceSeeds</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::size_t tmk::place::kMaxAdviceSeeds = 8</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="place__advice_8hpp_source.html#l00030">30</a> of file <a class="el" href="place__advice_8hpp_source.html">place_advice.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ade364a385b9cdf5eeef062298f4f1a22" name="ade364a385b9cdf5eeef062298f4f1a22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade364a385b9cdf5eeef062298f4f1a22">&#9670;&#160;</a></span>kMaxEcoMoves</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::size_t tmk::place::kMaxEcoMoves = 32</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="place__advice_8hpp_source.html#l00032">32</a> of file <a class="el" href="place__advice_8hpp_source.html">place_advice.hpp</a>.</p>
+
+</div>
+</div>
+<a id="abbb5d710886b9762ae898abedfdbbeb9" name="abbb5d710886b9762ae898abedfdbbeb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abbb5d710886b9762ae898abedfdbbeb9">&#9670;&#160;</a></span>kMaxSeedMoves</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::size_t tmk::place::kMaxSeedMoves = 64</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="place__advice_8hpp_source.html#l00031">31</a> of file <a class="el" href="place__advice_8hpp_source.html">place_advice.hpp</a>.</p>
 
 </div>
 </div>

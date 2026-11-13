@@ -12,11 +12,12 @@ var searchData=
   ['up_9',['up',['../namespacetmk_1_1app_1_1tui_1_1key.html#ab6dacb750930bd02da22271bf0322ddc',1,'tmk::app::tui::key']]],
   ['url_10',['url',['../structtmk_1_1analysis_1_1FootprintResult.html#a4843b9c0f64b354ad985be9171425438',1,'tmk::analysis::FootprintResult::url'],['../structtmk_1_1analysis_1_1FootprintRef.html#a55b51d53a11de3d4f5fff0da1dab68ae',1,'tmk::analysis::FootprintRef::url']]],
   ['usable_11',['usable',['../structtmk_1_1place_1_1CongestionOptions.html#affc99a2c06d627e4bce26bc737314a63',1,'tmk::place::CongestionOptions']]],
-  ['use_5fheight_5ffor_5flength_12',['use_height_for_length',['../structtmk_1_1model_1_1DesignRules.html#a030271b817f79539d0cafa3f913416a5',1,'tmk::model::DesignRules']]],
-  ['user_5fname_13',['user_name',['../structtmk_1_1model_1_1LayerDef.html#a37199c31c37135e760cc2548f1a03a84',1,'tmk::model::LayerDef']]],
-  ['util_14',['util',['../structtmk_1_1route_1_1GlobalResult.html#ae568a7c4bdddf24aa8ea759a13028d68',1,'tmk::route::GlobalResult']]],
-  ['utilisation_15',['utilisation',['../structtmk_1_1place_1_1PlaceReport.html#a2dafd495c4b165a6de6bf39eaf87867a',1,'tmk::place::PlaceReport']]],
-  ['uuid_16',['uuid',['../structtmk_1_1gpu_1_1DeviceInfo.html#a6e1960c196d787d7ff66f1672843eb92',1,'tmk::gpu::DeviceInfo::uuid'],['../structtmk_1_1model_1_1Footprint.html#a5c03c164639b6229e23bca1fe396d049',1,'tmk::model::Footprint::uuid'],['../structtmk_1_1model_1_1Zone.html#a2fb778dfb5e92a17c5331bfc53f21e66',1,'tmk::model::Zone::uuid']]],
-  ['uvia_5fdiameter_17',['uvia_diameter',['../structtmk_1_1model_1_1NetClass.html#a65725f21f5f2955f431560ecc2d94922',1,'tmk::model::NetClass']]],
-  ['uvia_5fdrill_18',['uvia_drill',['../structtmk_1_1model_1_1NetClass.html#a4d3f9b6452e8fb6d7241b66d9fd3ecc1',1,'tmk::model::NetClass']]]
+  ['use_5fgpu_12',['use_gpu',['../structtmk_1_1session_1_1DaemonOptions.html#a121f547a6f4c06bede59949a6d905a59',1,'tmk::session::DaemonOptions']]],
+  ['use_5fheight_5ffor_5flength_13',['use_height_for_length',['../structtmk_1_1model_1_1DesignRules.html#a030271b817f79539d0cafa3f913416a5',1,'tmk::model::DesignRules']]],
+  ['user_5fname_14',['user_name',['../structtmk_1_1model_1_1LayerDef.html#a37199c31c37135e760cc2548f1a03a84',1,'tmk::model::LayerDef']]],
+  ['util_15',['util',['../structtmk_1_1route_1_1GlobalResult.html#ae568a7c4bdddf24aa8ea759a13028d68',1,'tmk::route::GlobalResult']]],
+  ['utilisation_16',['utilisation',['../structtmk_1_1place_1_1PlaceReport.html#a2dafd495c4b165a6de6bf39eaf87867a',1,'tmk::place::PlaceReport']]],
+  ['uuid_17',['uuid',['../structtmk_1_1gpu_1_1DeviceInfo.html#a6e1960c196d787d7ff66f1672843eb92',1,'tmk::gpu::DeviceInfo::uuid'],['../structtmk_1_1model_1_1Footprint.html#a5c03c164639b6229e23bca1fe396d049',1,'tmk::model::Footprint::uuid'],['../structtmk_1_1model_1_1Zone.html#a2fb778dfb5e92a17c5331bfc53f21e66',1,'tmk::model::Zone::uuid']]],
+  ['uvia_5fdiameter_18',['uvia_diameter',['../structtmk_1_1model_1_1NetClass.html#a65725f21f5f2955f431560ecc2d94922',1,'tmk::model::NetClass']]],
+  ['uvia_5fdrill_19',['uvia_drill',['../structtmk_1_1model_1_1NetClass.html#a4d3f9b6452e8fb6d7241b66d9fd3ecc1',1,'tmk::model::NetClass']]]
 ];

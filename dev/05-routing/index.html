@@ -2552,6 +2552,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#78-pad-to-plane-searches-the-via-term-causes-with-filled-zones-measured-2026-11-13-d179" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        78. Pad-to-plane searches: the via term, causes with filled zones, measured (2026-11-13, D179)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2865,7 +2876,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -2900,7 +2911,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -4159,6 +4170,17 @@
     <span class="md-ellipsis">
       
         77. Coupled pairs: leg reach, protected halves, re-coupling past the budget, pad exits (issue #67, 2026-11-08, D175)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#78-pad-to-plane-searches-the-via-term-causes-with-filled-zones-measured-2026-11-13-d179" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        78. Pad-to-plane searches: the via term, causes with filled zones, measured (2026-11-13, D179)
       
     </span>
   </a>
@@ -9313,7 +9335,8 @@ boards against two on the 33 failing PCBench tier B-D boards (§67).</p>
 from nothing with <code>--relax</code>. The result that <code>route_result_better</code> prefers stands (more routed, then fewer vias, then shorter copper). A
 tie keeps the plain result. Then the advisor (doc 17), the refill repair (§36) and the passes run on what stands, as before.
 - <strong>Budget.</strong> The rescue gets <code>--time</code> again (as the advisor's re-run does) and, with <code>--work</code>, rounds of at most 20 M work that add
-  up to <code>--work</code>. A board left open can take up to twice the time. A complete board never gets a rescue.
+  up to <code>--work</code>. Since D163 there are two passes, so a board left open can take three times <code>--time</code>, plus the stages after routing
+  (<code>bench/run.py</code> stops a board at 4 × <code>--time</code> + 120 s, D182). A complete board never gets a rescue.
 - <strong>Why its own time.</strong> Without <code>--work</code>, the plain portfolio uses all of its 120 s on hard boards: on ardfpga, teensy-fx, poncho and
   serial_gw it was still working when the limit came (two passes on poncho). Splitting the time would give the plain run less on exactly
   those boards.
@@ -10166,6 +10189,16 @@ quanln's board is not known; its closest goal candidate missed by 0.027 mm, whic
 pad rather than on the direction, and the neck-down width is the other lever there. Not built: pad entry from the pad's edge rather than
 its centre, legs of more than one bend after an exit, and a pair whose end leg starts uncoupled at the pad and couples after the
 obstacle (the long-leg retry is the nearest form).</p>
+<h2 id="78-pad-to-plane-searches-the-via-term-causes-with-filled-zones-measured-2026-11-13-d179">78. Pad-to-plane searches: the via term, <code>causes</code> with filled zones, measured (2026-11-13, D179)<a class="headerlink" href="#78-pad-to-plane-searches-the-via-term-causes-with-filled-zones-measured-2026-11-13-d179" title="Permanent link">&para;</a></h2>
+<p>The rest of M22 item 4 (§63). With <code>--plane-informed</code> the bound of a pad-to-plane search is the octile distance to the plane's box <strong>plus
+one via for a state on another layer than the plane's</strong> (<code>router.cpp</code>, the search's <code>h</code>): such a search has no target cells but the plane
+on its one layer, and every layer change costs at least <code>via_cost</code>, so the bound stays admissible and consistent. <code>tracemaker causes</code>
+now fills copper zones that have no fill and routes its copies with soft zones, as <code>route</code> does (§54); <code>--no-fill-planes</code> keeps the old
+reading.</p>
+<p>Measured on the M22 gate set (33 <code>pcbench-bd-fail</code> boards, 10 M work, 8 variants, <code>bench/records/m22-plane</code>): <code>--plane-informed</code> gives
+<strong>byte-identical boards</strong> to the base on all 33. No pad-to-plane search there reaches a point where the bound, the proof or the fallback
+changes a decision, so item 4 does nothing for the gate. The option stays off. With it, all eight items of M22 are built and off; the best
+arm (<code>--via-shove --escape-all</code>, §64) cut open connections by 3.5 % against the 15 % gate.</p>
 
 
 

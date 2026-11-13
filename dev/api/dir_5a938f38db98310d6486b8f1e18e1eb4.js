@@ -7,6 +7,7 @@ var dir_5a938f38db98310d6486b8f1e18e1eb4 =
     [ "legality.hpp", "legality_8hpp.html", "legality_8hpp" ],
     [ "legalize.hpp", "place_2legalize_8hpp.html", "place_2legalize_8hpp" ],
     [ "lower_bound.hpp", "lower__bound_8hpp.html", "lower__bound_8hpp" ],
+    [ "place_advice.hpp", "place__advice_8hpp.html", "place__advice_8hpp" ],
     [ "placer.hpp", "placer_8hpp.html", "placer_8hpp" ],
     [ "problem.hpp", "problem_8hpp.html", "problem_8hpp" ],
     [ "routable.hpp", "routable_8hpp.html", "routable_8hpp" ],

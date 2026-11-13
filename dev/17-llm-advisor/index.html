@@ -1828,7 +1828,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -1853,7 +1853,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -1986,6 +1986,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#83-stage-4-placement-advice-2026-11-13-d178" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 Stage 4: placement advice (2026-11-13, D178)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2035,7 +2046,7 @@
     
   
   
-    <span class="md-status md-status--partly-built"></span>
+    <span class="md-status md-status--current"></span>
   
 
   
@@ -2419,6 +2430,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#83-stage-4-placement-advice-2026-11-13-d178" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 Stage 4: placement advice (2026-11-13, D178)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2461,13 +2483,9 @@
 
 
 <h1 id="17-advice-files-and-a-pluggable-advisor-called-only-when-the-router-is-stuck">17 — Advice files and a pluggable advisor, called only when the router is stuck<a class="headerlink" href="#17-advice-files-and-a-pluggable-advisor-called-only-when-the-router-is-stuck" title="Permanent link">&para;</a></h1>
-<div class="admonition info">
-<p class="admonition-title">Status: Partly built</p>
-<p>Part of this page describes code that exists; the rest is a plan. The page says which is which.</p>
-</div>
 <blockquote>
 <p>Part of the TraceMaker plan. Start at <a href="https://github.com/DingoOz/TraceMaker/blob/main/PLAN.md"><code>../PLAN.md</code></a>. Written 2026-10-14 for issue #26. <strong>Milestone M16.</strong>
-Status: stages 0–3 built; stage 4 (placement) is not. §8 holds what was measured, including what did not work.</p>
+Status: stages 0–4 built (stage 4, placement advice, on 2026-11-13: §8.3, D178). §8 holds what was measured, including what did not work.</p>
 </blockquote>
 <h2 id="1-where-a-language-model-belongs">1. Where a language model belongs<a class="headerlink" href="#1-where-a-language-model-belongs" title="Permanent link">&para;</a></h2>
 <p>TraceMaker is the deterministic counterweight to an LLM's probabilistic approach (requirement N3, rule 2). A model still has a
@@ -2772,6 +2790,10 @@ about twice a plain one; <code>--advice FILE</code> alone costs one run with the
 <td><code>tracemaker advice-check BOARD ADVICE [--json F]</code></td>
 <td>check an advice file against a board</td>
 </tr>
+<tr>
+<td><code>tracemaker-place --mode routable\|eco --place-advice FILE</code></td>
+<td>placement advice (stage 4, §8.3): proposed placements as seeds of the routability loop, proposed moves as ECO candidates</td>
+</tr>
 </tbody>
 </table>
 <p>The summary (<code>--json</code>) gets an <code>advice</code> block: the file's hints and warnings, <code>unadvised_best_routed</code> / <code>advised_best_routed</code> /
@@ -2901,11 +2923,84 @@ whose plain column agrees across experiments. (Lesson for any work-budget experi
 </tr>
 </tbody>
 </table>
+<h3 id="83-stage-4-placement-advice-2026-11-13-d178">8.3 Stage 4: placement advice (2026-11-13, D178)<a class="headerlink" href="#83-stage-4-placement-advice-2026-11-13-d178" title="Permanent link">&para;</a></h3>
+<p>What a model is supposed to add over the rule-based hints of §8.1 is judgement about <em>which part to move</em> (§1). Stage 4 gives that a
+channel: a placement advice file for <code>tracemaker-place</code> (<code>src/place/place_advice.hpp</code>), read strictly like the advice file:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">"note"</span><span class="p">:</span><span class="w"> </span><span class="s2">"free text"</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">"seeds"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"U3 to the west"</span><span class="p">,</span><span class="w"> </span><span class="nt">"moves"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"U3"</span><span class="p">,</span><span class="w"> </span><span class="nt">"at"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">42.5</span><span class="p">,</span><span class="w"> </span><span class="mf">18.0</span><span class="p">],</span><span class="w"> </span><span class="nt">"rotate"</span><span class="p">:</span><span class="w"> </span><span class="mi">90</span><span class="p">}]}],</span>
+<span class="w"> </span><span class="nt">"eco"</span><span class="p">:</span><span class="w">   </span><span class="p">[{</span><span class="nt">"ref"</span><span class="p">:</span><span class="w"> </span><span class="s2">"C12"</span><span class="p">,</span><span class="w"> </span><span class="nt">"at"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">40.0</span><span class="p">,</span><span class="w"> </span><span class="mf">21.5</span><span class="p">]}]}</span>
+</code></pre></div>
+<ul>
+<li><code>at</code> is the footprint origin in millimetres on the board file's axes, <code>rotate</code> the absolute orientation in degrees (default: as it is),
+  which must be the part's own orientation plus a multiple of 90 (the placer's rotation states; side changes are not offered).</li>
+<li>A <strong>seed</strong> (at most 8, each at most 64 moves) is the base placement with those parts moved. It joins the routability loop's seeds
+  (<code>--mode routable</code>) after the placer's own (input, refine, refine+rudy, full, full+rudy), is routed with the same budget, and is kept
+  only when it leaves fewer connections unrouted than every other seed, and then survives the loop's final verification route like any
+  other winner. A seed that adds an overlap or puts a part outside the board is skipped with the reason in the notes.</li>
+<li>An <strong>eco</strong> move (at most 32) is a single-part move routed first in each ECO round (<code>--mode eco</code>, and the ECO step of each routability
+  round), on top of the ECO's own <code>--eco-candidates</code> best-ranked moves; one is committed only when it routes more, as the ECO's own are.
+  Moves not legal on the current placement, or already tried, are dropped.</li>
+<li>Refused with an error naming the entry, before any route: an unknown reference or key, a reference that names two footprints, a part
+  that is locked or otherwise fixed (rule 6, whoever proposes it: <code>U1 may not move (overhangs the board edge in the input)</code>), an
+  orientation the part cannot take, a part moved twice by one seed, more entries than the limits.</li>
+<li>The report (<code>--json</code>) gets an <code>advice</code> block: each seed with legal / why / unrouted / kept, the number of ECO moves, and whether the
+  kept placement came from advice.</li>
+</ul>
+<p><strong>Checked.</strong> Unit tests (<code>[advice]</code> in <code>src/place/test_place.cpp</code>): strict parsing and every refusal above; a good advised seed is kept
+and a worse one is not; an advised ECO move is routed first and committed when it routes more, a useless one commits nothing, one onto a
+fixed part is not routed. The CLI on a real board (<code>1Bitsy_1bitsy</code>) and the three oracle boards below.</p>
+<p><strong>Measured, as an oracle</strong> (<code>bench/records/m16-stage4</code>): on a copy of three PCBench boards the three movable parts with the most pads
+were turned by 180 degrees, and the advice file put them back as the designer had them (one seed with the three moves, and the three as
+ECO moves). Router check 1 M work, 4 variants, one routability round, two ECO candidates, against the same run without advice:</p>
+<table>
+<thead>
+<tr>
+<th>Board</th>
+<th style="text-align: right;">Turned input</th>
+<th style="text-align: right;">Without advice</th>
+<th style="text-align: right;">With advice</th>
+<th>What the advice did</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fan_controller</code> (routable)</td>
+<td style="text-align: right;">4 unrouted</td>
+<td style="text-align: right;">0 (refine+rudy)</td>
+<td style="text-align: right;">0 (refine+rudy)</td>
+<td>seed skipped: the designer's orientation adds an overlap in the placer's conservative model</td>
+</tr>
+<tr>
+<td><code>fan_controller</code> (<code>--mode eco</code>)</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0 (ECO: U1 rotate 180)</td>
+<td style="text-align: right;">0 (advised: U1 back to 180°)</td>
+<td>the advised move was routed first and committed; ECO's own ranking finds the same move (5 routes against 3)</td>
+</tr>
+<tr>
+<td><code>spisolator</code> (routable)</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0, HPWL 162 mm</td>
+<td style="text-align: right;">0, HPWL 162 mm</td>
+<td>seed routed (0 unrouted, HPWL 182 mm) and not kept</td>
+</tr>
+<tr>
+<td><code>esp8266_envmonitor</code></td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">refused</td>
+<td><code>U1 may not move (overhangs the board edge in the input)</code></td>
+</tr>
+</tbody>
+</table>
+<p>So the channel works as designed and cannot make a result worse; on these boards the placer's own candidates find what the advice says,
+as the router's own seeds beat the rule-based hints of §8.1. <strong>That advice adds value is not shown</strong>: no advisor that writes placement
+advice exists yet (the reference advisors write routing hints), and no model has been connected.</p>
 <h2 id="9-not-built-and-limits">9. Not built, and limits<a class="headerlink" href="#9-not-built-and-limits" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Stage 4 (placement).</strong> Advisor-proposed placements as <code>seeds</code> of <code>routability_loop</code> and proposed moves as ECO candidates
-  (<code>src/place/routable.hpp</code>) are not built: they would be kept only if they route more, through seams that exist, and wait for §8's
-  evidence that hints help at all.</li>
+<li><strong>An advisor command for placement.</strong> <code>tracemaker-place</code> reads a placement advice file; it has no <code>--advisor CMD</code> loop like the
+  router's (§5). A model can write the file from <code>tracemaker-place --json</code> and the router's stuck report today; a loop is worth adding only
+  once a writer shows that the file helps.</li>
 <li><strong>Per-net layer preference and per-net guide corridors</strong> are new router features the issue asked to add only if the simple hints
   matter; §8.1 says they do not, so they were not added.</li>
 <li><strong>A hint that picks an attempt</strong> ("run the relax-route-legalise profile", doc 05 §41.3) is the hint type the evidence of this repository

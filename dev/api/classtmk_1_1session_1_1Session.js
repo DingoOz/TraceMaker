@@ -4,6 +4,7 @@ var classtmk_1_1session_1_1Session =
     [ "Session", "classtmk_1_1session_1_1Session.html#a0e02c17cfef116bcade60a0f4c5b56e1", null ],
     [ "base", "classtmk_1_1session_1_1Session.html#a109d9c7c3b87f231288bb36815a092ba", null ],
     [ "call", "classtmk_1_1session_1_1Session.html#aa2a9def412d82637550f2f53ca14d738", null ],
+    [ "copper_diff", "classtmk_1_1session_1_1Session.html#a192df2c6b0b435b904955e80543f0d8a", null ],
     [ "instructions", "classtmk_1_1session_1_1Session.html#a2d57690f6a13b0ae3cd08073df726537", null ],
     [ "replay", "classtmk_1_1session_1_1Session.html#ad44ba1bbcccafae45e7a3c59dd168eab", null ],
     [ "state", "classtmk_1_1session_1_1Session.html#a51753c98b6aefea547bd6bffde6da418", null ],

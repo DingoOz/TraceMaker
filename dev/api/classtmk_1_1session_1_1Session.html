@@ -111,6 +111,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aeae594dea06d92ada85adceaff2e6bf2" id="r_aeae594dea06d92ada85adceaff2e6bf2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeae594dea06d92ada85adceaff2e6bf2">state_digest</a> () const</td></tr>
 <tr class="memdesc:aeae594dea06d92ada85adceaff2e6bf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">FNV-1a 64 of the current state's session copper in canonical order (a digest, not a cryptographic hash).  <br /></td></tr>
 <tr class="memitem:a109d9c7c3b87f231288bb36815a092ba" id="r_a109d9c7c3b87f231288bb36815a092ba"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a109d9c7c3b87f231288bb36815a092ba">base</a> () const</td></tr>
+<tr class="memitem:a192df2c6b0b435b904955e80543f0d8a" id="r_a192df2c6b0b435b904955e80543f0d8a"><td class="memItemLeft" align="right" valign="top">nlohmann::json&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a192df2c6b0b435b904955e80543f0d8a">copper_diff</a> (int from_state) const</td></tr>
+<tr class="memdesc:a192df2c6b0b435b904955e80543f0d8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The session copper the current state has and <span class="tt">from_state</span> does not, in the &ndash;emit-items layout (layer and net by name, nm), and under "removed" what <span class="tt">from_state</span> has and the current state does not (a rip or an undo).  <br /></td></tr>
 <tr class="memitem:a51b35ceef5e6b2ae8afff7e073200d05" id="r_a51b35ceef5e6b2ae8afff7e073200d05"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51b35ceef5e6b2ae8afff7e073200d05">work_used</a> () const</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
@@ -198,6 +200,26 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>One tool call (doc 19 §4). Deterministic: the result depends on the board, the state, the arguments and the seed only. </p>
+
+</div>
+</div>
+<a id="a192df2c6b0b435b904955e80543f0d8a" name="a192df2c6b0b435b904955e80543f0d8a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a192df2c6b0b435b904955e80543f0d8a">&#9670;&#160;</a></span>copper_diff()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">nlohmann::json tmk::session::Session::copper_diff </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>from_state</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The session copper the current state has and <span class="tt">from_state</span> does not, in the &ndash;emit-items layout (layer and net by name, nm), and under "removed" what <span class="tt">from_state</span> has and the current state does not (a rip or an undo). </p>
+<p>For a client that mirrors the session onto an open board (the KiCad plugin through the daemon, doc 19 §10). Throws std::out_of_range for an unknown state. </p>
 
 </div>
 </div>
@@ -339,7 +361,7 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="session_8hpp_source.html#l00062">62</a> of file <a class="el" href="session_8hpp_source.html">session.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="session_8hpp_source.html#l00066">66</a> of file <a class="el" href="session_8hpp_source.html">session.hpp</a>.</p>
 
 </div>
 </div>

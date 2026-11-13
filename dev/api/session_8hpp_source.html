@@ -116,8 +116,7 @@ $(function(){initNavTree('session_8hpp_source.html','',''); });
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &quot;<a class="code" href="rules_8hpp.html">model/rules.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &quot;<a class="code" href="router_8hpp.html">route/router.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
-<div class="foldopen" id="foldopen00025" data-start="{" data-end="}">
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="namespacetmk_1_1session.html">   25</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetmk_1_1session.html">tmk::session</a> {</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetmk_1_1session.html">tmk::session</a> {</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="foldopen" id="foldopen00027" data-start="{" data-end="};">
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="structtmk_1_1session_1_1SessionOptions.html">   27</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structtmk_1_1session_1_1SessionOptions.html">SessionOptions</a> {</div>
@@ -159,90 +158,94 @@ $(function(){initNavTree('session_8hpp_source.html','',''); });
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  <span class="comment">// FNV-1a 64 of the current state&#39;s session copper in canonical order (a digest, not a cryptographic hash).</span></div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="classtmk_1_1session_1_1Session.html#aeae594dea06d92ada85adceaff2e6bf2">   60</a></span>  std::string <a class="code hl_function" href="classtmk_1_1session_1_1Session.html#aeae594dea06d92ada85adceaff2e6bf2">state_digest</a>() <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="classtmk_1_1session_1_1Session.html#a109d9c7c3b87f231288bb36815a092ba">   61</a></span>  <span class="keyword">const</span> <a class="code hl_struct" href="structtmk_1_1model_1_1Board.html">model::Board</a>&amp; <a class="code hl_function" href="classtmk_1_1session_1_1Session.html#a109d9c7c3b87f231288bb36815a092ba">base</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> lb_.board; }</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="classtmk_1_1session_1_1Session.html#a51b35ceef5e6b2ae8afff7e073200d05">   62</a></span>  <span class="keywordtype">long</span> <a class="code hl_function" href="classtmk_1_1session_1_1Session.html#a51b35ceef5e6b2ae8afff7e073200d05">work_used</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> work_used_; }</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  <span class="keyword">struct </span>Copper {</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    std::vector&lt;model::Track&gt; tracks;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    std::vector&lt;model::Via&gt; vias;</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  };</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  <span class="keyword">struct </span>Reason {</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    std::string reason, why;</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordtype">int</span> rips = 0, fails = 0;</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    std::vector&lt;std::string&gt; blockers;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  };</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  <span class="keyword">struct </span>OpenConn {</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    std::string net, a, b;        <span class="comment">// a, b: REF.PIN (&quot;zone&quot; for a plane)</span></div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="keywordtype">double</span> length_mm = -1;        <span class="comment">// -1: the connection ends in a plane</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keywordtype">int</span> pad_a = -1, pad_b = -1;</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  };</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>  <span class="keyword">struct </span>State {</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordtype">int</span> <span class="keywordtype">id</span> = 0, parent = -1;</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    std::string call;</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    Copper copper;</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    std::map&lt;std::pair&lt;std::string, std::string&gt;, Reason&gt; reasons;  <span class="comment">// of the last route that made or left this state</span></div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="comment">// Caches, filled on demand (a state never changes).</span></div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    std::optional&lt;std::vector&lt;OpenConn&gt;&gt; open[2];  <span class="comment">// planned without / with soft zones (plane connections)</span></div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    std::optional&lt;std::map&lt;std::string, int&gt;&gt; errors[2];  <span class="comment">// DRC errors by type, [0] on the stored fills, [1] with the zones refilled</span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keywordtype">int</span> unconnected[2] = {-1, -1};</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>  };</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>  <span class="keyword">struct </span>LastRoute {</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    std::shared_ptr&lt;const model::Board&gt; board;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    route::RouteResult result;</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keywordtype">int</span> state = -1;</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  };</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>  nlohmann::json dispatch(<span class="keyword">const</span> std::string&amp; tool, <span class="keyword">const</span> nlohmann::json&amp; args);</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>  nlohmann::json board_info();</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>  nlohmann::json open_connections(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  nlohmann::json route(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  nlohmann::json rip_net(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  nlohmann::json check(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  nlohmann::json stuck_report(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  nlohmann::json added_examples(State&amp; s, <span class="keyword">const</span> std::map&lt;std::string, int&gt;&amp; added, <span class="keywordtype">bool</span> refill);</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  nlohmann::json inspect_pad(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  nlohmann::json inspect_net(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  nlohmann::json history();</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  nlohmann::json undo();</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>  nlohmann::json restore(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  nlohmann::json save(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  model::Board working(<span class="keyword">const</span> Copper&amp; c) <span class="keyword">const</span>;               <span class="comment">// the board with the session copper added and locked</span></div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>  <span class="keyword">const</span> std::vector&lt;OpenConn&gt;&amp; open_of(State&amp; s, <span class="keywordtype">bool</span> soft_zones);  <span class="comment">// plans the state&#39;s open connections (cached)</span></div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>  <span class="keyword">const</span> std::map&lt;std::string, int&gt;&amp; errors_of(State&amp; s, <span class="keywordtype">bool</span> refill);  <span class="comment">// DRC errors by type (cached); refill = judged as kicad-cli --refill-zones</span></div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  <span class="keywordtype">int</span> add_state(State s);</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>  std::string digest_of(<span class="keyword">const</span> Copper&amp; c) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>  nlohmann::json state_json(<span class="keyword">const</span> State&amp; s) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>  SessionOptions opt_;</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>  io::LoadedBoard lb_;</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>  model::DesignRules rules_;</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>  std::string name_;</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>  std::vector&lt;State&gt; states_;</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>  <span class="keywordtype">int</span> cur_ = 0;</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  <span class="keywordtype">long</span> work_used_ = 0;</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>  std::optional&lt;LastRoute&gt; last_;</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>  <span class="keywordtype">int</span> calls_ = 0;</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>  <span class="keywordtype">bool</span> soft_used_ = <span class="keyword">false</span>;  <span class="comment">// a route with soft zones was kept: the DRC then judges the board with its zones refilled</span></div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>};</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  <span class="comment">// The session copper the current state has and `from_state` does not, in the --emit-items layout (layer and net by name, nm), and under</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  <span class="comment">// &quot;removed&quot; what `from_state` has and the current state does not (a rip or an undo). For a client that mirrors the session onto an open</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  <span class="comment">// board (the KiCad plugin through the daemon, doc 19 §10). Throws std::out_of_range for an unknown state.</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="classtmk_1_1session_1_1Session.html#a192df2c6b0b435b904955e80543f0d8a">   65</a></span>  nlohmann::json <a class="code hl_function" href="classtmk_1_1session_1_1Session.html#a192df2c6b0b435b904955e80543f0d8a">copper_diff</a>(<span class="keywordtype">int</span> from_state) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="classtmk_1_1session_1_1Session.html#a51b35ceef5e6b2ae8afff7e073200d05">   66</a></span>  <span class="keywordtype">long</span> <a class="code hl_function" href="classtmk_1_1session_1_1Session.html#a51b35ceef5e6b2ae8afff7e073200d05">work_used</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> work_used_; }</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  <span class="keyword">struct </span>Copper {</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    std::vector&lt;model::Track&gt; tracks;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    std::vector&lt;model::Via&gt; vias;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  };</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  <span class="keyword">struct </span>Reason {</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    std::string reason, why;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <span class="keywordtype">int</span> rips = 0, fails = 0;</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    std::vector&lt;std::string&gt; blockers;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  };</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  <span class="keyword">struct </span>OpenConn {</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    std::string net, a, b;        <span class="comment">// a, b: REF.PIN (&quot;zone&quot; for a plane)</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordtype">double</span> length_mm = -1;        <span class="comment">// -1: the connection ends in a plane</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <span class="keywordtype">int</span> pad_a = -1, pad_b = -1;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>  };</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  <span class="keyword">struct </span>State {</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="keywordtype">int</span> <span class="keywordtype">id</span> = 0, parent = -1;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    std::string call;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    Copper copper;</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    std::map&lt;std::pair&lt;std::string, std::string&gt;, Reason&gt; reasons;  <span class="comment">// of the last route that made or left this state</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="comment">// Caches, filled on demand (a state never changes).</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    std::optional&lt;std::vector&lt;OpenConn&gt;&gt; open[2];  <span class="comment">// planned without / with soft zones (plane connections)</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    std::optional&lt;std::map&lt;std::string, int&gt;&gt; errors[2];  <span class="comment">// DRC errors by type, [0] on the stored fills, [1] with the zones refilled</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keywordtype">int</span> unconnected[2] = {-1, -1};</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>  };</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  <span class="keyword">struct </span>LastRoute {</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    std::shared_ptr&lt;const model::Board&gt; board;</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    route::RouteResult result;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keywordtype">int</span> state = -1;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>  };</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  nlohmann::json dispatch(<span class="keyword">const</span> std::string&amp; tool, <span class="keyword">const</span> nlohmann::json&amp; args);</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  nlohmann::json board_info();</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  nlohmann::json open_connections(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  nlohmann::json route(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  nlohmann::json rip_net(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  nlohmann::json check(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>  nlohmann::json stuck_report(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>  nlohmann::json added_examples(State&amp; s, <span class="keyword">const</span> std::map&lt;std::string, int&gt;&amp; added, <span class="keywordtype">bool</span> refill);</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>  nlohmann::json inspect_pad(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>  nlohmann::json inspect_net(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>  nlohmann::json history();</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>  nlohmann::json undo();</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>  nlohmann::json restore(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>  nlohmann::json save(<span class="keyword">const</span> nlohmann::json&amp; args);</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>  model::Board working(<span class="keyword">const</span> Copper&amp; c) <span class="keyword">const</span>;               <span class="comment">// the board with the session copper added and locked</span></div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>  <span class="keyword">const</span> std::vector&lt;OpenConn&gt;&amp; open_of(State&amp; s, <span class="keywordtype">bool</span> soft_zones);  <span class="comment">// plans the state&#39;s open connections (cached)</span></div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>  <span class="keyword">const</span> std::map&lt;std::string, int&gt;&amp; errors_of(State&amp; s, <span class="keywordtype">bool</span> refill);  <span class="comment">// DRC errors by type (cached); refill = judged as kicad-cli --refill-zones</span></div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>  <span class="keywordtype">int</span> add_state(State s);</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>  std::string digest_of(<span class="keyword">const</span> Copper&amp; c) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>  nlohmann::json state_json(<span class="keyword">const</span> State&amp; s) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>  SessionOptions opt_;</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>  io::LoadedBoard lb_;</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  model::DesignRules rules_;</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>  std::string name_;</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>  std::vector&lt;State&gt; states_;</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>  <span class="keywordtype">int</span> cur_ = 0;</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>  <span class="keywordtype">long</span> work_used_ = 0;</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>  std::optional&lt;LastRoute&gt; last_;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>  <span class="keywordtype">int</span> calls_ = 0;</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>  <span class="keywordtype">bool</span> soft_used_ = <span class="keyword">false</span>;  <span class="comment">// a route with soft zones was kept: the DRC then judges the board with its zones refilled</span></div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>};</div>
 </div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span> </div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>}  <span class="comment">// namespace tmk::session</span></div>
-</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>}  <span class="comment">// namespace tmk::session</span></div>
 <div class="ttc" id="aboard_8hpp_html"><div class="ttname"><a href="board_8hpp.html">board.hpp</a></div><div class="ttdoc">The board model (design doc 02 §3): every object TraceMaker reads from a .kicad_pcb,...</div></div>
 <div class="ttc" id="aboard__reader_8hpp_html"><div class="ttname"><a href="board__reader_8hpp.html">board_reader.hpp</a></div><div class="ttdoc">Reads .kicad_pcb files (KiCad 9 and 10 formats) into the board model, keeping the s-expression docume...</div></div>
 <div class="ttc" id="aclasstmk_1_1events_1_1Sink_html"><div class="ttname"><a href="classtmk_1_1events_1_1Sink.html">tmk::events::Sink</a></div><div class="ttdef"><b>Definition</b> <a href="events_8hpp_source.html#l00011">events.hpp:11</a></div></div>
 <div class="ttc" id="aclasstmk_1_1session_1_1Session_html_a0e02c17cfef116bcade60a0f4c5b56e1"><div class="ttname"><a href="classtmk_1_1session_1_1Session.html#a0e02c17cfef116bcade60a0f4c5b56e1">tmk::session::Session::Session</a></div><div class="ttdeci">Session(SessionOptions opt)</div><div class="ttdoc">Reads the board and its rules. Throws on an unreadable board.</div></div>
 <div class="ttc" id="aclasstmk_1_1session_1_1Session_html_a109d9c7c3b87f231288bb36815a092ba"><div class="ttname"><a href="classtmk_1_1session_1_1Session.html#a109d9c7c3b87f231288bb36815a092ba">tmk::session::Session::base</a></div><div class="ttdeci">const model::Board &amp; base() const</div><div class="ttdef"><b>Definition</b> <a href="#l00061">session.hpp:61</a></div></div>
+<div class="ttc" id="aclasstmk_1_1session_1_1Session_html_a192df2c6b0b435b904955e80543f0d8a"><div class="ttname"><a href="classtmk_1_1session_1_1Session.html#a192df2c6b0b435b904955e80543f0d8a">tmk::session::Session::copper_diff</a></div><div class="ttdeci">nlohmann::json copper_diff(int from_state) const</div><div class="ttdoc">The session copper the current state has and from_state does not, in the –emit-items layout (layer an...</div></div>
 <div class="ttc" id="aclasstmk_1_1session_1_1Session_html_a2d57690f6a13b0ae3cd08073df726537"><div class="ttname"><a href="classtmk_1_1session_1_1Session.html#a2d57690f6a13b0ae3cd08073df726537">tmk::session::Session::instructions</a></div><div class="ttdeci">static const char * instructions()</div></div>
 <div class="ttc" id="aclasstmk_1_1session_1_1Session_html_a51753c98b6aefea547bd6bffde6da418"><div class="ttname"><a href="classtmk_1_1session_1_1Session.html#a51753c98b6aefea547bd6bffde6da418">tmk::session::Session::state</a></div><div class="ttdeci">int state() const</div><div class="ttdef"><b>Definition</b> <a href="#l00058">session.hpp:58</a></div></div>
-<div class="ttc" id="aclasstmk_1_1session_1_1Session_html_a51b35ceef5e6b2ae8afff7e073200d05"><div class="ttname"><a href="classtmk_1_1session_1_1Session.html#a51b35ceef5e6b2ae8afff7e073200d05">tmk::session::Session::work_used</a></div><div class="ttdeci">long work_used() const</div><div class="ttdef"><b>Definition</b> <a href="#l00062">session.hpp:62</a></div></div>
+<div class="ttc" id="aclasstmk_1_1session_1_1Session_html_a51b35ceef5e6b2ae8afff7e073200d05"><div class="ttname"><a href="classtmk_1_1session_1_1Session.html#a51b35ceef5e6b2ae8afff7e073200d05">tmk::session::Session::work_used</a></div><div class="ttdeci">long work_used() const</div><div class="ttdef"><b>Definition</b> <a href="#l00066">session.hpp:66</a></div></div>
 <div class="ttc" id="aclasstmk_1_1session_1_1Session_html_aa2a9def412d82637550f2f53ca14d738"><div class="ttname"><a href="classtmk_1_1session_1_1Session.html#aa2a9def412d82637550f2f53ca14d738">tmk::session::Session::call</a></div><div class="ttdeci">nlohmann::json call(const std::string &amp;tool, const nlohmann::json &amp;args)</div><div class="ttdoc">One tool call (doc 19 §4). Deterministic: the result depends on the board, the state,...</div></div>
 <div class="ttc" id="aclasstmk_1_1session_1_1Session_html_ad44ba1bbcccafae45e7a3c59dd168eab"><div class="ttname"><a href="classtmk_1_1session_1_1Session.html#ad44ba1bbcccafae45e7a3c59dd168eab">tmk::session::Session::replay</a></div><div class="ttdeci">Replay replay(const std::string &amp;log_path)</div></div>
 <div class="ttc" id="aclasstmk_1_1session_1_1Session_html_aeae594dea06d92ada85adceaff2e6bf2"><div class="ttname"><a href="classtmk_1_1session_1_1Session.html#aeae594dea06d92ada85adceaff2e6bf2">tmk::session::Session::state_digest</a></div><div class="ttdeci">std::string state_digest() const</div><div class="ttdoc">FNV-1a 64 of the current state&#39;s session copper in canonical order (a digest, not a cryptographic has...</div></div>
 <div class="ttc" id="aclasstmk_1_1session_1_1Session_html_af54d5e1935d9350d39ec261fa62311a0"><div class="ttname"><a href="classtmk_1_1session_1_1Session.html#af54d5e1935d9350d39ec261fa62311a0">tmk::session::Session::tools</a></div><div class="ttdeci">static nlohmann::json tools()</div><div class="ttdoc">The tools as MCP descriptors {name, description, inputSchema}, and the text the server sends as instr...</div></div>
 <div class="ttc" id="aevents_8hpp_html"><div class="ttname"><a href="events_8hpp.html">events.hpp</a></div><div class="ttdoc">Event sink for live visualisation and replay (design doc 02 §7, protocol in docs/13-viewer-protocol....</div></div>
-<div class="ttc" id="anamespacetmk_1_1session_html"><div class="ttname"><a href="namespacetmk_1_1session.html">tmk::session</a></div><div class="ttdef"><b>Definition</b> <a href="#l00025">session.hpp:25</a></div></div>
+<div class="ttc" id="anamespacetmk_1_1session_html"><div class="ttname"><a href="namespacetmk_1_1session.html">tmk::session</a></div><div class="ttdef"><b>Definition</b> <a href="daemon_8hpp_source.html#l00026">daemon.hpp:26</a></div></div>
 <div class="ttc" id="arouter_8hpp_html"><div class="ttname"><a href="router_8hpp.html">router.hpp</a></div><div class="ttdoc">TraceMaker&#39;s detailed router, version 1 (roadmap M4; design doc 05 §2, §5).</div></div>
 <div class="ttc" id="arules_8hpp_html"><div class="ttname"><a href="rules_8hpp.html">rules.hpp</a></div><div class="ttdoc">Design rules as KiCad defines them (design doc 08 §3–4): board minimums and net classes from the ....</div></div>
 <div class="ttc" id="astructtmk_1_1model_1_1Board_html"><div class="ttname"><a href="structtmk_1_1model_1_1Board.html">tmk::model::Board</a></div><div class="ttdef"><b>Definition</b> <a href="board_8hpp_source.html#l00200">board.hpp:200</a></div></div>

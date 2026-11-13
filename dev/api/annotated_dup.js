@@ -215,6 +215,9 @@ var annotated_dup =
         [ "Violations", "structtmk_1_1place_1_1Violations.html", "structtmk_1_1place_1_1Violations" ],
         [ "LegaliseStats", "structtmk_1_1place_1_1LegaliseStats.html", "structtmk_1_1place_1_1LegaliseStats" ],
         [ "MinCostFlow", "classtmk_1_1place_1_1MinCostFlow.html", "classtmk_1_1place_1_1MinCostFlow" ],
+        [ "AdvisedMove", "structtmk_1_1place_1_1AdvisedMove.html", "structtmk_1_1place_1_1AdvisedMove" ],
+        [ "AdvisedSeed", "structtmk_1_1place_1_1AdvisedSeed.html", "structtmk_1_1place_1_1AdvisedSeed" ],
+        [ "PlaceAdvice", "structtmk_1_1place_1_1PlaceAdvice.html", "structtmk_1_1place_1_1PlaceAdvice" ],
         [ "PlaceOptions", "structtmk_1_1place_1_1PlaceOptions.html", "structtmk_1_1place_1_1PlaceOptions" ],
         [ "Metrics", "structtmk_1_1place_1_1Metrics.html", "structtmk_1_1place_1_1Metrics" ],
         [ "PlaceReport", "structtmk_1_1place_1_1PlaceReport.html", "structtmk_1_1place_1_1PlaceReport" ],
@@ -303,6 +306,7 @@ var annotated_dup =
         [ "ViewerServer", "classtmk_1_1server_1_1ViewerServer.html", "classtmk_1_1server_1_1ViewerServer" ]
       ] ],
       [ "session", "namespacetmk_1_1session.html", [
+        [ "DaemonOptions", "structtmk_1_1session_1_1DaemonOptions.html", "structtmk_1_1session_1_1DaemonOptions" ],
         [ "SessionOptions", "structtmk_1_1session_1_1SessionOptions.html", "structtmk_1_1session_1_1SessionOptions" ],
         [ "Session", "classtmk_1_1session_1_1Session.html", "classtmk_1_1session_1_1Session" ]
       ] ],

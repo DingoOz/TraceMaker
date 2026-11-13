@@ -122,12 +122,33 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a9097d2cb830389e2900efe4ca924a465"><td class="mdescLeft">&#160;</td><td class="mdescRight">ranking: side-assignment via estimate (only when flipping is on; D48)  <br /></td></tr>
 <tr class="memitem:a412ae01523fa4c0be454bf9540a84f9d" id="r_a412ae01523fa4c0be454bf9540a84f9d"><td class="memItemLeft" align="right" valign="top">std::function&lt; void(const std::string &amp;)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a412ae01523fa4c0be454bf9540a84f9d">log</a></td></tr>
 <tr class="memitem:a989b2c2dc0c1f4c024672cf4ec904d8e" id="r_a989b2c2dc0c1f4c024672cf4ec904d8e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1place_1_1EcoMemory.html">EcoMemory</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a989b2c2dc0c1f4c024672cf4ec904d8e">memory</a> = nullptr</td></tr>
-<tr class="memdesc:a989b2c2dc0c1f4c024672cf4ec904d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">shared across calls (e.g. the rounds of the routability loop); null = local  <br /></td></tr>
+<tr class="memdesc:a989b2c2dc0c1f4c024672cf4ec904d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">shared across calls (e.g.  <br /></td></tr>
+<tr class="memitem:a3890a6960050f61c0cefbacc138687dc" id="r_a3890a6960050f61c0cefbacc138687dc"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="structtmk_1_1place_1_1AdvisedMove.html">AdvisedMove</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3890a6960050f61c0cefbacc138687dc">advised</a> = nullptr</td></tr>
+<tr class="memdesc:a3890a6960050f61c0cefbacc138687dc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> advice (doc 17 stage 4): proposed single-part moves, routed first in each round, in addition to the <span class="tt"><a class="el" href="#ad499cb0e34f51d682ce63685c7bf68f3" title="moves routed per round (the best-ranked ones)">candidates</a></span> best ranked moves; like those, one is committed only when it routes more.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00051">51</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00052">52</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
+<a id="a3890a6960050f61c0cefbacc138687dc" name="a3890a6960050f61c0cefbacc138687dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3890a6960050f61c0cefbacc138687dc">&#9670;&#160;</a></span>advised</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt;<a class="el" href="structtmk_1_1place_1_1AdvisedMove.html">AdvisedMove</a>&gt;* tmk::place::EcoOptions::advised = nullptr</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> advice (doc 17 stage 4): proposed single-part moves, routed first in each round, in addition to the <span class="tt"><a class="el" href="#ad499cb0e34f51d682ce63685c7bf68f3" title="moves routed per round (the best-ranked ones)">candidates</a></span> best ranked moves; like those, one is committed only when it routes more. </p>
+<p>Ones that are not legal on the current placement, or already tried, are dropped. </p>
+
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00070">70</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+
+</div>
+</div>
 <a id="ac406652558dcb2337369575637d922a2" name="ac406652558dcb2337369575637d922a2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac406652558dcb2337369575637d922a2">&#9670;&#160;</a></span>alpha_cross_mm</h2>
 
@@ -140,7 +161,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00057">57</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00058">58</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -158,7 +179,7 @@ Public Attributes</h2></td></tr>
 
 <p>routability weight in the ranking cost </p>
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00058">58</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00059">59</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -176,7 +197,7 @@ Public Attributes</h2></td></tr>
 
 <p>moves routed per round (the best-ranked ones) </p>
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00053">53</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00054">54</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -194,7 +215,7 @@ Public Attributes</h2></td></tr>
 
 <p>parts whose body is within this of a failed connection's box are candidates </p>
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00056">56</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00057">57</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -212,7 +233,7 @@ Public Attributes</h2></td></tr>
 
 <p>ranking: one mm of displacement costs this many mm of signal HPWL </p>
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00060">60</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00061">61</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -228,7 +249,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00064">64</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00065">65</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -246,7 +267,7 @@ Public Attributes</h2></td></tr>
 
 <p>shifts of 1..max_steps pitches in each axis direction </p>
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00055">55</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00056">56</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -262,9 +283,10 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>shared across calls (e.g. the rounds of the routability loop); null = local </p>
+<p>shared across calls (e.g. </p>
+<p>the rounds of the routability loop); null = local </p>
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00065">65</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00066">66</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -282,7 +304,7 @@ Public Attributes</h2></td></tr>
 
 <p>shift step </p>
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00054">54</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00055">55</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -300,7 +322,7 @@ Public Attributes</h2></td></tr>
 
 <p>ranking: clearance around a failed pad counts up to this distance </p>
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00061">61</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00062">62</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -318,7 +340,7 @@ Public Attributes</h2></td></tr>
 
 <p>ranking: one mm more room around a failed pad is worth this many mm of signal HPWL </p>
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00062">62</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00063">63</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -336,7 +358,7 @@ Public Attributes</h2></td></tr>
 
 <p>commit rounds </p>
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00052">52</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00053">53</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -354,7 +376,7 @@ Public Attributes</h2></td></tr>
 
 <p>ranking: side-assignment via estimate (only when flipping is on; D48) </p>
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00063">63</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00064">64</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
@@ -372,7 +394,7 @@ Public Attributes</h2></td></tr>
 
 <p>failed nets weigh this many times more in the ranking cost </p>
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00059">59</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00060">60</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
