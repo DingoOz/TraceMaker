@@ -125,7 +125,7 @@ import tracemaker_settings as ts  # noqa: E402
 with tempfile.TemporaryDirectory() as d:
     s0, src = ts.load(d, {})
     assert s0 == ts.DEFAULTS and src == "defaults"
-    assert ts.route_args(s0) == ["--time", "120", "--power-width", "0.5"]
+    assert ts.route_args(s0) == ["--time-total", "120", "--power-width", "0.5"]
     with open(os.path.join(d, "tracemaker.json"), "w") as f:
         json.dump({"version": 1, "route_args": "--time 30 --threads 4", "power_width_mm": 0, "refill": True, "report": "off"}, f)
     s1, src = ts.load(d, {})

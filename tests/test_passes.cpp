@@ -19,6 +19,7 @@
 #include "io/kicad/project_reader.hpp"
 #include "passes/stitch.hpp"
 #include "passes/style.hpp"
+#include "passes/octilinear.hpp"
 #include "passes/widen.hpp"
 #include "route/obstacles.hpp"
 
@@ -636,4 +637,64 @@ TEST_CASE("neck at pads: a wide track is necked to the pads it ends in, inside i
   REQUIRE(t.size() == 3);
   CHECK(t[0].width == 2'500'000);
   CHECK(t[2].width == 1'000'000);
+}
+
+// ---------------------------------------------------------------------------------------------- octilinear clean-up
+
+TEST_CASE("octilinear: an off-angle track becomes a dogleg on the eight directions, ends unchanged", "[passes][octilinear]") {
+  // P's pads at (5, 10) and (25, 10); a track from the first pad to (15, 14) and on to the second, both off-angle.
+  const auto l = load("octi", board_text(""));
+  std::vector<model::Track> t = {track(pt(5, 10), pt(15, 14), 2), track(pt(15, 14), pt(25, 10), 2)};
+  CHECK(passes::off_octilinear_segment(t[0].a, t[0].b));
+  CHECK_FALSE(passes::off_octilinear_segment(pt(0, 0), pt(3, 3)));
+  CHECK_FALSE(passes::off_octilinear_segment(pt(0, 0), pt(3, 0)));
+  passes::OctilinearOptions o;
+  const auto r = passes::octilinear_tracks(l.board, l.rules, t, {}, o);
+  CHECK(r.off_angle == 2);
+  CHECK(r.replaced == 2);
+  REQUIRE(t.size() == 4);
+  for (const auto& x : t) CHECK_FALSE(passes::off_octilinear_segment(x.a, x.b));
+  CHECK(t[0].a == pt(5, 10));  // the ends stay where they were
+  CHECK(t[1].b == pt(15, 14));
+  CHECK(t[2].a == pt(15, 14));
+  CHECK(t[3].b == pt(25, 10));
+  CHECK(t[0].b == t[1].a);
+  CHECK(t[2].b == t[3].a);
+  model::Board b = l.board;
+  b.tracks.insert(b.tracks.end(), t.begin(), t.end());
+  CHECK(errors(b, l.rules) == 0);
+}
+
+TEST_CASE("octilinear: a blocked dogleg takes the other split, or the track stays", "[passes][octilinear]") {
+  // The diagonal-first split of (5,10)->(15,14) turns at (9,14); the straight-first one at (11,10). An S track across x = 9..10 at
+  // y = 13.5..14.5 blocks the first; walls on both block everything.
+  const auto one = load("octi-one", board_text(seg(9.5, 13, 9.5, 15, 3)));
+  std::vector<model::Track> t = {track(pt(5, 10), pt(15, 14), 2)};
+  auto r = passes::octilinear_tracks(one.board, one.rules, t, {}, {});
+  CHECK(r.replaced == 1);
+  REQUIRE(t.size() == 2);
+  CHECK(t[0].b == pt(11, 10));  // straight first
+  const auto both = load("octi-both", board_text(seg(9.5, 13, 9.5, 15, 3) + seg(8, 9, 8, 11, 3)));
+  t = {track(pt(5, 10), pt(15, 14), 2)};
+  r = passes::octilinear_tracks(both.board, both.rules, t, {}, {});
+  CHECK(r.replaced == 0);
+  CHECK(r.no_room == 1);
+  CHECK(t.size() == 1);
+}
+
+TEST_CASE("octilinear: short legs and acute corners are not made", "[passes][octilinear]") {
+  const auto l = load("octi-short", board_text(""));
+  // Nearly straight: the straight leg would be 0.1 mm, below one track width.
+  std::vector<model::Track> t = {track(pt(5, 10), pt(15, 10.1), 2)};
+  auto r = passes::octilinear_tracks(l.board, l.rules, t, {}, {});
+  CHECK(r.short_leg == 1);
+  CHECK(t.size() == 1);
+  passes::OctilinearOptions any;
+  any.min_leg_widths = 0;
+  r = passes::octilinear_tracks(l.board, l.rules, t, {}, any);
+  CHECK(r.replaced == 1);
+  // A neighbour that comes in from the direction both doglegs would leave in: each would turn back on it.
+  t = {track(pt(5, 10), pt(15, 14), 2), track(pt(5, 10), pt(9, 12), 2)};
+  r = passes::octilinear_tracks(l.board, l.rules, t, {}, {});
+  CHECK(r.acute >= 1);
 }

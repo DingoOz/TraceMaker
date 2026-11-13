@@ -8,7 +8,7 @@ change nothing.
 
     {
       "version": 1,
-      "route_args": "--time 120",      # tracemaker route options (TRACEMAKER_ARGS)
+      "route_args": "--time-total 120",  # tracemaker route options (TRACEMAKER_ARGS); one limit for the whole run
       "power_width_mm": 0.5,           # supply nets routed this wide where it fits (route --power-width); 0 = off
       "refill": "auto",                # "auto": after footprints moved; true: always; false: never (TRACEMAKER_REFILL)
       "report": "browser",             # "browser": run report opened in the web browser; "project": also kept next to the board; "off"
@@ -27,7 +27,7 @@ FILE_NAME = "tracemaker.json"
 
 # key: (type check, default, environment variable, how the variable's text becomes the value)
 DEFAULTS = {
-    "route_args": "--time 120",
+    "route_args": "--time-total 120",
     "power_width_mm": 0.5,
     "refill": "auto",
     "report": "browser",

@@ -109,6 +109,11 @@ struct RouteJob {
   bool rescue = true;
   bool why_open = true;  // explain open connections: pins the fixed copper walls in (doc 20 §2.4); --no-why-open
   std::string rescue_mode = "both";  // --rescue-mode: warm (relax from the plain run's routes), fresh (from nothing), both (warm, then fresh; D163)
+  // --time-total S (D186, M23 E6): one wall-clock limit for the whole job. Every stage that otherwise gets --time again (the relax rescue's
+  // passes, advisor rounds, repair windows, the refill and thermal repairs) gets at most what is left, and a stage with under a second left
+  // is skipped. With the rescue possible the plain run gets `rescue_share` of it, else all. 0 = off (each stage gets --time).
+  double time_total_s = 0;
+  double rescue_share = 0.5;
   // --no-tracks-on / --layer-cost (doc 05 §29): copper layer names, and "LAYER=FACTOR" entries. Resolved against
   // the board into opt.no_track_layers / opt.layer_cost_pm; an unknown layer or a bad factor throws.
   std::vector<std::string> no_tracks_on;
@@ -132,6 +137,10 @@ struct RouteJob {
   // target is stated, every net with a target is routed at it first (RouterOptions::preferred_widths) and necked to its pads afterwards,
   // and --widen-power runs. 0 = off.
   double power_width_mm = 0;
+  // --octilinear (D187, M23 E3): new tracks off the eight directions become doglegs of two that are on them where the exact check allows,
+  // judged like the other passes (kept only if no net has more unconnected items). Off by default.
+  bool octilinear = false;
+  double octilinear_min_leg = 1.0;  // --octilinear-min-leg: shortest leg, in track widths (0 = any)
   // --stitch-vias: "planes" (vias of a plane's net on a grid where its fills overlap on two or more layers),
   // "return" (a plane via near each via of the signals that need a reference plane: component rules of kind
   // reference_plane, and --stitch-return "PATTERN=PLANE_NET"), or "all". Empty = off.

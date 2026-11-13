@@ -1164,6 +1164,12 @@ static int run_main(int argc, char** argv) {
   route->add_flag("--keep-vias-off-pads", ropt.vias_off_pads, "Vias keep clear of SMD pads narrower than --vias-off-pads-below (via-in-pad excepted)");
   route->add_option("--vias-off-pads-below", ropt.vias_off_pads_below_mm, "Pad width (mm) below which --keep-vias-off-pads applies (default 2)");
   tmk::app::RouteJob r_job;
+  route->add_option("--time-total", r_job.time_total_s,
+                    "One time limit for the whole run, seconds: the plain run gets --rescue-share of it when the relax rescue may follow, and every "
+                    "later stage (rescue passes, advisor rounds, repairs) at most what is left; without it each stage gets --time again (D186). 0 = off")
+      ->check(CLI::NonNegativeNumber);
+  route->add_option("--rescue-share", r_job.rescue_share, "With --time-total: the plain run's share of it when the relax rescue may follow (default 0.5)")
+      ->check(CLI::Range(0.01, 1.0));
   route->add_flag("!--no-rescue", r_job.rescue,
                   "Do not route again with --relax when connections are left open (by default the rescue runs, each pass on a budget of its own, "
                   "--time and --work again, and a result is kept only if it is better; doc 05 §68, §71)");
@@ -1318,6 +1324,11 @@ static int run_main(int argc, char** argv) {
                     "Route supply nets (GND*, VCC*, VDD*, VBUS*, VIN*, +..., 3V3, ...) at this width (mm) where it fits, necked to their pads, and "
                     "every net with a --widen-net or component-rule target at that target; the rest of a net falls back to its class width, then "
                     "--widen-power tops up (doc 05 §79). 0 = off")
+      ->check(CLI::Range(0.0, 20.0));
+  route->add_flag("--octilinear", r_job.octilinear,
+                  "After routing: replace new tracks that run off the eight directions by doglegs of two tracks on them where the exact check "
+                  "allows and no corner turns acute (doc 05 §80)");
+  route->add_option("--octilinear-min-leg", r_job.octilinear_min_leg, "With --octilinear: the shortest leg a dogleg may have, in track widths (default 1; 0 = any)")
       ->check(CLI::Range(0.0, 20.0));
   route->add_option("--widen-net", r_job.widen_nets, "With --widen-power: target width for nets as PATTERN=WIDTH_MM, e.g. '+5V=0.8' or 'VBUS*=1' (repeatable)");
   route->add_option("--stitch-vias", r_job.stitch_vias,

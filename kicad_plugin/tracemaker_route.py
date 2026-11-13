@@ -14,7 +14,7 @@ placement), else the defaults there. The environment variables below win over th
 Environment:
   TRACEMAKER                path to the tracemaker binary (default: `bin/tracemaker` next to this file, then PATH)
   TRACEMAKER_PYTHONPATH     directory holding the tracemaker Python module (default: `lib/` next to this file)
-  TRACEMAKER_ARGS           route options, e.g. "--time 120 --threads 8 --view" (CLI spelling for both paths)
+  TRACEMAKER_ARGS           route options, e.g. "--time-total 120 --threads 8 --view" (CLI spelling for both paths)
   TRACEMAKER_NO_BINDINGS=1  always use the binary
   TRACEMAKER_REROUTE=1      remove the unlocked tracks and vias and route the whole board again (same commit)
   TRACEMAKER_PLACE          let TraceMaker move footprints first: refine, auto, routable, eco or full (same commit);
