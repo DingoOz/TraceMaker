@@ -1,0 +1,1514 @@
+[
+ {
+  "board": "CPU-Power-Supply-Mod_CPU_Power_Supply_Mod",
+  "base": {
+   "board": "bench/results/e1-base/boards/CPU-Power-Supply-Mod_CPU_Power_Supply_Mod.kicad_pcb",
+   "supply_nets": 6,
+   "supply_length_mm": 842.9,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.2032,
+   "by_width_mm": {
+    "0.2032": 842.9
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/CPU-Power-Supply-Mod_CPU_Power_Supply_Mod.kicad_pcb",
+   "supply_nets": 6,
+   "supply_length_mm": 845.37,
+   "at_target_mm": 830.23,
+   "at_target_share": 0.9821,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.351": 2.81,
+    "0.425": 12.33,
+    "0.5": 830.23
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/CPU-Power-Supply-Mod_CPU_Power_Supply_Mod/raw.kicad_pcb",
+   "supply_nets": 6,
+   "supply_length_mm": 1118.15,
+   "at_target_mm": 1094.98,
+   "at_target_share": 0.9793,
+   "median_width_mm": 0.6096,
+   "by_width_mm": {
+    "0.3556": 23.17,
+    "0.6096": 816.06,
+    "1.524": 49.8,
+    "2.032": 229.12
+   }
+  },
+  "routed": [
+   135,
+   135,
+   135
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "DustSensorShield_DustSensorShield",
+  "base": {
+   "board": "bench/results/e1-base/boards/DustSensorShield_DustSensorShield.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 243.32,
+   "at_target_mm": 185.93,
+   "at_target_share": 0.7642,
+   "median_width_mm": 0.6,
+   "by_width_mm": {
+    "0.2": 57.38,
+    "0.6": 185.93
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/DustSensorShield_DustSensorShield.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 243.32,
+   "at_target_mm": 208.41,
+   "at_target_share": 0.8565,
+   "median_width_mm": 0.6,
+   "by_width_mm": {
+    "0.312": 0.44,
+    "0.35": 5.4,
+    "0.387": 9.2,
+    "0.4": 17.8,
+    "0.425": 1.78,
+    "0.462": 0.28,
+    "0.5": 22.48,
+    "0.6": 185.93
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/DustSensorShield_DustSensorShield/raw.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 278.24,
+   "at_target_mm": 198.0,
+   "at_target_share": 0.7116,
+   "median_width_mm": 0.6,
+   "by_width_mm": {
+    "0.3998": 0.0,
+    "0.4": 80.23,
+    "0.6": 116.93,
+    "0.8": 81.07
+   }
+  },
+  "routed": [
+   17,
+   17,
+   17
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "E202VAR-Natural-Radio-Receiver_e202var-vlf-radio-receiver",
+  "base": {
+   "board": "bench/results/e1-base/boards/E202VAR-Natural-Radio-Receiver_e202var-vlf-radio-receiver.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 394.83,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.254,
+   "by_width_mm": {
+    "0.254": 394.83
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/E202VAR-Natural-Radio-Receiver_e202var-vlf-radio-receiver.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 395.36,
+   "at_target_mm": 395.36,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.5": 395.36
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/E202VAR-Natural-Radio-Receiver_e202var-vlf-radio-receiver/raw.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 133.32,
+   "at_target_mm": 128.01,
+   "at_target_share": 0.9602,
+   "median_width_mm": 0.508,
+   "by_width_mm": {
+    "0.254": 5.31,
+    "0.508": 128.01
+   }
+  },
+  "routed": [
+   92,
+   92,
+   92
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "ESP_nRF_Relay_Relay_WiFi_nRF24",
+  "base": {
+   "board": "bench/results/e1-base/boards/ESP_nRF_Relay_Relay_WiFi_nRF24.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 170.31,
+   "at_target_mm": 170.31,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.5": 170.31
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/ESP_nRF_Relay_Relay_WiFi_nRF24.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 170.31,
+   "at_target_mm": 170.31,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.5": 170.31
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/ESP_nRF_Relay_Relay_WiFi_nRF24/raw.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 150.62,
+   "at_target_mm": 150.62,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.5": 150.62
+   }
+  },
+  "routed": [
+   36,
+   36,
+   36
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "EUC-VESC_electronics_BJT",
+  "base": {
+   "board": "bench/results/e1-base/boards/EUC-VESC_electronics_BJT.kicad_pcb",
+   "supply_nets": 4,
+   "supply_length_mm": 799.26,
+   "at_target_mm": 793.73,
+   "at_target_share": 0.9931,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.2": 5.53,
+    "0.5": 793.73
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/EUC-VESC_electronics_BJT.kicad_pcb",
+   "supply_nets": 4,
+   "supply_length_mm": 799.26,
+   "at_target_mm": 778.69,
+   "at_target_share": 0.9743,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.275": 1.82,
+    "0.3": 18.75,
+    "0.5": 778.69
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/EUC-VESC_electronics_BJT/raw.kicad_pcb",
+   "supply_nets": 4,
+   "supply_length_mm": 1149.05,
+   "at_target_mm": 719.6,
+   "at_target_share": 0.6263,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.3": 429.45,
+    "0.5": 464.74,
+    "1": 155.17,
+    "1.5": 38.11,
+    "3": 61.58
+   }
+  },
+  "routed": [
+   361,
+   361,
+   366
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "ErgodoneWithHole_ErgoDone",
+  "base": {
+   "board": "bench/results/e1-base/boards/ErgodoneWithHole_ErgoDone.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 376.57,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.3048,
+   "by_width_mm": {
+    "0.3048": 376.57
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/ErgodoneWithHole_ErgoDone.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 377.62,
+   "at_target_mm": 376.02,
+   "at_target_share": 0.9958,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.3048": 1.6,
+    "0.5": 376.02
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/ErgodoneWithHole_ErgoDone/raw.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 408.98,
+   "at_target_mm": 408.8,
+   "at_target_share": 0.9996,
+   "median_width_mm": 0.6096,
+   "by_width_mm": {
+    "0.3048": 0.18,
+    "0.508": 189.15,
+    "0.6096": 180.05,
+    "0.7112": 39.6
+   }
+  },
+  "routed": [
+   352,
+   353,
+   356
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "HW-ESP8266_Roomba_ESP8266_Roomba_panel_x_3",
+  "base": {
+   "board": "bench/results/e1-base/boards/HW-ESP8266_Roomba_ESP8266_Roomba_panel_x_3.kicad_pcb",
+   "supply_nets": 4,
+   "supply_length_mm": 518.33,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.25,
+   "by_width_mm": {
+    "0.25": 518.33
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/HW-ESP8266_Roomba_ESP8266_Roomba_panel_x_3.kicad_pcb",
+   "supply_nets": 4,
+   "supply_length_mm": 641.23,
+   "at_target_mm": 573.1,
+   "at_target_share": 0.8938,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.25": 7.83,
+    "0.275": 0.38,
+    "0.287": 0.66,
+    "0.293": 4.19,
+    "0.3": 5.51,
+    "0.305": 2.64,
+    "0.312": 13.14,
+    "0.343": 2.13,
+    "0.375": 3.65,
+    "0.39878": 1.65,
+    "0.4": 23.28,
+    "0.406": 1.27,
+    "0.437": 1.81,
+    "0.5": 573.1
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/HW-ESP8266_Roomba_ESP8266_Roomba_panel_x_3/raw.kicad_pcb",
+   "supply_nets": 4,
+   "supply_length_mm": 616.99,
+   "at_target_mm": 346.22,
+   "at_target_share": 0.5612,
+   "median_width_mm": 0.8,
+   "by_width_mm": {
+    "0.25": 257.51,
+    "0.45": 13.26,
+    "0.8": 346.22
+   }
+  },
+  "routed": [
+   173,
+   173,
+   181
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "Hangul-Clock_Hangul",
+  "base": {
+   "board": "bench/results/e1-base/boards/Hangul-Clock_Hangul.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 1533.56,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.25,
+   "by_width_mm": {
+    "0.25": 1533.56
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/Hangul-Clock_Hangul.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 1550.2,
+   "at_target_mm": 1550.2,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.5": 1550.2
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/Hangul-Clock_Hangul/raw.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 1151.5,
+   "at_target_mm": 846.26,
+   "at_target_share": 0.7349,
+   "median_width_mm": 1.0,
+   "by_width_mm": {
+    "0.25": 168.51,
+    "0.3": 136.72,
+    "1": 846.26
+   }
+  },
+  "routed": [
+   209,
+   209,
+   209
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "Hardware_Playground_pro_mini",
+  "base": {
+   "board": "bench/results/e1-base/boards/Hardware_Playground_pro_mini.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 240.16,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.35,
+   "by_width_mm": {
+    "0.35": 240.16
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/Hardware_Playground_pro_mini.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 254.09,
+   "at_target_mm": 235.24,
+   "at_target_share": 0.9258,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.35": 18.86,
+    "0.5": 235.24
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/Hardware_Playground_pro_mini/raw.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 125.94,
+   "at_target_mm": 85.21,
+   "at_target_share": 0.6766,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.35": 40.73,
+    "0.5": 36.87,
+    "0.6": 0.95,
+    "0.8": 20.74,
+    "1": 26.64
+   }
+  },
+  "routed": [
+   78,
+   78,
+   78
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "Hardware_Playground_rpi_zero_ws2812",
+  "base": {
+   "board": "bench/results/e1-base/boards/Hardware_Playground_rpi_zero_ws2812.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 226.03,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.3,
+   "by_width_mm": {
+    "0.3": 226.03
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/Hardware_Playground_rpi_zero_ws2812.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 251.68,
+   "at_target_mm": 231.27,
+   "at_target_share": 0.9189,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.375": 11.15,
+    "0.4": 9.26,
+    "0.5": 231.27
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/Hardware_Playground_rpi_zero_ws2812/raw.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 204.51,
+   "at_target_mm": 197.78,
+   "at_target_share": 0.9671,
+   "median_width_mm": 1.0,
+   "by_width_mm": {
+    "0.3": 6.73,
+    "0.5": 42.19,
+    "0.8": 3.82,
+    "1": 53.86,
+    "4": 97.91
+   }
+  },
+  "routed": [
+   46,
+   46,
+   46
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "Horticulture_Light_EQ_3-Band_3 channel led driver rev0.4",
+  "base": {
+   "board": "bench/results/e1-base/boards/Horticulture_Light_EQ_3-Band_3 channel led driver rev0.4.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 214.18,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.25,
+   "by_width_mm": {
+    "0.25": 214.18
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/Horticulture_Light_EQ_3-Band_3 channel led driver rev0.4.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 184.69,
+   "at_target_mm": 123.25,
+   "at_target_share": 0.6674,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.25": 13.16,
+    "0.343": 21.16,
+    "0.375": 2.33,
+    "0.406": 13.7,
+    "0.437": 1.48,
+    "0.468": 9.6,
+    "0.5": 123.25
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/Horticulture_Light_EQ_3-Band_3 channel led driver rev0.4/raw.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 275.83,
+   "at_target_mm": 192.44,
+   "at_target_share": 0.6977,
+   "median_width_mm": 1.27,
+   "by_width_mm": {
+    "0.25": 83.39,
+    "0.635": 35.05,
+    "1.27": 66.66,
+    "2.54": 90.72
+   }
+  },
+  "routed": [
+   368,
+   368,
+   368
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "LadybugLiteBlue_HW_LadybugBlueLite",
+  "base": {
+   "board": "bench/results/e1-base/boards/LadybugLiteBlue_HW_LadybugBlueLite.kicad_pcb",
+   "supply_nets": 6,
+   "supply_length_mm": 381.3,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.254,
+   "by_width_mm": {
+    "0.254": 381.3
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/LadybugLiteBlue_HW_LadybugBlueLite.kicad_pcb",
+   "supply_nets": 6,
+   "supply_length_mm": 378.64,
+   "at_target_mm": 319.82,
+   "at_target_share": 0.8446,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.284": 2.86,
+    "0.315": 1.24,
+    "0.346": 12.87,
+    "0.377": 7.25,
+    "0.4": 6.69,
+    "0.407": 13.77,
+    "0.438": 12.08,
+    "0.469": 2.06,
+    "0.5": 319.82
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/LadybugLiteBlue_HW_LadybugBlueLite/raw.kicad_pcb",
+   "supply_nets": 6,
+   "supply_length_mm": 190.71,
+   "at_target_mm": 116.12,
+   "at_target_share": 0.6089,
+   "median_width_mm": 0.762,
+   "by_width_mm": {
+    "0.254": 55.7,
+    "0.381": 18.89,
+    "0.762": 116.12
+   }
+  },
+  "routed": [
+   140,
+   140,
+   140
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "NeoWall_NeoWall",
+  "base": {
+   "board": "bench/results/e1-base/boards/NeoWall_NeoWall.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 335.54,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.25,
+   "by_width_mm": {
+    "0.25": 335.54
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/NeoWall_NeoWall.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 335.94,
+   "at_target_mm": 334.45,
+   "at_target_share": 0.9956,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.343": 1.48,
+    "0.5": 334.45
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/NeoWall_NeoWall/raw.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 191.16,
+   "at_target_mm": 98.11,
+   "at_target_share": 0.5132,
+   "median_width_mm": 0.508,
+   "by_width_mm": {
+    "0.25": 93.06,
+    "0.508": 22.58,
+    "1.016": 63.77,
+    "2.032": 11.75
+   }
+  },
+  "routed": [
+   32,
+   32,
+   32
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "SPEX_HAB_Mainboard_Hardware_Power",
+  "base": {
+   "board": "bench/results/e1-base/boards/SPEX_HAB_Mainboard_Hardware_Power.kicad_pcb",
+   "supply_nets": 10,
+   "supply_length_mm": 715.63,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.16,
+   "by_width_mm": {
+    "0.16": 715.63
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/SPEX_HAB_Mainboard_Hardware_Power.kicad_pcb",
+   "supply_nets": 10,
+   "supply_length_mm": 798.12,
+   "at_target_mm": 680.06,
+   "at_target_share": 0.8521,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.16": 15.39,
+    "0.238": 0.18,
+    "0.245": 1.84,
+    "0.25": 10.42,
+    "0.282": 1.63,
+    "0.287": 28.08,
+    "0.33": 38.55,
+    "0.372": 16.23,
+    "0.415": 2.68,
+    "0.457": 2.51,
+    "0.4572": 0.56,
+    "0.5": 680.06
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/SPEX_HAB_Mainboard_Hardware_Power/raw.kicad_pcb",
+   "supply_nets": 10,
+   "supply_length_mm": 1425.21,
+   "at_target_mm": 1199.54,
+   "at_target_share": 0.8417,
+   "median_width_mm": 0.7,
+   "by_width_mm": {
+    "0.16": 2.9,
+    "0.2": 59.72,
+    "0.25": 163.05,
+    "0.5": 262.72,
+    "0.7": 613.7,
+    "1": 323.12
+   }
+  },
+  "routed": [
+   231,
+   227,
+   259
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "SmartLaserCO2-PCB_WaterCool",
+  "base": {
+   "board": "bench/results/e1-base/boards/SmartLaserCO2-PCB_WaterCool.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 106.81,
+   "at_target_mm": 106.81,
+   "at_target_share": 1.0,
+   "median_width_mm": 1.524,
+   "by_width_mm": {
+    "1.524": 106.81
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/SmartLaserCO2-PCB_WaterCool.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 106.81,
+   "at_target_mm": 106.81,
+   "at_target_share": 1.0,
+   "median_width_mm": 1.524,
+   "by_width_mm": {
+    "1": 6.34,
+    "1.524": 100.48
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/SmartLaserCO2-PCB_WaterCool/raw.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 111.97,
+   "at_target_mm": 111.97,
+   "at_target_share": 1.0,
+   "median_width_mm": 1.524,
+   "by_width_mm": {
+    "1.524": 111.97
+   }
+  },
+  "routed": [
+   8,
+   8,
+   8
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "Teensy-Hats_Temperature-Monitor-Hat",
+  "base": {
+   "board": "bench/results/e1-base/boards/Teensy-Hats_Temperature-Monitor-Hat.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 259.72,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.254,
+   "by_width_mm": {
+    "0.254": 259.72
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/Teensy-Hats_Temperature-Monitor-Hat.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 284.31,
+   "at_target_mm": 226.18,
+   "at_target_share": 0.7956,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.377": 43.56,
+    "0.407": 0.45,
+    "0.438": 6.25,
+    "0.469": 7.86,
+    "0.5": 226.18
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/Teensy-Hats_Temperature-Monitor-Hat/raw.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 156.85,
+   "at_target_mm": 156.85,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.508,
+   "by_width_mm": {
+    "0.508": 156.85
+   }
+  },
+  "routed": [
+   29,
+   29,
+   29
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "digital_clock_led_clock_3_and_4_digit",
+  "base": {
+   "board": "bench/results/e1-base/boards/digital_clock_led_clock_3_and_4_digit.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 643.18,
+   "at_target_mm": 643.18,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.5": 643.18
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/digital_clock_led_clock_3_and_4_digit.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 643.18,
+   "at_target_mm": 643.18,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.5": 643.18
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/digital_clock_led_clock_3_and_4_digit/raw.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 1109.16,
+   "at_target_mm": 1109.16,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.8,
+   "by_width_mm": {
+    "0.8": 1109.16
+   }
+  },
+  "routed": [
+   251,
+   251,
+   253
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "hardware-designs_nixie-combo",
+  "base": {
+   "board": "bench/results/e1-base/boards/hardware-designs_nixie-combo.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 441.1,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.254,
+   "by_width_mm": {
+    "0.254": 441.1
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/hardware-designs_nixie-combo.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 441.39,
+   "at_target_mm": 441.39,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.5": 441.39
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/hardware-designs_nixie-combo/raw.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 389.96,
+   "at_target_mm": 389.96,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.8128,
+   "by_width_mm": {
+    "0.6096": 132.05,
+    "0.8128": 257.91
+   }
+  },
+  "routed": [
+   101,
+   101,
+   101
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "kitspace_12_24_boost_converter",
+  "base": {
+   "board": "bench/results/e1-base/boards/kitspace_12_24_boost_converter.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 200.31,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.25,
+   "by_width_mm": {
+    "0.25": 200.31
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/kitspace_12_24_boost_converter.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 202.15,
+   "at_target_mm": 202.15,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.5": 202.15
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_12_24_boost_converter/raw.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 127.67,
+   "at_target_mm": 127.67,
+   "at_target_share": 1.0,
+   "median_width_mm": 1.0,
+   "by_width_mm": {
+    "0.75": 56.32,
+    "1": 71.35
+   }
+  },
+  "routed": [
+   31,
+   31,
+   31
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "kitspace_8_switch_array",
+  "base": {
+   "board": "bench/results/e1-base/boards/kitspace_8_switch_array.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 266.26,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.25,
+   "by_width_mm": {
+    "0.25": 266.26
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/kitspace_8_switch_array.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 269.68,
+   "at_target_mm": 269.68,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.5": 269.68
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_8_switch_array/raw.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 136.96,
+   "at_target_mm": 136.79,
+   "at_target_share": 0.9988,
+   "median_width_mm": 1.5,
+   "by_width_mm": {
+    "0.25": 0.17,
+    "1": 26.57,
+    "1.25": 16.97,
+    "1.5": 93.24
+   }
+  },
+  "routed": [
+   54,
+   54,
+   54
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "kitspace_OtterScreen",
+  "base": {
+   "board": "bench/results/e1-base/boards/kitspace_OtterScreen.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 275.14,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.2,
+   "by_width_mm": {
+    "0.2": 275.14
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/kitspace_OtterScreen.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 268.06,
+   "at_target_mm": 163.07,
+   "at_target_share": 0.6083,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.26": 16.93,
+    "0.275": 30.11,
+    "0.28": 15.69,
+    "0.3": 9.37,
+    "0.312": 13.9,
+    "0.35": 4.39,
+    "0.353": 0.71,
+    "0.375": 4.54,
+    "0.387": 7.22,
+    "0.462": 2.13,
+    "0.5": 163.07
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_OtterScreen/raw.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 154.68,
+   "at_target_mm": 93.48,
+   "at_target_share": 0.6043,
+   "median_width_mm": 1.0,
+   "by_width_mm": {
+    "0.154": 3.33,
+    "0.2": 23.27,
+    "0.3": 34.6,
+    "0.8": 13.48,
+    "1": 80.0
+   }
+  },
+  "routed": [
+   121,
+   121,
+   121
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "kitspace_Unifying",
+  "base": {
+   "board": "bench/results/e1-base/boards/kitspace_Unifying.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 18.58,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.2,
+   "by_width_mm": {
+    "0.2": 9.65,
+    "0.25": 8.93
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/kitspace_Unifying.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 18.79,
+   "at_target_mm": 15.76,
+   "at_target_share": 0.8389,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.2": 2.6,
+    "0.25": 0.43,
+    "0.5": 15.76
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_Unifying/raw.kicad_pcb",
+   "supply_nets": 6,
+   "supply_length_mm": 955.63,
+   "at_target_mm": 656.87,
+   "at_target_share": 0.6874,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.127": 131.71,
+    "0.13": 94.49,
+    "0.147": 0.64,
+    "0.2": 71.91,
+    "0.5": 650.87,
+    "1": 6.01
+   }
+  },
+  "routed": [
+   152,
+   151,
+   167
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "kitspace_esp8266",
+  "base": {
+   "board": "bench/results/e1-base/boards/kitspace_esp8266.kicad_pcb",
+   "supply_nets": 4,
+   "supply_length_mm": 329.22,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.1524,
+   "by_width_mm": {
+    "0.1524": 329.22
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/kitspace_esp8266.kicad_pcb",
+   "supply_nets": 4,
+   "supply_length_mm": 325.01,
+   "at_target_mm": 316.17,
+   "at_target_share": 0.9728,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.282": 8.84,
+    "0.5": 316.17
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_esp8266/raw.kicad_pcb",
+   "supply_nets": 4,
+   "supply_length_mm": 368.67,
+   "at_target_mm": 368.67,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.8128,
+   "by_width_mm": {
+    "0.508": 2.22,
+    "0.8128": 366.45
+   }
+  },
+  "routed": [
+   53,
+   53,
+   53
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "open-source-multimeter_board",
+  "base": {
+   "board": "bench/results/e1-base/boards/open-source-multimeter_board.kicad_pcb",
+   "supply_nets": 7,
+   "supply_length_mm": 332.33,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.25,
+   "by_width_mm": {
+    "0.25": 332.33
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/open-source-multimeter_board.kicad_pcb",
+   "supply_nets": 7,
+   "supply_length_mm": 329.7,
+   "at_target_mm": 299.61,
+   "at_target_share": 0.9088,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.25": 11.54,
+    "0.281": 1.18,
+    "0.312": 5.27,
+    "0.343": 0.67,
+    "0.375": 1.6,
+    "0.406": 3.78,
+    "0.437": 2.62,
+    "0.468": 3.43,
+    "0.5": 299.61
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/open-source-multimeter_board/raw.kicad_pcb",
+   "supply_nets": 7,
+   "supply_length_mm": 367.77,
+   "at_target_mm": 300.25,
+   "at_target_share": 0.8164,
+   "median_width_mm": 0.635,
+   "by_width_mm": {
+    "0.25": 67.52,
+    "0.635": 300.25
+   }
+  },
+  "routed": [
+   87,
+   87,
+   108
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "rgb-strip-controller__autosave-rgb-strip",
+  "base": {
+   "board": "bench/results/e1-base/boards/rgb-strip-controller__autosave-rgb-strip.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 204.67,
+   "at_target_mm": 204.67,
+   "at_target_share": 1.0,
+   "median_width_mm": 1.016,
+   "by_width_mm": {
+    "1.016": 204.67
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/rgb-strip-controller__autosave-rgb-strip.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 204.67,
+   "at_target_mm": 204.67,
+   "at_target_share": 1.0,
+   "median_width_mm": 1.016,
+   "by_width_mm": {
+    "1.016": 204.67
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/rgb-strip-controller__autosave-rgb-strip/raw.kicad_pcb",
+   "supply_nets": 1,
+   "supply_length_mm": 107.84,
+   "at_target_mm": 107.84,
+   "at_target_share": 1.0,
+   "median_width_mm": 1.016,
+   "by_width_mm": {
+    "1.016": 107.84
+   }
+  },
+  "routed": [
+   39,
+   39,
+   39
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "scimpy_crossover",
+  "base": {
+   "board": "bench/results/e1-base/boards/scimpy_crossover.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 175.28,
+   "at_target_mm": 175.28,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.508,
+   "by_width_mm": {
+    "0.508": 175.28
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/scimpy_crossover.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 175.28,
+   "at_target_mm": 175.28,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.508,
+   "by_width_mm": {
+    "0.508": 175.28
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/scimpy_crossover/raw.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 190.32,
+   "at_target_mm": 190.32,
+   "at_target_share": 1.0,
+   "median_width_mm": 0.508,
+   "by_width_mm": {
+    "0.508": 190.32
+   }
+  },
+  "routed": [
+   51,
+   51,
+   51
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "solar-lora_solar-lora",
+  "base": {
+   "board": "bench/results/e1-base/boards/solar-lora_solar-lora.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 190.34,
+   "at_target_mm": 150.27,
+   "at_target_share": 0.7895,
+   "median_width_mm": 0.6,
+   "by_width_mm": {
+    "0.2": 40.07,
+    "0.6": 150.27
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/solar-lora_solar-lora.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 190.34,
+   "at_target_mm": 171.18,
+   "at_target_share": 0.8993,
+   "median_width_mm": 0.6,
+   "by_width_mm": {
+    "0.287": 13.04,
+    "0.3": 5.0,
+    "0.462": 1.12,
+    "0.5": 20.91,
+    "0.55": 7.97,
+    "0.6": 142.3
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/solar-lora_solar-lora/raw.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 298.43,
+   "at_target_mm": 269.93,
+   "at_target_share": 0.9045,
+   "median_width_mm": 0.6,
+   "by_width_mm": {
+    "0.3": 28.5,
+    "0.5": 9.53,
+    "0.6": 260.4
+   }
+  },
+  "routed": [
+   130,
+   130,
+   136
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "temperature-alarm_controller",
+  "base": {
+   "board": "bench/results/e1-base/boards/temperature-alarm_controller.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 354.96,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.25,
+   "by_width_mm": {
+    "0.25": 354.96
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/temperature-alarm_controller.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 357.35,
+   "at_target_mm": 279.95,
+   "at_target_share": 0.7834,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.437": 52.58,
+    "0.468": 24.83,
+    "0.5": 279.95
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/temperature-alarm_controller/raw.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 165.6,
+   "at_target_mm": 158.21,
+   "at_target_share": 0.9554,
+   "median_width_mm": 1.27,
+   "by_width_mm": {
+    "0.381": 7.39,
+    "0.635": 56.11,
+    "1.27": 102.1
+   }
+  },
+  "routed": [
+   53,
+   53,
+   53
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ },
+ {
+  "board": "timecircuits-hardware_BTTF-TimeCircuits",
+  "base": {
+   "board": "bench/results/e1-base/boards/timecircuits-hardware_BTTF-TimeCircuits.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 1326.45,
+   "at_target_mm": 0.0,
+   "at_target_share": 0.0,
+   "median_width_mm": 0.254,
+   "by_width_mm": {
+    "0.254": 1326.45
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/timecircuits-hardware_BTTF-TimeCircuits.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 1330.53,
+   "at_target_mm": 1291.18,
+   "at_target_share": 0.9704,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.35052": 39.35,
+    "0.5": 1291.18
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/timecircuits-hardware_BTTF-TimeCircuits/raw.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 1965.28,
+   "at_target_mm": 1762.97,
+   "at_target_share": 0.8971,
+   "median_width_mm": 0.508,
+   "by_width_mm": {
+    "0.254": 202.31,
+    "0.508": 1762.97
+   }
+  },
+  "routed": [
+   443,
+   445,
+   446
+  ],
+  "clean": [
+   false,
+   false
+  ]
+ },
+ {
+  "board": "tinyDriverP_tinybot",
+  "base": {
+   "board": "bench/results/e1-base/boards/tinyDriverP_tinybot.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 237.59,
+   "at_target_mm": 68.12,
+   "at_target_share": 0.2867,
+   "median_width_mm": 0.25,
+   "by_width_mm": {
+    "0.2": 20.24,
+    "0.25": 149.24,
+    "0.75": 68.12
+   }
+  },
+  "power_width": {
+   "board": "bench/results/e1-pw05/boards/tinyDriverP_tinybot.kicad_pcb",
+   "supply_nets": 3,
+   "supply_length_mm": 271.16,
+   "at_target_mm": 250.13,
+   "at_target_share": 0.9225,
+   "median_width_mm": 0.5,
+   "by_width_mm": {
+    "0.28": 1.42,
+    "0.343": 1.88,
+    "0.375": 4.67,
+    "0.437": 2.4,
+    "0.468": 10.65,
+    "0.5": 124.59,
+    "0.6": 1.9,
+    "0.75": 123.64
+   }
+  },
+  "designer": {
+   "board": "bench/data/freerouting/scripts/benchmark/fixtures/PCBench/tinyDriverP_tinybot/raw.kicad_pcb",
+   "supply_nets": 2,
+   "supply_length_mm": 158.73,
+   "at_target_mm": 156.71,
+   "at_target_share": 0.9873,
+   "median_width_mm": 0.75,
+   "by_width_mm": {
+    "0.25": 2.02,
+    "0.75": 156.71
+   }
+  },
+  "routed": [
+   73,
+   73,
+   73
+  ],
+  "clean": [
+   true,
+   true
+  ]
+ }
+]

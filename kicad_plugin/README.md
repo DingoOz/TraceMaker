@@ -43,18 +43,49 @@ The plugin does not contain the router by default; it finds it in this order:
 
 Both paths run the same code (`tmk::app::run_route_job`) and produce identical results.
 
-Environment variables (set them where KiCad is started, e.g. in the shell or a desktop file):
+**Settings per project (D185).** Put a `tracemaker.json` next to the `.kicad_pro`; both actions read it on every run, so nothing has
+to be set before KiCad starts. Every key is optional, and the defaults are the values below. An unknown key or a wrong value stops
+the action with a message naming it.
+
+```json
+{
+  "version": 1,
+  "route_args": "--time-total 120",
+  "power_width_mm": 0.5,
+  "octilinear": true,
+  "refill": "auto",
+  "report": "browser",
+  "reroute": false,
+  "place": "",
+  "place_args": "",
+  "net_work": 2000000
+}
+```
+
+- `power_width_mm`: supply nets (GND, VCC, VDD, VBUS, +5V, 3V3, ...) are routed this wide where it fits and necked to their pads
+  (`route --power-width`, doc 05 §79). 0 turns it off.
+- `octilinear`: tracks the router laid at an odd angle are split into a straight leg and a 45-degree leg where both pass the exact check and no corner turns acute (route `--octilinear`, doc 05 §80); measured with no change in routed connections or DRC errors.
+- `report`: `browser` writes the run report (what was routed, what is open and why, the rules read, DRC before and after) to
+  `~/.cache/tracemaker/reports/` and opens it in the web browser; `project` also keeps it next to the board as
+  `<board>.tracemaker-report.html`; `off` writes none.
+- `refill`: `auto` refills the zones only after footprints moved; `true` always; `false` never.
+- The other keys are the variables below.
+
+Environment variables win over the file (set them where KiCad is started, e.g. in the shell or a desktop file):
 
 | Variable | Meaning |
 |---|---|
 | `TRACEMAKER` | path to the `tracemaker` binary |
 | `TRACEMAKER_PYTHONPATH` | directory containing the `tracemaker` Python module |
-| `TRACEMAKER_ARGS` | route options in CLI spelling, default `--time 120`; e.g. `--time 60 --threads 8 --view` (`--view` streams the routing to the browser viewer, on this machine only; `--view-host 0.0.0.0` lets other machines connect and prints a URL with a token in the log) |
+| `TRACEMAKER_ARGS` | route options in CLI spelling, default `--time-total 120` (one limit for the whole run, rescue passes included; `--time T` instead gives every stage T seconds); e.g. `--time 60 --threads 8 --view` (`--view` streams the routing to the browser viewer, on this machine only; `--view-host 0.0.0.0` lets other machines connect and prints a URL with a token in the log) |
 | `TRACEMAKER_NO_BINDINGS=1` | always use the binary |
 | `TRACEMAKER_REROUTE=1` | remove the unlocked tracks and vias and route the whole board again, in the same commit (locked copper, arcs and zones stay) |
 | `TRACEMAKER_PLACE` | let TraceMaker move footprints first (`refine`, `auto`, `routable`, `eco`, `full`), in the same commit; when parts move, the existing unlocked copper is routed again and the zones are refilled; needs `tracemaker-place` (`TRACEMAKER_PLACE_BIN`, else next to the router binary). Side changes are not applied |
 | `TRACEMAKER_PLACE_ARGS` | extra `tracemaker-place` options |
 | `TRACEMAKER_REFILL=1` | refill the zones afterwards. Off by default, except after footprints moved (`=0` stops that too): KiCad records the refill as its own step, so the result then takes two undos |
+| `TRACEMAKER_POWER_WIDTH` | `power_width_mm` (mm; 0 = off) |
+| `TRACEMAKER_OCTILINEAR` | `octilinear` (`1` or `0`) |
+| `TRACEMAKER_REPORT` | `report` (`browser`, `project`, `off`) |
 
 Checked in a running KiCad 10.0.6 without a desktop by `scripts/kicad_gui_roundtrip.py` (pcbnew from the Docker image
 under Xvfb, the plugin through the IPC API): tracks and vias appear in the open board, one Ctrl+Z removes the whole
@@ -88,8 +119,9 @@ tracemaker.emit_items("board.kicad_pcb", work=2_000_000)   # new copper, `route 
 
 ## Tests
 
-- `test_offline.py ITEMS_JSON`: TraceMaker's `--emit-items` output becomes valid kipy Track/Via objects, and
-  `TRACEMAKER_ARGS` maps onto the module's keyword arguments (kicad-python 0.8, no KiCad needed).
+- `test_offline.py ITEMS_JSON`: TraceMaker's `--emit-items` output becomes valid kipy Track/Via objects,
+  `TRACEMAKER_ARGS` maps onto the module's keyword arguments (options it does not take send the run to the binary), and the
+  per-project settings are read and checked (kicad-python 0.8, no KiCad needed).
 - `bindings/test_bindings.py` (ctest `python_bindings`): module against CLI, byte-identical boards.
 - ctest `pcm_package`: builds and validates the PCM archive.
 

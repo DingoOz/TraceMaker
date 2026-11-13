@@ -170,4 +170,82 @@ WidenResult widen_tracks(const model::Board& board, const model::DesignRules& ru
   return res;
 }
 
+int neck_at_pads(const model::Board& board, std::vector<model::Track>& tracks, const std::vector<Coord>& floor_by_net) {
+  struct PadEnd {
+    std::vector<geom::Shape> shapes;
+    geom::Box box;
+    model::LayerMask copper = 0;
+    Coord small = 0, large = 0;
+  };
+  std::vector<std::vector<PadEnd>> pads(board.nets.size());
+  for (const auto& p : board.pads) {
+    if (p.net <= 0 || p.copper == 0 || static_cast<std::size_t>(p.net) >= pads.size()) continue;
+    PadEnd pe{drc::pad_shapes(p), {}, p.copper, std::min(p.size_x, p.size_y), std::max(p.size_x, p.size_y)};
+    for (const auto& s : pe.shapes) pe.box.add(s.box);
+    pads[static_cast<std::size_t>(p.net)].push_back(std::move(pe));
+  }
+  // The pad a track end sits in, if the track is wider than its smaller side.
+  auto pad_at = [&](const model::Track& t, Point e) -> const PadEnd* {
+    const geom::Shape probe = geom::Shape::point(e, 0);
+    for (const auto& pe : pads[static_cast<std::size_t>(t.net)]) {
+      if (!(pe.copper & model::layer_bit(t.layer)) || pe.box.empty() || e.x < pe.box.x0 || e.x > pe.box.x1 || e.y < pe.box.y0 || e.y > pe.box.y1) continue;
+      for (const auto& s : pe.shapes)
+        if (geom::closer_than(probe, s, 1)) return &pe;
+    }
+    return nullptr;
+  };
+  int necks = 0;
+  std::vector<model::Track> out;
+  out.reserve(tracks.size());
+  for (const auto& t0 : tracks) {
+    if (t0.locked || t0.net <= 0 || static_cast<std::size_t>(t0.net) >= pads.size()) {
+      out.push_back(t0);
+      continue;
+    }
+    const Coord fl = static_cast<std::size_t>(t0.net) < floor_by_net.size() ? floor_by_net[static_cast<std::size_t>(t0.net)] : 0;
+    // Pieces from a to b; the a end first, then the b end of the remaining piece.
+    std::vector<model::Track> pieces{t0};
+    for (const bool at_b : {false, true}) {
+      model::Track& t = at_b ? pieces.back() : pieces.front();
+      const Point e = at_b ? t.b : t.a, o = at_b ? t.a : t.b;
+      const PadEnd* pe = pad_at(t, e);
+      if (pe == nullptr) continue;
+      const Coord nw = std::max(std::min(t.width, pe->small), fl);
+      if (nw >= t.width) continue;
+      const Coord dx = o.x - e.x, dy = o.y - e.y;
+      const Coord adx = dx < 0 ? -dx : dx, ady = dy < 0 ? -dy : dy;
+      if (!(dx == 0 || dy == 0 || adx == ady)) continue;  // off-angle: left as it is (an exact split point may not exist)
+      const Coord steps = std::max(adx, ady);              // length along the major axis
+      if (steps == 0) continue;
+      const Coord want = pe->large / 2 + 200'000;           // along the track
+      // On a diagonal a step of 1 in x and y is sqrt(2) long.
+      const Coord k = adx == ady ? static_cast<Coord>(static_cast<double>(want) / std::sqrt(2.0)) : want;
+      if (k >= steps) {
+        t.width = nw;  // the whole track is the neck
+        ++necks;
+        continue;
+      }
+      const Point m{e.x + (dx == 0 ? 0 : (dx > 0 ? k : -k)), e.y + (dy == 0 ? 0 : (dy > 0 ? k : -k))};
+      model::Track neck = t, rest = t;
+      if (at_b) {
+        rest.b = m;
+        neck.a = m;
+        neck.width = nw;
+        pieces.back() = rest;
+        pieces.push_back(neck);
+      } else {
+        neck.b = m;
+        neck.width = nw;
+        rest.a = m;
+        pieces.front() = rest;
+        pieces.insert(pieces.begin(), neck);
+      }
+      ++necks;
+    }
+    out.insert(out.end(), pieces.begin(), pieces.end());
+  }
+  tracks = std::move(out);
+  return necks;
+}
+
 }  // namespace tmk::passes

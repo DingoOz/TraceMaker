@@ -197,6 +197,13 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D180](decisions/D180.md) | Session daemon and the KiCad action that routes selected nets through it | accepted |
 | [D181](decisions/D181.md) | --txn 1 stays off by default after the tier A-D run | accepted |
 | [D182](decisions/D182.md) | Benchmark harness stops a board at 4 x --time + 120 s | accepted |
+| [D183](decisions/D183.md) | Group E: features for a finished, usable KiCad board | accepted |
+| [D184](decisions/D184.md) | Power nets routed wide from the start (--power-width) | accepted |
+| [D185](decisions/D185.md) | The plugin reads per-project settings and shows the run report | accepted |
+| [D186](decisions/D186.md) | One time limit for the whole run (--time-total) | accepted |
+| [D187](decisions/D187.md) | Octilinear doglegs after the route | accepted |
+| [D188](decisions/D188.md) | Return-path audit of critical nets in every run report | accepted |
+| [D189](decisions/D189.md) | CPU fields skip the rows that cannot change | accepted |
 <!-- END decision index -->
 
 ## Risks

@@ -1,0 +1,12 @@
+1cd1755caa58bb91d7418fd43194b07c  field/e5-Aleste-520EX_aleste.kicad_pcb
+a9655b6e8dcc4b4fcafc89fc4e72093d  field/e5-DronPi_dronPi.kicad_pcb
+1cd1755caa58bb91d7418fd43194b07c  field/e5f-Aleste-520EX_aleste.kicad_pcb
+a9655b6e8dcc4b4fcafc89fc4e72093d  field/e5f-DronPi_dronPi.kicad_pcb
+acf491c5fcef90f0cc477ef48f6a30d9  field/e5f-mini_mass_prog_bench_prog_rig.kicad_pcb
+acf491c5fcef90f0cc477ef48f6a30d9  field/e5-mini_mass_prog_bench_prog_rig.kicad_pcb
+32499b34d0fcddaed7c69d988b31845d  field8/e5-def-Aleste-520EX_aleste.kicad_pcb
+9d3001329239a5f2bb5c3f4c020f6da5  field8/e5-def-mini_mass_prog_bench_prog_rig.kicad_pcb
+32499b34d0fcddaed7c69d988b31845d  field8/e5f-cpu-Aleste-520EX_aleste.kicad_pcb
+9d3001329239a5f2bb5c3f4c020f6da5  field8/e5f-cpu-mini_mass_prog_bench_prog_rig.kicad_pcb
+32499b34d0fcddaed7c69d988b31845d  field8/e5f-def-Aleste-520EX_aleste.kicad_pcb
+9d3001329239a5f2bb5c3f4c020f6da5  field8/e5f-def-mini_mass_prog_bench_prog_rig.kicad_pcb

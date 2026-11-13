@@ -1,0 +1,318 @@
+{
+ "board": "StickHub",
+ "critical_nets": {
+  "detour_listed_over_mm": 2.0,
+  "mode": "audit",
+  "nets": [
+   {
+    "detour_mm": 0.0,
+    "length_mm": 0.0,
+    "missing_stitches": 0,
+    "name": "/XI",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xin)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 0.0,
+    "missing_stitches": 0,
+    "name": "/XO",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xout)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.454,
+    "missing_stitches": 0,
+    "name": "/U2D+",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.454,
+    "missing_stitches": 0,
+    "name": "/U6D-",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.454,
+    "missing_stitches": 0,
+    "name": "/U6D+",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.454,
+    "missing_stitches": 0,
+    "name": "/U7D-",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.156,
+    "length_mm": 1.454,
+    "missing_stitches": 0,
+    "name": "/U7D+",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 1,
+    "warnings": [
+     "1 connection not routed",
+     "runs over 1 void of its reference plane (detour 0.16 mm)"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.454,
+    "missing_stitches": 0,
+    "name": "/U5D+",
+    "splits": 2,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 2,
+    "warnings": [
+     "1 connection not routed",
+     "crosses 2 splits of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 0.0,
+    "missing_stitches": 0,
+    "name": "/U4D+",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 2,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "2 connections not routed"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.114,
+    "length_mm": 1.454,
+    "missing_stitches": 0,
+    "name": "/U5D-",
+    "splits": 1,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 2,
+    "warnings": [
+     "1 connection not routed",
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.454,
+    "missing_stitches": 0,
+    "name": "/U1D-",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 1,
+    "warnings": [
+     "1 connection not routed",
+     "runs over 1 void of its reference plane (detour 0.00 mm)"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.454,
+    "missing_stitches": 0,
+    "name": "/U3D-",
+    "splits": 1,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 1,
+    "warnings": [
+     "1 connection not routed",
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.454,
+    "missing_stitches": 0,
+    "name": "/U2D-",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.454,
+    "missing_stitches": 0,
+    "name": "/U1D+",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.451,
+    "missing_stitches": 0,
+    "name": "/U4D-",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.454,
+    "missing_stitches": 0,
+    "name": "/U3D+",
+    "splits": 1,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 1,
+    "warnings": [
+     "1 connection not routed",
+     "crosses 1 split of its reference plane"
+    ],
+    "why": "differential pair"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 0.0,
+    "missing_stitches": 0,
+    "name": "/D-",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 2,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "2 connections not routed"
+    ],
+    "why": "USB 2.0 (Full/High Speed) port (usb2 dm)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 0.0,
+    "missing_stitches": 0,
+    "name": "/D+",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 2,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "2 connections not routed"
+    ],
+    "why": "USB 2.0 (Full/High Speed) port (usb2 dp)"
+   }
+  ],
+  "options": {
+   "first": false,
+   "split_cost": 0.0,
+   "split_hard": false,
+   "via_max": 0,
+   "via_mult": 1.0
+  },
+  "totals": {
+   "missing_stitches": 0,
+   "nets": 18,
+   "over_via_limit": 0,
+   "vias": 0,
+   "void_crossings": 8
+  }
+ },
+ "seconds": 40.783806939
+}
