@@ -1,0 +1,39 @@
+live view: http://127.0.0.1:8791/
+portfolio: 8 variants on 8 threads
+  variant 0 exact bends, shortest first    routed 64 in 120.4 s
+  variant 1 fast bends, shortest first, crowded source routed 64 in 120.0 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 64 in 120.0 s
+  variant 3 fast bends, jittered order, escape plan routed 64 in 120.0 s
+  variant 4 exact bends, jittered order    routed 64 in 120.4 s  <- best
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 64 in 120.1 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 64 in 120.0 s
+  variant 7 fast bends, dear vias, crowded source routed 64 in 120.0 s
+rescue (warm): 40 of 104 connections are open; routing again with relax (from the plain routes, up to 120 s)
+portfolio: 8 variants on 8 threads
+  variant 0 exact bends, shortest first    routed 64 in 0.0 s  <- best
+  variant 1 fast bends, shortest first, crowded source routed 64 in 0.0 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 64 in 0.0 s
+  variant 3 fast bends, jittered order, escape plan routed 64 in 0.0 s
+  variant 4 exact bends, jittered order    routed 64 in 0.0 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 64 in 0.0 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 64 in 0.0 s
+  variant 7 fast bends, dear vias, crowded source routed 64 in 0.0 s
+rescue (warm): 64 -> 64 routed (no gain: the result before stands)
+rescue (fresh): 40 of 104 connections are open; routing again with relax (from nothing, up to 120 s)
+portfolio: 8 variants on 8 threads
+  variant 0 exact bends, shortest first    routed 64 in 0.0 s
+  variant 1 fast bends, shortest first, crowded source routed 64 in 0.0 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 64 in 0.0 s  <- best
+  variant 3 fast bends, jittered order, escape plan routed 64 in 0.0 s
+  variant 4 exact bends, jittered order    routed 64 in 0.0 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 64 in 0.0 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 64 in 0.0 s
+  variant 7 fast bends, dear vias, crowded source routed 64 in 0.0 s
+rescue (fresh): 64 -> 64 routed (the relax result is kept)
+routed 64/104 connections, 209 tracks, 20 vias, pitch 0.095 mm, 122494155 expansions, 395.64 s (best variant 0.02 s)
+why open: 79 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 79 open through congestion (3.51 s)
+  next: 79 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 2129778146 expansions, 1535139884 flood cells, 2424589409 cell checks, 408582940 fixed-copper checks, 14776590160 field cells in 32398 fields, 23345 commits, 243 rips
+warning: the time limit (120 s) ended the search before the work budget did: the result depends on machine speed
+Command exited with non-zero status 3
+wall 399.63 s

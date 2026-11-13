@@ -110,8 +110,10 @@ with `--route-args=--txn 1`. Machine shared by both arms and their Freerouting r
 | D | 22 | 15 | 9 → 8 | 10,035 → 10,040 / 10,246 | 6 / 6 |
 | all | 132 | 108 | **95 → 94** | 22,625 → 22,659 / 22,937 | 17 / 20 |
 
-"Judged in both arms": both have a KiCad-judged result. A harness timeout is the engine still running at 3 × 120 s + 60 s; the base has 17, so the `--time` stop
-itself overruns on these boards under this load (both arms equally exposed).
+"Judged in both arms": both have a KiCad-judged result. A harness timeout is the engine still running at 3 × 120 s + 60 s. That is the designed budget of a board left open (the plain portfolio
+plus two relax rescue passes, each with `--time`), not an overrun: `fifogfx_c64cart` alone on an idle machine took 400 s (`overrun-c64cart.log`).
+The harness now stops a board at 4 × `--time` + 120 s (D182). A board times out only if it was left open, so the two boards clean in the base that timed
+out only with `--txn 1` (serial_gw_ATMEGA328P, mechkeys_58r-mxalps, listed below) are very probably two more boards it lost.
 
 - Lost: `m2-electronics_m2fc` (clean → 723/724, 120 s → 412 s). Gained clean: none.
 - Largest gains, all on boards that stay open: `poncho_fpga_fpga-dongle` 389 → 404 / 413, `zx-sizif-512-ext_sizif512ext` 454 → 468 / 498,

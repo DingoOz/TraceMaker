@@ -3156,7 +3156,8 @@ boards against two on the 33 failing PCBench tier B-D boards (§67).
 from nothing with `--relax`. The result that `route_result_better` prefers stands (more routed, then fewer vias, then shorter copper). A
 tie keeps the plain result. Then the advisor (doc 17), the refill repair (§36) and the passes run on what stands, as before.
 - **Budget.** The rescue gets `--time` again (as the advisor's re-run does) and, with `--work`, rounds of at most 20 M work that add
-  up to `--work`. A board left open can take up to twice the time. A complete board never gets a rescue.
+  up to `--work`. Since D163 there are two passes, so a board left open can take three times `--time`, plus the stages after routing
+  (`bench/run.py` stops a board at 4 × `--time` + 120 s, D182). A complete board never gets a rescue.
 - **Why its own time.** Without `--work`, the plain portfolio uses all of its 120 s on hard boards: on ardfpga, teensy-fx, poncho and
   serial_gw it was still working when the limit came (two passes on poncho). Splitting the time would give the plain run less on exactly
   those boards.

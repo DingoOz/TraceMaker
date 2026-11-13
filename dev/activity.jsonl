@@ -228,3 +228,4 @@
 {"ts": "2026-11-13T02:18:37+00:00", "kind": "milestone", "text": "M16 stage 4 built (D178): placement advice as routability seeds and ECO candidates; no gain shown on an oracle"}
 {"ts": "2026-11-13T02:18:37+00:00", "kind": "milestone", "text": "M18 daemon + KiCad 'route selected nets' (D180): 1.75 s for a 2-pad net in KiCad 10.0.6, one undo"}
 {"ts": "2026-11-13T04:17:59+00:00", "kind": "decision", "text": "M17: --txn 1 on tiers A-D at equal wall time, 95 -> 94 clean on 108 boards judged in both arms, +34 connections; stays off by default (D181)"}
+{"ts": "2026-11-13T04:26:48+00:00", "kind": "decision", "text": "bench/run.py stops a board at 4 x --time + 120 s: the relax rescue's two passes each get --time, so 3 x + 60 s killed open boards (D182)"}

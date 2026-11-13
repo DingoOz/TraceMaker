@@ -196,6 +196,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D179](decisions/D179.md) | Pad-to-plane bound pays a via off the plane layer; causes fills zones as route does | accepted |
 | [D180](decisions/D180.md) | Session daemon and the KiCad action that routes selected nets through it | accepted |
 | [D181](decisions/D181.md) | --txn 1 stays off by default after the tier A-D run | accepted |
+| [D182](decisions/D182.md) | Benchmark harness stops a board at 4 x --time + 120 s | accepted |
 <!-- END decision index -->
 
 ## Risks

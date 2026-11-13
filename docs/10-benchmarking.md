@@ -507,9 +507,12 @@ What §11.3 left open. Both arms ran at the same time on the same machine (`benc
 - No board becomes clean. One board is lost: `m2-electronics_m2fc` is clean in the base and leaves one connection open with `--txn 1`
   (and runs 412 s against 120 s). Routed connections on the boards both arms finished: +34 of 22,937, mostly on boards that stay open
   (`poncho_fpga_fpga-dongle` +15, `zx-sizif-512-ext_sizif512ext` +14, `Aleste-520EX_aleste` +8).
-- `--txn 1` hit the harness's stop on 20 boards and the base on 17. Both numbers are high because the two arms and their Freerouting
-  references shared the machine; the base's own timeouts show the engine's `--time` stop does not hold on these boards under that load
-  (the post-route stages run past it), which is a separate problem.
+- `--txn 1` hit the harness's stop on 20 boards and the base on 17. Not an engine overrun: a board left open gets `--time` for the plain
+  portfolio and again for each of the two relax rescue passes (D160, D163), so 3 × 120 s before the post-route stages, while the harness
+  stopped it at 3 × 120 + 60 s (`fifogfx_c64cart` alone on an idle machine: 400 s). The harness now allows 4 × `--time` + 120 s (D182).
+  A board times out only if it was left open (the rescue ran). Two boards clean in the base timed out with `--txn 1` only
+  (`Hardware_Playground_serial_gw_ATMEGA328P`, `mechkeys_58r-mxalps`), so `--txn 1` very probably lost them too: not in the table, which counts
+  boards judged in both arms.
 - Tier A: all 40 clean in both, 33 of 40 boards byte-identical, route CPU −5.7 %.
 - **Decision (D181):** `--txn 1` stays where D100 put it (breakout boards only). The gain is a few connections on boards that stay open, the
   cost is one clean board and more overruns. Records: `bench/records/m17/README.md` §5.
