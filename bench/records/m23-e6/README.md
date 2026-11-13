@@ -19,4 +19,7 @@ worse on 6, the same on 14. 32 of 33 boards exit 3 (not complete) in every arm.
 asked, about 96 s taken; its warm relax rescue got the 30 s left and took 45 s, because the relax pass's legalising stage does not stop on the
 time limit). The same overrun happens with `--time`, where it comes on top of every stage's own limit.
 
+On a quiet machine the overrun is smaller: `../m23-e5` ran the same 33 boards at `--time-total 120` (two arms at once, 2 jobs each). Median
+123 s, at most 134 s, and 5 or 6 boards over 125 s. P8000 alone took 124 s.
+
 Files: `run.sh`; `e6-*/boards.jsonl` and `summary.json` per arm; `e6-{a,b,c}.log`.

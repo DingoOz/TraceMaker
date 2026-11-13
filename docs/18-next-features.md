@@ -470,7 +470,8 @@ section: 2 boards flagged, 2 clean, and 4 with no critical net (`bench/records/m
 **E6 built (2026-11-13, D186, doc 05 §82).** `--time-total T` is one limit for the run, with the plain run getting 0.75 of it; the plugin
 uses `--time-total 120`. At equal wall time it routed 111 more of 16,935 connections than the per-stage limit. The gate is met in part: the
 run ends near its stated time (median 124 s for 120 s) and no longer at three times it, but the relax pass's legalising stage can still overrun,
-by up to 28 s on these boards (`bench/records/m23-e6`).
+by up to 28 s on these boards (`bench/records/m23-e6`). That run shared an overloaded machine; on a quiet one the 33 boards end at a
+median of 123 s and at most 134 s (`bench/records/m23-e5`).
 
 **E5, first step (2026-11-13, D189, doc 05 §83).** More search does route more: 8× the work leaves 41 % fewer connections open on the 33
 failing boards. The CPU field now skips rows that cannot change: field cells cost half as much (25-41 ns instead of 53-79), and runs are

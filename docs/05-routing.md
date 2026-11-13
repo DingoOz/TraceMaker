@@ -3730,7 +3730,8 @@ therefore took about three times T (the plugin at `--time 60`: 325 s, `bench/rec
 At the same wall time, share 0.75 routes 111 more connections than the per-stage limit: a longer plain run is worth more than the rescue
 passes on these boards. **Limit**: the total is a target, not a hard stop. Stages stop at their own check points, and the relax pass's
 legalising stage does not stop on the time limit: 14 of 33 boards took more than 125 s, the most 148 s (P8000_WDC_Emulator, whose 30 s rescue
-took 45 s).
+took 45 s). Most of that was the load: on a quiet machine (`bench/records/m23-e5`, `e5t-new`, `e5c-new`) the same 33 boards end at a median of
+123 s and at most 134 s, 5 or 6 of them over 125 s, and P8000 at 124 s.
 
 ## 83. Throughput: CPU fields skip the rows that cannot change (2026-11-13, D189, M23 E5)
 
