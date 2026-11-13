@@ -684,8 +684,8 @@ TEST_CASE("octilinear: a blocked dogleg takes the other split, or the track stay
 
 TEST_CASE("octilinear: short legs and acute corners are not made", "[passes][octilinear]") {
   const auto l = load("octi-short", board_text(""));
-  // Nearly straight: the straight leg would be 0.1 mm, below one track width.
-  std::vector<model::Track> t = {track(pt(5, 10), pt(15, 10.1), 2)};
+  // Nearly straight: the diagonal leg would be 0.07 mm (0.05 mm in x and y), below half a track width (0.125 mm).
+  std::vector<model::Track> t = {track(pt(5, 10), pt(15, 10.05), 2)};
   auto r = passes::octilinear_tracks(l.board, l.rules, t, {}, {});
   CHECK(r.short_leg == 1);
   CHECK(t.size() == 1);

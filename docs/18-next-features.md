@@ -459,3 +459,16 @@ defaults route power at 0.5 mm and open the run report in the browser. In KiCad 
 cannot join that step: called inside the open commit it is still its own step (`bench/records/m23-e2`). E6 was added because of what this
 run showed.
 
+**E3 built (2026-11-13, D187, doc 05 §80).** `--octilinear` splits off-angle tracks into 0/45/90° doglegs where the exact check allows. On
+tiers A-B, off-angle segments fall by 39 % (3,659 → 2,245) with routed, clean and DRC errors unchanged: the gate is met with legs down to half a
+track width. Off in the engine, on in the plugin (`bench/records/m23-e3`).
+
+**E4 built (2026-11-13, D188, doc 05 §81).** On a board with a plane, the nets `--critical-auto` would find are audited after every route,
+report only (the copper is byte-identical), and the run report flags only a return-path fault. On the planes set every board's report has the
+section: 2 boards flagged, 2 clean, and 4 with no critical net (`bench/records/m23-e4`).
+
+**E6 built (2026-11-13, D186, doc 05 §82).** `--time-total T` is one limit for the run, with the plain run getting 0.75 of it; the plugin
+uses `--time-total 120`. At equal wall time it routed 111 more of 16,935 connections than the per-stage limit. The gate is met in part: the
+run ends near its stated time (median 124 s for 120 s) and no longer at three times it, but the relax pass's legalising stage can still overrun,
+by up to 28 s on these boards (`bench/records/m23-e6`).
+

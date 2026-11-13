@@ -10,6 +10,7 @@ change nothing.
       "version": 1,
       "route_args": "--time-total 120",  # tracemaker route options (TRACEMAKER_ARGS); one limit for the whole run
       "power_width_mm": 0.5,           # supply nets routed this wide where it fits (route --power-width); 0 = off
+      "octilinear": true,              # off-angle tracks become 0/45/90-degree doglegs where they fit (route --octilinear)
       "refill": "auto",                # "auto": after footprints moved; true: always; false: never (TRACEMAKER_REFILL)
       "report": "browser",             # "browser": run report opened in the web browser; "project": also kept next to the board; "off"
       "reroute": false,                # route the whole board again (TRACEMAKER_REROUTE)
@@ -29,6 +30,7 @@ FILE_NAME = "tracemaker.json"
 DEFAULTS = {
     "route_args": "--time-total 120",
     "power_width_mm": 0.5,
+    "octilinear": True,
     "refill": "auto",
     "report": "browser",
     "reroute": False,
@@ -39,6 +41,7 @@ DEFAULTS = {
 ENV = {
     "route_args": "TRACEMAKER_ARGS",
     "power_width_mm": "TRACEMAKER_POWER_WIDTH",
+    "octilinear": "TRACEMAKER_OCTILINEAR",
     "refill": "TRACEMAKER_REFILL",
     "report": "TRACEMAKER_REPORT",
     "reroute": "TRACEMAKER_REROUTE",
@@ -71,7 +74,7 @@ def _check(key: str, v, where: str):
     elif key == "report":
         if v not in REPORT_MODES:
             bad('must be "browser", "project" or "off"')
-    elif key == "reroute":
+    elif key in ("reroute", "octilinear"):
         if not isinstance(v, bool):
             bad("must be true or false")
     elif key == "place":
@@ -97,7 +100,7 @@ def _from_env(key: str, text: str):
             raise SettingsError(f"{ENV[key]}: expected a whole number, got {text!r}") from None
     if key == "refill":
         return {"1": True, "0": False}.get(text, text)
-    if key == "reroute":
+    if key in ("reroute", "octilinear"):
         return text == "1"
     return text
 
@@ -141,4 +144,6 @@ def route_args(s: dict) -> list[str]:
     args = shlex.split(s["route_args"])
     if s["power_width_mm"] > 0 and "--power-width" not in args:
         args += ["--power-width", f"{s['power_width_mm']:g}"]
+    if s["octilinear"] and "--octilinear" not in args:
+        args += ["--octilinear"]
     return args

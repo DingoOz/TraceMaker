@@ -52,6 +52,7 @@ the action with a message naming it.
   "version": 1,
   "route_args": "--time-total 120",
   "power_width_mm": 0.5,
+  "octilinear": true,
   "refill": "auto",
   "report": "browser",
   "reroute": false,
@@ -63,6 +64,7 @@ the action with a message naming it.
 
 - `power_width_mm`: supply nets (GND, VCC, VDD, VBUS, +5V, 3V3, ...) are routed this wide where it fits and necked to their pads
   (`route --power-width`, doc 05 §79). 0 turns it off.
+- `octilinear`: tracks the router laid at an odd angle are split into a straight leg and a 45-degree leg where both pass the exact check and no corner turns acute (route `--octilinear`, doc 05 §80); measured with no change in routed connections or DRC errors.
 - `report`: `browser` writes the run report (what was routed, what is open and why, the rules read, DRC before and after) to
   `~/.cache/tracemaker/reports/` and opens it in the web browser; `project` also keeps it next to the board as
   `<board>.tracemaker-report.html`; `off` writes none.
@@ -82,6 +84,7 @@ Environment variables win over the file (set them where KiCad is started, e.g. i
 | `TRACEMAKER_PLACE_ARGS` | extra `tracemaker-place` options |
 | `TRACEMAKER_REFILL=1` | refill the zones afterwards. Off by default, except after footprints moved (`=0` stops that too): KiCad records the refill as its own step, so the result then takes two undos |
 | `TRACEMAKER_POWER_WIDTH` | `power_width_mm` (mm; 0 = off) |
+| `TRACEMAKER_OCTILINEAR` | `octilinear` (`1` or `0`) |
 | `TRACEMAKER_REPORT` | `report` (`browser`, `project`, `off`) |
 
 Checked in a running KiCad 10.0.6 without a desktop by `scripts/kicad_gui_roundtrip.py` (pcbnew from the Docker image

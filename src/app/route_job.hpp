@@ -47,6 +47,10 @@ struct RouteJob {
   bool split_cost_given = false;           // as critical_via_given (else +4 with si_rules)
   bool split_hard = false;                 // such cells are closed to critical nets
   bool si_rules = false;
+  // Report only (doc 18 §20 E4, doc 05 §81): with none of the options above, the nets --critical-auto would find are still audited after the
+  // route on a board with a plane, so every run report says whether their return paths are sound. Nothing about the route changes;
+  // --no-critical-audit turns it off.
+  bool critical_audit = true;
   // With si_rules: layer changes of critical nets that the reference-return audit finds without a stitch get return-path stitching vias
   // of their plane net (doc 05 §57); --no-si-stitch turns it off.
   bool si_stitch = true;
@@ -113,7 +117,7 @@ struct RouteJob {
   // passes, advisor rounds, repair windows, the refill and thermal repairs) gets at most what is left, and a stage with under a second left
   // is skipped. With the rescue possible the plain run gets `rescue_share` of it, else all. 0 = off (each stage gets --time).
   double time_total_s = 0;
-  double rescue_share = 0.5;
+  double rescue_share = 0.75;  // measured: 0.75 routed more than 0.5 and than --time T/3 per stage (bench/records/m23-e6)
   // --no-tracks-on / --layer-cost (doc 05 §29): copper layer names, and "LAYER=FACTOR" entries. Resolved against
   // the board into opt.no_track_layers / opt.layer_cost_pm; an unknown layer or a bad factor throws.
   std::vector<std::string> no_tracks_on;
@@ -140,7 +144,7 @@ struct RouteJob {
   // --octilinear (D187, M23 E3): new tracks off the eight directions become doglegs of two that are on them where the exact check allows,
   // judged like the other passes (kept only if no net has more unconnected items). Off by default.
   bool octilinear = false;
-  double octilinear_min_leg = 1.0;  // --octilinear-min-leg: shortest leg, in track widths (0 = any)
+  double octilinear_min_leg = 0.5;  // --octilinear-min-leg: shortest leg, in track widths (0 = any); 0.5 measured (bench/records/m23-e3)
   // --stitch-vias: "planes" (vias of a plane's net on a grid where its fills overlap on two or more layers),
   // "return" (a plane via near each via of the signals that need a reference plane: component rules of kind
   // reference_plane, and --stitch-return "PATTERN=PLANE_NET"), or "all". Empty = off.

@@ -16,7 +16,7 @@ struct OctilinearOptions {
   bool soft_zones = false;      // as RouterOptions::soft_zones
   // A leg shorter than this many track widths would be a jog of its own (the style metric's short segment): such a dogleg is not
   // used. 0 allows any length.
-  double min_leg_widths = 1.0;
+  double min_leg_widths = 0.5;
 };
 
 struct OctilinearResult {

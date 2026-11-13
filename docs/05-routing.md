@@ -3653,3 +3653,81 @@ designer's widths (`bench/records/closure`).
 - **Off by default.** It changes every board with a supply net, and the gate of doc 18 §20.2 asks for equal completion; −2 is close to
   that and not equal. It is the setting the KiCad plugin should offer (E2).
 
+
+## 80. Octilinear doglegs (`--octilinear`, 2026-11-13, D187, M23 E3)
+
+The router's paths leave the lattice through any-angle smoothing (§10), so a finished board carries tracks at odd angles: on tiers A-B one new
+segment in seven (3,659 of 24,433). A designer reads them as unfinished, and a hand edit has to break each one.
+
+- **What it does** (`src/passes/octilinear.{hpp,cpp}`): every new, unlocked track more than 0.1° from an axis and from a diagonal
+  (`off_octilinear_segment`, integer arithmetic) is replaced by a dogleg of two tracks on the eight directions. There are two candidates, the
+  diagonal leg first (`a + d`) or the straight leg first (`b − d`); the first that passes is taken. Ends do not move, so connectivity, the
+  pads reached and the nets are unchanged.
+- **The check**: both legs must be free in the router's obstacle model (`Obstacles::segment_state`), against the board and all new copper,
+  including the doglegs already made, which update the model at once. This is the exact check used to commit a route (rule 1).
+- **Not made**: a leg shorter than `--octilinear-min-leg` track widths (default 0.5; a leg that short would be a jog of its own), and a
+  corner that turns acute with copper of the same net, layer and point (the neighbour's direction is taken from its own new legs if it was
+  replaced). Locked tracks are never touched (rule 6).
+- **Budget**: `--pass-work` exact checks; when they run out the remaining tracks stay as they are (rule 5).
+- **Where**: the first after-route pass (§39), after the pad necks of `--power-width` and before widening, judged like every after-route pass: kept only if no net has
+  more unconnected items after it (`no_worse`). The summary has `octilinear` (off-angle, replaced, no room, short leg, acute, checks).
+
+**Measured** (`bench/records/m23-e3`): tiers A and B, 40 boards each, 3 M work, deterministic. Off-angle segments are counted on the boards as
+written (`bench/octilinear_count.py`, the engine's test).
+
+| | routed | clean | DRC errors added | off-angle segments | shorter than their width |
+|---|---|---|---|---|---|
+| none | 7,740 / 8,017 | 64 | 0 | 3,659 | 1,777 |
+| min leg 1 width | 7,740 / 8,017 | 64 | 0 | 2,826 (−23 %) | 1,778 |
+| min leg 0.5 width (default) | 7,740 / 8,017 | 64 | 0 | **2,245 (−39 %)** | 2,492 |
+
+Tier A alone −56 %, tier B −34 %, wall time the same. The gate of doc 18 §20.2 (a third fewer, no loss, no error added) is met with the half-width
+minimum, at the price of 712 more segments shorter than their width. **Off by default in the engine** (it changes the copper of every
+board) and **on in the KiCad plugin** (`"octilinear": true`, kicad_plugin/README.md). The rest are tracks where neither dogleg fits, mostly
+between the pins of fine-pitch parts.
+
+## 81. Return-path audit in every run report (2026-11-13, D188, M23 E4)
+
+The reference-return audit (§42) analysed only nets the user named, and the critical-net rules (§44) only ran when asked. So a default run
+said nothing about whether a USB pair or a crystal line had copper under it.
+
+- **Default**: on a board with a zone of a net and more than one copper layer, and with none of the critical-net options given
+  (`--critical-auto`, `--critical-nets`, `--critical-first`, `--critical-via-cost`, `--critical-via-max`, `--split-cost`, `--split-hard`,
+  `--si-rules`), the nets `--critical-auto` would find (component roles: clocks, crystals, RF, USB, Ethernet, PCIe, DDR, ...; and named
+  differential pairs) are found and audited after the route on the refilled board. `--no-critical-audit` turns it off.
+- **Report only**: the nets are not passed to the router (no order, no via cost, no split cost), so the copper is the run's without it:
+  StickHub routed with and without it writes byte-identical boards.
+- **Summary and report**: `critical_nets` as in §44, with `"mode": "audit"`. The run report's audit section says how the nets were
+  found, and flags the board (a warning box) only for a return-path fault: a split crossed, a layer change with no return via or
+  capacitor within reach, or a detour over the listed threshold (2 mm). Open connections are not counted, since the Result section has them.
+  A board with no such net says that the nets were looked for and none was found.
+
+**Measured** (`bench/records/m23-e4`): the 8 planes boards, one run each. 4 have critical nets (RoyalBlue54L-Feather 6, StickHub 18,
+interf_u 2, plane_smd 2): StickHub is flagged on 4 nets and interf_u on 1, while RoyalBlue and plane_smd get "no return-path fault". The other 4
+have no clock, pair or high-speed role and say so. The audit took no measurable time (StickHub 40 s with it, 44 s without; noise on a shared
+machine).
+
+## 82. One time limit for the whole run (`--time-total`, 2026-11-13, D186, M23 E6)
+
+`--time T` limits each stage: the plain run, each relax rescue pass (D160, D163), each advisor round and each repair. A board left open
+therefore took about three times T (the plugin at `--time 60`: 325 s, `bench/records/m23-e2`).
+
+- **`--time-total T`** (`src/app/route_job.cpp`): one deadline from the job's start. If the relax rescue may follow, the plain run gets
+  `--rescue-share` of T (default 0.75), otherwise all of it. Each rescue pass gets what is left divided by the passes still to run. The advisor
+  round, the repair windows, the refill repair and the thermal repair each get at most what is left. A stage with less than 1 s left is
+  skipped, and the log says so. `--time` keeps its meaning when `--time-total` is not given.
+- The summary records `time_total_s`, and the live page's budget line shows the total and the plain run's share.
+- **The KiCad plugin's default is `--time-total 120`** (it was `--time 120`).
+
+**Measured** (`bench/records/m23-e6`): the 33 failing tier B-D boards, three arms at once on a loaded machine.
+
+| | routed / 16,935 | wall, median / max s |
+|---|---|---|
+| `--time 40` (each stage 40 s) | 15,871 | 136 / 168 |
+| `--time-total 120`, share 0.5 | 15,909 | 126 / 144 |
+| `--time-total 120`, share 0.75 | **15,982** | 124 / 148 |
+
+At the same wall time, share 0.75 routes 111 more connections than the per-stage limit: a longer plain run is worth more than the rescue
+passes on these boards. **Limit**: the total is a target, not a hard stop. Stages stop at their own check points, and the relax pass's
+legalising stage does not stop on the time limit: 14 of 33 boards took more than 125 s, the most 148 s (P8000_WDC_Emulator, whose 30 s rescue
+took 45 s).

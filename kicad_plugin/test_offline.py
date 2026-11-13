@@ -125,15 +125,15 @@ import tracemaker_settings as ts  # noqa: E402
 with tempfile.TemporaryDirectory() as d:
     s0, src = ts.load(d, {})
     assert s0 == ts.DEFAULTS and src == "defaults"
-    assert ts.route_args(s0) == ["--time-total", "120", "--power-width", "0.5"]
+    assert ts.route_args(s0) == ["--time-total", "120", "--power-width", "0.5", "--octilinear"]
     with open(os.path.join(d, "tracemaker.json"), "w") as f:
-        json.dump({"version": 1, "route_args": "--time 30 --threads 4", "power_width_mm": 0, "refill": True, "report": "off"}, f)
+        json.dump({"version": 1, "route_args": "--time 30 --threads 4", "power_width_mm": 0, "octilinear": False, "refill": True, "report": "off"}, f)
     s1, src = ts.load(d, {})
     assert s1["refill"] is True and s1["report"] == "off" and src.endswith("tracemaker.json")
-    assert ts.route_args(s1) == ["--time", "30", "--threads", "4"]  # power width 0: off
+    assert ts.route_args(s1) == ["--time", "30", "--threads", "4"]  # power width 0 and octilinear false: neither option
     s2, src = ts.load(d, {"TRACEMAKER_REFILL": "0", "TRACEMAKER_POWER_WIDTH": "0.8", "TRACEMAKER_REROUTE": "1"})
     assert s2["refill"] is False and s2["power_width_mm"] == 0.8 and s2["reroute"] is True and "TRACEMAKER_REFILL" in src
-    assert ts.route_args(dict(s2, route_args="--power-width 1")) == ["--power-width", "1"]  # an explicit option is not doubled
+    assert ts.route_args(dict(s2, route_args="--power-width 1 --octilinear")) == ["--power-width", "1", "--octilinear"]  # explicit options are not doubled
     for bad, word in (({"power_width_mm": "wide"}, "power_width_mm"), ({"refill": "yes"}, "refill"), ({"plaec": "auto"}, "plaec"),
                       ({"place": "anywhere"}, "place"), ({"net_work": 0}, "net_work"), ({"version": 2}, "version")):
         with open(os.path.join(d, "tracemaker.json"), "w") as f:

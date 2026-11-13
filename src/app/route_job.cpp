@@ -721,13 +721,22 @@ RouteJobResult run_route_job(RouteJob job) {
       log("warning: net class " + c.name + " names tuning profile " + c.tuning_profile + ", which the project does not define (KiCad: missing_tuning_profile)");
   // Critical nets (issue #24, doc 05 §44): the names the user gave and, with --critical-auto, the nets the component rules' roles make critical.
   std::vector<crules::CriticalNet> critical;
+  bool critical_audit_only = false;
   {
     const bool si = job.si_rules;
     const bool want_auto = job.critical_auto || si;
     const bool want_first = job.critical_first || si;
     const double via_mult = job.critical_via_given || !si ? job.critical_via_mult : 3.0;
     const double split = job.split_cost_given || !si ? job.split_cost : 4.0;
-    if (!job.critical_nets.empty() || want_auto) {
+    // Audit only: no critical option given, a plane to audit against. The nets are found as --critical-auto finds them and handed to nothing but the
+    // audit after the route, so the copper is the run's without it.
+    bool plane = false;
+    for (const auto& z : lb.board.zones) plane = plane || (!z.rule_area && z.net > 0);
+    plane = plane && lb.board.copper_count() > 1;
+    const bool audit_only = job.critical_audit && plane && job.critical_nets.empty() && !want_auto && !want_first && !job.critical_via_given &&
+                            !job.split_cost_given && !job.split_hard && job.critical_via_max == 0;
+    critical_audit_only = audit_only;
+    if (!job.critical_nets.empty() || want_auto || audit_only) {
       std::map<model::NetId, crules::CriticalNet> found;
       for (const auto& n : lb.board.nets) {
         if (n.id <= 0 || n.name.empty()) continue;
@@ -737,7 +746,7 @@ RouteJobResult run_route_job(RouteJob job) {
             break;
           }
       }
-      if (want_auto) {
+      if (want_auto || audit_only) {
         const auto& cat = crules::builtin_catalogue();
         crules::Overrides ov;  // the user's override file (doc 15 §6.3) changes what a part is, and so which nets are critical
         if (!job.rules_override.empty()) ov = crules::load_overrides_file(job.rules_override, cat);
@@ -751,6 +760,11 @@ RouteJobResult run_route_job(RouteJob job) {
       for (const auto& [id, c] : found) critical.push_back(c);
       std::stable_sort(critical.begin(), critical.end(), [](const crules::CriticalNet& a, const crules::CriticalNet& c) { return a.tier < c.tier; });
     }
+    if (audit_only) {
+      if (!critical.empty())
+        log(fmt("critical nets: %zu found (component roles and differential pairs), audited after the route only; --critical-auto and the options of "
+                "doc 05 §44 route them with care, --no-critical-audit skips the audit", critical.size()));
+    } else {
     for (const auto& c : critical) opt.critical.emplace_back(lb.board.nets[static_cast<std::size_t>(c.net)].name, c.tier);
     opt.critical_first = want_first && !critical.empty();
     opt.critical_via_mult = via_mult;
@@ -774,6 +788,7 @@ RouteJobResult run_route_job(RouteJob job) {
       log(fmt("critical nets: %zu%s%s", critical.size(), lines.empty() ? "" : " - ", lines.c_str()));
       log(fmt("  routed first: %s; via cost x%.3g; over a plane void: %s", opt.critical_first ? "yes" : "no", opt.critical_via_mult,
               opt.split_hard ? "not allowed" : opt.split_cost > 0 ? fmt("+%.3g pitches per lattice step", opt.split_cost).c_str() : "free"));
+    }
     }
   }
   if (!job.warm_pcb.empty()) {  // copper of an earlier solution (looser rules, legalised): the router keeps what is legal
@@ -1685,7 +1700,7 @@ RouteJobResult run_route_job(RouteJob job) {
   }
   // Critical nets after the route (issue #24): vias, length and the plane crossings of each, so the three rules can be judged on the board they produced.
   nlohmann::json critical_summary;
-  if (!critical.empty()) {
+  if (!critical.empty() || critical_audit_only) {  // audit only with none found: the report says the board was looked at
     std::map<model::NetId, int> vias_by_net;
     std::map<model::NetId, double> length_by_net;
     for (const auto& v : res.vias) ++vias_by_net[v.net];
@@ -1707,6 +1722,7 @@ RouteJobResult run_route_job(RouteJob job) {
       }
     }
     critical_summary = nlohmann::json::object();
+    critical_summary["mode"] = critical_audit_only ? "audit" : "route";  // audit: found and audited by default, the route did not treat them apart
     critical_summary["options"] = {{"first", opt.critical_first}, {"via_mult", opt.critical_via_mult}, {"split_cost", opt.split_cost}, {"split_hard", opt.split_hard},
                                    {"via_max", job.critical_via_max}};
     critical_summary["nets"] = nlohmann::json::array();

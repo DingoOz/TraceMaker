@@ -81,7 +81,11 @@ def main():
     # 1. Without the options: the plain route, no report. Naming the net without a cost is a report only: the same copper, straight across the slot.
     r0, j0 = route(boards["bridged"], "plain.kicad_pcb")
     check(r0.returncode == 0, f"plain route: exit {r0.returncode}: {r0.stderr[-200:]}")
-    check("critical_nets" not in j0, "no critical_nets in the summary unless asked")
+    # By default (D188) the board's plane gets the audit of what --critical-auto would find, report only; this board has no such net.
+    check(j0.get("critical_nets", {}).get("mode") == "audit" and j0["critical_nets"]["nets"] == [], f"default: audit only, no net found: {j0.get('critical_nets')}")
+    ra, ja = route(boards["bridged"], "noaudit.kicad_pcb", "--no-critical-audit")
+    check("critical_nets" not in ja, "no critical_nets in the summary with --no-critical-audit")
+    check((work / "noaudit.kicad_pcb").read_bytes() == (work / "plain.kicad_pcb").read_bytes(), "the default audit must not change the routed board")
     rn, jn = route(boards["bridged"], "named.kicad_pcb", "--critical-nets", "SIG")
     check((work / "named.kicad_pcb").read_bytes() == (work / "plain.kicad_pcb").read_bytes(), "naming a critical net without any cost or order must not change the routed board")
     nn = jn.get("critical_nets", {}).get("nets", [])

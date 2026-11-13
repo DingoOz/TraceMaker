@@ -204,7 +204,9 @@ kicad-cli pcb drc --format json --severity-all --all-track-errors --exit-code-vi
   (`kicad_plugin/tracemaker_settings.py`, strict: an unknown key stops the action); the environment variables above win over it. The plugin's
   defaults route supply nets at 0.5 mm (`--power-width`, doc 05 §79) and write the run report (`route --report`) to
   `~/.cache/tracemaker/reports/`, opened in the web browser (`"report": "project"` also keeps it next to the board). Options the Python
-  module does not take send the run to the binary instead of being dropped.
+  module does not take send the run to the binary instead of being dropped. Since D186 and D187 the defaults also give the run one time limit
+  (`--time-total 120`, doc 05 §82) and turn off-angle tracks into doglegs (`"octilinear": true`, `--octilinear`, doc 05 §80); since D188 every
+  run report on a board with a plane has the return-path audit of its critical nets (doc 05 §81).
 - **Round trip in a running KiCad GUI** (`scripts/kicad_gui_roundtrip.py`, KiCad 10.0.6): pcbnew from the Docker
   image runs on an Xvfb display with the API server enabled (`kicad_common.json`), the first-run wizard is
   clicked away through XTEST, and the plugin talks to the live board over the API socket. On

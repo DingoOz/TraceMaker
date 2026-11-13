@@ -963,20 +963,20 @@
           "done": true
         },
         {
-          "text": "E3: off-angle cleanup",
-          "done": false
+          "text": "E3: --octilinear doglegs (D187, doc 05 section 80): off-angle segments -39 % on tiers A-B, routed/clean/DRC unchanged; on in the plugin",
+          "done": true
         },
         {
-          "text": "E4: the return-path audit (doc 05 section 42) on automatically chosen nets, in every run report",
-          "done": false
+          "text": "E4: default report-only audit of the critical nets on boards with a plane (D188, doc 05 section 81); every planes board's report has it, copper byte-identical",
+          "done": true
         },
         {
           "text": "E5: throughput on the open boards",
           "done": false
         },
         {
-          "text": "E6: a time limit that means the whole run (rescue passes each get --time again: 325 s for --time 60)",
-          "done": false
+          "text": "E6: --time-total with rescue share 0.75 (D186, doc 05 section 82): +111 of 16,935 at equal wall time; plugin default; relax legaliser can still overrun (max +28 s)",
+          "done": true
         }
       ]
     }

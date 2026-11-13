@@ -274,6 +274,14 @@ OPTIONS:
           --vias-off-pads-below FLOAT
                               Pad width (mm) below which --keep-vias-off-pads applies (default
                               2)
+          --time-total FLOAT:NONNEGATIVE
+                              One time limit for the whole run, seconds: the plain run gets
+                              --rescue-share of it when the relax rescue may follow, and every
+                              later stage (rescue passes, advisor rounds, repairs) at most what
+                              is left; without it each stage gets --time again (D186). 0 = off
+          --rescue-share FLOAT:FLOAT in [0.01 - 1]
+                              With --time-total: the plain run's share of it when the relax
+                              rescue may follow (default 0.75)
           --no-rescue{false}  Do not route again with --relax when connections are left open
                               (by default the rescue runs, each pass on a budget of its own,
                               --time and --work again, and a result is kept only if it is
@@ -427,6 +435,10 @@ OPTIONS:
                               the nets found by --critical-auto follow in their own tiers
           --critical-auto     Critical nets from the component rules' roles (clock, crystal,
                               USB, Ethernet, PCIe, DDR ...) and from differential pairs
+          --no-critical-audit{false}
+                              No reference-return audit of the nets --critical-auto would find;
+                              by default they are audited after the route, report only, on a
+                              board with a plane (doc 05 §81)
           --critical-first    Route the critical nets before all others, tier by tier (clocks
                               and crystals, differential links, memory buses); --first-nets
                               stay in front
@@ -507,6 +519,12 @@ OPTIONS:
                               net with a --widen-net or component-rule target at that target;
                               the rest of a net falls back to its class width, then
                               --widen-power tops up (doc 05 §79). 0 = off
+          --octilinear        After routing: replace new tracks that run off the eight
+                              directions by doglegs of two tracks on them where the exact check
+                              allows and no corner turns acute (doc 05 §80)
+          --octilinear-min-leg FLOAT:FLOAT in [0 - 20]
+                              With --octilinear: the shortest leg a dogleg may have, in track
+                              widths (default 0.5; 0 = any)
           --widen-net TEXT ...
                               With --widen-power: target width for nets as PATTERN=WIDTH_MM,
                               e.g. '+5V=0.8' or 'VBUS*=1' (repeatable)

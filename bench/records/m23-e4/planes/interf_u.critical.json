@@ -1,0 +1,57 @@
+{
+ "board": "interf_u",
+ "critical_nets": {
+  "detour_listed_over_mm": 2.0,
+  "mode": "audit",
+  "nets": [
+   {
+    "detour_mm": 3.671,
+    "length_mm": 30.262,
+    "missing_stitches": 0,
+    "name": "Net-(U9-P{slash}A3)",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 6,
+    "warnings": [
+     "runs over 6 voids of its reference plane (detour 3.67 mm)",
+     "detour of 2.36 mm round a void on F.Cu at (112.457, 92.386) mm"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xout)"
+   },
+   {
+    "detour_mm": 1.767,
+    "length_mm": 15.766,
+    "missing_stitches": 0,
+    "name": "/8MH-OUT",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 2,
+    "warnings": [
+     "runs over 2 voids of its reference plane (detour 1.77 mm)"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xin)"
+   }
+  ],
+  "options": {
+   "first": false,
+   "split_cost": 0.0,
+   "split_hard": false,
+   "via_max": 0,
+   "via_mult": 1.0
+  },
+  "totals": {
+   "missing_stitches": 0,
+   "nets": 2,
+   "over_via_limit": 0,
+   "vias": 0,
+   "void_crossings": 8
+  }
+ },
+ "seconds": 69.256672918
+}

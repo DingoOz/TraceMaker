@@ -232,3 +232,4 @@
 {"ts": "2026-11-13T06:58:20+00:00", "kind": "milestone", "text": "M23 planned: group E (power widths, plugin as a KiCad tool, off-angle cleanup, return-path check, throughput), doc 18 section 20, D183"}
 {"ts": "2026-11-13T07:22:02+00:00", "kind": "build", "text": "M23 E1: --power-width routes supply nets wide first (D184); power-wide set: copper at >= 0.5 mm 20 % -> 94 %, clean 21 -> 21, -2 of 4,038 connections; off by default"}
 {"ts": "2026-11-13T07:47:14+00:00", "kind": "build", "text": "M23 E2: the KiCad actions read a per-project tracemaker.json; plugin defaults: power width 0.5 mm, run report in the browser; refill cannot share the undo step (D185)"}
+{"ts": "2026-11-13T08:44:37+00:00", "kind": "milestone", "text": "M23 E3, E4, E6 built: --octilinear (-39 % off-angle, no loss), default return-path audit in every run report, --time-total (plugin default, share 0.75)"}
