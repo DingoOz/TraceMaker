@@ -30,6 +30,7 @@
 #include "io/srj/srj.hpp"
 #include "route/layer_limits.hpp"
 #include "route/router.hpp"
+#include "session/daemon.hpp"
 #include "session/session.hpp"
 #include "session/transport.hpp"
 #include "server/messages.hpp"
@@ -1408,6 +1409,15 @@ static int run_main(int argc, char** argv) {
   advice_cmd->add_option("board", ac_board)->required()->check(CLI::ExistingFile);
   advice_cmd->add_option("advice", ac_advice, "Advice file (JSON)")->required()->check(CLI::ExistingFile);
   advice_cmd->add_option("--json", ac_json, "Write what each hint became as JSON");
+  tmk::session::DaemonOptions dm_opt;
+  bool dm_print_socket = false;
+  auto* daemon_cmd = app.add_subcommand("daemon", "Hold board sessions between clients (the KiCad plugin's \"route selected nets\") on a Unix socket, JSON lines (doc 19 §10)");
+  daemon_cmd->add_option("--socket", dm_opt.socket, "Socket path (default $XDG_RUNTIME_DIR/tracemaker/daemon.sock, else /tmp/tracemaker-UID/daemon.sock)");
+  daemon_cmd->add_option("--idle-exit", dm_opt.idle_exit_s, "Exit after this many seconds without a client (0 = never)")->default_val(1800)->check(CLI::NonNegativeNumber);
+  daemon_cmd->add_option("--max-sessions", dm_opt.max_sessions, "Sessions held at once; the least recently used is closed beyond this")->default_val(4)->check(CLI::Range(1, 64));
+  daemon_cmd->add_option("--threads", dm_opt.threads, "Portfolio threads of a route call with several variants (the result does not depend on it)")->default_val(4);
+  daemon_cmd->add_flag("--gpu", dm_opt.use_gpu, "Cost-to-go fields on the GPU (default: the CPU reference; same results)");
+  daemon_cmd->add_flag("--print-socket", dm_print_socket, "Print the default socket path and exit");
   auto* session_cmd = app.add_subcommand("session", "Serve a board session to an agent over MCP (stdin/stdout) or JSON lines: list open connections, route with hints, rip, undo, save (doc 19)");
   std::string se_board, se_out, se_log, se_replay, se_host, se_token;
   std::uint64_t se_seed = 1;
@@ -1446,6 +1456,8 @@ static int run_main(int argc, char** argv) {
   causes_cmd->add_option("--threads", ca_opt.threads, "Nets classified at once (the result does not depend on it; default 8)")->check(CLI::Range(1, 256));
   causes_cmd->add_option("--seed", ca_opt.seed, "Router seed (default 1)");
   causes_cmd->add_flag("--baseline-only", ca_opt.baseline_only, "Only the run on the board as it is (for a copy with more layers)");
+  causes_cmd->add_flag("--soft-zones", ca_opt.soft_zones, "Zone fills do not block other nets (as route --soft-zones)");
+  causes_cmd->add_flag("!--no-fill-planes", ca_opt.fill_planes, "Do not fill zones that have no fill (route fills them in memory and routes soft)");
   auto* cuts_cmd = app.add_subcommand("cuts", "Cut test of a routed board's topology: cuts between pads and vias that cannot hold their wires, vias with no room in their cell (doc 05 §67)");
   std::string cu_board, cu_rules, cu_json;
   double cu_clearance = -1, cu_max_gap = 2.0;
@@ -1586,6 +1598,13 @@ static int run_main(int argc, char** argv) {
     if (*pairs_cmd) return cmd_pairs(pr_board, pr_extra, pr_json);
     if (*buses_cmd) return cmd_buses(bu_board, bu_specs, bu_detect, bu_skew, bu_json);
     if (*advice_cmd) return cmd_advice_check(ac_board, ac_advice, ac_json);
+    if (*daemon_cmd) {
+      if (dm_print_socket) {
+        std::printf("%s\n", (dm_opt.socket.empty() ? tmk::session::default_socket_path() : dm_opt.socket).c_str());
+        return 0;
+      }
+      return tmk::session::run_daemon(dm_opt);
+    }
     if (*session_cmd) return cmd_session(se_board, se_out, se_seed, se_limit, se_threads, se_gpu, se_log, se_jsonl, se_replay, se_view, se_port, se_host, se_token, se_insecure);
     if (*rp_cmd) {
       for (const auto& r : rp_refs) {

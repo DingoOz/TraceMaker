@@ -736,7 +736,7 @@
       "id": "M16",
       "title": "Advice files and a pluggable advisor",
       "status": "done",
-      "gate": "Options off: quick/mid/planes byte-identical; same advice at 1/2/4 threads identical; bad advice refused; advisor failure leaves the run unadvised; advised never fewer than unadvised; the hint channel proven without a model first (doc 17 section 8) | Result 2026-10-14: stages 0, 1 and 3 built; stage 4 (placement) not built. The stage 2 gate is NOT met: rule-based advice routes no more than the plain run on the held-out half (439 vs 439; the equal-compute control with 4 more variants routes 450) and ties the control on the tuning half (431 vs 431) (doc 17 section 8.1). Options off: quick/planes/mid byte-identical to main; 291/291 tests; no real model verified (bench/records/m16/).",
+      "gate": "Options off: quick/mid/planes byte-identical; same advice at 1/2/4 threads identical; bad advice refused; advisor failure leaves the run unadvised; advised never fewer than unadvised; the hint channel proven without a model first (doc 17 section 8) | Result 2026-10-14: stages 0, 1 and 3 built; stage 4 (placement) not built. The stage 2 gate is NOT met: rule-based advice routes no more than the plain run on the held-out half (439 vs 439; the equal-compute control with 4 more variants routes 450) and ties the control on the tuning half (431 vs 431) (doc 17 section 8.1). Options off: quick/planes/mid byte-identical to main; 291/291 tests; no real model verified (bench/records/m16/). | 2026-11-13: stage 4 built (D178); oracle on 3 boards: the placer finds the same fixes, no gain from advice shown (bench/records/m16-stage4).",
       "deliverables": "Stuck report, advice file, advised portfolio variants, --advisor protocol, reference advisors (doc 17, issue #26)",
       "tasks": [
         {
@@ -756,8 +756,8 @@
           "done": true
         },
         {
-          "text": "Stage 4: placement seams (routability_loop seeds, ECO candidates) - not built",
-          "done": false
+          "text": "Stage 4: placement advice (tracemaker-place --place-advice: seeds of the routability loop, ECO candidates; strict, locked parts refused); oracle shows the channel works, no gain shown (doc 17 section 8.3, D178)",
+          "done": true
         }
       ]
     },
@@ -793,8 +793,8 @@
           "done": true
         },
         {
-          "text": "Open: --txn 1 as a portfolio variant needs tiers A-D at equal wall time before it can be a default",
-          "done": false
+          "text": "--txn 1 at equal wall time on tiers A-D: 95 -> 94 clean on 108 boards judged in both, +34 connections; stays off by default (D181, doc 10 section 11.4)",
+          "done": true
         }
       ]
     },
@@ -802,7 +802,7 @@
       "id": "M18",
       "title": "Session server and agent interface",
       "status": "done",
-      "gate": "The agent must route more than the plain run at the same compute on a held-out half, otherwise the interface stays a library (D118). Result 2026-10-15: NOT met (model-driven agents 968 against the equal-compute control's 968); `tracemaker session` stays a library; nothing more built for agents until the router can say which end of a boxed-in pin is fenced (doc 19, D119). The long-running daemon for the KiCad plugin is not built.",
+      "gate": "The agent must route more than the plain run at the same compute on a held-out half, otherwise the interface stays a library (D118). Result 2026-10-15: NOT met (model-driven agents 968 against the equal-compute control's 968); `tracemaker session` stays a library; nothing more built for agents until the router can say which end of a boxed-in pin is fenced (doc 19, D119). The long-running daemon for the KiCad plugin is not built. | 2026-11-13: daemon + \"route selected nets\" built (D180); in a running KiCad 10.0.6 a 2-pad net routes in 1.75 s new / 1.59 s warm, an 11-connection net 4.0 / 3.8 s, one undo removes only that net, no new DRC error (bench/records/m18-daemon). The agent stop rule is unchanged.",
       "deliverables": "tracemaker session over MCP and JSON lines, scripted and model-driven evaluation, doc 19",
       "tasks": [
         {
@@ -814,8 +814,8 @@
           "done": true
         },
         {
-          "text": "Long-running daemon shared with the KiCad plugin - not built",
-          "done": false
+          "text": "tracemaker daemon (Unix socket, sessions reused by the client fingerprint, diff) and the KiCad action \"Route selected nets\": 1.75 s for a 2-pad net on multichannel_mixer in KiCad 10.0.6, one undo (doc 19 section 10, D180)",
+          "done": true
         }
       ]
     },
@@ -905,8 +905,8 @@
     {
       "id": "M22",
       "title": "Finish the last connections",
-      "status": "in_progress",
-      "gate": "At least 15 % fewer open connections on pcbench-bd-fail at 10 M work (KiCad judge), no clean board lost, quick and mid byte-identical with the options off",
+      "status": "done",
+      "gate": "At least 15 % fewer open connections on pcbench-bd-fail at 10 M work (KiCad judge), no clean board lost, quick and mid byte-identical with the options off | 2026-11-13: item 4 finished (D179); --plane-informed byte-identical to the base on all 33 pcbench-bd-fail boards at 10 M work. All eight items built and off; gate NOT met (best 3.5 % vs 15 %).",
       "deliverables": "Pin rescue, end-game retry, whole-board window attempt, pad-to-plane searches, gated via retry, via cost near dense pins, tight/off-lattice vias (doc 18 section 18, D155)",
       "tasks": [
         {
@@ -926,8 +926,8 @@
           "done": true
         },
         {
-          "text": "4 Informed pad-to-plane searches; causes fills zones",
-          "done": false
+          "text": "4 Informed pad-to-plane searches; causes fills zones -- finished 2026-11-13 (D179): bound + via off the plane layer, causes fills zones as route does; byte-identical to the base on the 33 gate boards at 10 M (bench/records/m22-plane)",
+          "done": true
         },
         {
           "text": "5 D153 via retry gated on budget misses (built, off: no effect on the boards measured)",

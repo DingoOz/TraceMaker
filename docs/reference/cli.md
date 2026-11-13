@@ -41,6 +41,8 @@ SUBCOMMANDS:
                               drills, mirroring (read-only; doc 05 §43)
   advice-check                Check an advice file (doc 17) against a board: the refusals
                               `route --advice` would give, and what each hint does
+  daemon                      Hold board sessions between clients (the KiCad plugin's "route
+                              selected nets") on a Unix socket, JSON lines (doc 19 §10)
   session                     Serve a board session to an agent over MCP (stdin/stdout) or JSON
                               lines: list open connections, route with hints, rip, undo, save
                               (doc 19)
@@ -734,6 +736,32 @@ OPTIONS:
           --json TEXT         Write what each hint became as JSON
 ```
 
+### `tracemaker daemon`
+
+```text
+Hold board sessions between clients (the KiCad plugin's "route selected nets")
+on a Unix socket, JSON lines (doc 19 §10)
+
+
+tracemaker daemon [OPTIONS]
+
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --socket TEXT       Socket path (default $XDG_RUNTIME_DIR/tracemaker/daemon.sock,
+                              else /tmp/tracemaker-UID/daemon.sock)
+          --idle-exit INT:NONNEGATIVE [1800]
+                              Exit after this many seconds without a client (0 = never)
+          --max-sessions INT:INT in [1 - 64] [4]
+                              Sessions held at once; the least recently used is closed beyond
+                              this
+          --threads INT [4]   Portfolio threads of a route call with several variants (the
+                              result does not depend on it)
+          --gpu               Cost-to-go fields on the GPU (default: the CPU reference; same
+                              results)
+          --print-socket      Print the default socket path and exit
+```
+
 ### `tracemaker session`
 
 ```text
@@ -821,6 +849,10 @@ OPTIONS:
                               default 8)
           --seed UINT         Router seed (default 1)
           --baseline-only     Only the run on the board as it is (for a copy with more layers)
+          --soft-zones        Zone fills do not block other nets (as route --soft-zones)
+          --no-fill-planes{false}
+                              Do not fill zones that have no fill (route fills them in memory
+                              and routes soft)
 ```
 
 ### `tracemaker cuts`
@@ -1070,6 +1102,10 @@ OPTIONS:
                               --route-check, 0 = off)
           --record TEXT       routable: write the placement timelapse (JSONL: header, then one
                               frame per stage)
+          --place-advice TEXT:FILE
+                              routable/eco: placement advice file (JSON: seeds = proposed
+                              placements, eco = proposed moves; doc 17 stage 4), each kept only
+                              if it routes more
           --loop-time FLOAT   routable: wall-time stop in seconds; checked between seeds and
                               routes, keeps the best placement so far (0 = none)
 ```

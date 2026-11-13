@@ -245,7 +245,9 @@ def run_board(name: str, outdir: pathlib.Path, time_limit: float) -> dict:
         budget = ["--work", str(WORK), "--no-kb"] if WORK else ["--kb", str(outdir / "kb.sqlite")]
         code, stdout, stderr, cpu = run_measured(
             [str(TM), "route", str(src), "-o", str(out), "--time", str(time_limit), "--threads", str(THREADS), "--json", str(out) + ".route.json"] + budget + state_args(name, out) + view + EXTRA,
-            time_limit * 3 + 60, LIVE.env(name) if LIVE else None)
+            # The harness's own stop: a board left open takes --time for the plain portfolio and --time again for each of the two
+            # relax rescue passes (doc 05 §68, D160, D163), then the post-route stages; 3 x --time + 60 s killed such boards (D182).
+            time_limit * 4 + 120, LIVE.env(name) if LIVE else None)
         res["exit"] = code
         res["cpu_s"] = round(cpu, 2)
         if code not in (0, 3):

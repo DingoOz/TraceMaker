@@ -17,6 +17,7 @@
 #include "place/global.hpp"
 #include "place/legalize.hpp"
 #include "place/lower_bound.hpp"
+#include "place/place_advice.hpp"
 #include "place/placer.hpp"
 #include "place/routable.hpp"
 #include "place/wirelength.hpp"
@@ -1130,4 +1131,87 @@ TEST_CASE("flip: swap states exchange absolute poses on either side", "[place][f
     const int back = swap_state(sa, -1);
     CHECK(std::fmod(b.angle_of(back) - a.angle_of(sa) + 720.0, 360.0) == 0.0);
   }
+}
+
+TEST_CASE("placement advice: strict parsing, locked parts refused, rotation states", "[place][advice]") {
+  Problem p = board(30 * MM, 30 * MM);
+  const int a = add_part(p, {10 * MM, 10 * MM}, MM, MM, {{0, 0}}, true);
+  const int b = add_part(p, {20 * MM, 20 * MM}, MM, MM, {{0, 0}}, false);
+  p.parts[z(b)].fixed_reason = "locked";
+  p.parts[z(a)].angle0 = 90;
+  const std::string ra = p.parts[z(a)].ref, rb = p.parts[z(b)].ref;
+  const auto adv = parse_place_advice(R"({"version": 1, "note": "n", "seeds": [{"name": "s", "moves": [{"ref": ")" + ra +
+                                          R"(", "at": [12.5, 9], "rotate": 270}]}], "eco": [{"ref": ")" + ra + R"(", "at": [11, 10]}]})", p);
+  REQUIRE(adv.seeds.size() == 1);
+  CHECK(adv.seeds[0].moves[0].pos == Point{12'500'000, 9'000'000});
+  CHECK(adv.seeds[0].moves[0].rot == 2);  // 90 + 2 x 90
+  CHECK(adv.eco[0].rot == 0);             // unchanged orientation
+  CHECK(adv.note == "n");
+  const Placement t = apply_seed(Placement::initial(p), adv.seeds[0]);
+  CHECK(t.pos[z(a)] == Point{12'500'000, 9'000'000});
+  CHECK(t.pos[z(b)] == p.parts[z(b)].pos0);
+  auto refused = [&](const std::string& text, const std::string& needle) {
+    try {
+      parse_place_advice(text, p, "f.json");
+    } catch (const std::runtime_error& e) {
+      INFO(e.what());
+      CHECK(std::string(e.what()).find(needle) != std::string::npos);
+      return true;
+    }
+    return false;
+  };
+  CHECK(refused(R"({"version": 1, "eco": [{"ref": ")" + rb + R"(", "at": [1, 1]}]})", "may not move (locked)"));  // rule 6
+  CHECK(refused(R"({"version": 1, "eco": [{"ref": "NOPE", "at": [1, 1]}]})", "eco[0].ref"));
+  CHECK(refused(R"({"version": 1, "eco": [{"ref": ")" + ra + R"(", "at": [1, 1], "rotate": 45}]})", "eco[0].rotate"));
+  CHECK(refused(R"({"version": 1, "seeds": [{"moves": [{"ref": ")" + ra + R"(", "at": [1, 1], "flip": true}]}]})", "unknown key \"flip\""));
+  CHECK(refused(R"({"version": 2})", "version"));
+  CHECK(refused(R"({"version": 1, "eco": [{"ref": ")" + ra + R"(", "at": [1]}]})", "eco[0].at"));
+  CHECK(refused(R"({"version": 1, "seeds": [{"moves": []}]})", "seeds[0].moves"));
+  CHECK(refused(R"({"version": 1, "seeds": [{"moves": [{"ref": ")" + ra + R"(", "at": [1, 1]}, {"ref": ")" + ra + R"(", "at": [2, 2]}]}]})", "already moved"));
+  CHECK(refused("{", "not valid JSON"));
+}
+
+TEST_CASE("placement advice: an advised seed or ECO move is kept only when it routes more", "[place][advice][m8]") {
+  // Two parts joined by one net, 16 mm apart; the synthetic router routes nets of HPWL <= 6 mm.
+  Problem p = board(30 * MM, 30 * MM);
+  const int a = add_part(p, {5 * MM, 15 * MM}, MM, MM, {{0, 0}}, true);
+  const int b = add_part(p, {21 * MM, 15 * MM}, MM, MM, {{0, 0}}, false);
+  add_net(p, {{a, {0, 0}}, {b, {0, 0}}});
+  const RouteFn route = fake_router(p, 6 * MM);
+  const Placement start = Placement::initial(p);
+  const RouteEval e0 = route(start);
+  REQUIRE(e0.unrouted() == 1);
+  const std::string ra = p.parts[z(a)].ref;
+  // Seeds: a good one (next to b) is kept; a bad one (farther away) is routed but not kept.
+  const auto adv = parse_place_advice(R"({"version": 1, "seeds": [{"name": "far", "moves": [{"ref": ")" + ra + R"(", "at": [3, 15]}]},
+                                                                 {"name": "near", "moves": [{"ref": ")" + ra + R"(", "at": [17, 15]}]}]})", p);
+  std::vector<Candidate> seeds{{"input", start, {}, 0}};
+  for (const auto& s : adv.seeds) seeds.push_back(Candidate{"advice: " + s.name, apply_seed(start, s), {}, 0});
+  LoopOptions lo;
+  lo.rounds = 0;
+  const LoopResult r = routability_loop(p, seeds, lo, route);
+  CHECK(r.best.label == "advice: near");
+  CHECK(r.best.eval.unrouted() == 0);
+  CHECK(r.tried.size() == 3);
+  // ECO: the advised move is routed first and committed; a useless advised move alone commits nothing.
+  const auto good = parse_place_advice(R"({"version": 1, "eco": [{"ref": ")" + ra + R"(", "at": [17, 15]}]})", p);
+  EcoOptions eo;
+  eo.rounds = 1;
+  eo.candidates = 0;  // only the advice is routed
+  eo.advised = &good.eco;
+  const EcoResult er = eco_place(p, start, e0, eo, route);
+  CHECK(er.committed == 1);
+  CHECK(er.routes == 1);
+  CHECK(er.pl.pos[z(a)] == Point{17 * MM, 15 * MM});
+  REQUIRE(!er.moves.empty());
+  CHECK(er.moves[0].find("advice: ") == 0);
+  const auto bad = parse_place_advice(R"({"version": 1, "eco": [{"ref": ")" + ra + R"(", "at": [3, 15]}]})", p);
+  eo.advised = &bad.eco;
+  const EcoResult eb = eco_place(p, start, e0, eo, route);
+  CHECK(eb.committed == 0);
+  CHECK(eb.pl.pos == start.pos);
+  // An advised move onto the fixed part is not legal and is not routed.
+  const auto clash = parse_place_advice(R"({"version": 1, "eco": [{"ref": ")" + ra + R"(", "at": [21, 15]}]})", p);
+  eo.advised = &clash.eco;
+  CHECK(eco_place(p, start, e0, eo, route).routes == 0);
 }

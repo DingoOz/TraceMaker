@@ -2,7 +2,7 @@
   "$schema": "https://go.kicad.org/api/schemas/v1",
   "identifier": "org.tracemaker.autoroute",
   "name": "TraceMaker",
-  "description": "Autoroute the open board with TraceMaker (routes all unrouted connections; one undo step)",
+  "description": "Autoroute the open board, or the selected nets, with TraceMaker (one undo step each)",
   "runtime": {
     "type": "python",
     "min_version": "3.9"
@@ -13,10 +13,36 @@
       "name": "Autoroute with TraceMaker",
       "description": "Route every unrouted connection with KiCad's own design rules",
       "show-button": true,
-      "scopes": ["pcb"],
-      "icons-light": ["icons/tracemaker-24.png", "icons/tracemaker-48.png"],
-      "icons-dark": ["icons/tracemaker-24.png", "icons/tracemaker-48.png"],
+      "scopes": [
+        "pcb"
+      ],
+      "icons-light": [
+        "icons/tracemaker-24.png",
+        "icons/tracemaker-48.png"
+      ],
+      "icons-dark": [
+        "icons/tracemaker-24.png",
+        "icons/tracemaker-48.png"
+      ],
       "entrypoint": "tracemaker_route.py"
+    },
+    {
+      "identifier": "org.tracemaker.autoroute.route_nets",
+      "name": "Route selected nets with TraceMaker",
+      "description": "Route the nets of the selected pads, tracks or footprints through the TraceMaker daemon, which keeps the board between actions",
+      "show-button": true,
+      "scopes": [
+        "pcb"
+      ],
+      "icons-light": [
+        "icons/tracemaker-24.png",
+        "icons/tracemaker-48.png"
+      ],
+      "icons-dark": [
+        "icons/tracemaker-24.png",
+        "icons/tracemaker-48.png"
+      ],
+      "entrypoint": "tracemaker_route_nets.py"
     }
   ]
 }

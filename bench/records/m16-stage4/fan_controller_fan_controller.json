@@ -1,0 +1,61 @@
+{
+ "version": 1,
+ "note": "oracle: the designer's orientation of the parts turned by 180 degrees",
+ "seeds": [
+  {
+   "name": "designer orientation",
+   "moves": [
+    {
+     "ref": "U1",
+     "at": [
+      138.966,
+      80.932
+     ],
+     "rotate": 180.0
+    },
+    {
+     "ref": "Q1",
+     "at": [
+      156.866,
+      73.632
+     ],
+     "rotate": 90.0
+    },
+    {
+     "ref": "Q2",
+     "at": [
+      149.466,
+      68.932
+     ],
+     "rotate": 270.0
+    }
+   ]
+  }
+ ],
+ "eco": [
+  {
+   "ref": "U1",
+   "at": [
+    138.966,
+    80.932
+   ],
+   "rotate": 180.0
+  },
+  {
+   "ref": "Q1",
+   "at": [
+    156.866,
+    73.632
+   ],
+   "rotate": 90.0
+  },
+  {
+   "ref": "Q2",
+   "at": [
+    149.466,
+    68.932
+   ],
+   "rotate": 270.0
+  }
+ ]
+}

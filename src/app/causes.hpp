@@ -20,6 +20,8 @@ struct CausesOptions {
   int threads = 8;                  // nets classified at once (the result does not depend on it)
   std::uint64_t seed = 1;
   bool baseline_only = false;       // only the run on the board as it is (the layer test: run it on a copy with more layers)
+  bool fill_planes = true;          // zones with no fill are filled in memory and routed soft, as `route` does (D155 item 4)
+  bool soft_zones = false;          // zone fills do not block other nets (as route --soft-zones); set by fill_planes when it fills one
 };
 
 // Classifies the open connections of `board` and returns the report (also printed as a table when `print`).

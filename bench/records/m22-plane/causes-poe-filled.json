@@ -1,0 +1,12 @@
+{
+ "baseline": {
+  "connections": 1189,
+  "open": 1089,
+  "routed": 100,
+  "work": 3000000
+ },
+ "board": "/tmp/claude-1000/-home-dingo-Programming-TraceMaker/0eb5330d-7327-41fa-97b4-5a919efd08e3/scratchpad/poe/poe_gbe_switch_10p-2-placed.kicad_pcb",
+ "copper_layers": 4,
+ "soft_zones": true,
+ "zones_filled": 2
+}

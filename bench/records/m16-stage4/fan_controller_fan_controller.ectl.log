@@ -1,0 +1,69 @@
+  component rules (soft): connector_general=5 ic_decoupling=9 mounting_hole=4; 9 proximity pseudo-net(s)
+fan_controller_fan_controller.kicad_pcb: 65 parts (47 movable), mode eco, router budget 1000000 expansions x 4 variants
+  input not legal: 7 conflict(s) involving movable parts (REF**_16/SW1, REF**_16/U2, REF**_15/SW1, REF**_15/U2, Q2/D2, Q3/D3, ...); compared as it is (--repair-input compares its minimal repair instead)
+searches: 94 ok (1005867 expansions), 0 failed (0 expansions); fields 0 GPU + 5 CPU (0.01 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 174326; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 2, 0 proved no path, 20003 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 14 ok (518536 expansions), 6 failed (280577 expansions); fields 0 GPU + 20 CPU (0.25 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 897051; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 0 proved unreachable, 207733 cells visited
+failed-search expansions: strict confined 0, strict wide 280577, negotiated confined 0, negotiated wide 0
+searches: 108 ok (589414 expansions), 4 failed (180291 expansions); fields 0 GPU + 23 CPU (0.18 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 881843; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 0 proved unreachable, 236982 cells visited
+failed-search expansions: strict confined 0, strict wide 180291, negotiated confined 0, negotiated wide 0
+searches: 112 ok (704272 expansions), 10 failed (229832 expansions); fields 0 GPU + 33 CPU (0.27 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 1077793; rips 0, passes 1, boxed-in 6, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 59153 cells visited
+late reachability proofs: 1, 0 proved no path, 10002 cells visited
+failed-search expansions: strict confined 0, strict wide 229832, negotiated confined 0, negotiated wide 0
+  input: 4 unrouted (111/115)
+  eco round 1: 35 parts near 4 failed connections, 460 legal moves
+searches: 95 ok (989999 expansions), 0 failed (0 expansions); fields 0 GPU + 2 CPU (0.01 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 171453; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 2, 0 proved no path, 20002 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 115 ok (341538 expansions), 2 failed (298 expansions); fields 2 GPU + 20 CPU (0.16 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 390467; rips 0, passes 1, boxed-in 2, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 298, negotiated confined 0, negotiated wide 0
+searches: 116 ok (720775 expansions), 2 failed (70183 expansions); fields 2 GPU + 21 CPU (0.21 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 957717; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 0 proved unreachable, 203151 cells visited
+late reachability proofs: 2, 0 proved no path, 20003 cells visited
+failed-search expansions: strict confined 0, strict wide 70183, negotiated confined 0, negotiated wide 0
+searches: 119 ok (666295 expansions), 54 failed (349386 expansions); fields 3 GPU + 21 CPU (0.20 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 1119686; rips 7, passes 2, boxed-in 32, nogood skips 0, history cells 14, transactions 0 kept of 0
+reachability checks: 16, 10 proved unreachable, 196282 cells visited
+failed-search expansions: strict confined 0, strict wide 222065, negotiated confined 0, negotiated wide 0
+    U1 rotate 180: 0 unrouted (115/115)
+searches: 94 ok (1038912 expansions), 0 failed (0 expansions); fields 0 GPU + 2 CPU (0.01 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 182739; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 3, 0 proved no path, 30004 cells visited
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 115 ok (564259 expansions), 3 failed (252 expansions); fields 0 GPU + 26 CPU (0.19 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 648930; rips 0, passes 2, boxed-in 3, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 25915 cells visited
+failed-search expansions: strict confined 0, strict wide 252, negotiated confined 0, negotiated wide 0
+searches: 114 ok (316156 expansions), 11 failed (708750 expansions); fields 0 GPU + 30 CPU (0.32 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 988968; rips 0, passes 2, boxed-in 8, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 3, 3 proved unreachable, 707398 cells visited
+failed-search expansions: strict confined 0, strict wide 1352, negotiated confined 0, negotiated wide 0
+searches: 114 ok (666087 expansions), 18 failed (144149 expansions); fields 1 GPU + 24 CPU (0.20 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 1100357; rips 0, passes 2, boxed-in 3, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 8, 6 proved unreachable, 508787 cells visited
+failed-search expansions: strict confined 0, strict wide 60820, negotiated confined 0, negotiated wide 0
+    U1 rotate 90: 0 unrouted (115/115)
+  kept: eco, 4 -> 0 unrouted (115/115 routed), HPWL 748.2 -> 640.7 mm, 1 footprints moved, 3 routes, 5.6 s, legal moves, 7 conflict(s) of the input remain -> fan_controller_fan_controller.ectl.kicad_pcb

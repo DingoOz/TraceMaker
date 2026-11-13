@@ -1,0 +1,171 @@
+{
+  "after": {
+    "conflicts": [],
+    "crossings": 4,
+    "fixed_outside": 0,
+    "fixed_overlaps": 0,
+    "flipped": 0,
+    "hpwl_mm": 162.432,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 0,
+    "side_vias": 8,
+    "weighted_hpwl_mm": 121.758
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [],
+    "crossings": 18,
+    "fixed_outside": 0,
+    "fixed_overlaps": 0,
+    "flipped": 0,
+    "hpwl_mm": 192.28,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 0,
+    "side_vias": 8,
+    "weighted_hpwl_mm": 153.0715
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 1.8621218076458974,
+    "lb_any_rotation_mm": 65.38669999999999,
+    "lb_fixed_rotation_mm": 130.897,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "fixed_parts": [
+    {
+      "reason": "edge connector",
+      "ref": "P2"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "P1"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "spisolator_spisolator.kicad_pcb",
+  "kept": "full+rudy",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "routable",
+  "movable": 6,
+  "moved": 6,
+  "nets": 13,
+  "notes": [],
+  "output": "spisolator_spisolator.ctl.kicad_pcb",
+  "parts": 8,
+  "pins": 45,
+  "rounds": 0,
+  "route_check": {
+    "connections": 31,
+    "connections_input": 31,
+    "connections_output": 31,
+    "kept_input": false,
+    "routed_input": 31,
+    "routed_output": 31,
+    "work": 1000000
+  },
+  "route_input": {
+    "connections": 31,
+    "routed": 31,
+    "seconds": 1.217711404,
+    "unrouted": 0
+  },
+  "route_output": {
+    "connections": 31,
+    "routed": 31,
+    "seconds": 0.63432727,
+    "unrouted": 0
+  },
+  "routes": 5,
+  "seconds": {},
+  "seconds_total": 44.576783052,
+  "tried": [
+    {
+      "hpwl_mm": 192.28,
+      "label": "input",
+      "route": {
+        "connections": 31,
+        "routed": 31,
+        "seconds": 1.217711404,
+        "unrouted": 0
+      }
+    },
+    {
+      "hpwl_mm": 163.0,
+      "label": "refine",
+      "route": {
+        "connections": 31,
+        "routed": 31,
+        "seconds": 1.594475342,
+        "unrouted": 0
+      }
+    },
+    {
+      "hpwl_mm": 164.44,
+      "label": "refine+rudy",
+      "route": {
+        "connections": 31,
+        "routed": 31,
+        "seconds": 0.3958005,
+        "unrouted": 0
+      }
+    },
+    {
+      "hpwl_mm": 163.13,
+      "label": "full",
+      "route": {
+        "connections": 31,
+        "routed": 31,
+        "seconds": 0.391821993,
+        "unrouted": 0
+      }
+    },
+    {
+      "hpwl_mm": 162.432,
+      "label": "full+rudy",
+      "route": {
+        "connections": 31,
+        "routed": 31,
+        "seconds": 0.63432727,
+        "unrouted": 0
+      }
+    }
+  ],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

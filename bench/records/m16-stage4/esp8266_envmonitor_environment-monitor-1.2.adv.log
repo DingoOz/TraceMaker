@@ -1,0 +1,3 @@
+error: esp8266_envmonitor_environment-monitor-1.2.json: seeds[0].moves[0].ref: U1 may not move (overhangs the board edge in the input)
+  component rules (soft): connector_general=4 ic_decoupling=1 ldo=1 mounting_hole=2 rf_module=1; 1 proximity pseudo-net(s)
+esp8266_envmonitor_environment-monitor-1.2.kicad_pcb: 16 parts (11 movable), mode routable, router budget 1000000 expansions x 4 variants

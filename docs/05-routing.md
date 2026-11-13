@@ -3156,7 +3156,8 @@ boards against two on the 33 failing PCBench tier B-D boards (§67).
 from nothing with `--relax`. The result that `route_result_better` prefers stands (more routed, then fewer vias, then shorter copper). A
 tie keeps the plain result. Then the advisor (doc 17), the refill repair (§36) and the passes run on what stands, as before.
 - **Budget.** The rescue gets `--time` again (as the advisor's re-run does) and, with `--work`, rounds of at most 20 M work that add
-  up to `--work`. A board left open can take up to twice the time. A complete board never gets a rescue.
+  up to `--work`. Since D163 there are two passes, so a board left open can take three times `--time`, plus the stages after routing
+  (`bench/run.py` stops a board at 4 × `--time` + 120 s, D182). A complete board never gets a rescue.
 - **Why its own time.** Without `--work`, the plain portfolio uses all of its 120 s on hard boards: on ardfpga, teensy-fx, poncho and
   serial_gw it was still working when the limit came (two passes on poncho). Splitting the time would give the plain run less on exactly
   those boards.
@@ -3603,3 +3604,17 @@ quanln's board is not known; its closest goal candidate missed by 0.027 mm, whic
 pad rather than on the direction, and the neck-down width is the other lever there. Not built: pad entry from the pad's edge rather than
 its centre, legs of more than one bend after an exit, and a pair whose end leg starts uncoupled at the pad and couples after the
 obstacle (the long-leg retry is the nearest form).
+
+## 78. Pad-to-plane searches: the via term, `causes` with filled zones, measured (2026-11-13, D179)
+
+The rest of M22 item 4 (§63). With `--plane-informed` the bound of a pad-to-plane search is the octile distance to the plane's box **plus
+one via for a state on another layer than the plane's** (`router.cpp`, the search's `h`): such a search has no target cells but the plane
+on its one layer, and every layer change costs at least `via_cost`, so the bound stays admissible and consistent. `tracemaker causes`
+now fills copper zones that have no fill and routes its copies with soft zones, as `route` does (§54); `--no-fill-planes` keeps the old
+reading.
+
+Measured on the M22 gate set (33 `pcbench-bd-fail` boards, 10 M work, 8 variants, `bench/records/m22-plane`): `--plane-informed` gives
+**byte-identical boards** to the base on all 33. No pad-to-plane search there reaches a point where the bound, the proof or the fallback
+changes a decision, so item 4 does nothing for the gate. The option stays off. With it, all eight items of M22 are built and off; the best
+arm (`--via-shove --escape-all`, §64) cut open connections by 3.5 % against the 15 % gate.
+

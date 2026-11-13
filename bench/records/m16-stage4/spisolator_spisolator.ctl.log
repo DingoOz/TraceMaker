@@ -1,0 +1,110 @@
+searches: 32 ok (183363 expansions), 19 failed (243371 expansions); fields 0 GPU + 7 CPU (0.08 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 470674; rips 1, passes 2, boxed-in 5, nogood skips 0, history cells 9, transactions 0 kept of 0
+reachability checks: 8, 6 proved unreachable, 212966 cells visited
+failed-search expansions: strict confined 0, strict wide 96530, negotiated confined 0, negotiated wide 0
+searches: 36 ok (190808 expansions), 46 failed (361594 expansions); fields 0 GPU + 15 CPU (0.14 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 635141; rips 5, passes 2, boxed-in 17, nogood skips 0, history cells 25, transactions 0 kept of 0
+reachability checks: 22, 17 proved unreachable, 317678 cells visited
+failed-search expansions: strict confined 0, strict wide 115588, negotiated confined 0, negotiated wide 0
+searches: 27 ok (846399 expansions), 2 failed (112018 expansions); fields 0 GPU + 3 CPU (0.03 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 146854; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 45347 cells visited
+failed-search expansions: strict confined 0, strict wide 112018, negotiated confined 0, negotiated wide 0
+searches: 49 ok (359731 expansions), 77 failed (483172 expansions); fields 0 GPU + 18 CPU (0.24 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 1021760; rips 20, passes 2, boxed-in 33, nogood skips 0, history cells 137, transactions 0 kept of 0
+reachability checks: 36, 30 proved unreachable, 293812 cells visited
+failed-search expansions: strict confined 0, strict wide 350640, negotiated confined 0, negotiated wide 0
+  component rules (soft): connector_general=2 ic_decoupling=1; 1 proximity pseudo-net(s)
+spisolator_spisolator.kicad_pcb: 8 parts (6 movable), mode routable, router budget 1000000 expansions x 4 variants
+  input: 0 unrouted (31/31), HPWL 192.28 mm
+searches: 32 ok (157464 expansions), 21 failed (66297 expansions); fields 0 GPU + 6 CPU (0.11 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 293563; rips 1, passes 2, boxed-in 8, nogood skips 0, history cells 13, transactions 0 kept of 0
+reachability checks: 10, 6 proved unreachable, 142007 cells visited
+failed-search expansions: strict confined 0, strict wide 42158, negotiated confined 0, negotiated wide 0
+searches: 34 ok (167976 expansions), 22 failed (330648 expansions); fields 0 GPU + 12 CPU (0.16 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 555620; rips 3, passes 2, boxed-in 7, nogood skips 1, history cells 3, transactions 0 kept of 0
+reachability checks: 11, 8 proved unreachable, 305237 cells visited
+failed-search expansions: strict confined 0, strict wide 130894, negotiated confined 0, negotiated wide 0
+searches: 29 ok (592445 expansions), 7 failed (405232 expansions); fields 0 GPU + 5 CPU (0.06 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 198192; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 2, 1 proved unreachable, 59646 cells visited
+late reachability proofs: 2, 0 proved no path, 20003 cells visited
+failed-search expansions: strict confined 0, strict wide 377681, negotiated confined 0, negotiated wide 0
+searches: 33 ok (166861 expansions), 23 failed (436372 expansions); fields 0 GPU + 11 CPU (0.17 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 636747; rips 2, passes 2, boxed-in 3, nogood skips 1, history cells 23, transactions 0 kept of 0
+reachability checks: 14, 12 proved unreachable, 362541 cells visited
+failed-search expansions: strict confined 0, strict wide 152744, negotiated confined 0, negotiated wide 0
+  refine: 0 unrouted (31/31), HPWL 163.00 mm
+searches: 31 ok (78425 expansions), 0 failed (0 expansions); fields 0 GPU + 4 CPU (0.04 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 90279; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 31 ok (131712 expansions), 6 failed (100816 expansions); fields 0 GPU + 7 CPU (0.08 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 257511; rips 0, passes 2, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 4, 3 proved unreachable, 115853 cells visited
+failed-search expansions: strict confined 0, strict wide 38265, negotiated confined 0, negotiated wide 0
+searches: 37 ok (154260 expansions), 55 failed (112216 expansions); fields 0 GPU + 10 CPU (0.11 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 345643; rips 6, passes 2, boxed-in 19, nogood skips 0, history cells 20, transactions 0 kept of 0
+reachability checks: 20, 15 proved unreachable, 98994 cells visited
+failed-search expansions: strict confined 0, strict wide 95697, negotiated confined 0, negotiated wide 0
+searches: 30 ok (657519 expansions), 12 failed (324665 expansions); fields 0 GPU + 10 CPU (0.07 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 176495; rips 0, passes 2, boxed-in 4, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 5, 5 proved unreachable, 15110 cells visited
+late reachability proofs: 2, 0 proved no path, 20005 cells visited
+failed-search expansions: strict confined 0, strict wide 309555, negotiated confined 0, negotiated wide 0
+  refine+rudy: 0 unrouted (31/31), HPWL 164.44 mm
+searches: 31 ok (80042 expansions), 0 failed (0 expansions); fields 0 GPU + 3 CPU (0.03 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 91715; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 36 ok (105883 expansions), 26 failed (87604 expansions); fields 0 GPU + 4 CPU (0.03 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 233482; rips 5, passes 2, boxed-in 6, nogood skips 0, history cells 8, transactions 0 kept of 0
+reachability checks: 14, 13 proved unreachable, 57111 cells visited
+failed-search expansions: strict confined 0, strict wide 58299, negotiated confined 0, negotiated wide 0
+searches: 33 ok (183228 expansions), 16 failed (219537 expansions); fields 0 GPU + 7 CPU (0.15 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 428392; rips 2, passes 2, boxed-in 2, nogood skips 1, history cells 12, transactions 0 kept of 0
+reachability checks: 8, 6 proved unreachable, 252147 cells visited
+failed-search expansions: strict confined 0, strict wide 71079, negotiated confined 0, negotiated wide 0
+searches: 30 ok (616820 expansions), 9 failed (385735 expansions); fields 0 GPU + 8 CPU (0.10 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 228179; rips 0, passes 1, boxed-in 3, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 3, 3 proved unreachable, 75429 cells visited
+late reachability proofs: 2, 0 proved no path, 20002 cells visited
+failed-search expansions: strict confined 0, strict wide 310306, negotiated confined 0, negotiated wide 0
+  full: 0 unrouted (31/31), HPWL 163.13 mm
+searches: 33 ok (97551 expansions), 6 failed (2994 expansions); fields 0 GPU + 3 CPU (0.02 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 115757; rips 2, passes 2, boxed-in 6, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 3, 3 proved unreachable, 1497 cells visited
+failed-search expansions: strict confined 0, strict wide 1497, negotiated confined 0, negotiated wide 0
+searches: 31 ok (89549 expansions), 2 failed (33670 expansions); fields 0 GPU + 5 CPU (0.06 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 160115; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 39609 cells visited
+failed-search expansions: strict confined 0, strict wide 33670, negotiated confined 0, negotiated wide 0
+searches: 31 ok (99956 expansions), 2 failed (33433 expansions); fields 0 GPU + 5 CPU (0.06 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 170986; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 37742 cells visited
+failed-search expansions: strict confined 0, strict wide 33433, negotiated confined 0, negotiated wide 0
+searches: 28 ok (720427 expansions), 4 failed (266529 expansions); fields 0 GPU + 3 CPU (0.04 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 156082; rips 0, passes 1, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 58067 cells visited
+failed-search expansions: strict confined 0, strict wide 266529, negotiated confined 0, negotiated wide 0
+  full+rudy: 0 unrouted (31/31), HPWL 162.43 mm
+  seed kept: full+rudy
+  kept: full+rudy, 0 -> 0 unrouted (31/31 routed), HPWL 192.3 -> 162.4 mm, 6 footprints moved, 5 routes, 44.6 s, legal -> spisolator_spisolator.ctl.kicad_pcb

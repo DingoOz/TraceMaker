@@ -1,6 +1,6 @@
 ---
-status: partly-built
-code: [src/session]
+status: current
+code: [src/session, kicad_plugin/tracemaker_route_nets.py]
 ---
 
 # 19 — A board session and an agent interface (M18)
@@ -8,7 +8,7 @@ code: [src/session]
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Written 2026-10-15. Milestone **M18** ([11-roadmap.md](11-roadmap.md)), candidate D2 of
 > [18-next-features.md](18-next-features.md). Decision D119.
 > Status: stage A (session, tools, two transports) and stage B (evaluation harness, scripted baseline agent) are what this note specifies; §9 says
-> what is built and what was measured.
+> what is built and what was measured. The daemon and the plugin action that uses it were built on 2026-11-13 (§10, D180).
 
 ## 1. What it is, and how it differs from the advisor
 
@@ -79,8 +79,8 @@ cannot be worse" guard of doc 17 §4 is not needed; the transaction rule above t
 
 State = the input board, plus a list of session copper (tracks and vias, in commit order), plus the open-connection reasons of the last route. A state is
 immutable; each change makes a new one. A router run gets the board with the session copper added and marked locked. The first listing of the open
-connections of a state costs one router set-up (the planner needs the obstacle model); it is cached per state. A long-running daemon that keeps the set-up
-between calls is the other half of M18 and is not built.
+connections of a state costs one router set-up (the planner needs the obstacle model); it is cached per state. The daemon (§10) keeps sessions, their
+states and these caches between processes.
 
 The log is a JSON-lines file (`--log FILE`): per call, the tool, the arguments, a digest of the result and the state's digest (FNV-1a 64 of the session copper
 in canonical order: a digest to compare a session with its replay, not a cryptographic hash). `tracemaker session --replay LOG BOARD --out FILE` runs the calls again and stops at the first digest that differs. Replay is the
@@ -220,5 +220,53 @@ tell an agent more than it does now (below). What the agents asked of the tools,
 - What the agents asked for and the router cannot yet say: which end of a boxed-in connection is fenced and which lanes and via sites are free; a dry run that names the
   minimal set of nets to remove to free a pin; "stopped at net X" and a reason with blockers for every open connection of a multi-net call. These are router
   questions (escape analysis per pad, doc 05 §14), not session ones; they are the thing to build if agents are worth another try.
-- The daemon (`tracemakerd`) and the KiCad assistant that uses it (the other half of M18).
+- The daemon and the KiCad action that uses it were built afterwards (§10).
 - Redaction in the session, `propose_path`, placement moves (§8).
+
+## 10. The daemon and the KiCad action "route selected nets" (2026-11-13, D180)
+
+The other half of M18. A KiCad action is a new process each time, so on its own it would read the board, the rules and plan the open
+connections again for every net the user routes. `tracemaker daemon` (`src/session/daemon.hpp`; the roadmap's `tracemakerd`) holds
+sessions between processes.
+
+**The daemon.** A Unix-domain socket that only its owner can reach (directory 0700, socket 0600), default
+`$XDG_RUNTIME_DIR/tracemaker/daemon.sock` (`tracemaker daemon --print-socket`); JSON lines, one request and one answer per line; clients
+are served one at a time. Requests: `status`; `open` (`board`, `key`, `fingerprint`, `out`, `work_limit`, `seed`); `call` (`session`,
+`tool`, `args`: exactly `Session::call`, §4); `diff` (`session`, `from`: the session copper added since that state and, under `removed`,
+what it lost, in the `--emit-items` layout); `mark` (`session`, `fingerprint`); `close`; `shutdown`. It exits after `--idle-exit`
+seconds without a client (default 1800) and holds at most `--max-sessions` sessions (default 4, least recently used closed first). A
+session reads its own copy of the board and its project files, so the client may delete what it sent.
+
+**Reuse by fingerprint.** `open` with a `key` (the client's name for the board) and a `fingerprint` returns the session whose *current
+state* was marked with that fingerprint, without reading the board; otherwise it starts a new session from `board` (a newer board for the
+same key replaces the older session). The fingerprint is the client's, and the daemon only compares strings: the client must change it
+whenever anything the router reads changes. A stale match would route on an out-of-date board; every route is still the session's own
+transaction behind the exact check and `verify: refuse` (§4), and the client applies only the copper the daemon returns.
+
+**The action** (`kicad_plugin/tracemaker_route_nets.py`, "Route selected nets with TraceMaker"). It takes the nets of the selected pads,
+tracks, vias, zones and footprints; fingerprints the open board (SHA-256 over KiCad's own serialisation of every track, via, footprint
+and zone with its fills, sorted, and the `.kicad_pro`/`.kicad_dru` files on disk); starts the daemon if none answers; opens the session
+for that fingerprint, or saves a copy of the board and starts one; calls `route` for the nets (work `TRACEMAKER_NET_WORK`, default 2 M);
+adds the `diff` to the open board in **one commit**; and marks the session's new state with the fingerprint of the board as it now is.
+Any change in KiCad between two actions (an edit, an undo, a refill) changes the fingerprint, and the next action starts a fresh session
+from the board as it is. Unsaved changes to the board setup that are not in the project files on disk are not in the fingerprint: save
+the board after changing the rules.
+
+**Checked in a running KiCad 10.0.6** (`scripts/kicad_gui_roundtrip.py --nets`, pcbnew from the Docker image under Xvfb, the action
+through the IPC API; `bench/records/m18-daemon`), on `multichannel_mixer-unrouted`:
+
+| Action | Result | Wall time of the action |
+|---|---|--:|
+| select a pad of `Net-(R14-Pad1)`, route selected nets | 3 tracks, 2/2 routed; new session | 1.75 s |
+| select a pad of `vbias`, route selected nets | 48 tracks, 6 vias, 9/11 routed; **warm session** (the board was not read again) | 3.78 s |
+| Ctrl+Z | removes only `vbias`'s copper (143 tracks, 19 vias, as before it); Ctrl+Y brings it back | |
+| KiCad DRC of the board saved from the GUI | unconnected 148 → 134, no new error | |
+
+The wall time includes the action's start, the fingerprint, the save of a copy when the session is new, the route with its exact check and
+DRC verification, and the commit. In the session alone (no KiCad), a 2-connection net costs 0.86 s, of which about 0.8 s is the router
+set-up every `route` call pays; a session that kept a router between calls is the next step if that matters, and it is not built.
+
+What the gate of M18 asked for: a single-net route from the plugin within a stated latency on `multichannel_mixer`, one undo step. Both
+hold: 1.75 s for a two-pad net (3.8 s for an 11-connection one), one undo. The stop rule of §7 is unchanged: no agent loop is built on the
+daemon.
+

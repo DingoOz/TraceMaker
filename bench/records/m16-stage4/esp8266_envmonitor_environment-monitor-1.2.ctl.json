@@ -1,0 +1,193 @@
+{
+  "after": {
+    "conflicts": [],
+    "crossings": 6,
+    "fixed_outside": 1,
+    "fixed_overlaps": 2,
+    "flipped": 0,
+    "hpwl_mm": 365.54,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 0,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 246.46599999999998
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [],
+    "crossings": 26,
+    "fixed_outside": 1,
+    "fixed_overlaps": 2,
+    "flipped": 0,
+    "hpwl_mm": 563.53,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 0,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 441.052
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 2.1119984918336216,
+    "lb_any_rotation_mm": 116.69800000000001,
+    "lb_fixed_rotation_mm": 134.75799999999998,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "fixed_parts": [
+    {
+      "reason": "edge connector",
+      "ref": "P1"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "P2"
+    },
+    {
+      "reason": "overhangs the board edge in the input",
+      "ref": "U1"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "Noname_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "Noname_1"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "esp8266_envmonitor_environment-monitor-1.2.kicad_pcb",
+  "kept": "full",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "routable",
+  "movable": 11,
+  "moved": 11,
+  "nets": 13,
+  "notes": [],
+  "output": "esp8266_envmonitor_environment-monitor-1.2.ctl.kicad_pcb",
+  "parts": 16,
+  "pins": 46,
+  "rounds": 1,
+  "route_check": {
+    "connections": 32,
+    "connections_input": 32,
+    "connections_output": 32,
+    "kept_input": false,
+    "routed_input": 24,
+    "routed_output": 24,
+    "work": 1000000
+  },
+  "route_input": {
+    "connections": 32,
+    "routed": 24,
+    "seconds": 3.74604761,
+    "unrouted": 8
+  },
+  "route_output": {
+    "connections": 32,
+    "routed": 24,
+    "seconds": 2.219354484,
+    "unrouted": 8
+  },
+  "routes": 8,
+  "seconds": {},
+  "seconds_total": 60.551296759,
+  "tried": [
+    {
+      "hpwl_mm": 563.53,
+      "label": "input",
+      "route": {
+        "connections": 32,
+        "routed": 24,
+        "seconds": 3.74604761,
+        "unrouted": 8
+      }
+    },
+    {
+      "hpwl_mm": 386.95,
+      "label": "refine",
+      "route": {
+        "connections": 32,
+        "routed": 23,
+        "seconds": 1.915278241,
+        "unrouted": 9
+      }
+    },
+    {
+      "hpwl_mm": 365.83,
+      "label": "refine+rudy",
+      "route": {
+        "connections": 32,
+        "routed": 23,
+        "seconds": 2.0084839309999998,
+        "unrouted": 9
+      }
+    },
+    {
+      "hpwl_mm": 365.54,
+      "label": "full",
+      "route": {
+        "connections": 32,
+        "routed": 24,
+        "seconds": 2.219354484,
+        "unrouted": 8
+      }
+    },
+    {
+      "hpwl_mm": 366.46,
+      "label": "full+rudy",
+      "route": {
+        "connections": 32,
+        "routed": 23,
+        "seconds": 2.118320004,
+        "unrouted": 9
+      }
+    },
+    {
+      "hpwl_mm": 364.47,
+      "label": "round 1 re-place",
+      "route": {
+        "connections": 32,
+        "routed": 24,
+        "seconds": 2.183763427,
+        "unrouted": 8
+      }
+    }
+  ],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

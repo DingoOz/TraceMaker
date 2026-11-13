@@ -131,6 +131,14 @@ comparable (judge version, time limit, machine load).
 | [m17-pcbworld-d3](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-pcbworld-d3/summary.json) | pcbworld-d3-test | 119 | d685629 | 97.5% | 99.5% | 93.3% | 1068 |  |
 | [m17-pcbworld-fr21](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-pcbworld-fr21/summary.json) | pcbworld-d3-test | 119 |  | 61.6% | 96.1% |  | 10694 |  |
 | [m17-quick-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-quick-new/summary.json) | quick | 30 | 6cb3d65 | 83.3% | 99.0% | 100.0% | 124 | `--no-gpu` |
+| [txn-base-tierA](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-base-tierA/summary.json) | PCBench tier A | 40 | c75fcb8 | 100.0% | 100.0% | 100.0% | 781 |  |
+| [txn-base-tierB](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-base-tierB/summary.json) | PCBench tier B | 37 | ed0ca60 | 83.8% | 97.9% | 54.0% | 3803 |  |
+| [txn-base-tierC](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-base-tierC/summary.json) | PCBench tier C | 23 | ed0ca60 | 73.9% | 99.3% | 56.5% | 2748 |  |
+| [txn-base-tierD](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-base-tierD/summary.json) | PCBench tier D | 16 | ed0ca60 | 56.2% | 97.0% | 43.8% | 2454 |  |
+| [txn-txn-tierA](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-txn-tierA/summary.json) | PCBench tier A | 40 | c75fcb8 | 100.0% | 100.0% | 100.0% | 694 | `--txn 1` |
+| [txn-txn-tierB](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-txn-tierB/summary.json) | PCBench tier B | 35 | ed0ca60 | 85.7% | 98.0% | 57.1% | 3506 | `--txn 1` |
+| [txn-txn-tierC](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-txn-tierC/summary.json) | PCBench tier C | 21 | ed0ca60 | 76.2% | 99.7% | 57.1% | 2269 | `--txn 1` |
+| [txn-txn-tierD](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-txn-tierD/summary.json) | PCBench tier D | 17 | ed0ca60 | 47.1% | 97.5% | 41.2% | 3263 | `--txn 1` |
 
 ## m20-c2
 
@@ -296,6 +304,15 @@ comparable (judge version, time limit, machine load).
 | [lm-m22headsse](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22headsse/summary.json) | lm10 | 10 | 05a5e77 | 0.0% | 86.9% | 0.0% | 6679 | `--fanout-heads 5 --via-shove --escape-all` |
 | [lm-m22shove](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22shove/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 86.8% | 0.0% | 7139 | `--via-shove` |
 | [lm-m22shovee](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22shovee/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 87.2% | 0.0% | 6918 | `--via-shove --escape-all` |
+
+## m22-plane
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m22-plane)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [m22p-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-plane/base/summary.json) | pcbench-bd-fail | 33 | 816634e | 3.0% | 91.0% | 12.1% | 8286 |  |
+| [m22p-plane](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-plane/plane/summary.json) | pcbench-bd-fail | 32 | 816634e | 3.1% | 90.9% | 12.5% | 8098 | `--plane-informed` |
 
 ## m23-throughput
 

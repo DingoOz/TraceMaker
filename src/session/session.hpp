@@ -59,6 +59,10 @@ class Session {
   // FNV-1a 64 of the current state's session copper in canonical order (a digest, not a cryptographic hash).
   std::string state_digest() const;
   const model::Board& base() const { return lb_.board; }
+  // The session copper the current state has and `from_state` does not, in the --emit-items layout (layer and net by name, nm), and under
+  // "removed" what `from_state` has and the current state does not (a rip or an undo). For a client that mirrors the session onto an open
+  // board (the KiCad plugin through the daemon, doc 19 §10). Throws std::out_of_range for an unknown state.
+  nlohmann::json copper_diff(int from_state) const;
   long work_used() const { return work_used_; }
 
  private:

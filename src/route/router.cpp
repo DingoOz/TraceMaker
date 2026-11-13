@@ -1836,11 +1836,14 @@ struct Router::Impl {
       const Point p = at(gx, gy);
       if (zone_target) {
         if (!opt.plane_informed || zone_box.empty()) return std::int64_t{0};  // plane anywhere nearby: no useful lower bound
-        // --plane-informed: octile distance to the plane's bounding box, a lower bound on the steps to any cell inside it.
+        // --plane-informed: octile distance to the plane's bounding box, a lower bound on the steps to any cell inside it. A state on another
+        // layer must also change layer once: every layer change costs at least via_cost (through: via_cost + a non-negative extra; blind or
+        // micro: 3/2 of it), and the plane is the only target (no target cells), so the bound stays admissible and consistent (D155 item 4).
         const std::int64_t bx = std::max<std::int64_t>({0, zone_box.x0 - p.x, p.x - zone_box.x1});
         const std::int64_t by = std::max<std::int64_t>({0, zone_box.y0 - p.y, p.y - zone_box.y1});
         const std::int64_t zmn = std::min(bx, by), zmx = std::max(bx, by);
-        return static_cast<std::int64_t>(static_cast<double>((zmx - zmn) + zmn * diag / step) * hweight);
+        const std::int64_t off_layer = fl != zone_layer ? via_cost : 0;
+        return static_cast<std::int64_t>(static_cast<double>((zmx - zmn) + zmn * diag / step + off_layer) * hweight);
       }
       const std::int64_t dx = std::llabs(p.x - tp.x), dy = std::llabs(p.y - tp.y);
       const std::int64_t mn = std::min(dx, dy), mx = std::max(dx, dy);
