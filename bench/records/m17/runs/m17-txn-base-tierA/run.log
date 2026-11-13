@@ -1,0 +1,61 @@
+run txn-base-tierA: 40 boards, tier A, 120 s per board, 3 jobs
+CLEAN CubeSAT-Reaction-Wheel_Edison_Motor_Servo    routed 8/8 unconn 0 added {} 0.8s  FR-RC12 clean=True
+CLEAN C-BISCUIT_buck-reg-5v                        routed 55/55 unconn 0 added {} 4.8s  FR-RC12 clean=True
+CLEAN Dekada_dekada_TopoR_curves                   routed 117/117 unconn 0 added {} 0.7s  FR-RC12 clean=True
+CLEAN ESP_WiFiSwitch_WifiSwitch                    routed 22/22 unconn 0 added {} 11.6s  FR-RC12 clean=True
+CLEAN ESP8266-MQTT-battery-monitor-hw_battery-moni routed 95/95 unconn 0 added {} 15.7s  FR-RC12 clean=True
+CLEAN HES-V2__autosave-hes                         routed 36/36 unconn 0 added {} 0.7s  FR-RC12 clean=True
+CLEAN Hardware_Playground_rpi_zero_ws2812          routed 46/46 unconn 0 added {} 1.0s  FR-RC12 clean=True
+CLEAN 655_testboard                                routed 57/57 unconn 0 added {} 29.0s  FR-RC12 clean=True
+CLEAN Inkjet__autosave-InkjetDriver                routed 65/65 unconn 0 added {} 42.2s  FR-RC12 clean=True
+CLEAN Photodiode_dethead                           routed 40/40 unconn 0 added {} 1.1s  FR-RC12 clean=True
+CLEAN Hangul-Clock_Hangul                          routed 209/209 unconn 0 added {} 58.4s  FR-RC12 clean=True
+CLEAN QRPCard_QRPCard                              routed 92/92 unconn 0 added {} 12.6s  FR-RC12 clean=True
+CLEAN TTNEnschedeMote_ArduinoNanoRN2483            routed 52/52 unconn 0 added {} 9.5s  FR-RC12 clean=True
+CLEAN LogicBoxen_LogicBoxen                        routed 116/116 unconn 0 added {} 70.7s  FR-RC12 clean=True
+CLEAN WordClock_v2.0_WordClock_v2                  routed 50/50 unconn 0 added {} 6.7s  FR-RC12 clean=True
+CLEAN breakout-boards_swd-and-uart                 routed 11/11 unconn 0 added {} 7.5s  FR-RC12 clean=True
+CLEAN SmartLaserCO2-PCB__autosave-SmartLaserShield routed 107/107 unconn 0 added {} 37.9s  FR-RC12 clean=True
+CLEAN devttys0_IRis                                routed 52/52 unconn 0 added {} 3.4s  FR-RC12 clean=True
+CLEAN esp-serial-terminal_esp-com                  routed 59/59 unconn 0 added {} 9.3s  FR-RC12 clean=True
+CLEAN esp8266_envmonitor_environment-monitor-1.2   routed 32/32 unconn 0 added {} 7.7s  FR-RC12 clean=True
+CLEAN atmel-programmer_atmel_programmer            routed 39/39 unconn 0 added {} 70.2s  FR-RC12 clean=True
+CLEAN kika-in-space_DS8500                         routed 44/44 unconn 0 added {} 1.8s  FR-RC12 clean=True
+CLEAN fan_controller_fan_controller                routed 115/115 unconn 0 added {} 22.5s  FR-RC12 clean=True
+CLEAN kitspace_4_switch_array                      routed 24/24 unconn 0 added {} 0.8s  FR-RC12 clean=True
+CLEAN custom_cpu--ALU_custom_cpu--ALU              routed 83/83 unconn 0 added {} 58.9s  FR-RC12 clean=True
+CLEAN kitspace_8_switch_array                      routed 54/54 unconn 0 added {} 1.8s  FR-RC12 clean=True
+CLEAN kitspace_Potentiometer_mount_4LED            routed 8/8 unconn 0 added {} 2.1s  FR-RC12 clean=True
+CLEAN kitspace_pmt_combiner                        routed 35/35 unconn 0 added {} 6.0s  FR-RC12 clean=True
+CLEAN komputer-klavier_KomputerKlavier             routed 87/87 unconn 0 added {} 8.9s  FR-RC12 clean=True
+CLEAN mearm-base-pcb_ServoPCB                      routed 14/14 unconn 0 added {} 3.7s  FR-RC12 clean=True
+CLEAN kitspace_threeboard                          routed 119/119 unconn 0 added {} 43.3s  FR-RC12 clean=True
+CLEAN mini-whip_mini-whip-power-feed               routed 23/23 unconn 0 added {} 4.5s  FR-RC12 clean=True
+CLEAN mechkeys_1800-controller                     routed 166/166 unconn 0 added {} 21.5s  FR-RC12 clean=True
+CLEAN opentilt_opentilt1                           routed 24/24 unconn 0 added {} 10.3s  FR-RC12 clean=True
+CLEAN phone_rtty_interface_phone_rtty_rev_a        routed 61/61 unconn 0 added {} 1.1s  FR-RC12 clean=True
+CLEAN scimpy_volumebuffer                          routed 67/67 unconn 0 added {} 16.6s  FR-RC12 clean=True
+CLEAN spisolator_spisolator                        routed 31/31 unconn 0 added {} 6.1s  FR-RC12 clean=True
+CLEAN mosavr_pcie1x_backplane                      routed 110/110 unconn 0 added {} 42.1s  FR-RC12 clean=True
+CLEAN uC3Moy_uC3Moy                                routed 41/41 unconn 0 added {} 6.5s  FR-RC12 clean=True
+CLEAN kitspace_aquarius                            routed 171/171 unconn 0 added {} 120.9s  FR-RC12 clean=True
+# Benchmark txn-base-tierA
+
+PCBench tier A, 40 boards, 120 s per board.
+
+| Metric | TraceMaker | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |
+|---|--:|--:|--:|
+| Clean pass (KiCad DRC) | 100.0% | 100.0% | 87.5% |
+| Mean completion | 100.0% | | |
+| Route CPU time, all boards | 3,073 s | | |
+
+Both clean: 40; only TraceMaker: 0; only Freerouting: 0.
+Boards with added DRC errors: 0 ({}).
+
+Style of the routed copper (doc 05 §39, informational):
+
+| Routing | Boards | Bends per connection | Acute angles | Stair-steps | Short segments | Off-angle segments | Detour ratio | Long detours |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|
+| TraceMaker | 40 | 0.84 | 0 | 35 | 442 | 702 | 1.059 | 51 |
+| TraceMaker, boards with a reference | 40 | 0.84 | 0 | 35 | 442 | 702 | 1.059 | 51 |
+| Reference routing | 40 | 1.20 | 76 | 230 | 2044 | 611 | 1.107 | 90 |

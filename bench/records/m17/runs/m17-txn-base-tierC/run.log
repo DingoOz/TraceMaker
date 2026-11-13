@@ -1,0 +1,51 @@
+run txn-base-tierC: 30 boards, tier C, 120 s per board, 3 jobs
+CLEAN Apple-M0110-BT_Apple M0110                   routed 224/224 unconn 0 added {} 45.6s  FR-RC12 clean=True
+CLEAN BUF-DiffToSE-ADAU1966_BUF-DiffToSE-ADAU1966  routed 307/307 unconn 0 added {} 24.6s  FR-RC12 clean=True
+CLEAN AmpOne_dev-AmpOne                            routed 321/321 unconn 0 added {} 88.2s  FR-RC12 clean=True
+CLEAN Biscay_Blueeye_sipm                          routed 306/306 unconn 0 added {} 120.4s  FR-RC12 clean=True
+ERR   96boards-robomezzi_96boards-robomezzi        routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+CLEAN Hardware_Playground_multisensor_cr2032       routed 205/205 unconn 0 added {} 11.7s  FR-RC12 clean=False
+ERR   DronPi_dronPi                                routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+CLEAN Hardware_Playground_usb_shield               routed 211/211 unconn 0 added {} 7.9s  FR-RC12 clean=True
+CLEAN Horticulture_Light_EQ_3-Band_3 channel led d routed 368/368 unconn 0 added {} 68.9s  FR-RC12 clean=True
+      ErgodoneWithHole_ErgoDone                    routed 354/356 unconn 2 added {} 416.2s  FR-RC12 clean=False
+      Microdox-PCB_Microdox                        routed 223/223 unconn 0 added {} 81.6s  FR-RC12 clean=False
+      Microdox-PCB_Microdox-topMCU                 routed 216/216 unconn 0 added {} 85.3s  FR-RC12 clean=False
+ERR   Hardware_Playground_sd_wav_pcm5100           routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+CLEAN Paperino_HW_paperino_breakout                routed 11/11 unconn 0 added {} 0.9s  FR-RC12 clean=True
+CLEAN TripleDelay2399_TripleDelay2399              routed 256/256 unconn 0 added {} 22.5s  FR-RC12 clean=True
+CLEAN draco_draco                                  routed 418/418 unconn 0 added {} 121.0s  FR-RC12 clean=False
+      P8000_WDC_Emulator_P8000_WDC_Emulator        routed 336/361 unconn 25 added {} 378.5s  FR-RC12 clean=True
+ERR   PCIE-to-MXM-Adapter_PCIEx1toMXM3.0           routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=True
+CLEAN jadonk_PocketBone                            routed 202/202 unconn 0 added {} 121.0s  FR-RC12 clean=False
+CLEAN kitspace_40-channel-hv-switching-board       routed 604/604 unconn 0 added {} 120.3s  FR-RC12 clean=True
+CLEAN kitspace_PSLab                               routed 339/339 unconn 0 added {} 121.4s  FR-RC12 clean=True
+CLEAN kitspace_dropbot_control_board               routed 307/307 unconn 0 added {} 123.9s  FR-RC12 clean=False
+CLEAN mechkeys_58r-mxalps                          routed 361/361 unconn 0 added {} 123.3s  FR-RC12 clean=False
+CLEAN mechkeys_MF68+10                             routed 415/415 unconn 0 added {} 123.2s  FR-RC12 clean=False
+ERR   kitspace_d20_tri_r0.3                        routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+CLEAN tiny-8088_Computer                           routed 284/284 unconn 0 added {} 120.1s  FR-RC12 clean=True
+      wordclock_ledboard2                          routed 310/310 unconn 0 added {} 15.2s  FR-RC12 clean=True
+ERR   motor-high-current-sensors_CurrentSensorPCB_ routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+ERR   rvi_v2x_hardware_V2X                         routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+      zx-sizif-512-ext_sizif512ext                 routed 454/498 unconn 44 added {} 406.2s  FR-RC12 clean=False
+# Benchmark txn-base-tierC
+
+PCBench tier C, 23 boards, 120 s per board.
+
+| Metric | TraceMaker | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |
+|---|--:|--:|--:|
+| Clean pass (KiCad DRC) | 73.9% | 56.5% | 21.7% |
+| Mean completion | 99.3% | | |
+| Route CPU time, all boards | 16,895 s | | |
+
+Both clean: 11; only TraceMaker: 6; only Freerouting: 2.
+Boards with added DRC errors: 0 ({}).
+
+Style of the routed copper (doc 05 §39, informational):
+
+| Routing | Boards | Bends per connection | Acute angles | Stair-steps | Short segments | Off-angle segments | Detour ratio | Long detours |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|
+| TraceMaker | 23 | 0.81 | 0 | 27 | 1041 | 3179 | 1.074 | 132 |
+| TraceMaker, boards with a reference | 23 | 0.81 | 0 | 27 | 1041 | 3179 | 1.074 | 132 |
+| Reference routing | 23 | 1.15 | 44 | 263 | 4430 | 534 | 1.103 | 249 |

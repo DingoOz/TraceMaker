@@ -96,6 +96,34 @@ the default completes. (4) `--relax` with `--variants 1` was silently ignored un
 `bench/run.py --set quick --work 1000000 --route-args=--no-gpu --jobs 4` with the release binary against `bench/results/m18-quick-new` (main's engine): routed boards byte-identical 30/30
 (`quick-identity.md`). The only change to routing code is that the round-based options now reach the portfolio when `--variants 1` is given.
 
+## 5. `--txn 1` at equal wall time on tiers A-D (2026-11-13)
+
+Branch `roadmap-2026-11-13` (engine of `ed0ca60`; the only routing change on the branch since main is behind `--plane-informed`, which is off).
+Script `txn-tiers.sh`: both arms run at once with the same jobs, `bench/run.py --tier X --limit 40/40/30/40 --time 120 --threads 8 --jobs 3`, the second
+with `--route-args=--txn 1`. Machine shared by both arms and their Freerouting reference runs (load about 20 to 50); GPU an RTX 5060 Ti.
+
+| tier | boards run | judged in both arms | clean, base → `--txn 1` | routed on those boards | harness timeouts, base / `--txn 1` |
+|---|---:|---:|---:|---:|---:|
+| A | 40 | 40 | 40 → 40 | 2,637 → 2,637 / 2,637 | 0 / 0 |
+| B | 40 | 33 | 30 → 30 | 3,972 → 3,987 / 4,029 | 4 / 5 |
+| C | 30 | 20 | 16 → 16 | 5,981 → 5,995 / 6,025 | 7 / 9 |
+| D | 22 | 15 | 9 → 8 | 10,035 → 10,040 / 10,246 | 6 / 6 |
+| all | 132 | 108 | **95 → 94** | 22,625 → 22,659 / 22,937 | 17 / 20 |
+
+"Judged in both arms": both have a KiCad-judged result. A harness timeout is the engine still running at 3 × 120 s + 60 s; the base has 17, so the `--time` stop
+itself overruns on these boards under this load (both arms equally exposed).
+
+- Lost: `m2-electronics_m2fc` (clean → 723/724, 120 s → 412 s). Gained clean: none.
+- Largest gains, all on boards that stay open: `poncho_fpga_fpga-dongle` 389 → 404 / 413, `zx-sizif-512-ext_sizif512ext` 454 → 468 / 498,
+  `Aleste-520EX_aleste` 1,426 → 1,434 / 1,616.
+- Timed out only with `--txn 1`: EtherCAT_shield_v1, serial_gw_ATMEGA328P (clean in the base), kitspace_ardfpga, ErgoDone, P8000_WDC_Emulator,
+  mechkeys_58r-mxalps (clean in the base), LeeChee_1800, mechkeys_LFK78. Only in the base: fifogfx_c64cart, kitspace_OtterPill,
+  CurrentSensorPCB_line, Teensy_test_layout, mini_mass_prog_bench_prog_rig.
+- Tier A: 40/40 clean in both, 33/40 byte-identical, route CPU 3,073 → 2,896 s.
+
+Decision D181: `--txn 1` is not made a default variant. Per-tier tables from `bench/compare_runs.py`: `txn-tier{A,B,C,D}-compare.md`; runs in
+`runs/m17-txn-{base,txn}-tier{A,B,C,D}/` (`boards.jsonl`, `summary.json`, `run.log`).
+
 ## Files
 
 `runs/<run>/boards.jsonl` and `summary.json` of every run named above, the three tables (`pcbworld-d3.md`, `c1-single-variant.md`, `c1-portfolio8.md`), `gui-package.log`, the shell scripts of the C1

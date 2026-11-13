@@ -793,8 +793,8 @@
           "done": true
         },
         {
-          "text": "Open: --txn 1 as a portfolio variant needs tiers A-D at equal wall time before it can be a default",
-          "done": false
+          "text": "--txn 1 at equal wall time on tiers A-D: 95 -> 94 clean on 108 boards judged in both, +34 connections; stays off by default (D181, doc 10 section 11.4)",
+          "done": true
         }
       ]
     },

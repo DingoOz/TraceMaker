@@ -131,6 +131,14 @@ comparable (judge version, time limit, machine load).
 | [m17-pcbworld-d3](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-pcbworld-d3/summary.json) | pcbworld-d3-test | 119 | d685629 | 97.5% | 99.5% | 93.3% | 1068 |  |
 | [m17-pcbworld-fr21](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-pcbworld-fr21/summary.json) | pcbworld-d3-test | 119 |  | 61.6% | 96.1% |  | 10694 |  |
 | [m17-quick-new](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-quick-new/summary.json) | quick | 30 | 6cb3d65 | 83.3% | 99.0% | 100.0% | 124 | `--no-gpu` |
+| [txn-base-tierA](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-base-tierA/summary.json) | PCBench tier A | 40 | c75fcb8 | 100.0% | 100.0% | 100.0% | 781 |  |
+| [txn-base-tierB](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-base-tierB/summary.json) | PCBench tier B | 37 | ed0ca60 | 83.8% | 97.9% | 54.0% | 3803 |  |
+| [txn-base-tierC](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-base-tierC/summary.json) | PCBench tier C | 23 | ed0ca60 | 73.9% | 99.3% | 56.5% | 2748 |  |
+| [txn-base-tierD](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-base-tierD/summary.json) | PCBench tier D | 16 | ed0ca60 | 56.2% | 97.0% | 43.8% | 2454 |  |
+| [txn-txn-tierA](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-txn-tierA/summary.json) | PCBench tier A | 40 | c75fcb8 | 100.0% | 100.0% | 100.0% | 694 | `--txn 1` |
+| [txn-txn-tierB](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-txn-tierB/summary.json) | PCBench tier B | 35 | ed0ca60 | 85.7% | 98.0% | 57.1% | 3506 | `--txn 1` |
+| [txn-txn-tierC](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-txn-tierC/summary.json) | PCBench tier C | 21 | ed0ca60 | 76.2% | 99.7% | 57.1% | 2269 | `--txn 1` |
+| [txn-txn-tierD](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m17/runs/m17-txn-txn-tierD/summary.json) | PCBench tier D | 17 | ed0ca60 | 47.1% | 97.5% | 41.2% | 3263 | `--txn 1` |
 
 ## m20-c2
 

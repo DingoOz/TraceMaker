@@ -227,3 +227,4 @@
 {"ts": "2026-11-13T02:18:37+00:00", "kind": "milestone", "text": "M22 item 4 finished (D179): --plane-informed byte-identical to base on 33 pcbench-bd-fail boards at 10 M; all eight items built, gate not met"}
 {"ts": "2026-11-13T02:18:37+00:00", "kind": "milestone", "text": "M16 stage 4 built (D178): placement advice as routability seeds and ECO candidates; no gain shown on an oracle"}
 {"ts": "2026-11-13T02:18:37+00:00", "kind": "milestone", "text": "M18 daemon + KiCad 'route selected nets' (D180): 1.75 s for a 2-pad net in KiCad 10.0.6, one undo"}
+{"ts": "2026-11-13T04:17:59+00:00", "kind": "decision", "text": "M17: --txn 1 on tiers A-D at equal wall time, 95 -> 94 clean on 108 boards judged in both arms, +34 connections; stays off by default (D181)"}

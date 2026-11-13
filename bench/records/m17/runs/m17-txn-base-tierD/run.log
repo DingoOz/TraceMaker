@@ -1,0 +1,43 @@
+run txn-base-tierD: 22 boards, tier D, 120 s per board, 3 jobs
+CLEAN DSP-ADAU1452_DSP-ADAU1452                    routed 742/742 unconn 0 added {} 74.7s  FR-RC12 clean=False
+CLEAN EUC-VESC_electronics_sept                    routed 760/760 unconn 0 added {} 126.2s  FR-RC12 clean=False
+      Hardware_Playground_heater_actuator_node     routed 1039/1039 unconn 0 added {} 58.1s  FR-RC12 clean=True
+CLEAN Horticulture_Light_EQ_3-Band_light           routed 422/422 unconn 0 added {} 36.4s  FR-RC12 clean=True
+      Aleste-520EX_aleste                          routed 1426/1616 unconn 190 added {} 404.1s  FR-RC12 clean=False
+ERR   CoreOne-xCORE200-Original_CoreOne            routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+CLEAN Keyboard_PCB_Keyboard                        routed 534/534 unconn 0 added {} 124.1s  FR-RC12 clean=True
+      LeeChee_1800                                 routed 1160/1160 unconn 0 added {} 275.6s  FR-RC12 clean=False
+ERR   KiCad-Library_Teensy_test_layout             routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+      badge2016_Badge_init                         routed 76/76 unconn 0 added {} 11.6s  FR-RC12 clean=True
+ERR   MonApollo_analog-board                       routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+      TCKB_Kicad_TCKB                              routed 576/597 unconn 21 added {} 401.0s  FR-RC12 clean=False
+CLEAN m2-electronics_m2fc                          routed 724/724 unconn 0 added {} 120.3s  FR-RC12 clean=True
+ERR   dorkyboard_keyboard                          routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+ERR   front-end-modules_LimeSDR_Sony               routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=True
+CLEAN memsarray_mems_array                         routed 245/245 unconn 0 added {} 121.8s  FR-RC12 clean=True
+CLEAN newer-motor-controllers_busparts             routed 316/316 unconn 0 added {} 122.7s  FR-RC12 clean=False
+CLEAN newer-motor-controllers_si31-3               routed 316/316 unconn 0 added {} 123.1s  FR-RC12 clean=False
+      mechkeys_LFK78                               routed 861/893 unconn 32 added {} 415.8s  FR-RC12 clean=False
+      perfplusplus_Ard-perf++                      routed 886/886 unconn 0 added {} 5.7s  FR-RC12 clean=True
+CLEAN opendous_Upconverter                         routed 813/813 unconn 0 added {} 33.3s  FR-RC12 clean=False
+ERR   mini_mass_prog_bench_prog_rig                routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+# Benchmark txn-base-tierD
+
+PCBench tier D, 16 boards, 120 s per board.
+
+| Metric | TraceMaker | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |
+|---|--:|--:|--:|
+| Clean pass (KiCad DRC) | 56.2% | 43.8% | 0.0% |
+| Mean completion | 97.0% | | |
+| Route CPU time, all boards | 15,891 s | | |
+
+Both clean: 4; only TraceMaker: 5; only Freerouting: 3.
+Boards with added DRC errors: 0 ({}).
+
+Style of the routed copper (doc 05 §39, informational):
+
+| Routing | Boards | Bends per connection | Acute angles | Stair-steps | Short segments | Off-angle segments | Detour ratio | Long detours |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|
+| TraceMaker | 16 | 0.80 | 1 | 49 | 2365 | 2795 | 1.114 | 205 |
+| TraceMaker, boards with a reference | 16 | 0.80 | 1 | 49 | 2365 | 2795 | 1.114 | 205 |
+| Reference routing | 16 | 0.93 | 30 | 375 | 6125 | 805 | 1.115 | 279 |

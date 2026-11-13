@@ -1,0 +1,61 @@
+run txn-base-tierB: 40 boards, tier B, 120 s per board, 3 jobs
+CLEAN APM-RPi-Shield_APM-RPi-Shield                routed 125/125 unconn 0 added {} 58.3s  FR-RC12 clean=True
+      EtherCAT_shield_v1_EtherCAT_shield_v1        routed 246/272 unconn 25 added {} 374.2s  FR-RC12 clean=False
+CLEAN Hypfer-RGB-W-LED-Controller_led_strip_contro routed 74/74 unconn 0 added {} 23.4s  FR-RC12 clean=True
+CLEAN KiCad-Like-a-Pro-Tutorial_rf24-breakout-v1   routed 10/10 unconn 0 added {} 10.9s  FR-RC12 clean=True
+ERR   Hardware_Playground_E3_Pcb_rev0.3            routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+CLEAN NavigationThing_NavigationThing              routed 90/90 unconn 0 added {} 8.3s  FR-RC12 clean=True
+CLEAN PCB_small_halogen_replacement                routed 52/52 unconn 0 added {} 2.2s  FR-RC12 clean=False
+CLEAN ProtoHead_v4_Protohead_v4_FAB_rc1            routed 34/34 unconn 0 added {} 2.2s  FR-RC12 clean=False
+CLEAN Hardware_Playground_serial_gw_ATMEGA328P     routed 172/172 unconn 0 added {} 390.1s  FR-RC12 clean=False
+CLEAN Radio-FM-TEA5767_radio tea5767               routed 83/83 unconn 0 added {} 4.1s  FR-RC12 clean=True
+CLEAN Prototyping_Workshop_Prototyping_PCB         routed 80/80 unconn 0 added {} 20.2s  FR-RC12 clean=True
+CLEAN TPS63001-Breakout_TPS63001 Breakout 25x25    routed 26/26 unconn 0 added {} 4.3s  FR-RC12 clean=True
+CLEAN WemosLoraTracker_wemosGPSrfm                 routed 53/53 unconn 0 added {} 65.0s  FR-RC12 clean=True
+CLEAN TOBS_HybridChargeController                  routed 210/210 unconn 0 added {} 115.4s  FR-RC12 clean=True
+CLEAN avr_ledprojector_avr_ledprojection-0402      routed 176/176 unconn 0 added {} 47.2s  FR-RC12 clean=True
+CLEAN cat-trainer_teensy_base_pcb                  routed 67/67 unconn 0 added {} 41.4s  FR-RC12 clean=True
+CLEAN bumps_bumps                                  routed 330/330 unconn 0 added {} 120.7s  FR-RC12 clean=True
+CLEAN espeverywhere_espeverywhere                  routed 84/84 unconn 0 added {} 36.1s  FR-RC12 clean=True
+CLEAN digital_clock_led_clock_3_and_4_digit        routed 253/253 unconn 0 added {} 104.7s  FR-RC12 clean=True
+CLEAN gamelights_leds                              routed 30/30 unconn 0 added {} 4.8s  FR-RC12 clean=False
+CLEAN kitspace_BalthazarPSU3                       routed 204/204 unconn 0 added {} 20.5s  FR-RC12 clean=False
+ERR   MicroMaple_MicroMaple                        routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+CLEAN kitspace_USBI2C01                            routed 73/73 unconn 0 added {} 13.3s  FR-RC12 clean=False
+ERR   fifogfx_c64cart                              routed ?/? unconn 40 added {} 0.0s  FR-RC12 clean=True
+ERR   kitspace_OtterPill                           routed ?/? unconn ? added {} 0.0s  FR-RC12 clean=False
+CLEAN kitspace_sympetrum-v2%20FF1.1                routed 146/146 unconn 0 added {} 55.0s  FR-RC12 clean=False
+      kitspace_ardfpga                             routed 210/214 unconn 4 added {} 389.4s  FR-RC12 clean=False
+CLEAN kitspace_sympetrum-v2%20NFF1.1               routed 115/115 unconn 0 added {} 50.4s  FR-RC12 clean=False
+CLEAN kitspace_teensy-fx                           routed 196/196 unconn 0 added {} 277.7s  FR-RC12 clean=False
+      memsarray_mems_modules                       routed 9/10 unconn 1 added {} 255.9s  FR-RC12 clean=False
+CLEAN motor-3xdrv8833-hw_ver1                      routed 195/195 unconn 0 added {} 120.3s  FR-RC12 clean=True
+CLEAN ourglass__autosave-watch-v4                  routed 134/134 unconn 0 added {} 120.1s  FR-RC12 clean=True
+      kitspace_test-jig                            routed 260/292 unconn 32 added {} 407.7s  FR-RC12 clean=False
+CLEAN royer_royer                                  routed 46/46 unconn 0 added {} 1.4s  FR-RC12 clean=True
+CLEAN rxadc_14_rxadc_14                            routed 124/124 unconn 0 added {} 32.5s  FR-RC12 clean=False
+CLEAN retroreflectors_SALSAFLOCK                   routed 40/40 unconn 0 added {} 64.5s  FR-RC12 clean=False
+CLEAN wavegen_wavegen                              routed 140/140 unconn 0 added {} 69.3s  FR-RC12 clean=False
+CLEAN yamsek.kicad_i2c_bridge_primary              routed 34/34 unconn 0 added {} 7.5s  FR-RC12 clean=True
+CLEAN scimpy_amp                                   routed 90/90 unconn 0 added {} 95.3s  FR-RC12 clean=True
+      poncho_fpga_fpga-dongle                      routed 389/413 unconn 24 added {} 388.9s  FR-RC12 clean=False
+# Benchmark txn-base-tierB
+
+PCBench tier B, 37 boards, 120 s per board.
+
+| Metric | TraceMaker | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |
+|---|--:|--:|--:|
+| Clean pass (KiCad DRC) | 83.8% | 54.0% | 13.5% |
+| Mean completion | 97.9% | | |
+| Route CPU time, all boards | 21,971 s | | |
+
+Both clean: 19; only TraceMaker: 12; only Freerouting: 1.
+Boards with added DRC errors: 0 ({}).
+
+Style of the routed copper (doc 05 §39, informational):
+
+| Routing | Boards | Bends per connection | Acute angles | Stair-steps | Short segments | Off-angle segments | Detour ratio | Long detours |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|
+| TraceMaker | 36 | 0.88 | 2 | 40 | 998 | 2472 | 1.117 | 191 |
+| TraceMaker, boards with a reference | 36 | 0.88 | 2 | 40 | 998 | 2472 | 1.117 | 191 |
+| Reference routing | 36 | 1.13 | 36 | 291 | 3874 | 853 | 1.147 | 219 |
