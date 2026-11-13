@@ -1,0 +1,442 @@
+{
+  "after": {
+    "conflicts": [],
+    "crossings": 0,
+    "fixed_outside": 4,
+    "fixed_overlaps": 0,
+    "flipped": 0,
+    "hpwl_mm": 34.377,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 0,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 14.7165
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [],
+    "crossings": 0,
+    "fixed_outside": 4,
+    "fixed_overlaps": 0,
+    "flipped": 0,
+    "hpwl_mm": 34.377,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 0,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 14.7165
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 2.787743890888426,
+    "lb_any_rotation_mm": 5.279,
+    "lb_fixed_rotation_mm": 5.4990000000000006,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "closure": {
+    "accepted": 0,
+    "arms": {
+      "far": {
+        "pulls": 10,
+        "wins": 0
+      },
+      "flip": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "replace": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "room": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "rotate": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "shift": {
+        "pulls": 12,
+        "wins": 0
+      },
+      "swap": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "window": {
+        "pulls": 4,
+        "wins": 0
+      }
+    },
+    "prior": null,
+    "routes": 34,
+    "stop": "no candidates",
+    "trials": [
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift +y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "rotate",
+        "before": 1,
+        "escalated": false,
+        "what": "C1 rotate 180"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "far",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift +y 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "window",
+        "before": 1,
+        "escalated": false,
+        "what": "re-place 2 parts around the failures (seed 1)"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "replace",
+        "before": 1,
+        "escalated": false,
+        "what": "new placement of the whole board (1)"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift +x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "window",
+        "before": 1,
+        "escalated": true,
+        "what": "re-place 2 parts around the failures (seed 2)"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "rotate",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 rotate 90"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "far",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift +y 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "replace",
+        "before": 1,
+        "escalated": false,
+        "what": "new placement of the whole board (2)"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "window",
+        "before": 1,
+        "escalated": true,
+        "what": "re-place 2 parts around the failures (seed 3)"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift +y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "rotate",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 rotate 270"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "far",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift +x 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "replace",
+        "before": 1,
+        "escalated": true,
+        "what": "new placement of the whole board (3)"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift +x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "rotate",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 rotate 180"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "far",
+        "before": 1,
+        "escalated": false,
+        "what": "C1 shift -y 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "window",
+        "before": 1,
+        "escalated": true,
+        "what": "re-place 2 parts around the failures (seed 4)"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "C1 shift -y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "replace",
+        "before": 1,
+        "escalated": false,
+        "what": "new placement of the whole board (4)"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "far",
+        "before": 1,
+        "escalated": false,
+        "what": "C1 shift -y 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "C1 shift +y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "far",
+        "before": 1,
+        "escalated": false,
+        "what": "C1 shift +y 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "C1 shift -y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "far",
+        "before": 1,
+        "escalated": false,
+        "what": "C1 shift +y 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "C1 shift +y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "far",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift +x 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift -y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "far",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift -y 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "C1 shift +x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "far",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift -y 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift -x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "MIC1 shift -y 1.00 mm"
+      }
+    ]
+  },
+  "fixed_parts": [
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P1"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P2"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/memsarray_mems_modules/unrouted.kicad_pcb",
+  "kept": "input",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "closure",
+  "movable": 2,
+  "moved": 0,
+  "nets": 4,
+  "notes": [],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/closure-place10m/boards/memsarray_mems_modules.placed.kicad_pcb",
+  "parts": 6,
+  "pins": 14,
+  "rounds": 0,
+  "route_check": {
+    "connections": 10,
+    "connections_input": 10,
+    "connections_output": 10,
+    "kept_input": true,
+    "routed_input": 9,
+    "routed_output": 9,
+    "work": 10000000
+  },
+  "route_input": {
+    "connections": 10,
+    "routed": 9,
+    "seconds": 7.977868442,
+    "unrouted": 1
+  },
+  "route_output": {
+    "connections": 10,
+    "routed": 9,
+    "seconds": 7.977868442,
+    "unrouted": 1
+  },
+  "routes": 35,
+  "seconds": {},
+  "seconds_total": 162.623355743,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

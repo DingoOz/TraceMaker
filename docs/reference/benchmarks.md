@@ -370,6 +370,18 @@ comparable (judge version, time limit, machine load).
 |---|---|--:|---|--:|--:|--:|--:|---|
 | [m23-quick-split](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-throughput/quick-split/summary.json) | quick | 30 | 34c30cb | 86.7% | 99.3% | 100.0% | 114 |  |
 
+## m24-closure
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m24-closure)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [closure-human10m](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m24-closure/closure-human10m/summary.json) | closure-eval | 14 | 975cb00 | 0.0% | 95.8% | 14.3% | 1596 |  |
+| [closure-human40m](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m24-closure/closure-human40m/summary.json) | closure-eval | 14 | 975cb00 | 21.4% | 96.5% | 14.3% | 3119 |  |
+| [closure-place10m](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m24-closure/closure-place10m/summary.json) | closure-eval + placement (closure) | 14 | 975cb00 | 0.0% | 96.1% | 14.3% | 1055 |  |
+| [closure-route10m](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m24-closure/closure-route10m/summary.json) | closure-eval + placement (closure) | 14 | 975cb00 | 21.4% | 96.6% | 14.3% | 1049 |  |
+| [closure-route10m-then40m](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m24-closure/closure-route10m-then40m/summary.json) | closure-eval | 14 | 975cb00 | 28.6% | 96.8% | 14.3% | 3648 |  |
+
 ## macos15
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/macos15)

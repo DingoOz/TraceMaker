@@ -1,0 +1,2310 @@
+{
+  "after": {
+    "conflicts": [
+      "GND_VIA_240/open harware",
+      "GND_VIA_239/open harware",
+      "GND_VIA_237/open harware",
+      "GND_VIA_199/R47",
+      "GND_VIA_195/R47",
+      "GND_VIA_194/R48",
+      "GND_VIA_182/R42",
+      "GND_VIA_172/C23",
+      "GND_VIA_171/U7",
+      "GND_VIA_170/C31",
+      "GND_VIA_169/C22",
+      "GND_VIA_168/R2",
+      "GND_VIA_166/C19",
+      "GND_VIA_165/R11",
+      "GND_VIA_164/FB1",
+      "GND_VIA_164/R11",
+      "GND_VIA_163/C9",
+      "GND_VIA_162/R9",
+      "GND_VIA_161/R21",
+      "GND_VIA_160/FB1",
+      "GND_VIA_159/L12",
+      "GND_VIA_156/SW2",
+      "GND_VIA_155/SW1",
+      "GND_VIA_154/U5",
+      "GND_VIA_153/R12",
+      "GND_VIA_153/U6",
+      "GND_VIA_152/U6",
+      "GND_VIA_151/U8",
+      "GND_VIA_150/U8",
+      "GND_VIA_149/R22",
+      "GND_VIA_148/C28",
+      "GND_VIA_147/U9",
+      "GND_VIA_147/R22",
+      "GND_VIA_146/C27",
+      "GND_VIA_145/U4",
+      "GND_VIA_144/C19",
+      "GND_VIA_143/FB1",
+      "GND_VIA_143/U4",
+      "GND_VIA_142/C12",
+      "GND_VIA_141/R23",
+      "GND_VIA_140/R23",
+      "GND_VIA_139/C26",
+      "GND_VIA_138/C26",
+      "GND_VIA_137/C30",
+      "GND_VIA_136/C30",
+      "GND_VIA_135/C26",
+      "GND_VIA_135/U8",
+      "GND_VIA_134/C26",
+      "GND_VIA_133/C11",
+      "GND_VIA_132/C14",
+      "GND_VIA_131/C21",
+      "GND_VIA_131/R51",
+      "GND_VIA_131/R64",
+      "GND_VIA_129/FB3",
+      "GND_VIA_129/C11",
+      "GND_VIA_128/C11",
+      "GND_VIA_127/C75",
+      "GND_VIA_126/C38",
+      "GND_VIA_125/C103",
+      "GND_VIA_124/R30",
+      "GND_VIA_124/C34",
+      "GND_VIA_123/R30",
+      "GND_VIA_123/R24",
+      "GND_VIA_122/R30",
+      "GND_VIA_121/FB1",
+      "GND_VIA_120/FB1",
+      "GND_VIA_119/C9",
+      "GND_VIA_118/FB1",
+      "GND_VIA_117/FB3",
+      "GND_VIA_116/FB3",
+      "GND_VIA_115/FB3",
+      "GND_VIA_114/FB3",
+      "GND_VIA_112/R44",
+      "GND_VIA_111/C114",
+      "GND_VIA_110/SW1",
+      "GND_VIA_110/C110",
+      "GND_VIA_109/C111",
+      "GND_VIA_108/R12",
+      "GND_VIA_107/R12",
+      "GND_VIA_106/R34",
+      "GND_VIA_106/R35",
+      "GND_VIA_104/R12",
+      "GND_VIA_103/R44",
+      "GND_VIA_101/C26",
+      "GND_VIA_100/C26",
+      "GND_VIA_99/R13",
+      "GND_VIA_98/R13",
+      "GND_VIA_97/C26",
+      "GND_VIA_96/C20",
+      "GND_VIA_96/U5",
+      "GND_VIA_95/C20",
+      "GND_VIA_89/R42",
+      "GND_VIA_88/C106",
+      "GND_VIA_86/R42",
+      "GND_VIA_83/C10",
+      "GND_VIA_83/J3",
+      "GND_VIA_82/C13",
+      "GND_VIA_82/J3",
+      "GND_VIA_81/U18",
+      "GND_VIA_80/J3",
+      "GND_VIA_79/LD1",
+      "GND_VIA_76/LD1",
+      "GND_VIA_75/R3",
+      "GND_VIA_75/R13",
+      "GND_VIA_73/XT1",
+      "GND_VIA_72/XT1",
+      "GND_VIA_71/C115",
+      "GND_VIA_70/C108",
+      "GND_VIA_69/XT1",
+      "GND_VIA_68/C108",
+      "GND_VIA_68/R36",
+      "GND_VIA_68/LD1",
+      "GND_VIA_67/XT1",
+      "GND_VIA_66/C114",
+      "GND_VIA_66/C115",
+      "X7/C69",
+      "GND_VIA_64/U3",
+      "GND_VIA_63/R1",
+      "GND_VIA_63/U3",
+      "GND_VIA_62/C17",
+      "GND_VIA_62/U3",
+      "GND_VIA_61/U3",
+      "GND_VIA_55/FB2",
+      "GND_VIA_54/C10",
+      "GND_VIA_54/J3",
+      "GND_VIA_53/LD1",
+      "GND_VIA_52/C66",
+      "GND_VIA_51/C66",
+      "GND_VIA_51/C64",
+      "GND_VIA_50/C62",
+      "GND_VIA_50/C53",
+      "GND_VIA_49/C64",
+      "GND_VIA_49/C62",
+      "GND_VIA_48/C53",
+      "GND_VIA_48/L8",
+      "GND_VIA_47/C53",
+      "GND_VIA_47/L6",
+      "GND_VIA_47/L8",
+      "GND_VIA_42/C49",
+      "GND_VIA_40/R18",
+      "GND_VIA_39/R18",
+      "GND_VIA_35/C91",
+      "GND_VIA_35/C100",
+      "GND_VIA_34/C91",
+      "GND_VIA_33/C91",
+      "GND_VIA_33/L15",
+      "GND_VIA_32/C91",
+      "GND_VIA_32/L17",
+      "GND_VIA_32/L15",
+      "GND_VIA_31/L20",
+      "GND_VIA_31/L19",
+      "GND_VIA_30/C91",
+      "GND_VIA_30/L16",
+      "GND_VIA_29/C91",
+      "GND_VIA_29/C100",
+      "GND_VIA_29/L20",
+      "GND_VIA_26/R27",
+      "GND_VIA_24/C41",
+      "GND_VIA_20/C97",
+      "GND_VIA_12/C59",
+      "GND_VIA_10/C51",
+      "GND_VIA_5/C88",
+      "GND_VIA/C91",
+      "FB2/C13",
+      "R30/C30",
+      "R24/R23",
+      "R3/R7",
+      "R3/R13",
+      "FB3/C14",
+      "FB3/C11",
+      "C21/R8",
+      "C19/R11",
+      "C35/L5",
+      "C35/U11",
+      "C35/C48",
+      "C45/U12",
+      "C80/U16",
+      "C71/U14",
+      "C95/U17",
+      "C79/C81",
+      "C79/C72",
+      "C81/C72",
+      "C81/C84",
+      "C81/L14",
+      "C66/C64",
+      "C66/C65",
+      "C64/C62",
+      "C64/C65",
+      "C24/R25",
+      "C28/C27",
+      "C22/C31",
+      "C58/L9",
+      "C86/C87",
+      "C86/R19",
+      "C57/C55",
+      "C57/L10",
+      "C57/U12",
+      "C39/L4",
+      "C39/U11",
+      "C38/U10",
+      "C67/U13",
+      "C103/U17",
+      "C96/L18",
+      "C91/L17",
+      "C91/L16",
+      "C25/U7",
+      "C92/C89",
+      "C92/L19",
+      "C92/U16",
+      "C76/L13",
+      "C76/U15",
+      "C75/U14",
+      "C78/R17",
+      "C72/C84",
+      "C72/C85",
+      "C72/L14",
+      "C84/L14",
+      "C85/L14",
+      "C105/X8",
+      "C83/U15",
+      "C100/C102",
+      "C100/L20",
+      "C102/C104",
+      "C102/L20",
+      "C102/C98",
+      "C104/C98",
+      "C90/C93",
+      "C93/C94",
+      "C97/C99",
+      "C97/R15",
+      "C99/C101",
+      "C88/C87",
+      "C53/L6",
+      "C53/L7",
+      "C53/L8",
+      "C42/C44",
+      "C60/U13",
+      "C34/U10",
+      "C43/L5",
+      "C9/FB1",
+      "C44/C47",
+      "C44/L5",
+      "C52/C54",
+      "C47/L5",
+      "C49/C50",
+      "C49/R31",
+      "C50/C51",
+      "C54/C56",
+      "C63/C61",
+      "C59/C61",
+      "R28/R26",
+      "R26/R21",
+      "R26/R20",
+      "R10/U7",
+      "R21/R20",
+      "R21/C29",
+      "R27/R29",
+      "R20/C29",
+      "R6/R2",
+      "R31/R25",
+      "L3/U10",
+      "L3/C36",
+      "L12/U14",
+      "L12/C73",
+      "L4/U11",
+      "L20/U17",
+      "L20/C98",
+      "L6/L7",
+      "L6/L8",
+      "L6/U12",
+      "L11/U13",
+      "L11/C65",
+      "L14/U16",
+      "L7/L10",
+      "L7/L8",
+      "L7/U12",
+      "L8/U12",
+      "L5/U12",
+      "L5/C48",
+      "L17/L15",
+      "L17/L16",
+      "L17/U16",
+      "L15/L16",
+      "L15/U16",
+      "L16/L19",
+      "L16/U16",
+      "L13/U15",
+      "U10/C36",
+      "U13/C65",
+      "U11/C46",
+      "U14/C73",
+      "U17/C98",
+      "C68/X6",
+      "C32/X5",
+      "C16/C15",
+      "C16/C17",
+      "C16/U3",
+      "C18/R5",
+      "C18/R9",
+      "C15/C17",
+      "C15/R5",
+      "C15/U3",
+      "C17/U3",
+      "R5/U3",
+      "R5/R9",
+      "R19/R16",
+      "R15/R17",
+      "C107/R34",
+      "C107/R35",
+      "C109/R41",
+      "C110/R43",
+      "C114/C115",
+      "R34/R35",
+      "R34/U19",
+      "R39/R33",
+      "J1/R32",
+      "J1/R33",
+      "R32/R33",
+      "open harware/outline",
+      "R35/outline"
+    ],
+    "crossings": 239,
+    "fixed_outside": 36,
+    "fixed_overlaps": 334,
+    "flipped": 0,
+    "hpwl_mm": 1279.030195,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 2,
+    "overlaps": 318,
+    "side_vias": 150,
+    "weighted_hpwl_mm": 1288.4087181999998
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [
+      "GND_VIA_240/open harware",
+      "GND_VIA_239/open harware",
+      "GND_VIA_237/open harware",
+      "GND_VIA_199/R47",
+      "GND_VIA_195/R47",
+      "GND_VIA_194/R48",
+      "GND_VIA_182/R42",
+      "GND_VIA_172/C23",
+      "GND_VIA_171/U7",
+      "GND_VIA_170/C31",
+      "GND_VIA_169/C22",
+      "GND_VIA_168/R2",
+      "GND_VIA_166/C19",
+      "GND_VIA_165/R11",
+      "GND_VIA_164/FB1",
+      "GND_VIA_164/R11",
+      "GND_VIA_163/C9",
+      "GND_VIA_162/R9",
+      "GND_VIA_161/R21",
+      "GND_VIA_160/FB1",
+      "GND_VIA_159/L12",
+      "GND_VIA_156/SW2",
+      "GND_VIA_155/SW1",
+      "GND_VIA_154/U5",
+      "GND_VIA_153/R12",
+      "GND_VIA_153/U6",
+      "GND_VIA_152/U6",
+      "GND_VIA_151/U8",
+      "GND_VIA_150/U8",
+      "GND_VIA_149/R22",
+      "GND_VIA_148/C28",
+      "GND_VIA_147/U9",
+      "GND_VIA_147/R22",
+      "GND_VIA_146/C27",
+      "GND_VIA_145/U4",
+      "GND_VIA_144/C19",
+      "GND_VIA_143/FB1",
+      "GND_VIA_143/U4",
+      "GND_VIA_142/C12",
+      "GND_VIA_141/R23",
+      "GND_VIA_140/R23",
+      "GND_VIA_139/C26",
+      "GND_VIA_138/C26",
+      "GND_VIA_137/C30",
+      "GND_VIA_136/C30",
+      "GND_VIA_135/C26",
+      "GND_VIA_135/U8",
+      "GND_VIA_134/C26",
+      "GND_VIA_133/C11",
+      "GND_VIA_132/C14",
+      "GND_VIA_131/C21",
+      "GND_VIA_131/R51",
+      "GND_VIA_131/R64",
+      "GND_VIA_129/FB3",
+      "GND_VIA_129/C11",
+      "GND_VIA_128/C11",
+      "GND_VIA_127/C75",
+      "GND_VIA_126/C38",
+      "GND_VIA_125/C103",
+      "GND_VIA_124/R30",
+      "GND_VIA_124/C34",
+      "GND_VIA_123/R30",
+      "GND_VIA_123/R24",
+      "GND_VIA_122/R30",
+      "GND_VIA_121/FB1",
+      "GND_VIA_120/FB1",
+      "GND_VIA_119/C9",
+      "GND_VIA_118/FB1",
+      "GND_VIA_117/FB3",
+      "GND_VIA_116/FB3",
+      "GND_VIA_115/FB3",
+      "GND_VIA_114/FB3",
+      "GND_VIA_112/R44",
+      "GND_VIA_111/C114",
+      "GND_VIA_110/SW1",
+      "GND_VIA_110/C110",
+      "GND_VIA_109/C111",
+      "GND_VIA_108/R12",
+      "GND_VIA_107/R12",
+      "GND_VIA_106/R34",
+      "GND_VIA_106/R35",
+      "GND_VIA_104/R12",
+      "GND_VIA_103/R44",
+      "GND_VIA_101/C26",
+      "GND_VIA_100/C26",
+      "GND_VIA_99/R13",
+      "GND_VIA_98/R13",
+      "GND_VIA_97/C26",
+      "GND_VIA_96/C20",
+      "GND_VIA_96/U5",
+      "GND_VIA_95/C20",
+      "GND_VIA_89/R42",
+      "GND_VIA_88/C106",
+      "GND_VIA_86/R42",
+      "GND_VIA_83/C10",
+      "GND_VIA_83/J3",
+      "GND_VIA_82/C13",
+      "GND_VIA_82/J3",
+      "GND_VIA_81/U18",
+      "GND_VIA_80/J3",
+      "GND_VIA_79/LD1",
+      "GND_VIA_76/LD1",
+      "GND_VIA_75/R3",
+      "GND_VIA_75/R13",
+      "GND_VIA_73/XT1",
+      "GND_VIA_72/XT1",
+      "GND_VIA_71/C115",
+      "GND_VIA_70/C108",
+      "GND_VIA_69/XT1",
+      "GND_VIA_68/C108",
+      "GND_VIA_68/R36",
+      "GND_VIA_68/LD1",
+      "GND_VIA_67/XT1",
+      "GND_VIA_66/C114",
+      "GND_VIA_66/C115",
+      "X7/C69",
+      "GND_VIA_64/U3",
+      "GND_VIA_63/R1",
+      "GND_VIA_63/U3",
+      "GND_VIA_62/C17",
+      "GND_VIA_62/U3",
+      "GND_VIA_61/U3",
+      "GND_VIA_55/FB2",
+      "GND_VIA_54/C10",
+      "GND_VIA_54/J3",
+      "GND_VIA_53/LD1",
+      "GND_VIA_52/C66",
+      "GND_VIA_51/C66",
+      "GND_VIA_51/C64",
+      "GND_VIA_50/C62",
+      "GND_VIA_50/C53",
+      "GND_VIA_49/C64",
+      "GND_VIA_49/C62",
+      "GND_VIA_48/C53",
+      "GND_VIA_48/L8",
+      "GND_VIA_47/C53",
+      "GND_VIA_47/L6",
+      "GND_VIA_47/L8",
+      "GND_VIA_42/C49",
+      "GND_VIA_40/R18",
+      "GND_VIA_39/R18",
+      "GND_VIA_35/C91",
+      "GND_VIA_35/C100",
+      "GND_VIA_34/C91",
+      "GND_VIA_33/C91",
+      "GND_VIA_33/L15",
+      "GND_VIA_32/C91",
+      "GND_VIA_32/L17",
+      "GND_VIA_32/L15",
+      "GND_VIA_31/L20",
+      "GND_VIA_31/L19",
+      "GND_VIA_30/C91",
+      "GND_VIA_30/L16",
+      "GND_VIA_29/C91",
+      "GND_VIA_29/C100",
+      "GND_VIA_29/L20",
+      "GND_VIA_26/R27",
+      "GND_VIA_24/C41",
+      "GND_VIA_20/C97",
+      "GND_VIA_12/C59",
+      "GND_VIA_10/C51",
+      "GND_VIA_5/C88",
+      "GND_VIA/C91",
+      "FB2/C13",
+      "R30/C30",
+      "R24/R23",
+      "R3/R7",
+      "R3/R13",
+      "FB3/C14",
+      "FB3/C11",
+      "C21/R8",
+      "C19/R11",
+      "C35/L5",
+      "C35/U11",
+      "C35/C48",
+      "C45/U12",
+      "C80/U16",
+      "C71/U14",
+      "C95/U17",
+      "C79/C81",
+      "C79/C72",
+      "C81/C72",
+      "C81/C84",
+      "C81/L14",
+      "C66/C64",
+      "C66/C65",
+      "C64/C62",
+      "C64/C65",
+      "C24/R25",
+      "C28/C27",
+      "C22/C31",
+      "C58/L9",
+      "C86/C87",
+      "C86/R19",
+      "C57/C55",
+      "C57/L10",
+      "C57/U12",
+      "C39/L4",
+      "C39/U11",
+      "C38/U10",
+      "C67/U13",
+      "C103/U17",
+      "C96/L18",
+      "C91/L17",
+      "C91/L16",
+      "C25/U7",
+      "C92/C89",
+      "C92/L19",
+      "C92/U16",
+      "C76/L13",
+      "C76/U15",
+      "C75/U14",
+      "C78/R17",
+      "C72/C84",
+      "C72/C85",
+      "C72/L14",
+      "C84/L14",
+      "C85/L14",
+      "C105/X8",
+      "C83/U15",
+      "C100/C102",
+      "C100/L20",
+      "C102/C104",
+      "C102/L20",
+      "C102/C98",
+      "C104/C98",
+      "C90/C93",
+      "C93/C94",
+      "C97/C99",
+      "C97/R15",
+      "C99/C101",
+      "C88/C87",
+      "C53/L6",
+      "C53/L7",
+      "C53/L8",
+      "C42/C44",
+      "C60/U13",
+      "C34/U10",
+      "C43/L5",
+      "C9/FB1",
+      "C44/C47",
+      "C44/L5",
+      "C52/C54",
+      "C47/L5",
+      "C49/C50",
+      "C49/R31",
+      "C50/C51",
+      "C54/C56",
+      "C63/C61",
+      "C59/C61",
+      "R28/R26",
+      "R26/R21",
+      "R26/R20",
+      "R10/U7",
+      "R21/R20",
+      "R21/C29",
+      "R27/R29",
+      "R20/C29",
+      "R6/R2",
+      "R31/R25",
+      "L3/U10",
+      "L3/C36",
+      "L12/U14",
+      "L12/C73",
+      "L4/U11",
+      "L20/U17",
+      "L20/C98",
+      "L6/L7",
+      "L6/L8",
+      "L6/U12",
+      "L11/U13",
+      "L11/C65",
+      "L14/U16",
+      "L7/L10",
+      "L7/L8",
+      "L7/U12",
+      "L8/U12",
+      "L5/U12",
+      "L5/C48",
+      "L17/L15",
+      "L17/L16",
+      "L17/U16",
+      "L15/L16",
+      "L15/U16",
+      "L16/L19",
+      "L16/U16",
+      "L13/U15",
+      "U10/C36",
+      "U13/C65",
+      "U11/C46",
+      "U14/C73",
+      "U17/C98",
+      "C68/X6",
+      "C32/X5",
+      "C16/C15",
+      "C16/C17",
+      "C16/U3",
+      "C18/R5",
+      "C18/R9",
+      "C15/C17",
+      "C15/R5",
+      "C15/U3",
+      "C17/U3",
+      "R5/U3",
+      "R5/R9",
+      "R19/R16",
+      "R15/R17",
+      "C107/R34",
+      "C107/R35",
+      "C109/R41",
+      "C110/R43",
+      "C114/C115",
+      "R34/R35",
+      "R34/U19",
+      "R39/R33",
+      "J1/R32",
+      "J1/R33",
+      "R32/R33",
+      "open harware/outline",
+      "R35/outline"
+    ],
+    "crossings": 249,
+    "fixed_outside": 36,
+    "fixed_overlaps": 334,
+    "flipped": 0,
+    "hpwl_mm": 1279.414713,
+    "new_outside": 2,
+    "new_overlaps": 318,
+    "outside": 2,
+    "overlaps": 318,
+    "side_vias": 150,
+    "weighted_hpwl_mm": 1288.7932362
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 2.2945763851804957,
+    "lb_any_rotation_mm": 561.5017772,
+    "lb_fixed_rotation_mm": 628.4509742,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "closure": {
+    "accepted": 3,
+    "arms": {
+      "far": {
+        "pulls": 3,
+        "wins": 0
+      },
+      "flip": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "replace": {
+        "pulls": 3,
+        "wins": 0
+      },
+      "room": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "rotate": {
+        "pulls": 6,
+        "wins": 1
+      },
+      "shift": {
+        "pulls": 9,
+        "wins": 2
+      },
+      "swap": {
+        "pulls": 3,
+        "wins": 0
+      },
+      "window": {
+        "pulls": 4,
+        "wins": 0
+      }
+    },
+    "prior": null,
+    "routes": 28,
+    "stop": "time limit",
+    "trials": [
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "shift",
+        "before": 8,
+        "escalated": false,
+        "what": "R59 shift -y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "rotate",
+        "before": 8,
+        "escalated": false,
+        "what": "R60 rotate 180"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "swap",
+        "before": 8,
+        "escalated": false,
+        "what": "R45 swap R58"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "far",
+        "before": 8,
+        "escalated": false,
+        "what": "R59 shift -y 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 21,
+        "arm": "window",
+        "before": 8,
+        "escalated": false,
+        "what": "re-place 106 parts around the failures (seed 1)"
+      },
+      {
+        "accepted": false,
+        "after": 32,
+        "arm": "replace",
+        "before": 8,
+        "escalated": false,
+        "what": "new placement of the whole board (1)"
+      },
+      {
+        "accepted": false,
+        "after": 18,
+        "arm": "window",
+        "before": 8,
+        "escalated": true,
+        "what": "re-place 106 parts around the failures (seed 2)"
+      },
+      {
+        "accepted": true,
+        "after": 6,
+        "arm": "shift",
+        "before": 8,
+        "escalated": false,
+        "what": "R60 shift -y 1.00 mm"
+      },
+      {
+        "accepted": true,
+        "after": 3,
+        "arm": "shift",
+        "before": 6,
+        "escalated": false,
+        "what": "R61 shift +y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "shift",
+        "before": 3,
+        "escalated": false,
+        "what": "C78 shift -x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "shift",
+        "before": 3,
+        "escalated": false,
+        "what": "R39 shift -y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "shift",
+        "before": 3,
+        "escalated": false,
+        "what": "C37 shift -x 1.00 mm"
+      },
+      {
+        "accepted": true,
+        "after": 2,
+        "arm": "rotate",
+        "before": 3,
+        "escalated": false,
+        "what": "C82 rotate 90"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "rotate",
+        "before": 2,
+        "escalated": false,
+        "what": "C37 rotate 270"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "rotate",
+        "before": 2,
+        "escalated": false,
+        "what": "C112 rotate 180"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "swap",
+        "before": 2,
+        "escalated": false,
+        "what": "C112 swap R65"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "C41 shift +x 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "shift",
+        "before": 2,
+        "escalated": false,
+        "what": "R39 shift -y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 28,
+        "arm": "replace",
+        "before": 2,
+        "escalated": false,
+        "what": "new placement of the whole board (2)"
+      },
+      {
+        "accepted": false,
+        "after": 28,
+        "arm": "window",
+        "before": 2,
+        "escalated": true,
+        "what": "re-place 32 parts around the failures (seed 3)"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "rotate",
+        "before": 2,
+        "escalated": false,
+        "what": "C37 rotate 90"
+      },
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "shift",
+        "before": 2,
+        "escalated": false,
+        "what": "R43 shift -y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "rotate",
+        "before": 2,
+        "escalated": false,
+        "what": "R28 rotate 90"
+      },
+      {
+        "accepted": false,
+        "after": 35,
+        "arm": "replace",
+        "before": 2,
+        "escalated": true,
+        "what": "new placement of the whole board (3)"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "swap",
+        "before": 2,
+        "escalated": false,
+        "what": "C37 swap R45"
+      },
+      {
+        "accepted": false,
+        "after": 12,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "C41 shift +y 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "shift",
+        "before": 2,
+        "escalated": false,
+        "what": "C41 shift +x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 23,
+        "arm": "window",
+        "before": 2,
+        "escalated": true,
+        "what": "re-place 32 parts around the failures (seed 4)"
+      }
+    ]
+  },
+  "fixed_parts": [
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "FD6_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "FD5_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "FD4_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_292"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_291"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_290"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_289"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_288"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_287"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_286"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_285"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_284"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_283"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_282"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_281"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_280"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_279"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_278"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_277"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_276"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_275"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_274"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_273"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_272"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_271"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_270"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_269"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_268"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_267"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_266"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_265"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_264"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_263"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_262"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_261"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_260"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_259"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_258"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_257"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_256"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_255"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_254"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_253"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_252"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_251"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_250"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_249"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_248"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_247"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_246"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_245"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_244"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_243"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_242"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_241"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_240"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_239"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_238"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_237"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_236"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_235"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_234"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_233"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_232"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_231"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_230"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_229"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_228"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_227"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_226"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_225"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_224"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_223"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_222"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_221"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_220"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_219"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_218"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_217"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_216"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_215"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_214"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_213"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_212"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_211"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_210"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_209"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_208"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_207"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_206"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_205"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_204"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_203"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_202"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_201"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_200"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_199"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_198"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_197"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_196"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_195"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_194"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_193"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_192"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_191"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_190"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_189"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_188"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_187"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_186"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_185"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_184"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_183"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_182"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_181"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_180"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_179"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_178"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_177"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_176"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_175"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_174"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_173"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_172"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_171"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_170"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_169"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_168"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_167"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_166"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_165"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_164"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_163"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_162"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_161"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_160"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_159"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_158"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_157"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_156"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_155"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_154"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_153"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_152"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_151"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_150"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_149"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_148"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_147"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_146"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_145"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_144"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_143"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_142"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_141"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_140"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_139"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_138"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_137"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_136"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_135"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_134"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_133"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_132"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_131"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_130"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_129"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_128"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_127"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_126"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_125"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_124"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_123"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_122"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_121"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_120"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_119"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_118"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_117"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_116"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_115"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_114"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_113"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_112"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_111"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_110"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_109"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_108"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_107"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_106"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_105"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_104"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_103"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_102"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_101"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_100"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_99"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_98"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_97"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_96"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_95"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_94"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_93"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_92"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_91"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_90"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_89"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_88"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_87"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_86"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_85"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_84"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_83"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_82"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_81"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_80"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_79"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_78"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_77"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_76"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_75"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_74"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_73"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_72"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_71"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_70"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_69"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_68"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_67"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_66"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_65"
+    },
+    {
+      "reason": "locked",
+      "ref": "Noname_4"
+    },
+    {
+      "reason": "locked",
+      "ref": "Noname_3"
+    },
+    {
+      "reason": "locked",
+      "ref": "Noname_2"
+    },
+    {
+      "reason": "locked",
+      "ref": "X7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_64"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_63"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_62"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_61"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_60"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_59"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_58"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_57"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_56"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_55"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_54"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_53"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_52"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_51"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_50"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_48"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_47"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_46"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_45"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_44"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_43"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_42"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_41"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_40"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_39"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_38"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_37"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_36"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_35"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_34"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_33"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_31"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_30"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_29"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_28"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_27"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_26"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_25"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_24"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_23"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_22"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_17"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_12"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_11"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_10"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_5"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "GND_VIA"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "FD1"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "FD2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "FD3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "FD4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "FD5"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "FD6"
+    },
+    {
+      "reason": "locked",
+      "ref": "J2"
+    },
+    {
+      "reason": "locked",
+      "ref": "U12"
+    },
+    {
+      "reason": "locked",
+      "ref": "U16"
+    },
+    {
+      "reason": "locked",
+      "ref": "U10"
+    },
+    {
+      "reason": "locked",
+      "ref": "U13"
+    },
+    {
+      "reason": "locked",
+      "ref": "U11"
+    },
+    {
+      "reason": "locked",
+      "ref": "U14"
+    },
+    {
+      "reason": "locked",
+      "ref": "U17"
+    },
+    {
+      "reason": "locked",
+      "ref": "U15"
+    },
+    {
+      "reason": "locked",
+      "ref": "U19"
+    },
+    {
+      "reason": "locked",
+      "ref": "X5"
+    },
+    {
+      "reason": "locked",
+      "ref": "X6"
+    },
+    {
+      "reason": "locked",
+      "ref": "X8"
+    },
+    {
+      "reason": "locked",
+      "ref": "J1"
+    },
+    {
+      "reason": "locked",
+      "ref": "Noname_1"
+    },
+    {
+      "reason": "locked",
+      "ref": "J4"
+    },
+    {
+      "reason": "locked",
+      "ref": "J5"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/front-end-modules_LimeSDR_Sony/unrouted.kicad_pcb",
+  "kept": "closure",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "closure",
+  "movable": 206,
+  "moved": 3,
+  "nets": 167,
+  "notes": [
+    "input not legal: 320 conflict(s) involving movable parts (GND_VIA_240/open harware, GND_VIA_239/open harware, GND_VIA_237/open harware, GND_VIA_199/R47, GND_VIA_195/R47, GND_VIA_194/R48, ...); compared as it is (--repair-input compares its minimal repair instead)"
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/closure-place10m/boards/front-end-modules_LimeSDR_Sony.placed.kicad_pcb",
+  "parts": 528,
+  "pins": 1068,
+  "rounds": 0,
+  "route_check": {
+    "connections": 814,
+    "connections_input": 814,
+    "connections_output": 814,
+    "kept_input": false,
+    "routed_input": 806,
+    "routed_output": 812,
+    "work": 10000000
+  },
+  "route_input": {
+    "connections": 814,
+    "routed": 806,
+    "seconds": 36.997389657,
+    "unrouted": 8
+  },
+  "route_output": {
+    "connections": 814,
+    "routed": 812,
+    "seconds": 36.862112968,
+    "unrouted": 2
+  },
+  "routes": 29,
+  "seconds": {},
+  "seconds_total": 1875.179619019,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

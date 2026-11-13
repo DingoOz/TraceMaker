@@ -977,6 +977,10 @@
         {
           "text": "E6: --time-total with rescue share 0.75 (D186, doc 05 section 82): +111 of 16,935 at equal wall time; plugin default; relax legaliser can still overrun (max +28 s)",
           "done": true
+        },
+        {
+          "text": "Placement closure (D190, doc 04 section 11): tracemaker-place --mode closure, UCB bandit over 8 kinds of change judged by the product route; 14 incomplete boards: 58 -> 32 open at 10 M, 40 -> 30 open and 3 -> 4 clean vs human at 40 M",
+          "done": true
         }
       ]
     }

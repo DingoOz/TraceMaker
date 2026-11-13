@@ -1,0 +1,1780 @@
+{
+  "after": {
+    "conflicts": [
+      "RV1/V19_37",
+      "RV1/V20_37",
+      "RV1/V21_37",
+      "RV2/V8_34",
+      "RV2/V8_35",
+      "RV2/V7_37",
+      "RV2/V8_37",
+      "C1/V21_24",
+      "C2/J1",
+      "C4/V22_21",
+      "C4/V22_23",
+      "C6/V24_9",
+      "C9/V18_34",
+      "C9/V18_35",
+      "C9/V18_37",
+      "C17/V21_24",
+      "C21/V6_38",
+      "C21/V6_41",
+      "C21/V2_44",
+      "C21/V3_44",
+      "C21/V2_45",
+      "C21/V6_45",
+      "C21/V6_46",
+      "C21/V6_47",
+      "C21/V6_48",
+      "C21/V6_49",
+      "JP2/V26_7",
+      "JP2/V26_8",
+      "U1/V21_9",
+      "U1/V10_10",
+      "U1/V11_10",
+      "U1/V11_11",
+      "U1/V11_12",
+      "U1/V12_12",
+      "U1/V11_13",
+      "U1/V12_13",
+      "U1/V13_13",
+      "U1/V11_14",
+      "U1/V12_14",
+      "U1/V13_14",
+      "U1/V14_14",
+      "U1/V11_15",
+      "U1/V12_15",
+      "U1/V13_15",
+      "U1/V14_15",
+      "U1/V15_15",
+      "U1/V16_15",
+      "U1/V18_15",
+      "U1/V11_16",
+      "U1/V12_16",
+      "U1/V13_16",
+      "U1/V14_16",
+      "U1/V15_16",
+      "U1/V16_16",
+      "U1/V18_16",
+      "U1/V19_17",
+      "U1/V20_17",
+      "U1/V15_18",
+      "U1/V20_18",
+      "U1/V15_19",
+      "U1/V21_21",
+      "U1/V22_21",
+      "U2/V15_30",
+      "U3/V13_45",
+      "U3/V14_45",
+      "U3/V15_45",
+      "U3/V13_47",
+      "U3/V11_48",
+      "U3/V12_48",
+      "U3/V13_48",
+      "U3/V14_48",
+      "U4/V30_17",
+      "U4/V31_17",
+      "U4/V32_17",
+      "U4/V33_17",
+      "U4/V34_17",
+      "U4/V35_17",
+      "U4/V36_17",
+      "U4/V30_18",
+      "U4/V31_18",
+      "U4/V32_18",
+      "U4/V33_18",
+      "U4/V34_18",
+      "U4/V35_18",
+      "U4/V36_18",
+      "U4/V28_19",
+      "U4/V29_19",
+      "U4/V30_19",
+      "U4/V31_19",
+      "U4/V32_19",
+      "U4/V33_19",
+      "U4/V34_19",
+      "U4/V35_19",
+      "U4/V36_19",
+      "U4/V29_20",
+      "U4/V30_20",
+      "U4/V31_20",
+      "U4/V32_20",
+      "U4/V33_20",
+      "U4/V34_20",
+      "U4/V35_20",
+      "U4/V36_20",
+      "U4/V37_20",
+      "U4/V38_20",
+      "U4/V39_20",
+      "U4/V30_21",
+      "U4/V31_21",
+      "U4/V32_21",
+      "U4/V33_21",
+      "U4/V34_21",
+      "U4/V35_21",
+      "U4/V36_21",
+      "U4/V37_21",
+      "U4/V38_21",
+      "U4/V39_21",
+      "U4/V27_22",
+      "U4/V31_22",
+      "U4/V32_22",
+      "U4/V33_22",
+      "U4/V34_22",
+      "U4/V35_22",
+      "U4/V28_23",
+      "U4/V27_30",
+      "U4/V28_30",
+      "U4/V29_30",
+      "U4/V30_30",
+      "U4/V31_30",
+      "U4/V32_30",
+      "U4/V33_30",
+      "U4/V34_30",
+      "U4/V35_30",
+      "U4/V30_31",
+      "U4/V31_31",
+      "U4/V32_31",
+      "U4/V33_31",
+      "U4/V34_31",
+      "U4/V35_31",
+      "U4/V30_32",
+      "U4/V31_32",
+      "U4/V32_32",
+      "U4/V33_32",
+      "U4/V34_32",
+      "U4/V35_32",
+      "U4/V36_32",
+      "U4/V37_32",
+      "U4/V38_32",
+      "U4/V39_32",
+      "R2/V7_12",
+      "R2/V7_13"
+    ],
+    "crossings": 26,
+    "fixed_outside": 10,
+    "fixed_overlaps": 83,
+    "flipped": 0,
+    "hpwl_mm": 717.43638,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 149,
+    "side_vias": 2,
+    "weighted_hpwl_mm": 619.652922
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [
+      "RV1/V19_37",
+      "RV1/V20_37",
+      "RV1/V21_37",
+      "RV2/V8_34",
+      "RV2/V8_35",
+      "RV2/V7_37",
+      "RV2/V8_37",
+      "C1/V21_24",
+      "C2/J1",
+      "C4/V22_21",
+      "C4/V22_23",
+      "C6/V24_9",
+      "C9/V18_34",
+      "C9/V18_35",
+      "C9/V18_37",
+      "C17/V21_24",
+      "C21/V6_38",
+      "C21/V6_41",
+      "C21/V2_44",
+      "C21/V3_44",
+      "C21/V2_45",
+      "C21/V6_45",
+      "C21/V6_46",
+      "C21/V6_47",
+      "C21/V6_48",
+      "C21/V6_49",
+      "JP2/V26_7",
+      "JP2/V26_8",
+      "U1/V21_9",
+      "U1/V10_10",
+      "U1/V11_10",
+      "U1/V11_11",
+      "U1/V11_12",
+      "U1/V12_12",
+      "U1/V11_13",
+      "U1/V12_13",
+      "U1/V13_13",
+      "U1/V11_14",
+      "U1/V12_14",
+      "U1/V13_14",
+      "U1/V14_14",
+      "U1/V11_15",
+      "U1/V12_15",
+      "U1/V13_15",
+      "U1/V14_15",
+      "U1/V15_15",
+      "U1/V16_15",
+      "U1/V18_15",
+      "U1/V11_16",
+      "U1/V12_16",
+      "U1/V13_16",
+      "U1/V14_16",
+      "U1/V15_16",
+      "U1/V16_16",
+      "U1/V18_16",
+      "U1/V19_17",
+      "U1/V20_17",
+      "U1/V15_18",
+      "U1/V20_18",
+      "U1/V15_19",
+      "U1/V21_21",
+      "U1/V22_21",
+      "U2/V15_30",
+      "U3/V13_45",
+      "U3/V14_45",
+      "U3/V15_45",
+      "U3/V13_47",
+      "U3/V11_48",
+      "U3/V12_48",
+      "U3/V13_48",
+      "U3/V14_48",
+      "U4/V30_17",
+      "U4/V31_17",
+      "U4/V32_17",
+      "U4/V33_17",
+      "U4/V34_17",
+      "U4/V35_17",
+      "U4/V36_17",
+      "U4/V30_18",
+      "U4/V31_18",
+      "U4/V32_18",
+      "U4/V33_18",
+      "U4/V34_18",
+      "U4/V35_18",
+      "U4/V36_18",
+      "U4/V28_19",
+      "U4/V29_19",
+      "U4/V30_19",
+      "U4/V31_19",
+      "U4/V32_19",
+      "U4/V33_19",
+      "U4/V34_19",
+      "U4/V35_19",
+      "U4/V36_19",
+      "U4/V29_20",
+      "U4/V30_20",
+      "U4/V31_20",
+      "U4/V32_20",
+      "U4/V33_20",
+      "U4/V34_20",
+      "U4/V35_20",
+      "U4/V36_20",
+      "U4/V37_20",
+      "U4/V38_20",
+      "U4/V39_20",
+      "U4/V30_21",
+      "U4/V31_21",
+      "U4/V32_21",
+      "U4/V33_21",
+      "U4/V34_21",
+      "U4/V35_21",
+      "U4/V36_21",
+      "U4/V37_21",
+      "U4/V38_21",
+      "U4/V39_21",
+      "U4/V27_22",
+      "U4/V31_22",
+      "U4/V32_22",
+      "U4/V33_22",
+      "U4/V34_22",
+      "U4/V35_22",
+      "U4/V28_23",
+      "U4/V27_30",
+      "U4/V28_30",
+      "U4/V29_30",
+      "U4/V30_30",
+      "U4/V31_30",
+      "U4/V32_30",
+      "U4/V33_30",
+      "U4/V34_30",
+      "U4/V35_30",
+      "U4/V30_31",
+      "U4/V31_31",
+      "U4/V32_31",
+      "U4/V33_31",
+      "U4/V34_31",
+      "U4/V35_31",
+      "U4/V30_32",
+      "U4/V31_32",
+      "U4/V32_32",
+      "U4/V33_32",
+      "U4/V34_32",
+      "U4/V35_32",
+      "U4/V36_32",
+      "U4/V37_32",
+      "U4/V38_32",
+      "U4/V39_32",
+      "R2/V7_12",
+      "R2/V7_13"
+    ],
+    "crossings": 27,
+    "fixed_outside": 10,
+    "fixed_overlaps": 83,
+    "flipped": 0,
+    "hpwl_mm": 719.44638,
+    "new_outside": 0,
+    "new_overlaps": 149,
+    "outside": 0,
+    "overlaps": 149,
+    "side_vias": 2,
+    "weighted_hpwl_mm": 621.662922
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 3.096675086678008,
+    "lb_any_rotation_mm": 200.10266,
+    "lb_fixed_rotation_mm": 346.42784,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "closure": {
+    "accepted": 1,
+    "arms": {
+      "far": {
+        "pulls": 6,
+        "wins": 0
+      },
+      "flip": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "replace": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "room": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "rotate": {
+        "pulls": 1,
+        "wins": 0
+      },
+      "shift": {
+        "pulls": 4,
+        "wins": 1
+      },
+      "swap": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "window": {
+        "pulls": 4,
+        "wins": 0
+      }
+    },
+    "prior": null,
+    "routes": 19,
+    "stop": "no candidates",
+    "trials": [
+      {
+        "accepted": true,
+        "after": 2,
+        "arm": "shift",
+        "before": 3,
+        "escalated": false,
+        "what": "C11 shift +x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "shift",
+        "before": 2,
+        "escalated": false,
+        "what": "C2 shift -y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "rotate",
+        "before": 2,
+        "escalated": false,
+        "what": "C2 rotate 180"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "shift",
+        "before": 2,
+        "escalated": false,
+        "what": "C2 shift -y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "C2 shift -y 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "window",
+        "before": 2,
+        "escalated": false,
+        "what": "re-place 3 parts around the failures (seed 1)"
+      },
+      {
+        "accepted": false,
+        "after": 16,
+        "arm": "replace",
+        "before": 2,
+        "escalated": false,
+        "what": "new placement of the whole board (1)"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "window",
+        "before": 2,
+        "escalated": true,
+        "what": "re-place 3 parts around the failures (seed 2)"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "shift",
+        "before": 2,
+        "escalated": false,
+        "what": "C2 shift +x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "C2 shift -y 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 13,
+        "arm": "replace",
+        "before": 2,
+        "escalated": false,
+        "what": "new placement of the whole board (2)"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "window",
+        "before": 2,
+        "escalated": true,
+        "what": "re-place 3 parts around the failures (seed 3)"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "R2 shift -y 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 16,
+        "arm": "replace",
+        "before": 2,
+        "escalated": false,
+        "what": "new placement of the whole board (3)"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "R2 shift -y 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "window",
+        "before": 2,
+        "escalated": true,
+        "what": "re-place 3 parts around the failures (seed 4)"
+      },
+      {
+        "accepted": false,
+        "after": 14,
+        "arm": "replace",
+        "before": 2,
+        "escalated": false,
+        "what": "new placement of the whole board (4)"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "R2 shift -y 3.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "C2 shift -y 3.00 mm"
+      }
+    ]
+  },
+  "fixed_parts": [
+    {
+      "reason": "locked",
+      "ref": "REF**_5"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_4"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_3"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_2"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "P1"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J1"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J2"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J3"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "P2"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "P3"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "P4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V25_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V26_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V27_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V28_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V29_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V30_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V35_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V36_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V9_3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V26_3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V27_3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V28_3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V9_4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V26_4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V27_4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V28_4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_5"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V15_5"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V24_5"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V26_5"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V27_5"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V28_5"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V11_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V14_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V15_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V17_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V21_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V22_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V26_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V27_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V28_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V26_7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V27_7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V37_7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V4_8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V5_8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V26_8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V36_8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V37_8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V3_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V4_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V5_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V21_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V24_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_10"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V10_10"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V11_10"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V30_10"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_10"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_10"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_10"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_11"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V11_11"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_11"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_11"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_11"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_12"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_12"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V11_12"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V12_12"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_12"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_12"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V11_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V12_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V13_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V11_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V12_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V13_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V14_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V11_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V12_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V13_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V14_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V15_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V16_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V18_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V23_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V27_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V11_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V12_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V13_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V14_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V15_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V16_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V18_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V19_17"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V20_17"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V30_17"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_17"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_17"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_17"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_17"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V35_17"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V36_17"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V15_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V20_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V30_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V35_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V36_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V15_19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V28_19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V29_19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V30_19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V35_19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V36_19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V29_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V30_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V35_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V36_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V37_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V5_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V21_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V22_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V30_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V35_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V36_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V37_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_22"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_22"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V9_22"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V27_22"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_22"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_22"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_22"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_22"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V35_22"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V22_23"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V28_23"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_24"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V21_24"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V15_30"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V27_30"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V28_30"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V29_30"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V30_30"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_30"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_30"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_30"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_30"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V35_30"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V30_31"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_31"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_31"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_31"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_31"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V35_31"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V24_32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V30_32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V35_32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V36_32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V37_32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V38_32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V39_32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_34"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V9_34"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V18_34"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_35"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V9_35"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V18_35"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_37"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_37"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V9_37"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V18_37"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V19_37"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V20_37"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V21_37"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_38"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_38"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_38"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V23_39"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V24_39"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_40"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_40"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V23_40"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V24_40"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_41"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_41"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_41"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V2_44"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V3_44"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_44"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V2_45"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_45"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_45"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V13_45"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V14_45"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V15_45"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_46"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_46"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V23_46"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V24_46"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_47"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_47"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V13_47"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_48"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_48"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V11_48"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V12_48"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V13_48"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V14_48"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V9_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V10_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V11_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V12_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V13_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V16_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V17_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V18_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V19_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V20_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V21_49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V22_49"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/Hardware_Playground_sd_wav_pcm5100/unrouted.kicad_pcb",
+  "kept": "closure",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "closure",
+  "movable": 35,
+  "moved": 1,
+  "nets": 62,
+  "notes": [
+    "input not legal: 149 conflict(s) involving movable parts (RV1/V19_37, RV1/V20_37, RV1/V21_37, RV2/V8_34, RV2/V8_35, RV2/V7_37, ...); compared as it is (--repair-input compares its minimal repair instead)"
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/closure-place10m/boards/Hardware_Playground_sd_wav_pcm5100.placed.kicad_pcb",
+  "parts": 328,
+  "pins": 470,
+  "rounds": 0,
+  "route_check": {
+    "connections": 396,
+    "connections_input": 396,
+    "connections_output": 396,
+    "kept_input": false,
+    "routed_input": 393,
+    "routed_output": 394,
+    "work": 10000000
+  },
+  "route_input": {
+    "connections": 396,
+    "routed": 393,
+    "seconds": 20.900013743,
+    "unrouted": 3
+  },
+  "route_output": {
+    "connections": 396,
+    "routed": 394,
+    "seconds": 19.158498488,
+    "unrouted": 2
+  },
+  "routes": 20,
+  "seconds": {},
+  "seconds_total": 610.815479351,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

@@ -1,0 +1,538 @@
+{
+  "after": {
+    "conflicts": [
+      "U1/R1",
+      "U1/R2",
+      "U1/R4",
+      "U1/U4",
+      "U1/C10",
+      "U1/U6"
+    ],
+    "crossings": 237,
+    "fixed_outside": 4,
+    "fixed_overlaps": 1,
+    "flipped": 0,
+    "hpwl_mm": 2991.5745,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 6,
+    "side_vias": 9,
+    "weighted_hpwl_mm": 2594.79225
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [
+      "U1/R1",
+      "U1/R2",
+      "U1/R4",
+      "U1/U4",
+      "U1/C10",
+      "U1/U6"
+    ],
+    "crossings": 239,
+    "fixed_outside": 4,
+    "fixed_overlaps": 1,
+    "flipped": 0,
+    "hpwl_mm": 3007.4495,
+    "new_outside": 0,
+    "new_overlaps": 6,
+    "outside": 0,
+    "overlaps": 6,
+    "side_vias": 9,
+    "weighted_hpwl_mm": 2611.56725
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 7.941458805166187,
+    "lb_any_rotation_mm": 326.74,
+    "lb_fixed_rotation_mm": 451.38100000000003,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "closure": {
+    "accepted": 4,
+    "arms": {
+      "far": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "flip": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "replace": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "room": {
+        "pulls": 2,
+        "wins": 0
+      },
+      "rotate": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "shift": {
+        "pulls": 8,
+        "wins": 1
+      },
+      "swap": {
+        "pulls": 13,
+        "wins": 3
+      },
+      "window": {
+        "pulls": 5,
+        "wins": 0
+      }
+    },
+    "prior": null,
+    "routes": 40,
+    "stop": "route budget",
+    "trials": [
+      {
+        "accepted": false,
+        "after": 11,
+        "arm": "shift",
+        "before": 11,
+        "escalated": false,
+        "what": "U5 shift +y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 11,
+        "arm": "rotate",
+        "before": 11,
+        "escalated": false,
+        "what": "RV3 rotate 270"
+      },
+      {
+        "accepted": false,
+        "after": 11,
+        "arm": "room",
+        "before": 11,
+        "escalated": false,
+        "what": "room around a failed pad at (231.06, 91.70): RV1,SW1 pushed 0.50 mm"
+      },
+      {
+        "accepted": true,
+        "after": 9,
+        "arm": "swap",
+        "before": 11,
+        "escalated": false,
+        "what": "D10 swap D16"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "swap",
+        "before": 9,
+        "escalated": false,
+        "what": "D4 swap D16"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "far",
+        "before": 9,
+        "escalated": false,
+        "what": "U5 shift +y 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 19,
+        "arm": "window",
+        "before": 9,
+        "escalated": false,
+        "what": "re-place 48 parts around the failures (seed 1)"
+      },
+      {
+        "accepted": false,
+        "after": 11,
+        "arm": "swap",
+        "before": 9,
+        "escalated": false,
+        "what": "D10 swap D16"
+      },
+      {
+        "accepted": false,
+        "after": 18,
+        "arm": "replace",
+        "before": 9,
+        "escalated": false,
+        "what": "new placement of the whole board (1)"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "shift",
+        "before": 9,
+        "escalated": false,
+        "what": "U5 shift +y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 21,
+        "arm": "window",
+        "before": 9,
+        "escalated": true,
+        "what": "re-place 48 parts around the failures (seed 2)"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "rotate",
+        "before": 9,
+        "escalated": false,
+        "what": "RV11 rotate 270"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "room",
+        "before": 9,
+        "escalated": false,
+        "what": "room around a failed pad at (231.06, 91.70): RV1,SW1 pushed 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "swap",
+        "before": 9,
+        "escalated": false,
+        "what": "D16 swap D19"
+      },
+      {
+        "accepted": false,
+        "after": 17,
+        "arm": "replace",
+        "before": 9,
+        "escalated": true,
+        "what": "new placement of the whole board (2)"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "far",
+        "before": 9,
+        "escalated": false,
+        "what": "U5 shift +y 1.50 mm"
+      },
+      {
+        "accepted": true,
+        "after": 8,
+        "arm": "swap",
+        "before": 9,
+        "escalated": false,
+        "what": "D16 swap D18"
+      },
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "swap",
+        "before": 8,
+        "escalated": false,
+        "what": "D10 swap D11"
+      },
+      {
+        "accepted": true,
+        "after": 7,
+        "arm": "swap",
+        "before": 8,
+        "escalated": false,
+        "what": "D4 swap D11"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "swap",
+        "before": 7,
+        "escalated": false,
+        "what": "D5 swap D15"
+      },
+      {
+        "accepted": false,
+        "after": 7,
+        "arm": "swap",
+        "before": 7,
+        "escalated": false,
+        "what": "RV2 swap RV11"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "shift",
+        "before": 7,
+        "escalated": false,
+        "what": "U3 shift -x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 7,
+        "arm": "rotate",
+        "before": 7,
+        "escalated": false,
+        "what": "RV3 rotate 180"
+      },
+      {
+        "accepted": false,
+        "after": 7,
+        "arm": "swap",
+        "before": 7,
+        "escalated": false,
+        "what": "D3 swap D5"
+      },
+      {
+        "accepted": false,
+        "after": 7,
+        "arm": "far",
+        "before": 7,
+        "escalated": false,
+        "what": "D5 shift +x 4.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 20,
+        "arm": "window",
+        "before": 7,
+        "escalated": true,
+        "what": "re-place 42 parts around the failures (seed 3)"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "swap",
+        "before": 7,
+        "escalated": false,
+        "what": "D5 swap D10"
+      },
+      {
+        "accepted": false,
+        "after": 15,
+        "arm": "replace",
+        "before": 7,
+        "escalated": false,
+        "what": "new placement of the whole board (3)"
+      },
+      {
+        "accepted": true,
+        "after": 6,
+        "arm": "shift",
+        "before": 7,
+        "escalated": false,
+        "what": "U3 shift +y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "shift",
+        "before": 6,
+        "escalated": false,
+        "what": "RV4 shift -x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "shift",
+        "before": 6,
+        "escalated": false,
+        "what": "SW3 shift -y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "shift",
+        "before": 6,
+        "escalated": false,
+        "what": "RV4 shift +y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "rotate",
+        "before": 6,
+        "escalated": false,
+        "what": "RV11 rotate 180"
+      },
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "swap",
+        "before": 6,
+        "escalated": false,
+        "what": "D1 swap D15"
+      },
+      {
+        "accepted": false,
+        "after": 7,
+        "arm": "far",
+        "before": 6,
+        "escalated": false,
+        "what": "SW2 shift -x 4.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 21,
+        "arm": "window",
+        "before": 6,
+        "escalated": true,
+        "what": "re-place 42 parts around the failures (seed 4)"
+      },
+      {
+        "accepted": false,
+        "after": 7,
+        "arm": "swap",
+        "before": 6,
+        "escalated": false,
+        "what": "D5 swap D14"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "shift",
+        "before": 6,
+        "escalated": false,
+        "what": "SW3 shift +x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 18,
+        "arm": "replace",
+        "before": 6,
+        "escalated": false,
+        "what": "new placement of the whole board (4)"
+      },
+      {
+        "accepted": false,
+        "after": 19,
+        "arm": "window",
+        "before": 6,
+        "escalated": true,
+        "what": "re-place 42 parts around the failures (seed 5)"
+      }
+    ]
+  },
+  "fixed_parts": [
+    {
+      "reason": "overhangs the board edge in the input",
+      "ref": "U1"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP1"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP5"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP8"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J1"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J2"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J3"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_teensy-fx/unrouted.kicad_pcb",
+  "kept": "closure",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "closure",
+  "movable": 68,
+  "moved": 6,
+  "nets": 84,
+  "notes": [
+    "input not legal: 6 conflict(s) involving movable parts (U1/R1, U1/R2, U1/R4, U1/U4, U1/C10, U1/U6); compared as it is (--repair-input compares its minimal repair instead)"
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/closure-place10m/boards/kitspace_teensy-fx.placed.kicad_pcb",
+  "parts": 80,
+  "pins": 288,
+  "rounds": 0,
+  "route_check": {
+    "connections": 196,
+    "connections_input": 196,
+    "connections_output": 196,
+    "kept_input": false,
+    "routed_input": 185,
+    "routed_output": 190,
+    "work": 10000000
+  },
+  "route_input": {
+    "connections": 196,
+    "routed": 185,
+    "seconds": 31.828779171,
+    "unrouted": 11
+  },
+  "route_output": {
+    "connections": 196,
+    "routed": 190,
+    "seconds": 33.169327542,
+    "unrouted": 6
+  },
+  "routes": 41,
+  "seconds": {},
+  "seconds_total": 1278.219920115,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

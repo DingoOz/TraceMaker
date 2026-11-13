@@ -21,6 +21,7 @@
 #include "place/lower_bound.hpp"
 #include "place/place_advice.hpp"
 #include "place/placer.hpp"
+#include "place/closure.hpp"
 #include "place/routable.hpp"
 #include "place/wirelength.hpp"
 #include "route/router.hpp"
@@ -254,6 +255,37 @@ void setup_flip(const io::LoadedBoard& lb, bool flip, const std::string& keep_si
   }
 }
 
+// An unrouted connection "REF.NUM" -> "REF.NUM" (b = "zone" for a plane) mapped to its parts and pad positions on
+// board `b` (the input with placement `pl` applied).
+place::RouteEval::Failure failure_on(const model::Board& b, const place::Problem& p, const place::Placement& pl, const std::string& net,
+                                     const std::string& a, const std::string& bb, const std::string& reason) {
+  std::map<std::string, int> part_of;
+  for (std::size_t i = 0; i < p.parts.size(); ++i) part_of.emplace(p.parts[i].ref, static_cast<int>(i));
+  auto locate = [&](const std::string& s, int& part, place::Point& at) {
+    part = -1;
+    for (std::size_t k = s.find('.'); k != std::string::npos; k = s.find('.', k + 1)) {
+      const std::string ref = s.substr(0, k), num = s.substr(k + 1);
+      const auto it = part_of.find(ref);
+      if (it == part_of.end()) continue;
+      part = it->second;
+      for (int pi : b.footprints[static_cast<std::size_t>(p.parts[static_cast<std::size_t>(part)].fp)].pads)
+        if (b.pads[static_cast<std::size_t>(pi)].number == num) {
+          at = b.pads[static_cast<std::size_t>(pi)].pos;
+          return;
+        }
+      at = pl.pos[static_cast<std::size_t>(part)];
+      return;
+    }
+  };
+  place::RouteEval::Failure f;
+  f.net = net;
+  f.reason = reason;
+  locate(a, f.part_a, f.a);
+  f.b = f.a;
+  if (bb != "zone") locate(bb, f.part_b, f.b);
+  return f;
+}
+
 // The router as a placement evaluator: the input document with the placement applied, routed in memory with a
 // deterministic work budget; unrouted connections are mapped back to parts and pad positions.
 place::RouteFn make_route_fn(const std::string& in, const model::DesignRules& rules, const place::Problem& p, long work, int threads,
@@ -272,37 +304,67 @@ place::RouteFn make_route_fn(const std::string& in, const model::DesignRules& ru
     e.connections = res.connections;
     e.routed = res.routed;
     e.seconds = res.seconds;
-    std::map<std::string, int> part_of;
-    for (std::size_t i = 0; i < p.parts.size(); ++i) part_of.emplace(p.parts[i].ref, static_cast<int>(i));
-    // "REF.NUM" -> (part, pad position)
-    auto locate = [&](const std::string& s, int& part, place::Point& at) {
-      part = -1;
-      for (std::size_t k = s.find('.'); k != std::string::npos; k = s.find('.', k + 1)) {
-        const std::string ref = s.substr(0, k), num = s.substr(k + 1);
-        const auto it = part_of.find(ref);
-        if (it == part_of.end()) continue;
-        part = it->second;
-        for (int pi : b.footprints[static_cast<std::size_t>(p.parts[static_cast<std::size_t>(part)].fp)].pads)
-          if (b.pads[static_cast<std::size_t>(pi)].number == num) {
-            at = b.pads[static_cast<std::size_t>(pi)].pos;
-            return;
-          }
-        at = pl.pos[static_cast<std::size_t>(part)];
-        return;
-      }
-    };
-    for (const auto& u : res.unrouted) {
-      place::RouteEval::Failure f;
-      f.net = u.net;
-      locate(u.a, f.part_a, f.a);
-      f.b = f.a;
-      if (u.b != "zone") locate(u.b, f.part_b, f.b);
-      e.failed.push_back(f);
+    for (const auto& u : res.unrouted) e.failed.push_back(failure_on(b, p, pl, u.net, u.a, u.b, u.reason));
+    return e;
+  };
+}
+
+// The product route as the placement evaluator (--closure-judge route, D190): the placement is written next to the
+// output as `<out>.trial.kicad_pcb` (with the input's project files, so the same rules are read) and routed by
+// `tracemaker route --work W --no-kb`, exactly as a user's deterministic route; its summary's failures are mapped back to
+// parts. A trial that the router could not run is reported as not ok (never kept).
+place::RouteFn make_product_route_fn(const std::string& in, const std::string& out, const place::Problem& p, long work, int threads,
+                                     std::uint64_t seed, const std::string& router, const std::string& extra) {
+  namespace fs = std::filesystem;
+  const fs::path trial = out + ".trial.kicad_pcb";
+  for (const char* ext : {".kicad_pro", ".kicad_dru"}) {
+    const fs::path src = fs::path(in).replace_extension(ext);
+    if (fs::exists(src)) fs::copy_file(src, fs::path(trial).replace_extension(ext), fs::copy_options::overwrite_existing);
+  }
+  return [=, &p](const place::Placement& pl) {
+    place::RouteEval e;
+    io::LoadedBoard lb = io::read_board_file(in);
+    apply(lb, p, pl, seed);
+    io::BoardEditor(lb, seed).save(trial.string());
+    const model::Board b = io::read_board(lb.doc);
+    const std::string js = trial.string() + ".json", log = trial.string() + ".log";
+    fs::remove(js);
+    const std::string cmd = "'" + router + "' route '" + trial.string() + "' -o '" + trial.string() + ".routed.kicad_pcb' --work " + std::to_string(work) + " --no-kb --time 3600 --threads " +
+                            std::to_string(threads) + " --json '" + js + "'" + (extra.empty() ? "" : " " + extra) + " > '" + log + "' 2>&1";
+    const auto t0 = std::chrono::steady_clock::now();
+    const int rc = std::system(cmd.c_str());
+    e.seconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count();
+    if (!fs::exists(js)) {
+      std::printf("  route judge failed (exit %d): see %s\n", rc, log.c_str());
+      return e;  // ok = false
+    }
+    const auto j = nlohmann::json::parse(std::ifstream(js));
+    e.ok = true;
+    e.connections = j.value("connections", 0);
+    e.routed = j.value("routed", 0);
+    // "NET: A.N -> B.M  (why)"
+    for (const auto& fj : j.value("failures", nlohmann::json::array())) {
+      const std::string t = fj.get<std::string>();
+      const auto colon = t.find(": "), arrow = t.find(" -> ");
+      if (colon == std::string::npos || arrow == std::string::npos || arrow < colon) continue;
+      const auto end = t.find(' ', arrow + 4);
+      const std::string a = t.substr(colon + 2, arrow - colon - 2), bb = t.substr(arrow + 4, end == std::string::npos ? std::string::npos : end - arrow - 4);
+      e.failed.push_back(failure_on(b, p, pl, t.substr(0, colon), a, bb, t.find("boxed in") != std::string::npos ? "boxed_in" : ""));
     }
     return e;
   };
 }
 
+// The `tracemaker` binary beside this one (installed: same directory; build tree: ../app/).
+std::string find_router() {
+  namespace fs = std::filesystem;
+  std::error_code ec;
+  const fs::path self = fs::read_symlink("/proc/self/exe", ec);
+  if (!ec)
+    for (const fs::path& c : {self.parent_path() / "tracemaker", self.parent_path().parent_path() / "app" / "tracemaker"})
+      if (fs::exists(c)) return c.string();
+  return "";
+}
 
 struct LoopCli {
   std::string in, out, json_path;
@@ -326,7 +388,35 @@ struct LoopCli {
   std::string record;      // routable: write the placement timelapse (JSONL) here
   std::string keep_side;   // --keep-side (D48)
   std::string advice;      // --place-advice: proposed placements and moves (doc 17 stage 4)
+  int closure_routes = 40;  // closure: trials routed
+  int closure_stall = 6;    // closure: trials without improvement before a radical one
+  std::string learn;        // closure: learned bandit prior (JSON), read before and updated after the run
+  std::string judge = "route";  // closure: "route" (tracemaker route --work, the product route) or "portfolio" (in-memory check)
+  std::string router;           // closure: the tracemaker binary for the route judge (default: beside this one)
+  std::string route_args;       // closure: extra `tracemaker route` options for the route judge
 };
+
+// --closure-learn FILE: the bandit's trials and wins per arm over earlier runs ({"arms": {"shift": {"pulls": n,
+// "wins": w}, ...}}). A missing file is an empty prior; a malformed one is an error.
+place::ArmTable read_learned(const std::string& path) {
+  place::ArmTable t{};
+  if (path.empty() || !std::filesystem::exists(path)) return t;
+  const auto j = nlohmann::json::parse(std::ifstream(path));
+  for (const auto& [name, v] : j.at("arms").items()) {
+    const int a = place::arm_from_name(name);
+    if (a < 0) throw std::runtime_error(path + ": unknown arm '" + name + "'");
+    t[static_cast<std::size_t>(a)] = {v.at("pulls").get<int>(), v.at("wins").get<int>()};
+    if (t[static_cast<std::size_t>(a)].wins < 0 || t[static_cast<std::size_t>(a)].wins > t[static_cast<std::size_t>(a)].pulls)
+      throw std::runtime_error(path + ": arm '" + name + "' needs 0 <= wins <= pulls");
+  }
+  return t;
+}
+
+nlohmann::json arms_json(const place::ArmTable& t) {
+  nlohmann::json j = nlohmann::json::object();
+  for (int a = 0; a < place::kArms; ++a) j[place::arm_name(a)] = {{"pulls", t[static_cast<std::size_t>(a)].pulls}, {"wins", t[static_cast<std::size_t>(a)].wins}};
+  return j;
+}
 
 // --component-rules (doc 15 §3.5, P1): detect component categories and add their proximity rules as objective-only
 // pseudo-nets (crystal + load caps, oscillator, ESD at its connector, regulator caps, generalised decoupling). The
@@ -445,7 +535,76 @@ int run_loop_mode(const LoopCli& c) {
     if (c.scratch && !advice.seeds.empty()) log("placement advice: seeds are applied to the input pile and must be legal on their own");
   }
   nlohmann::json advice_report = nlohmann::json::array();
-  if (c.o.mode == "eco") {
+  if (c.o.mode == "closure") {
+    // Placement closure (doc 04 §11, D190): if the input does not route completely, a bandit over kinds of
+    // placement change (small ECO moves up to a new placement of the whole board) moves parts until it does.
+    place::RouteFn judge = route;
+    if (c.judge == "route") {
+      const std::string router = c.router.empty() ? find_router() : c.router;
+      if (router.empty() || !std::filesystem::exists(router))
+        throw std::runtime_error("closure: the tracemaker binary for the route judge was not found (give --closure-router PATH, or --closure-judge portfolio)");
+      judge = make_product_route_fn(c.in, c.out, P, c.work, c.route_threads, c.o.seed, router, c.route_args);
+      log("judge: " + router + " route --work " + std::to_string(c.work) + " --no-kb" + (c.route_args.empty() ? "" : " " + c.route_args));
+    }
+    input_eval = judge(base);
+    ++routes;
+    log(base_label + ": " + std::to_string(input_eval.unrouted()) + " unrouted (" + std::to_string(input_eval.routed) + "/" +
+        std::to_string(input_eval.connections) + ")");
+    const place::ArmTable prior = read_learned(c.learn);
+    bool have_prior = false;
+    for (const auto& a : prior) have_prior |= a.pulls > 0;
+    place::ClosureOptions co;
+    co.max_routes = c.closure_routes;
+    co.stall = c.closure_stall;
+    co.beta = c.beta;
+    co.alpha_cross_mm = c.o.alpha_cross_mm;
+    co.via_mm = c.o.flip ? c.o.via_mm : 0;
+    co.place = c.o;
+    co.place.tempering = true;
+    co.prior = have_prior ? &prior : nullptr;
+    co.log = log;
+    co.out_of_time = out_of_time;
+    // replace arm: the k-th full-mode placement with the routability term (seed + k), legal on the loop problem.
+    co.radical = [&](int k) -> std::optional<place::Placement> {
+      if (k >= 4) return std::nullopt;
+      place::PlaceOptions o = c.o;
+      o.mode = "full";
+      o.beta_congestion = c.beta;
+      o.tempering = true;
+      o.lns_rate = std::max(o.lns_rate, 0.02);
+      o.seed = c.o.seed + static_cast<std::uint64_t>(k) * 7'919u;
+      Placed x = place_with_fallbacks(lb, rules, c.in, eo, o, c.no_fallback);
+      bool same = x.p.parts.size() == P.parts.size();
+      for (std::size_t i = 0; same && i < P.parts.size(); ++i) same = x.p.parts[i].fp == P.parts[i].fp;
+      const place::Metrics m = place::measure(P, x.pl, &input);
+      if (!same || !x.r.legal || (repair ? m.overlaps > 0 || m.outside > 0 : m.new_overlaps > 0 || m.new_outside > 0)) {
+        log("replace " + std::to_string(k + 1) + ": not legal, skipped");
+        return place::Placement{};  // empty: skipped by the loop
+      }
+      return x.pl;
+    };
+    const place::ClosureResult cr = place::placement_closure(P, base, input_eval, co, judge);
+    if (c.judge == "route")
+      for (const char* ext : {".kicad_pcb", ".kicad_pro", ".kicad_dru", ".kicad_pcb.json", ".kicad_pcb.routed.kicad_pcb", ".kicad_pcb.routed.kicad_prl",
+                              ".kicad_prl"})
+        std::filesystem::remove(c.out + ".trial" + ext);  // the .log stays: it is the last trial's route log
+    routes += cr.routes;
+    best = place::Candidate{cr.accepted > 0 ? "closure" : base_label, cr.pl, cr.eval, place::total_hpwl(P, cr.pl), base_legal};
+    nlohmann::json trials = nlohmann::json::array();
+    for (const auto& t : cr.trials)
+      trials.push_back({{"arm", place::arm_name(t.arm)}, {"what", t.what}, {"before", t.before}, {"after", t.after}, {"accepted", t.accepted}, {"escalated", t.forced}});
+    extra["closure"] = {{"judge", c.judge}, {"stop", cr.stop}, {"accepted", cr.accepted}, {"routes", cr.routes}, {"arms", arms_json(cr.stats)}, {"trials", trials},
+                        {"prior", have_prior ? nlohmann::json(c.learn) : nlohmann::json(nullptr)}};
+    log("closure: " + cr.stop + ", " + std::to_string(cr.accepted) + " change(s) kept in " + std::to_string(cr.routes) + " trial routes");
+    if (!c.learn.empty()) {
+      place::ArmTable sum = prior;
+      for (int a = 0; a < place::kArms; ++a) {
+        sum[static_cast<std::size_t>(a)].pulls += cr.stats[static_cast<std::size_t>(a)].pulls;
+        sum[static_cast<std::size_t>(a)].wins += cr.stats[static_cast<std::size_t>(a)].wins;
+      }
+      std::ofstream(c.learn) << nlohmann::json{{"arms", arms_json(sum)}}.dump(2) << "\n";
+    }
+  } else if (c.o.mode == "eco") {
     input_eval = route(base);
     ++routes;
     log(base_label + ": " + std::to_string(input_eval.unrouted()) + " unrouted (" + std::to_string(input_eval.routed) + "/" +
@@ -575,7 +734,9 @@ int run_loop_mode(const LoopCli& c) {
   // base only if it is not worse there.
   nlohmann::json verify = nullptr;
   const bool best_is_base = best.pl.pos == base.pos && best.pl.rot == base.rot;
-  if (const long fw = c.final_work < 0 ? 4 * c.work : c.final_work; fw > 0 && !c.scratch && !best_is_base) {
+  // With the route judge (closure) every kept change already improved the product route itself: nothing to verify.
+  const bool judged_by_route = c.o.mode == "closure" && c.judge == "route";
+  if (const long fw = c.final_work < 0 ? 4 * c.work : c.final_work; fw > 0 && !c.scratch && !best_is_base && !judged_by_route) {
     const place::RouteFn route_full = make_route_fn(c.in, rules, P, fw, c.route_threads, c.o.seed);
     if (!c.record.empty()) rec.phase("verification: input and winner routed with a 4x budget");
     const place::RouteEval vi = route_full(base), vb = route_full(best.pl);
@@ -666,7 +827,7 @@ int main(int argc, char** argv) {
   app.add_option("board", in, "Input .kicad_pcb")->required()->check(CLI::ExistingFile);
   app.add_option("-o,--output", out, "Output .kicad_pcb")->required();
   app.add_option("--mode", o.mode, "full (place from scratch) or refine (improve the current placement)")
-      ->check(CLI::IsMember({"full", "refine", "auto", "routable", "eco"}));
+      ->check(CLI::IsMember({"full", "refine", "auto", "routable", "eco", "closure"}));
   app.add_option("--time", o.time_limit_s, "Wall-time stop for the annealer, seconds (0 = none; budgets are in moves)");
   app.add_option("--seed", o.seed, "Random seed");
   app.add_option("--threads", o.threads, "Threads for parallel annealing runs (0 = min(cores, 16))");
@@ -741,8 +902,18 @@ int main(int argc, char** argv) {
   app.add_option("--place-advice", lc.advice,
                  "routable/eco: placement advice file (JSON: seeds = proposed placements, eco = proposed moves; doc 17 stage 4), each kept only if it routes more")
       ->check(CLI::ExistingFile);
+  app.add_option("--closure-routes", lc.closure_routes, "closure: trial placements routed at most (doc 04 §11)");
+  app.add_option("--closure-stall", lc.closure_stall, "closure: trials without improvement before a radical one (re-place around the failures or the whole board)");
+  app.add_option("--closure-judge", lc.judge,
+                 "closure: what routes each trial: route = `tracemaker route --work <--route-check> --no-kb` (the product route; default), "
+                 "portfolio = the in-memory portfolio check of routable/eco")
+      ->check(CLI::IsMember({"route", "portfolio"}));
+  app.add_option("--closure-router", lc.router, "closure: the tracemaker binary for the route judge (default: beside tracemaker-place)");
+  app.add_option("--closure-route-args", lc.route_args, "closure: extra `tracemaker route` options for the route judge (one string)");
+  app.add_option("--closure-learn", lc.learn,
+                 "closure: learned prior of the move-type bandit (JSON); read before the run if it exists, updated after it");
   app.add_option("--loop-time", lc.loop_time_s,
-                 "routable: wall-time stop in seconds; checked between seeds and routes, keeps the best placement so far (0 = none)");
+                 "routable/closure: wall-time stop in seconds; checked between seeds and routes, keeps the best placement so far (0 = none)");
   CLI11_PARSE(app, argc, argv);
   if (!debug_flip.empty()) {  // writer check: flip footprints in place (verified against pcbnew, scripts/flip_check.py)
     try {
@@ -777,7 +948,7 @@ int main(int argc, char** argv) {
     std::fprintf(stderr, "error: --place-advice needs --mode routable or eco (each proposal is routed and kept only if it routes more)\n");
     return 1;
   }
-  if (o.mode == "routable" || o.mode == "eco") {
+  if (o.mode == "routable" || o.mode == "eco" || o.mode == "closure") {
     lc.in = in;
     lc.out = out;
     lc.json_path = json_path;

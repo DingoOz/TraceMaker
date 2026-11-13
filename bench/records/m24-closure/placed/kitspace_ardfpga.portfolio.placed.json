@@ -1,0 +1,510 @@
+{
+  "after": {
+    "conflicts": [],
+    "crossings": 281,
+    "fixed_outside": 1,
+    "fixed_overlaps": 1,
+    "flipped": 0,
+    "hpwl_mm": 2002.2819,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 0,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 1779.5829600000002
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [],
+    "crossings": 311,
+    "fixed_outside": 1,
+    "fixed_overlaps": 1,
+    "flipped": 0,
+    "hpwl_mm": 2024.7559,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 0,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 1803.4058799999998
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 8.208463765484767,
+    "lb_any_rotation_mm": 216.79854,
+    "lb_fixed_rotation_mm": 521.88479,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "closure": {
+    "accepted": 3,
+    "arms": {
+      "far": {
+        "pulls": 11,
+        "wins": 2
+      },
+      "flip": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "replace": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "room": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "rotate": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "shift": {
+        "pulls": 5,
+        "wins": 0
+      },
+      "swap": {
+        "pulls": 8,
+        "wins": 1
+      },
+      "window": {
+        "pulls": 4,
+        "wins": 0
+      }
+    },
+    "prior": null,
+    "routes": 40,
+    "stop": "route budget",
+    "trials": [
+      {
+        "accepted": false,
+        "after": 13,
+        "arm": "shift",
+        "before": 11,
+        "escalated": false,
+        "what": "RN3 shift +x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 15,
+        "arm": "rotate",
+        "before": 11,
+        "escalated": false,
+        "what": "U3 rotate 270"
+      },
+      {
+        "accepted": false,
+        "after": 11,
+        "arm": "swap",
+        "before": 11,
+        "escalated": false,
+        "what": "R2 swap R4"
+      },
+      {
+        "accepted": false,
+        "after": 12,
+        "arm": "far",
+        "before": 11,
+        "escalated": false,
+        "what": "U1 shift +x 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 24,
+        "arm": "window",
+        "before": 11,
+        "escalated": false,
+        "what": "re-place 40 parts around the failures (seed 1)"
+      },
+      {
+        "accepted": false,
+        "after": 15,
+        "arm": "replace",
+        "before": 11,
+        "escalated": false,
+        "what": "new placement of the whole board (1)"
+      },
+      {
+        "accepted": false,
+        "after": 27,
+        "arm": "window",
+        "before": 11,
+        "escalated": true,
+        "what": "re-place 40 parts around the failures (seed 2)"
+      },
+      {
+        "accepted": false,
+        "after": 12,
+        "arm": "shift",
+        "before": 11,
+        "escalated": false,
+        "what": "RN1 shift -x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 12,
+        "arm": "rotate",
+        "before": 11,
+        "escalated": false,
+        "what": "RN1 rotate 90"
+      },
+      {
+        "accepted": true,
+        "after": 10,
+        "arm": "swap",
+        "before": 11,
+        "escalated": false,
+        "what": "R10 swap R11"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "swap",
+        "before": 10,
+        "escalated": false,
+        "what": "CD5 swap C3"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "swap",
+        "before": 10,
+        "escalated": false,
+        "what": "CD6 swap C3"
+      },
+      {
+        "accepted": true,
+        "after": 9,
+        "arm": "far",
+        "before": 10,
+        "escalated": false,
+        "what": "U1 shift +x 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "room",
+        "before": 9,
+        "escalated": false,
+        "what": "room around a failed pad at (115.43, 100.84): RN3,U3 pushed 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "far",
+        "before": 9,
+        "escalated": false,
+        "what": "RN3 shift +x 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "room",
+        "before": 9,
+        "escalated": false,
+        "what": "room around a failed pad at (115.43, 100.84): RN3,U3 pushed 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 15,
+        "arm": "far",
+        "before": 9,
+        "escalated": false,
+        "what": "RN1 shift -x 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 20,
+        "arm": "replace",
+        "before": 9,
+        "escalated": false,
+        "what": "new placement of the whole board (2)"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "swap",
+        "before": 9,
+        "escalated": false,
+        "what": "R3 swap R7"
+      },
+      {
+        "accepted": false,
+        "after": 25,
+        "arm": "window",
+        "before": 9,
+        "escalated": true,
+        "what": "re-place 38 parts around the failures (seed 3)"
+      },
+      {
+        "accepted": false,
+        "after": 12,
+        "arm": "far",
+        "before": 9,
+        "escalated": false,
+        "what": "RN1 shift -x 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "shift",
+        "before": 9,
+        "escalated": false,
+        "what": "RN3 shift +x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "rotate",
+        "before": 9,
+        "escalated": false,
+        "what": "Q1 rotate 90"
+      },
+      {
+        "accepted": false,
+        "after": 19,
+        "arm": "replace",
+        "before": 9,
+        "escalated": true,
+        "what": "new placement of the whole board (3)"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "swap",
+        "before": 9,
+        "escalated": false,
+        "what": "CD5 swap CD6"
+      },
+      {
+        "accepted": true,
+        "after": 8,
+        "arm": "far",
+        "before": 9,
+        "escalated": false,
+        "what": "RN3 shift +x 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "far",
+        "before": 8,
+        "escalated": false,
+        "what": "R6 shift +y 4.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "room",
+        "before": 8,
+        "escalated": false,
+        "what": "room around a failed pad at (115.43, 100.84): RN3,U3 pushed 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 11,
+        "arm": "far",
+        "before": 8,
+        "escalated": false,
+        "what": "X1 shift -y 4.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "far",
+        "before": 8,
+        "escalated": false,
+        "what": "R6 shift +y 3.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "shift",
+        "before": 8,
+        "escalated": false,
+        "what": "RN1 shift +x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "rotate",
+        "before": 8,
+        "escalated": false,
+        "what": "R6 rotate 270"
+      },
+      {
+        "accepted": false,
+        "after": 22,
+        "arm": "window",
+        "before": 8,
+        "escalated": true,
+        "what": "re-place 20 parts around the failures (seed 4)"
+      },
+      {
+        "accepted": false,
+        "after": 12,
+        "arm": "room",
+        "before": 8,
+        "escalated": false,
+        "what": "room around a failed pad at (115.43, 100.84): RN3,U3 pushed 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "swap",
+        "before": 8,
+        "escalated": false,
+        "what": "CD1 swap CD2"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "far",
+        "before": 8,
+        "escalated": false,
+        "what": "X1 shift -y 3.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 21,
+        "arm": "replace",
+        "before": 8,
+        "escalated": true,
+        "what": "new placement of the whole board (4)"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "shift",
+        "before": 8,
+        "escalated": false,
+        "what": "CD2 shift -y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "far",
+        "before": 8,
+        "escalated": false,
+        "what": "R6 shift +y 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "swap",
+        "before": 8,
+        "escalated": false,
+        "what": "CD1 swap CD3"
+      }
+    ]
+  },
+  "fixed_parts": [
+    {
+      "reason": "edge connector",
+      "ref": "J1"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J2"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J3"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J4"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J5"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_5"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_4"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_3"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_2"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_ardfpga/unrouted.kicad_pcb",
+  "kept": "closure",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "closure",
+  "movable": 64,
+  "moved": 4,
+  "nets": 95,
+  "notes": [],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/closure-place10m/boards/kitspace_ardfpga.placed.kicad_pcb",
+  "parts": 73,
+  "pins": 320,
+  "rounds": 0,
+  "route_check": {
+    "connections": 214,
+    "connections_input": 214,
+    "connections_output": 214,
+    "kept_input": false,
+    "routed_input": 203,
+    "routed_output": 206,
+    "work": 10000000
+  },
+  "route_input": {
+    "connections": 214,
+    "routed": 203,
+    "seconds": 20.06294602,
+    "unrouted": 11
+  },
+  "route_output": {
+    "connections": 214,
+    "routed": 206,
+    "seconds": 23.395912724,
+    "unrouted": 8
+  },
+  "routes": 41,
+  "seconds": {},
+  "seconds_total": 1126.348219939,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

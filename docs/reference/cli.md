@@ -1038,7 +1038,7 @@ OPTIONS:
   -h,     --help              Print this help message and exit
   -o,     --output TEXT REQUIRED
                               Output .kicad_pcb
-          --mode TEXT:{full,refine,auto,routable,eco}
+          --mode TEXT:{full,refine,auto,routable,eco,closure}
                               full (place from scratch) or refine (improve the current
                               placement)
           --time FLOAT        Wall-time stop for the annealer, seconds (0 = none; budgets are
@@ -1130,8 +1130,25 @@ OPTIONS:
                               routable/eco: placement advice file (JSON: seeds = proposed
                               placements, eco = proposed moves; doc 17 stage 4), each kept only
                               if it routes more
-          --loop-time FLOAT   routable: wall-time stop in seconds; checked between seeds and
-                              routes, keeps the best placement so far (0 = none)
+          --closure-routes INT
+                              closure: trial placements routed at most (doc 04 §11)
+          --closure-stall INT closure: trials without improvement before a radical one
+                              (re-place around the failures or the whole board)
+          --closure-judge TEXT:{route,portfolio}
+                              closure: what routes each trial: route = `tracemaker route --work
+                              <--route-check> --no-kb` (the product route; default), portfolio
+                              = the in-memory portfolio check of routable/eco
+          --closure-router TEXT
+                              closure: the tracemaker binary for the route judge (default:
+                              beside tracemaker-place)
+          --closure-route-args TEXT
+                              closure: extra `tracemaker route` options for the route judge
+                              (one string)
+          --closure-learn TEXT
+                              closure: learned prior of the move-type bandit (JSON); read
+                              before the run if it exists, updated after it
+          --loop-time FLOAT   routable/closure: wall-time stop in seconds; checked between
+                              seeds and routes, keeps the best placement so far (0 = none)
 ```
 
 ## `tracemaker-view`
