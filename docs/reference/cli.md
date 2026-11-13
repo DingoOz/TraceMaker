@@ -501,6 +501,12 @@ OPTIONS:
                               class width back up to it where there is room, and nets with a
                               target (--widen-net, or a width the component rules computed)
                               towards the target (doc 05 §39)
+          --power-width FLOAT:FLOAT in [0 - 20]
+                              Route supply nets (GND*, VCC*, VDD*, VBUS*, VIN*, +..., 3V3, ...)
+                              at this width (mm) where it fits, necked to their pads, and every
+                              net with a --widen-net or component-rule target at that target;
+                              the rest of a net falls back to its class width, then
+                              --widen-power tops up (doc 05 §79). 0 = off
           --widen-net TEXT ...
                               With --widen-power: target width for nets as PATTERN=WIDTH_MM,
                               e.g. '+5V=0.8' or 'VBUS*=1' (repeatable)

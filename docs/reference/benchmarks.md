@@ -314,6 +314,16 @@ comparable (judge version, time limit, machine load).
 | [m22p-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-plane/base/summary.json) | pcbench-bd-fail | 33 | 816634e | 3.0% | 91.0% | 12.1% | 8286 |  |
 | [m22p-plane](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-plane/plane/summary.json) | pcbench-bd-fail | 32 | 816634e | 3.1% | 90.9% | 12.5% | 8098 | `--plane-informed` |
 
+## m23-e1
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m23-e1)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [e1-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e1/runs/e1-base/summary.json) | power-wide | 30 | 91b2cb5 | 70.0% | 98.3% | 76.7% | 471 |  |
+| [e1-pw05](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e1/runs/e1-pw05/summary.json) | power-wide | 30 | 91b2cb5 | 70.0% | 98.2% | 76.7% | 458 | `--power-width 0.5` |
+| [e1-pw05-strict](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-e1/runs/e1-pw05-strict/summary.json) | e1-open | 9 | 91b2cb5 | 0.0% | 94.1% | 33.3% | 228 | `--power-width 0.5` |
+
 ## m23-throughput
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m23-throughput)

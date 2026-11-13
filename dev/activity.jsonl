@@ -230,3 +230,4 @@
 {"ts": "2026-11-13T04:17:59+00:00", "kind": "decision", "text": "M17: --txn 1 on tiers A-D at equal wall time, 95 -> 94 clean on 108 boards judged in both arms, +34 connections; stays off by default (D181)"}
 {"ts": "2026-11-13T04:26:48+00:00", "kind": "decision", "text": "bench/run.py stops a board at 4 x --time + 120 s: the relax rescue's two passes each get --time, so 3 x + 60 s killed open boards (D182)"}
 {"ts": "2026-11-13T06:58:20+00:00", "kind": "milestone", "text": "M23 planned: group E (power widths, plugin as a KiCad tool, off-angle cleanup, return-path check, throughput), doc 18 section 20, D183"}
+{"ts": "2026-11-13T07:22:02+00:00", "kind": "build", "text": "M23 E1: --power-width routes supply nets wide first (D184); power-wide set: copper at >= 0.5 mm 20 % -> 94 %, clean 21 -> 21, -2 of 4,038 connections; off by default"}

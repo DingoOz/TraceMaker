@@ -602,3 +602,38 @@ TEST_CASE("stitch: a signal via gets one plane via within the distance", "[passe
   CHECK(r.vias.empty());
   CHECK(r.returns[0].stitched_after == 0);
 }
+
+TEST_CASE("neck at pads: a wide track is necked to the pads it ends in, inside its own copper", "[passes][widen]") {
+  // P's pads are 2 x 2 mm at (5, 10) and (25, 10); a 3 mm track between them is necked to 2 mm for 1.2 mm (half the pad plus 0.2) at each end.
+  const auto l = load("neck", board_text(""));
+  std::vector<Coord> floor(l.board.nets.size(), 250'000);
+  std::vector<model::Track> t = {track(pt(5, 10), pt(25, 10), 2, 3'000'000)};
+  CHECK(passes::neck_at_pads(l.board, t, floor) == 2);
+  REQUIRE(t.size() == 3);
+  CHECK(t[0].a == pt(5, 10));
+  CHECK(t[0].b == pt(6.2, 10));
+  CHECK(t[0].width == 2'000'000);
+  CHECK(t[1].a == pt(6.2, 10));
+  CHECK(t[1].b == pt(23.8, 10));
+  CHECK(t[1].width == 3'000'000);
+  CHECK(t[2].a == pt(23.8, 10));
+  CHECK(t[2].b == pt(25, 10));
+  CHECK(t[2].width == 2'000'000);
+
+  // A 45-degree track: the split point is exact (equal steps in x and y). An off-angle one is left whole.
+  t = {track(pt(5, 10), pt(15, 20), 2, 3'000'000), track(pt(5, 10), pt(15, 14), 2, 3'000'000)};
+  CHECK(passes::neck_at_pads(l.board, t, floor) == 1);
+  REQUIRE(t.size() == 3);
+  CHECK(t[0].b == Point{5'000'000 + 848'528, 10'000'000 + 848'528});
+  CHECK(t[0].width == 2'000'000);
+  CHECK(t[1].width == 3'000'000);
+  CHECK(t[2].width == 3'000'000);  // off-angle
+
+  // Never below the net's floor (its class width), and a track no wider than the pad is left alone.
+  floor[2] = 2'500'000;
+  t = {track(pt(5, 10), pt(15, 10), 2, 3'000'000), track(pt(25, 10), pt(25, 15), 2, 1'000'000)};
+  passes::neck_at_pads(l.board, t, floor);
+  REQUIRE(t.size() == 3);
+  CHECK(t[0].width == 2'500'000);
+  CHECK(t[2].width == 1'000'000);
+}

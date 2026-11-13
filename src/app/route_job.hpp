@@ -128,6 +128,10 @@ struct RouteJob {
   // a target (--widen-net "PATTERN=WIDTH_MM", or a width the component rules computed) are widened towards it.
   bool widen_power = false;
   std::vector<std::string> widen_nets;
+  // --power-width MM (D184): supply nets (by name: GND*, VCC*, VDD*, VBUS*, VIN*, +..., 3V3 ...) get MM as their widening target unless a
+  // target is stated, every net with a target is routed at it first (RouterOptions::preferred_widths) and necked to its pads afterwards,
+  // and --widen-power runs. 0 = off.
+  double power_width_mm = 0;
   // --stitch-vias: "planes" (vias of a plane's net on a grid where its fills overlap on two or more layers),
   // "return" (a plane via near each via of the signals that need a reference plane: component rules of kind
   // reference_plane, and --stitch-return "PATTERN=PLANE_NET"), or "all". Empty = off.

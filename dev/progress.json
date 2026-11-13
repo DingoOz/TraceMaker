@@ -955,8 +955,8 @@
       "deliverables": "E1 power nets wide from the start; E2 plugin settings file, one undo with refill, report shown; E3 off-angle cleanup; E4 return-path and plane-gap check; E5 throughput",
       "tasks": [
         {
-          "text": "E1: power nets routed wide from the start",
-          "done": false
+          "text": "E1: --power-width (D184, doc 05 section 79): supply copper at >= 0.5 mm 20 % -> 94 % on the power-wide set, clean 21 -> 21, -2 of 4,038 connections; off by default",
+          "done": true
         },
         {
           "text": "E2: plugin settings per project, refill in the same commit, report shown",
@@ -967,7 +967,7 @@
           "done": false
         },
         {
-          "text": "E4: return-path and plane-gap check in the run report",
+          "text": "E4: the return-path audit (doc 05 section 42) on automatically chosen nets, in every run report",
           "done": false
         },
         {

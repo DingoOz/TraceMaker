@@ -198,6 +198,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D181](decisions/D181.md) | --txn 1 stays off by default after the tier A-D run | accepted |
 | [D182](decisions/D182.md) | Benchmark harness stops a board at 4 x --time + 120 s | accepted |
 | [D183](decisions/D183.md) | Group E: features for a finished, usable KiCad board | accepted |
+| [D184](decisions/D184.md) | Power nets routed wide from the start (--power-width) | accepted |
 <!-- END decision index -->
 
 ## Risks

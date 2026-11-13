@@ -1314,6 +1314,11 @@ static int run_main(int argc, char** argv) {
   route->add_flag("--widen-power", r_job.widen_power,
                   "After routing: widen new tracks that are narrower than their net class width back up to it where there is room, and nets "
                   "with a target (--widen-net, or a width the component rules computed) towards the target (doc 05 §39)");
+  route->add_option("--power-width", r_job.power_width_mm,
+                    "Route supply nets (GND*, VCC*, VDD*, VBUS*, VIN*, +..., 3V3, ...) at this width (mm) where it fits, necked to their pads, and "
+                    "every net with a --widen-net or component-rule target at that target; the rest of a net falls back to its class width, then "
+                    "--widen-power tops up (doc 05 §79). 0 = off")
+      ->check(CLI::Range(0.0, 20.0));
   route->add_option("--widen-net", r_job.widen_nets, "With --widen-power: target width for nets as PATTERN=WIDTH_MM, e.g. '+5V=0.8' or 'VBUS*=1' (repeatable)");
   route->add_option("--stitch-vias", r_job.stitch_vias,
                     "After routing: add stitching vias. planes: vias of a plane's net on a grid where its fills overlap on two or more layers; "

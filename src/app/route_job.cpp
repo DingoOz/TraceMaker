@@ -11,6 +11,7 @@
 #include <ctime>
 #include <filesystem>
 #include <fstream>
+#include <regex>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -54,6 +55,19 @@
 
 namespace tmk::app {
 namespace {
+
+// A supply net by its name (D184): the last hierarchy component is GND, VCC, VDD, VSS, VEE, VBUS, VIN, VBAT, VSYS, VMOT, VPP or PWR
+// (optionally with an A/D/P prefix and an A/D/IO/Q suffix, then '_', '-', '.', '+', a digit or nothing), starts with '+', or is a voltage
+// such as 3V3, 5V, -12V or 1.8V. Stricter than crules::power_like_name (D25, a soft placer objective), which also takes sense lines
+// (VInSense) and KiCad's pin-derived names (Net-(U4-LOCAL_PWR...)): widening those costs room for nothing.
+bool supply_net_name(std::string_view name) {
+  static const std::regex word(R"(^(A|D|P)?(GND|VCC|VDD|VSS|VEE|VBUS|VIN|VBAT|VBATT|VSYS|VMOT|VPP|PWR)(A|D|IO|Q)?([-_.+0-9].*)?$)", std::regex::icase);
+  static const std::regex volts(R"(^[+-]?[0-9]+([.,][0-9]+)?V([0-9]+)?(_.*)?$)", std::regex::icase);
+  const std::string leaf(crules::net_leaf(name));
+  if (leaf.empty()) return false;
+  if (leaf[0] == '+') return true;
+  return std::regex_match(leaf, word) || std::regex_match(leaf, volts);
+}
 
 __attribute__((format(printf, 1, 2))) std::string fmt(const char* f, ...) {
   char buf[1024];
@@ -419,6 +433,8 @@ RouteJobResult run_route_job(RouteJob job) {
   const bool stitch_return = job.stitch_vias == "return" || job.stitch_vias == "all";
   std::vector<passes::WidenOptions::Target> widen_targets;
   std::vector<passes::StitchOptions::ReturnNet> stitch_returns;
+  if (job.power_width_mm < 0 || job.power_width_mm > 20) throw std::invalid_argument("--power-width: expected a width in millimetres (0 to 20)");
+  if (job.power_width_mm > 0) job.widen_power = true;  // routed wide first, then topped up where room is left
   // "PATTERN=VALUE": the nets whose name matches the pattern (KiCad wildcards), and the text after the last '='.
   auto pattern_nets = [&](const std::string& opt_name, const std::string& entry, std::string& value) {
     const auto eq = entry.rfind('=');
@@ -574,6 +590,37 @@ RouteJobResult run_route_job(RouteJob job) {
       std::ofstream(side) << crules::dru_sidecar(lb.board, cat, det);
       log("component rules: generated custom rules written to " + side);
     }
+  }
+  // --power-width (D184): supply nets get the width unless a target is stated, and every net with a target is routed at it first.
+  std::vector<Coord> wide_floor;  // by net: the class width a wide net is necked to at its pads
+  if (job.power_width_mm > 0) {
+    const Coord pw = static_cast<Coord>(std::llround(job.power_width_mm * 1e6));
+    std::vector<Coord> best(lb.board.nets.size(), 0);
+    for (const auto& t : widen_targets)
+      if (static_cast<std::size_t>(t.net) < best.size()) best[static_cast<std::size_t>(t.net)] = std::max(best[static_cast<std::size_t>(t.net)], t.width);
+    std::vector<std::uint8_t> paired(lb.board.nets.size(), 0);
+    for (const auto& [a, b2] : opt.pair_nets) paired[static_cast<std::size_t>(a)] = paired[static_cast<std::size_t>(b2)] = 1;
+    int supply = 0;
+    for (const auto& n : lb.board.nets)
+      if (n.id > 0 && !paired[static_cast<std::size_t>(n.id)] && best[static_cast<std::size_t>(n.id)] == 0 && supply_net_name(n.name)) {
+        widen_targets.push_back({n.id, pw, "power"});
+        best[static_cast<std::size_t>(n.id)] = pw;
+        ++supply;
+      }
+    wide_floor.assign(lb.board.nets.size(), 0);
+    std::string names;
+    int wide = 0;
+    for (const auto& n : lb.board.nets) {
+      const auto i = static_cast<std::size_t>(n.id);
+      if (n.id <= 0 || best[i] == 0 || paired[i]) continue;
+      const Coord cw = std::max(rules.class_for(n.name).track_width, rules.minimums.track_width);
+      if (best[i] <= cw) continue;
+      opt.preferred_widths.push_back({n.name, best[i]});
+      wide_floor[i] = cw;
+      ++wide;
+      if (names.size() < 200) names += (names.empty() ? "" : ", ") + n.name + fmt(" %.2f", nm_to_mm(best[i]));
+    }
+    log(fmt("power widths: %d supply nets at %.2f mm; %d nets routed wide first%s%s", supply, job.power_width_mm, wide, wide ? ": " : "", names.c_str()));
   }
   // Custom rules the router cannot apply (unreadable conditions, position-dependent disallow rules) are named
   // here, not only by `tracemaker drc`: the routed board may break them (rule 6).
@@ -1370,6 +1417,13 @@ RouteJobResult run_route_job(RouteJob job) {
       return true;
     };
     auto mm = [](Coord v) { return fmt("%.3f", nm_to_mm(v)); };
+    if (!wide_floor.empty()) {  // tracks routed wide (D184) are necked to the pads they end in before anything is topped up
+      const int necks = passes::neck_at_pads(*route_board, res.tracks, wide_floor);
+      int wide_tracks = 0;
+      for (const auto& t : res.tracks)
+        wide_tracks += static_cast<std::size_t>(t.net) < wide_floor.size() && wide_floor[static_cast<std::size_t>(t.net)] > 0 && t.width > wide_floor[static_cast<std::size_t>(t.net)];
+      log(fmt("power widths: %d tracks wider than their class, %d necks at pads", wide_tracks, necks));
+    }
     if (job.widen_power) {
       if (opt.sink) opt.sink->publish(server::stage("widen", "begin", "power track widening"));
       passes::WidenOptions wo;

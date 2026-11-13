@@ -3618,3 +3618,38 @@ Measured on the M22 gate set (33 `pcbench-bd-fail` boards, 10 M work, 8 variants
 changes a decision, so item 4 does nothing for the gate. The option stays off. With it, all eight items of M22 are built and off; the best
 arm (`--via-shove --escape-all`, §64) cut open connections by 3.5 % against the 15 % gate.
 
+
+## 79. Power nets wide from the start (`--power-width`, 2026-11-13, D184, M23 E1)
+
+`--widen-power` (§39.1) widens after routing where room is left; by then signals hold the channels a wide supply track needed. On
+robomezzi the router left power at 0.25 mm where the designer drew 0.6 to 2.5 mm, and the closure loop's safety check passed only with the
+designer's widths (`bench/records/closure`).
+
+- **Which nets** (`src/app/route_job.cpp`, `supply_net_name`): the last hierarchy component is GND, VCC, VDD, VSS, VEE, VBUS, VIN, VBAT,
+  VSYS, VMOT, VPP or PWR (an A/D/P prefix and an A/D/IO/Q suffix allowed, then `_`, `-`, `.`, `+`, a digit or nothing); a KiCad power
+  symbol's `+NAME`; or a voltage (3V3, 5V, -12V, 1.8V). Stricter than `crules::power_like_name` (D25), which also takes sense lines
+  (`/VInSense`) and KiCad's pin-derived names (`Net-(U4-…LOCAL_PWR…)`). Halves of coupled pairs are left out.
+- **Target**: `--power-width MM`, unless `--widen-net` or a component rule's `width_for_current` states one (the largest stated counts).
+  Every net whose target is wider than its class width is routed wide first (`RouterOptions::preferred_widths`).
+- **Routing**: such a connection is first searched strictly at its target. A strict search cannot rip anything, so wide power never
+  displaces a signal. If it fails, the connection is routed like any other at its class width, with the usual ladder (escapes, neck-down,
+  negotiation). Trying it in the first pass only lost width and gained nothing (below).
+- **Pad necks** (`passes::neck_at_pads`): a wide track ending in a narrower pad of its net is split, and the piece at the pad takes the pad's
+  smaller side (never below the class width) for half the pad's larger side plus 0.2 mm. Only 0/45/90° tracks are split, so the split
+  point lies exactly on the track and the result is copper the track already covered: no clearance can get worse.
+- Then `--widen-power` (switched on by `--power-width`) tops up what was routed narrow where room is left.
+
+**Measured** (`bench/records/m23-e1`): the power-wide set (`bench/sets/power-wide.txt`) is 30 PCBench boards drawn with seed 7 from the
+314 under 800 kB whose designer drew at least half of the supply copper (≥ 100 mm) at 0.5 mm or wider (`bench/power_widths.py` on
+`raw.kicad_pcb`). 3 M work, deterministic, KiCad-judged, `--power-width 0.5` against the base.
+
+| | routed / connections | clean | supply copper at ≥ 0.5 mm: base / `--power-width 0.5` / designer |
+|---|---|---|---|
+| all 30 | 3,946 → 3,944 / 4,038 | 21 → 21 | **20 % / 94 % / 84 %** (of 12,354 / 12,644 / 14,186 mm) |
+
+- No error added on any board, CPU −2.9 % at the same work. Of the 9 boards left open, two route more (ErgoDone +1, BTTF-TimeCircuits +2) and
+  two fewer (SPEX_HAB −4, Unifying −1): −2 of 4,038.
+- Wide attempts in the first pass only (an experiment, removed): the same routed counts on those 9 boards, width share 94 % → 91 %.
+- **Off by default.** It changes every board with a supply net, and the gate of doc 18 §20.2 asks for equal completion; −2 is close to
+  that and not equal. It is the setting the KiCad plugin should offer (E2).
+
