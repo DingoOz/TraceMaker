@@ -35,9 +35,11 @@ print(f"OK: {len(tracks)} tracks, {len(vias)} vias built")
 # TRACEMAKER_ARGS (CLI spelling) maps onto the Python module's keyword arguments.
 from tracemaker_route import route_kwargs  # noqa: E402
 
-kw = route_kwargs(["--time", "30", "--threads", "4", "--no-kb", "--no-gpu", "--view", "--work", "5000"])
-assert kw == {"time_s": 30.0, "threads": 4, "kb": False, "gpu": False, "view": True, "work": 5000}, kw
-assert route_kwargs([]) == {}
+kw, rest = route_kwargs(["--time", "30", "--threads", "4", "--no-kb", "--no-gpu", "--view", "--work", "5000"])
+assert kw == {"time_s": 30.0, "threads": 4, "kb": False, "gpu": False, "view": True, "work": 5000} and rest == [], kw
+assert route_kwargs([]) == ({}, [])
+kw, rest = route_kwargs(["--time", "30", "--power-width", "0.5"])  # options only the binary takes are returned, so the binary is used
+assert kw == {"time_s": 30.0} and rest == ["--power-width", "0.5"], (kw, rest)
 print("OK: TRACEMAKER_ARGS mapping")
 
 # The repair's lifted copper ("removed" in --emit-items, doc 05 §73) is found on the open board by geometry, layer and net.
@@ -113,3 +115,41 @@ assert f12 == fingerprint(SelBoard([], tracks=[t2, t1]))
 assert f12 != fingerprint(SelBoard([], tracks=[t1]))
 assert f12 != fingerprint(SelBoard([], vias=[t1, t2]))  # a via is not a track
 print("OK: selected nets and board fingerprint")
+
+# Per-project settings (tracemaker_settings.py, D185): defaults, the project's tracemaker.json, then the environment; read strictly.
+import os  # noqa: E402
+import tempfile  # noqa: E402
+
+import tracemaker_settings as ts  # noqa: E402
+
+with tempfile.TemporaryDirectory() as d:
+    s0, src = ts.load(d, {})
+    assert s0 == ts.DEFAULTS and src == "defaults"
+    assert ts.route_args(s0) == ["--time", "120", "--power-width", "0.5"]
+    with open(os.path.join(d, "tracemaker.json"), "w") as f:
+        json.dump({"version": 1, "route_args": "--time 30 --threads 4", "power_width_mm": 0, "refill": True, "report": "off"}, f)
+    s1, src = ts.load(d, {})
+    assert s1["refill"] is True and s1["report"] == "off" and src.endswith("tracemaker.json")
+    assert ts.route_args(s1) == ["--time", "30", "--threads", "4"]  # power width 0: off
+    s2, src = ts.load(d, {"TRACEMAKER_REFILL": "0", "TRACEMAKER_POWER_WIDTH": "0.8", "TRACEMAKER_REROUTE": "1"})
+    assert s2["refill"] is False and s2["power_width_mm"] == 0.8 and s2["reroute"] is True and "TRACEMAKER_REFILL" in src
+    assert ts.route_args(dict(s2, route_args="--power-width 1")) == ["--power-width", "1"]  # an explicit option is not doubled
+    for bad, word in (({"power_width_mm": "wide"}, "power_width_mm"), ({"refill": "yes"}, "refill"), ({"plaec": "auto"}, "plaec"),
+                      ({"place": "anywhere"}, "place"), ({"net_work": 0}, "net_work"), ({"version": 2}, "version")):
+        with open(os.path.join(d, "tracemaker.json"), "w") as f:
+            json.dump(bad, f)
+        try:
+            ts.load(d, {})
+            raise AssertionError(f"accepted {bad}")
+        except ts.SettingsError as e:
+            assert word in str(e), (bad, str(e))
+    with open(os.path.join(d, "tracemaker.json"), "w") as f:
+        f.write("{not json")
+    try:
+        ts.load(d, {})
+        raise AssertionError("accepted bad JSON")
+    except ts.SettingsError as e:
+        assert "not valid JSON" in str(e)
+assert ts.load(None, {})[0] == ts.DEFAULTS  # no project: defaults
+print("OK: per-project settings")
+

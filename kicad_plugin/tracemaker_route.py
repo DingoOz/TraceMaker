@@ -8,6 +8,9 @@ board itself is never overwritten.
 The engine runs in-process through the Python module `tracemaker` (bindings/) when it can be imported, and
 otherwise as the `tracemaker` binary (`tracemaker route ... --emit-items`). Both run the same code.
 
+Settings: `tracemaker.json` in the project folder (tracemaker_settings.py: route options, power width, refill, report, reroute,
+placement), else the defaults there. The environment variables below win over the file.
+
 Environment:
   TRACEMAKER                path to the tracemaker binary (default: `bin/tracemaker` next to this file, then PATH)
   TRACEMAKER_PYTHONPATH     directory holding the tracemaker Python module (default: `lib/` next to this file)
@@ -20,6 +23,8 @@ Environment:
   TRACEMAKER_REFILL=1       refill the zones after the commit. Off by default, except after footprints moved (=0 stops
                             that too): KiCad records the refill as a step of its own, so the result then takes two
                             undos instead of one
+  TRACEMAKER_POWER_WIDTH    supply nets routed this wide where it fits (mm, route --power-width; default 0.5, 0 = off)
+  TRACEMAKER_REPORT         browser (default: the run report opens in the web browser), project (also kept next to the board), off
 """
 from __future__ import annotations
 
@@ -31,6 +36,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
+import webbrowser
 
 from kipy import KiCad
 from kipy.board_types import Track, Via
@@ -38,6 +45,9 @@ from kipy.geometry import Angle, Vector2
 from kipy.proto.board import board_types_pb2
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+
+import tracemaker_settings  # noqa: E402 - next to this file
 
 
 def build_items(board, items: dict) -> list:
@@ -121,8 +131,8 @@ def find_binary():
     return shutil.which("tracemaker")
 
 
-def route_kwargs(args: list) -> dict:
-    """Maps the CLI's route options (TRACEMAKER_ARGS) to tracemaker.route() keyword arguments."""
+def route_kwargs(args: list) -> tuple[dict, list]:
+    """Maps the CLI's route options to tracemaker.route() keyword arguments; also returns the options the module does not take."""
     p = argparse.ArgumentParser(add_help=False)
     p.add_argument("--time", dest="time_s", type=float)
     p.add_argument("--threads", type=int)
@@ -142,9 +152,7 @@ def route_kwargs(args: list) -> dict:
     p.add_argument("--global", dest="global_route", action="store_true", default=None)
     p.add_argument("--record")
     known, unknown = p.parse_known_args(args)
-    if unknown:
-        print(f"TraceMaker: ignoring options the Python module does not take: {' '.join(unknown)}", file=sys.stderr)
-    return {k: v for k, v in vars(known).items() if v is not None}
+    return {k: v for k, v in vars(known).items() if v is not None}, unknown
 
 
 def find_placer():
@@ -162,14 +170,14 @@ def find_placer():
     return shutil.which("tracemaker-place")
 
 
-def run_placer(src: str, out: str, report: str, mode: str) -> dict:
+def run_placer(src: str, out: str, report: str, mode: str, extra: str = "") -> dict:
     """Places `src` into `out`; returns {reference: (x_nm, y_nm, angle_deg)} for the footprints the placer may move
     (the caller compares with the live board), or {} when placement failed (the board is then routed as it is)."""
     exe = find_placer()
     if not exe:
-        print("TraceMaker: TRACEMAKER_PLACE is set but tracemaker-place was not found (set TRACEMAKER_PLACE_BIN)", file=sys.stderr)
+        print("TraceMaker: placement is asked for but tracemaker-place was not found (set TRACEMAKER_PLACE_BIN)", file=sys.stderr)
         return {}
-    proc = subprocess.run([exe, src, "-o", out, "--mode", mode, "--json", report] + shlex.split(os.environ.get("TRACEMAKER_PLACE_ARGS", "")),
+    proc = subprocess.run([exe, src, "-o", out, "--mode", mode, "--json", report] + shlex.split(extra),
                           capture_output=True, text=True)
     if proc.returncode not in (0, 2) or not os.path.exists(out) or not os.path.exists(report):
         print(proc.stdout[-2000:], proc.stderr[-2000:], file=sys.stderr)
@@ -189,14 +197,17 @@ def run_placer(src: str, out: str, report: str, mode: str) -> dict:
     return moves
 
 
-def run_engine(src: str, out: str, items_path: str, extra: list | None = None) -> bool:
-    """Routes `src`, writing the routed board to `out` and the new copper as JSON to `items_path`."""
-    args = shlex.split(os.environ.get("TRACEMAKER_ARGS", "--time 120")) + (extra or [])
-    tm = None if extra else find_bindings()  # the module takes no --reroute
+def run_engine(src: str, out: str, items_path: str, args: list, report: str | None = None) -> bool:
+    """Routes `src`, writing the routed board to `out`, the new copper as JSON to `items_path` and, with `report`, the run report."""
+    tm = None if report else find_bindings()  # the module writes no report
+    if tm is not None:
+        kwargs, unknown = route_kwargs(args)
+        if unknown:
+            tm = None  # options only the binary takes (--power-width, --reroute, ...): use the binary rather than drop them
     if tm is not None:
         print(f"TraceMaker {tm.__version__} (Python module)", flush=True)
         try:
-            r = tm.route(src, out, items_out=items_path, verbose=True, **route_kwargs(args))
+            r = tm.route(src, out, items_out=items_path, verbose=True, **kwargs)
         except Exception as e:  # noqa: BLE001 - shown to the user in KiCad's plugin output
             print(f"TraceMaker: {e}", file=sys.stderr)
             return False
@@ -205,7 +216,8 @@ def run_engine(src: str, out: str, items_path: str, extra: list | None = None) -
     if not exe:
         print("TraceMaker: set TRACEMAKER to the tracemaker binary (or TRACEMAKER_PYTHONPATH to the module)", file=sys.stderr)
         return False
-    proc = subprocess.run([exe, "route", src, "-o", out, "--emit-items", items_path] + args, capture_output=True, text=True)
+    cmd = [exe, "route", src, "-o", out, "--emit-items", items_path] + args + (["--report", report] if report else [])
+    proc = subprocess.run(cmd, capture_output=True, text=True)
     print(proc.stdout)
     if proc.returncode not in (0, 3) or not os.path.exists(items_path):
         print(proc.stderr, file=sys.stderr)
@@ -213,21 +225,59 @@ def run_engine(src: str, out: str, items_path: str, extra: list | None = None) -
     return True
 
 
+def report_path(settings: dict, project_dir: str | None, board_name: str) -> str | None:
+    """Where the run report goes: a per-user cache folder (browser), or next to the board as well (project), or nowhere (off)."""
+    if settings["report"] == "off":
+        return None
+    base = os.environ.get("XDG_CACHE_HOME") or os.path.join(os.path.expanduser("~"), ".cache")
+    d = os.path.join(base, "tracemaker", "reports")
+    os.makedirs(d, exist_ok=True)
+    stem = os.path.splitext(os.path.basename(board_name or "board"))[0] or "board"
+    return os.path.join(d, f"{stem}-{time.strftime('%Y%m%d-%H%M%S')}.html")
+
+
+def show_report(path: str | None, settings: dict, project_dir: str | None, board_name: str) -> None:
+    """Opens the report in the browser; with "project", copies it next to the board first."""
+    if not path or not os.path.exists(path):
+        return
+    if settings["report"] == "project" and project_dir and os.path.isdir(project_dir):
+        stem = os.path.splitext(os.path.basename(board_name or "board"))[0] or "board"
+        kept = os.path.join(project_dir, f"{stem}.tracemaker-report.html")
+        shutil.copy2(path, kept)
+        path = kept
+    print(f"TraceMaker: run report {path}")
+    try:
+        webbrowser.open("file://" + os.path.abspath(path))
+    except Exception as e:  # noqa: BLE001 - the report is on disk either way
+        print(f"TraceMaker: could not open a browser ({e}); the report is at {path}", file=sys.stderr)
+
+
 def main() -> int:
     kicad = KiCad()
     board = kicad.get_board()
+    try:
+        project_dir = board.get_project().path
+    except Exception:  # noqa: BLE001 - a board without a project
+        project_dir = None
+    try:
+        settings, source = tracemaker_settings.load(project_dir)
+    except tracemaker_settings.SettingsError as e:
+        print(f"TraceMaker: {e}", file=sys.stderr)
+        return 1
+    print(f"TraceMaker: settings from {source}", flush=True)
+    report = report_path(settings, project_dir, board.name)
     with tempfile.TemporaryDirectory(prefix="tracemaker-") as tmp:
         src = os.path.join(tmp, "board.kicad_pcb")
         board.save_as(src, overwrite=True, include_project=True)
-        reroute = os.environ.get("TRACEMAKER_REROUTE") == "1"
+        reroute = settings["reroute"]
         moves = {}
         route_src = src
-        if os.environ.get("TRACEMAKER_PLACE"):
+        if settings["place"]:
             placed = os.path.join(tmp, "board.placed.kicad_pcb")  # same folder: the project files apply to it too
             for ext in (".kicad_pro", ".kicad_dru", ".kicad_prl"):
                 if os.path.exists(os.path.join(tmp, "board" + ext)):
                     shutil.copy2(os.path.join(tmp, "board" + ext), os.path.join(tmp, "board.placed" + ext))
-            moves = run_placer(src, placed, os.path.join(tmp, "place.json"), os.environ["TRACEMAKER_PLACE"])
+            moves = run_placer(src, placed, os.path.join(tmp, "place.json"), settings["place"], settings["place_args"])
             if moves:
                 route_src = placed
                 # Old tracks were routed to the old positions: with parts moved the board is routed again.
@@ -235,7 +285,8 @@ def main() -> int:
                     print("TraceMaker: footprints moved, so the existing unlocked tracks and vias are routed again", flush=True)
                 reroute = True
         items_path = os.path.join(tmp, "items.json")
-        if not run_engine(route_src, os.path.join(tmp, "routed.kicad_pcb"), items_path, ["--reroute"] if reroute else None):
+        args = tracemaker_settings.route_args(settings) + (["--reroute"] if reroute else [])
+        if not run_engine(route_src, os.path.join(tmp, "routed.kicad_pcb"), items_path, args, report):
             return 1
         with open(items_path) as f:
             items = json.load(f)
@@ -247,6 +298,7 @@ def main() -> int:
         return 1
     if not new and not moves:
         print("TraceMaker: nothing to add")
+        show_report(report, settings, project_dir, board.name)
         return 0
     # One commit: a single undo takes back the removed copper, the moved footprints and the new copper together.
     commit = board.begin_commit()
@@ -280,13 +332,14 @@ def main() -> int:
           (f", moved {len(changed)} footprints" if moves else ""))
     # Moved footprints leave the fills stale (KiCad's DRC then reports clearance errors against them), so they are
     # refilled unless switched off; otherwise only on request.
-    refill = os.environ.get("TRACEMAKER_REFILL")
-    if (refill == "1" or (changed and refill != "0")) and board.get_zones():
+    refill = settings["refill"]
+    if (refill is True or (changed and refill == "auto")) and board.get_zones():
         try:
             board.refill_zones()
             print("TraceMaker: zones refilled")
         except Exception as e:  # noqa: BLE001 - the copper is in; a failed refill is reported, not fatal
             print(f"TraceMaker: zone refill failed: {e}", file=sys.stderr)
+    show_report(report, settings, project_dir, board.name)
     return 0
 
 

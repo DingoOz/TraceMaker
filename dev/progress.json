@@ -959,8 +959,8 @@
           "done": true
         },
         {
-          "text": "E2: plugin settings per project, refill in the same commit, report shown",
-          "done": false
+          "text": "E2: per-project tracemaker.json for both actions, power width 0.5 and the run report in the browser by default; a refill cannot join the route's undo step in KiCad 10.0.6 (D185)",
+          "done": true
         },
         {
           "text": "E3: off-angle cleanup",
@@ -972,6 +972,10 @@
         },
         {
           "text": "E5: throughput on the open boards",
+          "done": false
+        },
+        {
+          "text": "E6: a time limit that means the whole run (rescue passes each get --time again: 325 s for --time 60)",
           "done": false
         }
       ]

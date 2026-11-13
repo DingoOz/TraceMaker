@@ -444,6 +444,7 @@ comments, one r/KiCad post through a mirror: anecdotal) and tool pages, mostly v
 | E2 | **The plugin as a KiCad tool:** settings saved per project (a `<project>.tracemaker.json` the plugin reads; no environment variables needed), zones refilled in the same commit as the routes (one undo), and the run report written next to the board and opened in a browser | §20.1 plugin [R]; user points 2, 5 [W] | S-M | In the GUI round trip: one undo removes routes and refill; the settings file changes the run; the report opens |
 | E3 | **Fewer off-angle segments:** a cleanup pass that replaces off-angle and short jogs with 0/45/90 runs where the exact check allows | 2,472 against 853 [R]; user point 1 [W] | M | Off-angle segments down by a third on tiers A-B at no loss of routed connections or added DRC errors |
 | E4 | **Return-path check in every run report:** the reference-return audit exists (doc 05 §42, issue #7: voids, splits and layer changes, measured), but it analyses only nets that are named. The open part is choosing the nets automatically (clocks, buses, pairs, component-rule high-speed nets) and putting the result in the run report | user point 7 [W]; doc 05 §42 analyses nothing by default [R] (the first draft of this row missed §42) | S | In the report of every planes-set board; no flag on boards whose audit is clean |
+| E6 | **A time limit that means the whole run** (found while building E2): `--time` is given again to each relax rescue pass (D160, D163), so a board left open takes about three times what the user set (plugin, `--time 60`: 325 s). A total budget split between the plain run and the rescue, or the plugin saying how long it may take | `bench/records/m17` §5, `bench/records/m23-e2` [R] | S | The plugin's run ends within its stated time, with completion at equal time no worse than now |
 | E5 | **Throughput** (the §18 conclusion): profile the 120 s runs of the eleven open boards and cut the cost per expansion | §20.1 completion [R] | L | More routed at equal wall time on the open boards, results byte-identical at equal work |
 
 Not proposed: IR-drop simulation (a pour-resistance estimate could follow E1, after E4); fab and assembly checks (JLCPCB rule sets exist,
@@ -452,4 +453,9 @@ D146; CPL/BOM export belongs to KiCad plugins that already do it); a learned rou
 **E1 built (2026-11-13, D184, doc 05 §79).** `--power-width MM`, off by default. On 30 boards whose designers drew power wide, supply copper
 at ≥ 0.5 mm goes from 20 % to 94 % (the designers: 84 %), with 21 clean boards before and after, no error added, and −2 of 4,038 connections
 (`bench/records/m23-e1`). E2 makes it a plugin setting.
+
+**E2 built (2026-11-13, D185).** Both KiCad actions read a per-project `tracemaker.json` (environment variables still win). The plugin's
+defaults route power at 0.5 mm and open the run report in the browser. In KiCad 10.0.6, one undo still removes the routes, and a refill
+cannot join that step: called inside the open commit it is still its own step (`bench/records/m23-e2`). E6 was added because of what this
+run showed.
 

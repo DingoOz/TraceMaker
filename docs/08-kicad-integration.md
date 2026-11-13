@@ -197,8 +197,14 @@ kicad-cli pcb drc --format json --severity-all --all-track-errors --exit-code-vi
   copper is routed again and the zones are refilled); `TRACEMAKER_REFILL=1` refills the zones. Removal, moves and
   new copper are one commit. Without `--reroute`, copper that the repair windows lifted (doc 05 §75, D172) comes in the
   items file under `removed` and is removed in the same commit; if one of those items is not on the open board, nothing is changed. KiCad records a zone refill as a step of its own, so with a refill the result takes
-  two undos; that is why refill is off unless footprints moved. Not built: a long-running `tracemakerd` (each run
-  starts the engine afresh). The plugin is tested offline against kicad-python 0.8 (`test_offline.py`).
+  two undos; that is why refill is off unless footprints moved (a refill called inside the open commit is still its own step and fills
+  before the copper is pushed: D185). The long-running session is `tracemaker daemon` (D180), used by the "Route selected nets" action.
+  The plugin is tested offline against kicad-python 0.8 (`test_offline.py`).
+- **Settings per project and the run report (2026-11-13, D185).** Both actions read `tracemaker.json` in the project folder
+  (`kicad_plugin/tracemaker_settings.py`, strict: an unknown key stops the action); the environment variables above win over it. The plugin's
+  defaults route supply nets at 0.5 mm (`--power-width`, doc 05 §79) and write the run report (`route --report`) to
+  `~/.cache/tracemaker/reports/`, opened in the web browser (`"report": "project"` also keeps it next to the board). Options the Python
+  module does not take send the run to the binary instead of being dropped.
 - **Round trip in a running KiCad GUI** (`scripts/kicad_gui_roundtrip.py`, KiCad 10.0.6): pcbnew from the Docker
   image runs on an Xvfb display with the API server enabled (`kicad_common.json`), the first-run wizard is
   clicked away through XTEST, and the plugin talks to the live board over the API socket. On

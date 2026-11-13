@@ -199,6 +199,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D182](decisions/D182.md) | Benchmark harness stops a board at 4 x --time + 120 s | accepted |
 | [D183](decisions/D183.md) | Group E: features for a finished, usable KiCad board | accepted |
 | [D184](decisions/D184.md) | Power nets routed wide from the start (--power-width) | accepted |
+| [D185](decisions/D185.md) | The plugin reads per-project settings and shows the run report | accepted |
 <!-- END decision index -->
 
 ## Risks
