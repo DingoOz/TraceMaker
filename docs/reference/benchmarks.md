@@ -297,6 +297,15 @@ comparable (judge version, time limit, machine load).
 | [lm-m22shove](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22shove/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 86.8% | 0.0% | 7139 | `--via-shove` |
 | [lm-m22shovee](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-oneboard/tenboard/m22shovee/summary.json) | lm10 | 10 | 08a82ff | 0.0% | 87.2% | 0.0% | 6918 | `--via-shove --escape-all` |
 
+## m22-plane
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m22-plane)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [m22p-base](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-plane/base/summary.json) | pcbench-bd-fail | 33 | 816634e | 3.0% | 91.0% | 12.1% | 8286 |  |
+| [m22p-plane](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m22-plane/plane/summary.json) | pcbench-bd-fail | 32 | 816634e | 3.1% | 90.9% | 12.5% | 8098 | `--plane-informed` |
+
 ## m23-throughput
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m23-throughput)

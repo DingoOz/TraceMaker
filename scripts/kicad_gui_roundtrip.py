@@ -37,6 +37,8 @@ def main() -> int:
     ap.add_argument("--work-dir", default=str(ROOT / "build/gui"))
     ap.add_argument("--route-args", default="--time 60 --threads 8 --no-kb")
     ap.add_argument("--package", help="run the plugin from this PCM package (scripts/make_release.py) unpacked, with the engine it carries and no TRACEMAKER variable")
+    ap.add_argument("--nets", default="", help="route these nets one after the other with the 'route selected nets' action through the daemon "
+                    "(comma separated; doc 19 §10) instead of the whole board")
     ap.add_argument("--place", default="", help="also let the plugin move footprints first (TRACEMAKER_PLACE: refine, auto, ...)")
     a = ap.parse_args()
     try:
@@ -146,6 +148,8 @@ def main() -> int:
             env.pop("TRACEMAKER")
             env.pop("PYTHONPATH", None)
             print(f"plugin from {a.package}: engine {g / 'pkg/plugins/bin/tracemaker'} (executable bit: {os.access(g / 'pkg/plugins/bin/tracemaker', os.X_OK)})")
+        if a.nets:
+            return nets_roundtrip(a, g, sock, env, board, check, ctrl, shot, src) if ok else 1
         if a.place:
             env["TRACEMAKER_PLACE"] = a.place
         p = subprocess.run([sys.executable, str(plugin_py)], env=env, capture_output=True, text=True, timeout=3600)
@@ -190,6 +194,87 @@ def main() -> int:
     finally:
         subprocess.run(["docker", "rm", "-f", NAME], capture_output=True)
         xvfb.terminate()
+
+
+def drc_of(path: pathlib.Path) -> tuple:
+    js = path.with_suffix(".drc.json")
+    subprocess.run(["kicad-cli", "pcb", "drc", "--format", "json", "--severity-all", "-o", str(js), str(path)], capture_output=True, cwd=path.parent)
+    d = json.loads(js.read_text())
+    return len(d.get("unconnected_items", [])), collections.Counter(v["type"] for v in d["violations"] if v["severity"] == "error")
+
+
+def nets_roundtrip(a, g, sock, env, board, check, ctrl, shot, src) -> int:
+    """--nets: each net is selected (one of its pads) and routed by kicad_plugin/tracemaker_route_nets.py through one daemon. Checks that
+    each action adds copper, that the second and later actions reuse the daemon's session (warm), that one undo removes only the last net's
+    copper, and KiCad's DRC as for the whole-board action. Prints each action's wall time (the latency the M18 gate states)."""
+    from kipy import KiCad
+
+    env = dict(env, TRACEMAKER_SOCKET=str(g / "daemon.sock"))
+    plugin_py = ROOT / "kicad_plugin/tracemaker_route_nets.py"
+    counts, times, warm = [], [], []
+    ok = True
+    outer = check
+
+    def check(cond: bool, what: str) -> None:  # noqa: F811 - the caller's check, also remembered here
+        nonlocal ok
+        outer(cond, what)
+        ok = ok and cond
+
+    try:
+        for net in [n for n in a.nets.split(",") if n]:
+            board = KiCad(socket_path=sock).get_board()
+            pads = [p for p in board.get_pads() if p.net is not None and p.net.name == net]
+            if not pads:
+                check(False, f"net {net} has pads on the board")
+                return 1
+            board.clear_selection()
+            board.add_to_selection(pads[:1])
+            before = (len(board.get_tracks()), len(board.get_vias()))
+            t0 = time.time()
+            p = subprocess.run([sys.executable, str(plugin_py)], env=env, capture_output=True, text=True, timeout=1800)
+            times.append(time.time() - t0)
+            print("\n".join(line for line in p.stdout.splitlines() if line.startswith("TraceMaker")))
+            if p.returncode != 0:
+                print(p.stderr[-1500:])
+            check(p.returncode == 0, f"route selected nets ({net}) ran against the live board in {times[-1]:.1f} s")
+            ok = ok and p.returncode == 0
+            board = KiCad(socket_path=sock).get_board()
+            after = (len(board.get_tracks()), len(board.get_vias()))
+            if "nothing added" in p.stdout:  # a net already routed as far as it goes: the board must be unchanged
+                check(after == before, f"{net}: nothing added, board unchanged")
+            else:
+                check(after[0] > before[0], f"{net}: tracks {before[0]} -> {after[0]}, vias {before[1]} -> {after[1]}")
+                counts.append((before, after))
+            warm.append("warm session" in p.stdout)
+        check(not warm[0], "the first action starts a session")
+        if len(warm) > 1:
+            check(all(warm[1:]), "later actions reuse the daemon's session (warm)")
+        shot("nets-routed.png")
+        ctrl("z")
+        board = KiCad(socket_path=sock).get_board()
+        now = (len(board.get_tracks()), len(board.get_vias()))
+        check(now == counts[-1][0], f"one undo removes only the last added net's copper: {now} (expected {counts[-1][0]})")
+        ctrl("y")
+        board = KiCad(socket_path=sock).get_board()
+        check((len(board.get_tracks()), len(board.get_vias())) == counts[-1][1], "redo brings it back")
+        out = g / "proj/after_gui.kicad_pcb"
+        board.save_as(str(out), overwrite=True, include_project=True)
+        (u0, e0), (u1, e1) = drc_of(g / "proj" / src.name), drc_of(out)
+        new = {t: n - e0.get(t, 0) for t, n in e1.items() if n > e0.get(t, 0)}
+        check(u1 < u0, f"KiCad DRC of the board saved from the GUI: unconnected {u0} -> {u1}")
+        check(not new, f"no new DRC errors ({dict(new) or 'none'})")
+        print("latency (s): " + ", ".join(f"{t:.2f}" for t in times))
+    finally:
+        try:
+            import socket as so
+            c = so.socket(so.AF_UNIX)
+            c.connect(str(g / "daemon.sock"))
+            c.sendall(b'{"op": "shutdown"}\n')
+            c.recv(100)
+            c.close()
+        except OSError:
+            pass
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":

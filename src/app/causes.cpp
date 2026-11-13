@@ -11,6 +11,7 @@
 #include <thread>
 #include <vector>
 
+#include "drc/refill.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "route/escape.hpp"
@@ -91,8 +92,29 @@ json classify_open_connections(const std::string& path, const CausesOptions& opt
   for (auto& t : board.arcs) t.locked = true;
   for (auto& v : board.vias) v.locked = true;
 
+  // Zones without a fill, as `route` sees them (route_job.cpp, doc 05 §54): a routed board keeps its zones as written, so a board that was
+  // routed from unfilled zones comes back unfilled. Read as it is, every plane connection looks open and its cause is wrong. Filled in memory
+  // for this copper and routed soft, the plane pads are judged as the route run judged them.
+  bool soft = opt.soft_zones;
+  int filled_zones = 0;
+  if (opt.fill_planes) {
+    std::vector<std::size_t> empty;
+    for (std::size_t i = 0; i < board.zones.size(); ++i) {
+      const auto& z = board.zones[i];
+      if (!z.rule_area && !z.teardrop && z.net > 0 && z.copper != 0 && z.fills.empty()) empty.push_back(i);
+    }
+    if (!empty.empty()) {
+      const auto filled = drc::refill_zones(board, rules);
+      for (const std::size_t i : empty) board.zones[i].fills = filled.board.zones[i].fills;
+      filled_zones = static_cast<int>(empty.size());
+      soft = true;
+      if (print) std::printf("%s: %d zone%s without a fill: filled in memory and routed with soft zones, as route does\n", path.c_str(), filled_zones, filled_zones == 1 ? "" : "s");
+    }
+  }
+
   route::RouterOptions base;
   base.seed = opt.seed;
+  base.soft_zones = soft;
   base.gpu_device = -1;
   base.time_limit_s = 3600;  // a safety net: the budgets are the stop (rule 5)
   auto run = [&](const model::Board& b, long work, const std::string& only) {
@@ -109,6 +131,8 @@ json classify_open_connections(const std::string& path, const CausesOptions& opt
   json out;
   out["board"] = path;
   out["copper_layers"] = board.copper_count();
+  out["zones_filled"] = filled_zones;
+  out["soft_zones"] = soft;
   out["baseline"] = {{"connections", first.connections}, {"routed", first.routed}, {"open", first.unrouted.size()}, {"work", opt.baseline_work}};
   if (print)
     std::printf("%s: %d copper layers; on the board as it is the router routes %d more and leaves %zu open (%ld work)\n", path.c_str(), board.copper_count(),

@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "place/congestion.hpp"
+#include "place/place_advice.hpp"
 #include "place/placer.hpp"
 
 namespace tmk::place {
@@ -63,6 +64,10 @@ struct EcoOptions {
   double via_mm = 0;           // ranking: side-assignment via estimate (only when flipping is on; D48)
   std::function<void(const std::string&)> log;
   EcoMemory* memory = nullptr;  // shared across calls (e.g. the rounds of the routability loop); null = local
+  // Placement advice (doc 17 stage 4): proposed single-part moves, routed first in each round, in addition to the `candidates` best
+  // ranked moves; like those, one is committed only when it routes more. Ones that are not legal on the current placement, or
+  // already tried, are dropped.
+  const std::vector<AdvisedMove>* advised = nullptr;
 };
 
 struct EcoResult {
@@ -100,6 +105,7 @@ struct LoopOptions {
   bool absolute_seed_legality = false;
   // With absolute_seed_legality: the first seed is the input whose minimal repair failed; it is compared as it is.
   bool accept_first_seed_conflicts = false;
+  const std::vector<AdvisedMove>* advised_eco = nullptr;  // placement advice for the ECO step (EcoOptions::advised)
 };
 
 struct LoopResult {

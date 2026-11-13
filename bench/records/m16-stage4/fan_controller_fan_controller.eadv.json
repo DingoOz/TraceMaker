@@ -1,0 +1,215 @@
+{
+  "advice": {
+    "eco_moves": 3,
+    "file": "fan_controller_fan_controller.json",
+    "kept": false,
+    "seeds": []
+  },
+  "after": {
+    "conflicts": [
+      "REF**_16/SW1",
+      "REF**_16/U2",
+      "REF**_15/SW1",
+      "REF**_15/U2",
+      "Q2/D2",
+      "Q3/D3",
+      "Q4/D4"
+    ],
+    "crossings": 15,
+    "fixed_outside": 0,
+    "fixed_overlaps": 9,
+    "flipped": 0,
+    "hpwl_mm": 640.7105,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 7,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 694.3781
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [
+      "REF**_16/SW1",
+      "REF**_16/U2",
+      "REF**_15/SW1",
+      "REF**_15/U2",
+      "Q2/D2",
+      "Q3/D3",
+      "Q4/D4"
+    ],
+    "crossings": 103,
+    "fixed_outside": 0,
+    "fixed_overlaps": 9,
+    "flipped": 0,
+    "hpwl_mm": 748.2105,
+    "new_outside": 0,
+    "new_overlaps": 7,
+    "outside": 0,
+    "overlaps": 7,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 776.0781
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 22.34020011582266,
+    "lb_any_rotation_mm": 31.082,
+    "lb_fixed_rotation_mm": 140.29125,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "eco": {
+    "committed": 1,
+    "moves": [
+      "advice: U1 to (138.97, 80.93) at 180 deg: 4 -> 0 unrouted"
+    ],
+    "ranked": 462
+  },
+  "fixed_parts": [
+    {
+      "reason": "locked",
+      "ref": "REF**_16"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_15"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_14"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_13"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_12"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_11"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_10"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_9"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_8"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_7"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_6"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "P2"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "P1"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_5"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_4"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_3"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**_2"
+    },
+    {
+      "reason": "locked",
+      "ref": "REF**"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "fan_controller_fan_controller.kicad_pcb",
+  "kept": "eco",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "eco",
+  "movable": 47,
+  "moved": 1,
+  "nets": 46,
+  "notes": [
+    "input not legal: 7 conflict(s) involving movable parts (REF**_16/SW1, REF**_16/U2, REF**_15/SW1, REF**_15/U2, Q2/D2, Q3/D3, ...); compared as it is (--repair-input compares its minimal repair instead)"
+  ],
+  "output": "fan_controller_fan_controller.eadv.kicad_pcb",
+  "parts": 65,
+  "pins": 170,
+  "rounds": 0,
+  "route_check": {
+    "connections": 115,
+    "connections_input": 115,
+    "connections_output": 115,
+    "kept_input": false,
+    "routed_input": 111,
+    "routed_output": 115,
+    "work": 1000000
+  },
+  "route_input": {
+    "connections": 115,
+    "routed": 111,
+    "seconds": 1.749065828,
+    "unrouted": 4
+  },
+  "route_output": {
+    "connections": 115,
+    "routed": 115,
+    "seconds": 0.821080185,
+    "unrouted": 0
+  },
+  "routes": 5,
+  "seconds": {},
+  "seconds_total": 8.813357061,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

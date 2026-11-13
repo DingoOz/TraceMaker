@@ -1,0 +1,15 @@
+ok   KiCad started and opened its API socket
+ok   the API answers (first-run wizard dismissed)
+TraceMaker: Net-(R14-Pad1): added 3 tracks and 0 vias, 2/2 routed, 0 still open (1.3 s, new session)
+ok   route selected nets (Net-(R14-Pad1)) ran against the live board in 1.7 s
+ok   Net-(R14-Pad1): tracks 140 -> 143, vias 19 -> 19
+TraceMaker: vbias: added 48 tracks and 6 vias, 9/11 routed, 2 still open (3.5 s, warm session)
+ok   route selected nets (vbias) ran against the live board in 3.8 s
+ok   vbias: tracks 143 -> 191, vias 19 -> 25
+ok   the first action starts a session
+ok   later actions reuse the daemon's session (warm)
+ok   one undo removes only the last net's copper: (143, 19) (expected (143, 19))
+ok   redo brings it back
+ok   KiCad DRC of the board saved from the GUI: unconnected 148 -> 134
+ok   no new DRC errors (none)
+latency (s): 1.75, 3.78

@@ -1,6 +1,15 @@
 # TraceMaker KiCad plugin (IPC API, KiCad 10)
 
-The action **Autoroute with TraceMaker** saves a copy of the open board (with its project, so all design rules are
+The plugin has two actions.
+
+**Route selected nets with TraceMaker** routes the nets of the selected pads, tracks, vias, zones or footprints through
+the TraceMaker daemon (`tracemaker daemon`, started on first use, exits after 30 minutes idle), which keeps the board
+between actions: route one net, look, route the next. Each action is one commit (one Ctrl-Z), and a route that would
+add a DRC error is refused. Any edit in KiCad between two actions makes the next one start from the board as it is.
+`TRACEMAKER_NET_WORK` sets the search work (default 2000000), `TRACEMAKER_SOCKET` the daemon's socket (design doc 19 §10).
+Save the board after changing the board setup: the daemon recognises the board by its items and the rule files on disk.
+
+**Autoroute with TraceMaker** saves a copy of the open board (with its project, so all design rules are
 available), routes every unrouted connection, and adds the new tracks and vias to the open board as **one commit**:
 a single Ctrl-Z removes the whole result. The open board file is never overwritten.
 

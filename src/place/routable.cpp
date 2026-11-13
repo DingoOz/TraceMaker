@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <limits>
 #include <map>
 
 #include "place/anneal.hpp"
@@ -194,6 +195,17 @@ EcoResult eco_place(const Problem& p, const Placement& start, const RouteEval& s
         add(EcoMove{a, b, na, nb, ra, rb, pt.ref + " swap " + pb.ref, 0, 0});
       }
     }
+    // Advised moves (doc 17 stage 4) go first, in the file's order, and are routed on top of the ranked ones.
+    int advised = 0;
+    if (o.advised)
+      for (const auto& am : *o.advised) {
+        if (am.pos == res.pl.pos[z(am.part)] && am.rot == res.pl.rot[z(am.part)]) continue;
+        if (!p.parts[z(am.part)].movable || !L.legal(am.part, am.pos, am.rot)) continue;
+        const std::size_t before = moves.size();
+        add(EcoMove{am.part, -1, am.pos, {}, am.rot, 0, "advice: " + am.what, 0, 0});
+        if (moves.size() == before) continue;  // tried before
+        moves.back().score = std::numeric_limits<std::int64_t>::min() + advised++;
+      }
     res.ranked += static_cast<int>(moves.size());
     std::sort(moves.begin(), moves.end(), [](const EcoMove& x, const EcoMove& y) { return x.score != y.score ? x.score < y.score : x.order < y.order; });
     say(o.log, "eco round " + std::to_string(round + 1) + ": " + std::to_string(involved.size()) + " parts near " +
@@ -201,7 +213,7 @@ EcoResult eco_place(const Problem& p, const Placement& start, const RouteEval& s
     int best = -1;
     RouteEval best_eval;
     Placement best_pl;
-    for (int i = 0; i < std::min<int>(o.candidates, static_cast<int>(moves.size())); ++i) {
+    for (int i = 0; i < std::min<int>(o.candidates + advised, static_cast<int>(moves.size())); ++i) {
       const EcoMove& m = moves[z(i)];
       tried.push_back(m.key());
       Placement t = res.pl;
@@ -336,6 +348,7 @@ LoopResult routability_loop(const Problem& p, std::vector<Candidate> seeds, cons
       eo.weight_boost = o.weight_boost;
       eo.log = o.log;
       eo.memory = &memory;
+      eo.advised = o.advised_eco;
       const RouteFn eco_route = [&](const Placement& x) {
         if (o.on_route) o.on_route("round " + std::to_string(round) + " ECO trial");
         return route(x);

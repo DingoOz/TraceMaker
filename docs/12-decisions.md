@@ -192,6 +192,9 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D175](decisions/D175.md) | Coupled pairs: leg reach, protected halves, a re-coupling allowance and pad exits | accepted |
 | [D176](decisions/D176.md) | Kookabus boards as a private fixture set; unused pins are not critical nets | accepted |
 | [D177](decisions/D177.md) | Run report: what the outside review of D3 found, fixed | accepted |
+| [D178](decisions/D178.md) | Placement advice: proposed placements as routability-loop seeds and ECO candidates | accepted |
+| [D179](decisions/D179.md) | Pad-to-plane bound pays a via off the plane layer; causes fills zones as route does | accepted |
+| [D180](decisions/D180.md) | Session daemon and the KiCad action that routes selected nets through it | accepted |
 <!-- END decision index -->
 
 ## Risks

@@ -378,7 +378,10 @@ millimetres of their routes as the designer lays them, straight or in staggered 
 (the designer's own heads give 990). On the ten boards it nets zero (7,175, as the base) and stays off. On CoreOne even the designer's own heads do not help (785
 against 787), so a better rule for the heads was not pursued.
 
-State of M22: items 1-3 and 5-8 are built and off by default, and item 4 is partly built (`--plane-informed`). The best arm,
+Item 4 was finished on 2026-11-13 (D179, doc 05 §78): the bound pays a via off the plane's layer and `causes` fills zones as `route`
+does. On the 33 gate boards at 10 M work `--plane-informed` gives byte-identical boards to the base.
+
+State of M22: all eight items are built and off by default. The best arm,
 `--via-shove --escape-all`, cuts open connections by 3.5 % against the 15 % gate. Every repair so far lands within a few connections
 of the base given about 10 % more work, so more search per second is the stronger lever.
 

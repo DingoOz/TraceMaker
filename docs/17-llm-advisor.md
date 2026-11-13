@@ -1,12 +1,12 @@
 ---
-status: partly-built
-code: [src/advice, advisors]
+status: current
+code: [src/advice, advisors, src/place/place_advice.hpp, src/place/place_advice.cpp]
 ---
 
 # 17 — Advice files and a pluggable advisor, called only when the router is stuck
 
 > Part of the TraceMaker plan. Start at [`../PLAN.md`](../PLAN.md). Written 2026-10-14 for issue #26. **Milestone M16.**
-> Status: stages 0–3 built; stage 4 (placement) is not. §8 holds what was measured, including what did not work.
+> Status: stages 0–4 built (stage 4, placement advice, on 2026-11-13: §8.3, D178). §8 holds what was measured, including what did not work.
 
 ## 1. Where a language model belongs
 
@@ -183,6 +183,7 @@ Benchmarks always run from **recorded advice files** (`bench/advice_eval.py` sto
 | `--advice-out FILE` | where the advice that was used is saved (default `<out>.advice.json`) |
 | `--stuck-report FILE` | write the stuck report |
 | `tracemaker advice-check BOARD ADVICE [--json F]` | check an advice file against a board |
+| `tracemaker-place --mode routable\|eco --place-advice FILE` | placement advice (stage 4, §8.3): proposed placements as seeds of the routability loop, proposed moves as ECO candidates |
 
 The summary (`--json`) gets an `advice` block: the file's hints and warnings, `unadvised_best_routed` / `advised_best_routed` /
 `winner_advised` of the first run, and per advisor round the program, seconds, outcome or error, routed before and after, and whether the
@@ -247,11 +248,56 @@ whose plain column agrees across experiments. (Lesson for any work-budget experi
 | KiCad DRC adds no error on advised boards | 0 router-introduced errors on 10 advised boards checked (5 of each design; `drc-advised.txt` has the final design's) |
 | A real model | **not verified.** The reference advisor was tested against fake OpenAI-compatible and Anthropic servers only. One live request to the shared `llama-server` on this machine ended in HTTP 503 (its engine stopped, exit -6), a second timed out at 150 s; no further attempts were made on a shared service |
 
+### 8.3 Stage 4: placement advice (2026-11-13, D178)
+
+What a model is supposed to add over the rule-based hints of §8.1 is judgement about *which part to move* (§1). Stage 4 gives that a
+channel: a placement advice file for `tracemaker-place` (`src/place/place_advice.hpp`), read strictly like the advice file:
+
+```json
+{"version": 1, "note": "free text",
+ "seeds": [{"name": "U3 to the west", "moves": [{"ref": "U3", "at": [42.5, 18.0], "rotate": 90}]}],
+ "eco":   [{"ref": "C12", "at": [40.0, 21.5]}]}
+```
+
+- `at` is the footprint origin in millimetres on the board file's axes, `rotate` the absolute orientation in degrees (default: as it is),
+  which must be the part's own orientation plus a multiple of 90 (the placer's rotation states; side changes are not offered).
+- A **seed** (at most 8, each at most 64 moves) is the base placement with those parts moved. It joins the routability loop's seeds
+  (`--mode routable`) after the placer's own (input, refine, refine+rudy, full, full+rudy), is routed with the same budget, and is kept
+  only when it leaves fewer connections unrouted than every other seed, and then survives the loop's final verification route like any
+  other winner. A seed that adds an overlap or puts a part outside the board is skipped with the reason in the notes.
+- An **eco** move (at most 32) is a single-part move routed first in each ECO round (`--mode eco`, and the ECO step of each routability
+  round), on top of the ECO's own `--eco-candidates` best-ranked moves; one is committed only when it routes more, as the ECO's own are.
+  Moves not legal on the current placement, or already tried, are dropped.
+- Refused with an error naming the entry, before any route: an unknown reference or key, a reference that names two footprints, a part
+  that is locked or otherwise fixed (rule 6, whoever proposes it: `U1 may not move (overhangs the board edge in the input)`), an
+  orientation the part cannot take, a part moved twice by one seed, more entries than the limits.
+- The report (`--json`) gets an `advice` block: each seed with legal / why / unrouted / kept, the number of ECO moves, and whether the
+  kept placement came from advice.
+
+**Checked.** Unit tests (`[advice]` in `src/place/test_place.cpp`): strict parsing and every refusal above; a good advised seed is kept
+and a worse one is not; an advised ECO move is routed first and committed when it routes more, a useless one commits nothing, one onto a
+fixed part is not routed. The CLI on a real board (`1Bitsy_1bitsy`) and the three oracle boards below.
+
+**Measured, as an oracle** (`bench/records/m16-stage4`): on a copy of three PCBench boards the three movable parts with the most pads
+were turned by 180 degrees, and the advice file put them back as the designer had them (one seed with the three moves, and the three as
+ECO moves). Router check 1 M work, 4 variants, one routability round, two ECO candidates, against the same run without advice:
+
+| Board | Turned input | Without advice | With advice | What the advice did |
+|---|--:|--:|--:|---|
+| `fan_controller` (routable) | 4 unrouted | 0 (refine+rudy) | 0 (refine+rudy) | seed skipped: the designer's orientation adds an overlap in the placer's conservative model |
+| `fan_controller` (`--mode eco`) | 4 | 0 (ECO: U1 rotate 180) | 0 (advised: U1 back to 180°) | the advised move was routed first and committed; ECO's own ranking finds the same move (5 routes against 3) |
+| `spisolator` (routable) | 0 | 0, HPWL 162 mm | 0, HPWL 162 mm | seed routed (0 unrouted, HPWL 182 mm) and not kept |
+| `esp8266_envmonitor` | 8 | 8 | refused | `U1 may not move (overhangs the board edge in the input)` |
+
+So the channel works as designed and cannot make a result worse; on these boards the placer's own candidates find what the advice says,
+as the router's own seeds beat the rule-based hints of §8.1. **That advice adds value is not shown**: no advisor that writes placement
+advice exists yet (the reference advisors write routing hints), and no model has been connected.
+
 ## 9. Not built, and limits
 
-- **Stage 4 (placement).** Advisor-proposed placements as `seeds` of `routability_loop` and proposed moves as ECO candidates
-  (`src/place/routable.hpp`) are not built: they would be kept only if they route more, through seams that exist, and wait for §8's
-  evidence that hints help at all.
+- **An advisor command for placement.** `tracemaker-place` reads a placement advice file; it has no `--advisor CMD` loop like the
+  router's (§5). A model can write the file from `tracemaker-place --json` and the router's stuck report today; a loop is worth adding only
+  once a writer shows that the file helps.
 - **Per-net layer preference and per-net guide corridors** are new router features the issue asked to add only if the simple hints
   matter; §8.1 says they do not, so they were not added.
 - **A hint that picks an attempt** ("run the relax-route-legalise profile", doc 05 §41.3) is the hint type the evidence of this repository

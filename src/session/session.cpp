@@ -2,6 +2,7 @@
 #include "session/session.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdio>
 #include <filesystem>
@@ -240,6 +241,41 @@ std::string Session::digest_of(const Copper& c) const {
     f.i64(v.pos.x), f.i64(v.pos.y), f.i64(v.size), f.i64(v.drill), f.i64(v.layer_top), f.i64(v.layer_bottom), f.i64(static_cast<int>(v.type)), f.i64(v.net);
   }
   return hex64(f.h);
+}
+
+nlohmann::json Session::copper_diff(int from_state) const {
+  const Copper& a = states_.at(static_cast<std::size_t>(from_state)).copper;
+  const Copper& b = states_[static_cast<std::size_t>(cur_)].copper;
+  const model::Board& bd = lb_.board;
+  auto net_name = [&](model::NetId n) { return bd.nets[static_cast<std::size_t>(n)].name; };
+  auto tkey = [](const model::Track& t) { return std::array<std::int64_t, 7>{t.a.x, t.a.y, t.b.x, t.b.y, t.width, t.layer, t.net}; };
+  auto vkey = [](const model::Via& v) {
+    return std::array<std::int64_t, 8>{v.pos.x, v.pos.y, v.size, v.drill, v.layer_top, v.layer_bottom, static_cast<int>(v.type), v.net};
+  };
+  auto tjson = [&](const model::Track& t) {
+    return json{{"start", {t.a.x, t.a.y}}, {"end", {t.b.x, t.b.y}}, {"width", t.width}, {"layer", bd.copper_name(t.layer)}, {"net", net_name(t.net)}};
+  };
+  auto vjson = [&](const model::Via& v) {
+    return json{{"position", {v.pos.x, v.pos.y}}, {"diameter", v.size}, {"drill", v.drill}, {"top", bd.copper_name(v.layer_top)},
+                {"bottom", bd.copper_name(v.layer_bottom)}, {"net", net_name(v.net)}};
+  };
+  // Multisets, so a copy of an item counts (the order of the result is the states' commit order).
+  auto diff = [](const auto& from, const auto& to, auto key, auto out) {
+    std::map<decltype(key(from.front())), int> have;
+    for (const auto& x : from) ++have[key(x)];
+    for (const auto& x : to)
+      if (auto it = have.find(key(x)); it != have.end() && it->second > 0) --it->second;
+      else out(x);
+  };
+  json added{{"tracks", json::array()}, {"vias", json::array()}}, removed{{"tracks", json::array()}, {"vias", json::array()}};
+  if (!b.tracks.empty()) diff(a.tracks, b.tracks, tkey, [&](const model::Track& t) { added["tracks"].push_back(tjson(t)); });
+  if (!a.tracks.empty()) diff(b.tracks, a.tracks, tkey, [&](const model::Track& t) { removed["tracks"].push_back(tjson(t)); });
+  if (!b.vias.empty()) diff(a.vias, b.vias, vkey, [&](const model::Via& v) { added["vias"].push_back(vjson(v)); });
+  if (!a.vias.empty()) diff(b.vias, a.vias, vkey, [&](const model::Via& v) { removed["vias"].push_back(vjson(v)); });
+  added["removed"] = std::move(removed);
+  added["from"] = from_state;
+  added["state"] = cur_;
+  return added;
 }
 
 std::string Session::state_digest() const { return digest_of(states_[static_cast<std::size_t>(cur_)].copper); }
