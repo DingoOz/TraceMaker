@@ -197,6 +197,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D180](decisions/D180.md) | Session daemon and the KiCad action that routes selected nets through it | accepted |
 | [D181](decisions/D181.md) | --txn 1 stays off by default after the tier A-D run | accepted |
 | [D182](decisions/D182.md) | Benchmark harness stops a board at 4 x --time + 120 s | accepted |
+| [D183](decisions/D183.md) | Group E: features for a finished, usable KiCad board | accepted |
 <!-- END decision index -->
 
 ## Risks

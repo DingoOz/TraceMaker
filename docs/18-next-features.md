@@ -11,6 +11,7 @@ code: []
 > **Update (2026-10-24): D3, the run report, was built (§9, D136).**
 > **Update (2026-10-27): C3, pours and the layer-count advisor, was built (§10, D138).**
 > **Update (2026-11-08): A3, the Kookabus boards, is a private fixture set (§19, D176); §7's open question is answered.**
+> **Update (2026-11-13): group E, features for a finished and usable KiCad board, researched after M16-M22 (§20, D183).**
 > **Status (2026-10-15): adopted as the roadmap's M17–M21 on the owner's answers in §7 (decision D118). Nothing here is built.** The
 > candidates keep the numbers they have in §4; §5 is the order that the answers gave. This note changes no code. Evidence tags: **[R]** checked in this repository (file or doc named), **[W]** from a web source (vendor
 > claims are marked as self-reported), **[A]** my estimate or assumption.
@@ -399,4 +400,52 @@ At 3 M work with `--refill`, 1 of 6 boards is clean (Kookabus-03) and completion
 DRC-clean designer layouts; `--si-rules` changes almost nothing and `--diff-pairs` costs completion on three boards (Kookabus-06's sense
 pairs coupled 95.9 %, the designer's 42.6 %). What these boards need is completion (M22), not high speed. The one real high-speed Kookabus
 design, the CSI-2 vision board Kookabus-05, has no layout yet; it is the board to revisit B1/B2 on.
+
+## 20. Group E: from routed to finished and usable (research, 2026-11-13, D183)
+
+Asked for after the roadmap's workable items were done: which new features help a KiCad user end with a board that is fully routed **and**
+useful. Two sources, read the same day. **[R]** this repository's records: the 2026-11-13 tier runs (`bench/records/m17` §5), M22 and doc
+20, the closure loop (`bench/records/closure`), the plugin and its docs. **[W]** user threads (KiCad forum, EEVblog, Hacker News, Hackaday
+comments, one r/KiCad post through a mirror: anecdotal) and tool pages, mostly vendors describing themselves (self-reported).
+
+### 20.1 What the evidence says
+
+- **Completion is a search-throughput problem, not a placement or rule problem [R].** Of 740 pins open on the eleven boards the 120 s tier
+  run left open, 735 are classed *congested* (more search or more layers), 5 *neck_down*, none walled in (`why_open` in each
+  `*.route.json`). M22 found every repair within a few connections of the base given about 10 % more work (§18). Nothing new to propose
+  here beyond what §18 already says: more search per second.
+- **A routed board is not yet a usable one [R].**
+  - **Power at signal width.** robomezzi's power was routed at 0.25 mm where its designer used 0.6 to 2.5 mm, and the closure loop's
+    safety check passed only with the designer's widths (`bench/records/closure`). `--widen-power` (doc 05 §39.1, D092) widens *after*
+    routing where room is left, so it cannot get back a channel that signals have already taken. It is off by default, and it has no
+    target unless one is stated.
+  - **Style.** Tier B has 2,472 off-angle segments against the references' 853 (`txn-base-tierB/report.md`).
+  - **Stale fills.** The written board keeps its old zone fills: the user refills (B) before DRC, and with the plugin's refill that is a
+    second undo step (`kicad_plugin/README.md`).
+- **The plugin is configured by environment variables before KiCad starts and reports to stdout [R]** (`kicad_plugin/tracemaker_route.py`).
+  There is no dialog, no saved per-project setting, and no report the user is shown.
+- **What users ask for, in order of how often it came up [W]:**
+  1. less cleanup than routing by hand;
+  2. routing inside KiCad, with control;
+  3. route this net or region, keeping the rest;
+  4. respect power and pours;
+  5. DRC-clean output;
+  6. constraints from the design's intent, not typed in;
+  7. "routed is not works": return paths, IR drop, decoupling.
+
+  Freerouting 2.5 (October 2026, self-reported 75 % clean on PCBench) now has a KiCad 10 IPC mode, pour awareness and an MCP server.
+  Quilter generates power pours and shows IR drop. Flux sizes power traces from current. DeepPCB and VelaTrace check each route with DRC.
+
+### 20.2 Candidates, in the order to build them
+
+| # | Feature | Evidence | Size | Gate |
+|---|---|---|---|---|
+| E1 | **Power nets wide from the start.** Supply nets (from component rules and net names) get a target width (stated, IPC-2221 from a stated current, or a default) and are routed at it, necked down to the class width only where the wide track does not fit; `--widen-power` then tops up | robomezzi 0.25 against 0.6-2.5 mm; `--widen-power` ran with no loss on 30 quick boards but only widens where room is left [R]; user point 4 [W] | M | On boards whose designer drew power wider than the class width: length of power copper at its target width up, with completion and clean count equal at equal work (KiCad-judged) |
+| E2 | **The plugin as a KiCad tool:** settings saved per project (a `<project>.tracemaker.json` the plugin reads; no environment variables needed), zones refilled in the same commit as the routes (one undo), and the run report written next to the board and opened in a browser | §20.1 plugin [R]; user points 2, 5 [W] | S-M | In the GUI round trip: one undo removes routes and refill; the settings file changes the run; the report opens |
+| E3 | **Fewer off-angle segments:** a cleanup pass that replaces off-angle and short jogs with 0/45/90 runs where the exact check allows | 2,472 against 853 [R]; user point 1 [W] | M | Off-angle segments down by a third on tiers A-B at no loss of routed connections or added DRC errors |
+| E4 | **Return-path and plane-gap check** in the run report: signal tracks that cross a gap in the plane of the adjacent layer, and layer changes without a nearby return via | user point 7 [W]; doc 15 §14.5 lists the plane coverage check as not built [R] | S | Reported with track and location on the planes set; zero false reports on boards with solid planes |
+| E5 | **Throughput** (the §18 conclusion): profile the 120 s runs of the eleven open boards and cut the cost per expansion | §20.1 completion [R] | L | More routed at equal wall time on the open boards, results byte-identical at equal work |
+
+Not proposed: IR-drop simulation (a pour-resistance estimate could follow E1, after E4); fab and assembly checks (JLCPCB rule sets exist,
+D146; CPL/BOM export belongs to KiCad plugins that already do it); a learned router (§6).
 

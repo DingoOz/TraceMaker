@@ -946,6 +946,35 @@
           "done": true
         }
       ]
+    },
+    {
+      "id": "M23",
+      "title": "Finished and usable boards",
+      "status": "in_progress",
+      "gate": "Each item's gate in docs/18 section 20.2, KiCad-judged, no loss of routed connections or clean boards at equal work (D183)",
+      "deliverables": "E1 power nets wide from the start; E2 plugin settings file, one undo with refill, report shown; E3 off-angle cleanup; E4 return-path and plane-gap check; E5 throughput",
+      "tasks": [
+        {
+          "text": "E1: power nets routed wide from the start",
+          "done": false
+        },
+        {
+          "text": "E2: plugin settings per project, refill in the same commit, report shown",
+          "done": false
+        },
+        {
+          "text": "E3: off-angle cleanup",
+          "done": false
+        },
+        {
+          "text": "E4: return-path and plane-gap check in the run report",
+          "done": false
+        },
+        {
+          "text": "E5: throughput on the open boards",
+          "done": false
+        }
+      ]
     }
   ]
 }
