@@ -1,0 +1,2684 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 90.81,
+ "connections": 272,
+ "copper_layers": 2,
+ "drc": {
+  "added_routing_errors": 0,
+  "after": {
+   "errors": 4,
+   "notes": [
+    "no project file ethercat.kicad_pro; using KiCad defaults and rules stored in the board"
+   ],
+   "unconnected": 24,
+   "unconnected_cut_by_refill": 0,
+   "unconnected_items": [
+    {
+     "from": "Pad 8 of U2 [+3V3]",
+     "open_by_router": true,
+     "to": "Pad 1 of P1 [+3V3]",
+     "what": "Missing connection in net +3V3",
+     "x_mm": 146.92,
+     "y_mm": 81.3
+    },
+    {
+     "from": "Pad 1 of P1 [+3V3]",
+     "open_by_router": true,
+     "to": "Pad 1 of C6 [+3V3]",
+     "what": "Missing connection in net +3V3",
+     "x_mm": 132.08,
+     "y_mm": 125.095
+    },
+    {
+     "from": "Pad 1 of C6 [+3V3]",
+     "open_by_router": true,
+     "to": "Pad 20 of U1 [+3V3]",
+     "what": "Missing connection in net +3V3",
+     "x_mm": 138.0,
+     "y_mm": 89.65
+    },
+    {
+     "from": "Pad 1 of C12 [Net-(C12-Pad1)]",
+     "open_by_router": true,
+     "to": "Pad 1 of C13 [Net-(C12-Pad1)]",
+     "what": "Missing connection in net Net-(C12-Pad1)",
+     "x_mm": 129.9,
+     "y_mm": 82.95
+    },
+    {
+     "from": "Pad 1 of C13 [Net-(C12-Pad1)]",
+     "open_by_router": true,
+     "to": "Pad 1 of C14 [Net-(C12-Pad1)]",
+     "what": "Missing connection in net Net-(C12-Pad1)",
+     "x_mm": 132.6,
+     "y_mm": 90.15
+    },
+    {
+     "from": "Pad 1 of C14 [Net-(C12-Pad1)]",
+     "open_by_router": true,
+     "to": "Pad 6 of U1 [Net-(C12-Pad1)]",
+     "what": "Missing connection in net Net-(C12-Pad1)",
+     "x_mm": 128.5,
+     "y_mm": 82.95
+    },
+    {
+     "from": "Pad 1 of R12 [Net-(R12-Pad1)]",
+     "open_by_router": true,
+     "to": "Pad 9 of U1 [Net-(R12-Pad1)]",
+     "what": "Missing connection in net Net-(R12-Pad1)",
+     "x_mm": 125.0,
+     "y_mm": 84.55
+    },
+    {
+     "from": "Pad 1 of R18 [Net-(R18-Pad1)]",
+     "open_by_router": true,
+     "to": "Pad 8 of U1 [Net-(R18-Pad1)]",
+     "what": "Missing connection in net Net-(R18-Pad1)",
+     "x_mm": 127.35,
+     "y_mm": 84.4
+    },
+    {
+     "from": "Pad 1 of C21 [TX1_N]",
+     "open_by_router": true,
+     "to": "Pad 52 of U1 [TX1_N]",
+     "what": "Missing connection in net TX1_N",
+     "x_mm": 142.45,
+     "y_mm": 69.3
+    },
+    {
+     "from": "Pad 1 of C22 [TX1_P]",
+     "open_by_router": true,
+     "to": "Pad 53 of U1 [TX1_P]",
+     "what": "Missing connection in net TX1_P",
+     "x_mm": 141.15,
+     "y_mm": 69.3
+    },
+    {
+     "from": "Pad 1 of C16 [Net-(C16-Pad1)]",
+     "open_by_router": true,
+     "to": "Pad 56 of U1 [Net-(C16-Pad1)]",
+     "what": "Missing connection in net Net-(C16-Pad1)",
+     "x_mm": 133.6,
+     "y_mm": 80.05
+    },
+    {
+     "from": "Pad 56 of U1 [Net-(C16-Pad1)]",
+     "open_by_router": true,
+     "to": "Pad 59 of U1 [Net-(C16-Pad1)]",
+     "what": "Missing connection in net Net-(C16-Pad1)",
+     "x_mm": 133.6,
+     "y_mm": 80.0
+    },
+    {
+     "from": "Pad 13 of U1 [SIO1]",
+     "open_by_router": true,
+     "to": "Pad 2 of J5 [SIO1]",
+     "what": "Missing connection in net SIO1",
+     "x_mm": 128.9,
+     "y_mm": 86.7
+    },
+    {
+     "from": "Pad 19 of U1 [SCK]",
+     "open_by_router": true,
+     "to": "Pad 2 of J4 [SCK]",
+     "what": "Missing connection in net SCK",
+     "x_mm": 130.6,
+     "y_mm": 88.9
+    },
+    {
+     "from": "Pad 35 of U1 [SIO3]",
+     "open_by_router": true,
+     "to": "Pad 1 of J8 [SIO3]",
+     "what": "Missing connection in net SIO3",
+     "x_mm": 137.8,
+     "y_mm": 87.2
+    },
+    {
+     "from": "Pad 17 of P1 [GPIO0]",
+     "open_by_router": true,
+     "to": "Pad 36 of U1 [GPIO0]",
+     "what": "Missing connection in net GPIO0",
+     "x_mm": 132.08,
+     "y_mm": 104.775
+    },
+    {
+     "from": "Pad 4 of P1 [GPIO15]",
+     "open_by_router": true,
+     "to": "Pad 31 of U1 [GPIO15]",
+     "what": "Missing connection in net GPIO15",
+     "x_mm": 134.62,
+     "y_mm": 122.555
+    },
+    {
+     "from": "Pad 15 of P1 [GPIO1]",
+     "open_by_router": true,
+     "to": "Pad 39 of U1 [GPIO1]",
+     "what": "Missing connection in net GPIO1",
+     "x_mm": 132.08,
+     "y_mm": 107.315
+    },
+    {
+     "from": "Pad 6 of P1 [GPIO14]",
+     "open_by_router": true,
+     "to": "Pad 30 of U1 [GPIO14]",
+     "what": "Missing connection in net GPIO14",
+     "x_mm": 134.62,
+     "y_mm": 120.015
+    },
+    {
+     "from": "Pad 11 of P1 [GPIO3]",
+     "open_by_router": true,
+     "to": "Pad 49 of U1 [GPIO3]",
+     "what": "Missing connection in net GPIO3",
+     "x_mm": 132.08,
+     "y_mm": 112.395
+    },
+    {
+     "from": "Pad 7 of P1 [GPIO5]",
+     "open_by_router": true,
+     "to": "Pad 22 of U1 [GPIO5]",
+     "what": "Missing connection in net GPIO5",
+     "x_mm": 132.08,
+     "y_mm": 117.475
+    },
+    {
+     "from": "Pad 14 of P1 [GPIO10]",
+     "open_by_router": true,
+     "to": "Pad 29 of U1 [GPIO10]",
+     "what": "Missing connection in net GPIO10",
+     "x_mm": 134.62,
+     "y_mm": 109.855
+    },
+    {
+     "from": "Pad 18 of P1 [GPIO8]",
+     "open_by_router": true,
+     "to": "Pad 15 of U1 [GPIO8]",
+     "what": "Missing connection in net GPIO8",
+     "x_mm": 134.62,
+     "y_mm": 104.775
+    },
+    {
+     "from": "Pad 21 of P2 [LAN9252_IRQ]",
+     "open_by_router": true,
+     "to": "Pad 44 of U1 [LAN9252_IRQ]",
+     "what": "Missing connection in net LAN9252_IRQ",
+     "x_mm": 101.6,
+     "y_mm": 106.68
+    }
+   ],
+   "unconnected_open_by_router": 24,
+   "warnings": 0
+  },
+  "before": {
+   "error_items": [
+    {
+     "item": "Pad 1 of U1 [Net-(C19-Pad1)]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 128.9,
+     "y_mm": 80.7
+    },
+    {
+     "item": "Pad 16 of U1 [GPIO7]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 128.9,
+     "y_mm": 88.2
+    },
+    {
+     "item": "Pad 32 of U1 [+3V3]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 137.1,
+     "y_mm": 88.9
+    },
+    {
+     "item": "Pad 48 of U1 [/LAN9252/LINKACTLED0]",
+     "type": "clearance",
+     "what": "",
+     "x_mm": 137.8,
+     "y_mm": 80.7
+    }
+   ],
+   "errors": 4,
+   "notes": [
+    "no project file ethercat.kicad_pro; using KiCad defaults and rules stored in the board"
+   ],
+   "unconnected": 272,
+   "warnings": 0
+  },
+  "checker": "tracemaker drc",
+  "removed": 0,
+  "types": [
+   {
+    "added": 0,
+    "after": 4,
+    "before": 4,
+    "routing": true,
+    "severity": "error",
+    "type": "clearance"
+   }
+  ],
+  "unconnected_change": -248,
+  "zones_refilled": false
+ },
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 100690256,
+ "failures": [
+  "LAN9252_IRQ: P2.21 -> U1.44  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "SCK: U1.19 -> J4.2  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "GPIO15: P1.4 -> U1.31  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "GPIO3: P1.11 -> U1.49  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "GPIO14: P1.6 -> U1.30  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "GPIO5: P1.7 -> U1.22  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "GPIO1: P1.15 -> U1.39  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "GPIO10: P1.14 -> U1.29  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "SIO1: U1.13 -> J5.2  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "GPIO0: P1.17 -> U1.36  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "GPIO8: P1.18 -> U1.15  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "SIO3: U1.35 -> J8.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "TX1_N: R8.1 -> U1.52  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "Net-(C12-Pad1): C12.1 -> U1.24  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "+3V3: U1.32 -> C8.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "TX1_P: R9.1 -> U1.53  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "Net-(R12-Pad1): R12.1 -> U1.9  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "+3V3: U1.20 -> U1.14  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "Net-(R18-Pad1): R18.1 -> U1.8  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "+3V3: C8.1 -> U1.20  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "+3V3: U1.37 -> C7.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "Net-(C12-Pad1): C12.1 -> U1.6  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "Net-(C12-Pad1): U1.6 -> C14.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "Net-(C16-Pad1): C16.1 -> U1.56  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "Net-(C16-Pad1): C18.1 -> U1.59  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)"
+ ],
+ "open": 25,
+ "package_pin_edges": 5,
+ "pitch_mm": 0.075,
+ "rescue": {
+  "adopted": true,
+  "connections": 272,
+  "mode": "both",
+  "passes": [
+   {
+    "adopted": true,
+    "mode": "warm",
+    "relaxed_stages": [
+     {
+      "clearance_lowered_mm": 0.08,
+      "routed": 246
+     },
+     {
+      "clearance_lowered_mm": 0.04,
+      "routed": 246
+     }
+    ],
+    "routed": 246,
+    "seconds": 138.97761867
+   },
+   {
+    "adopted": true,
+    "mode": "fresh",
+    "relaxed_stages": [
+     {
+      "clearance_lowered_mm": 0.08,
+      "routed": 246
+     },
+     {
+      "clearance_lowered_mm": 0.04,
+      "routed": 247
+     }
+    ],
+    "routed": 247,
+    "seconds": 140.798650469
+   }
+  ],
+  "routed_after": 247,
+  "routed_before": 245,
+  "seconds": 279.77626913899996
+ },
+ "routed": 247,
+ "rules": {
+  "custom_rule_count": 0,
+  "custom_rules": [],
+  "files": {
+   "custom_rules": "ethercat.kicad_dru",
+   "custom_rules_found": false,
+   "project": "ethercat.kicad_pro",
+   "project_found": false
+  },
+  "minimums": {
+   "blind_buried_vias": false,
+   "clearance_mm": 0.0,
+   "copper_edge_clearance_mm": 0.5,
+   "drill_mm": 0.3,
+   "hole_clearance_mm": 0.25,
+   "hole_to_hole_mm": 0.25,
+   "microvias": false,
+   "track_width_mm": 0.2,
+   "via_annular_width_mm": 0.1,
+   "via_diameter_mm": 0.4
+  },
+  "net_classes": [
+   {
+    "clearance_mm": 0.2,
+    "diff_pair_gap_mm": 0.25,
+    "diff_pair_width_mm": 0.2,
+    "name": "Default",
+    "nets": 143,
+    "track_width_mm": 0.25,
+    "via_diameter_mm": 0.6,
+    "via_drill_mm": 0.4
+   }
+  ],
+  "not_read": [
+   {
+    "source": "project",
+    "text": "no project file ethercat.kicad_pro; using KiCad defaults and rules stored in the board"
+   }
+  ],
+  "not_read_count": 1
+ },
+ "run": {
+  "board": "ethercat.kicad_pcb",
+  "date": "2026-11-14T08:25:22Z",
+  "input": "ethercat.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "ethercat.routed.kicad_pcb"
+   },
+   {
+    "name": "--record",
+    "value": "ethercat.jsonl"
+   },
+   {
+    "name": "--json",
+    "value": "ethercat.json"
+   },
+   {
+    "name": "--report",
+    "value": "ethercat.html"
+   }
+  ],
+  "output": "ethercat.routed.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 120.0,
+  "time_total_s": 0.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 0
+ },
+ "seconds": 400.774904129,
+ "stuck": {
+  "board": {
+   "copper_layers": [
+    "F.Cu",
+    "B.Cu"
+   ],
+   "name": "ethercat.kicad_pcb",
+   "nets": 143,
+   "outline_mm": [
+    97.79,
+    50.8,
+    168.91,
+    132.08
+   ],
+   "pads": 436,
+   "parts": 115
+  },
+  "escape_analysis": [
+   {
+    "already_connected": 0,
+    "cannot_escape": 0,
+    "dead": [],
+    "escapable": 78,
+    "not_proved": [],
+    "part": "U1",
+    "pins": 78,
+    "pitch_mm": 0.5
+   }
+  ],
+  "parts": [
+   {
+    "kind": "multi_pin",
+    "library_id": "Socket_Strips:Socket_Strip_Straight_2x10_Pitch2.54mm",
+    "pads": 20,
+    "part": "P1",
+    "side": "front",
+    "unrouted_ends": 8,
+    "value": "CONN_02X10",
+    "x_mm": 132.08,
+    "y_mm": 125.095
+   },
+   {
+    "kind": "multi_pin",
+    "library_id": "Pin_Headers:Pin_Header_Straight_2x19_Pitch2.54mm",
+    "pads": 38,
+    "part": "P2",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "CONN_02X19",
+    "x_mm": 101.6,
+    "y_mm": 81.28
+   },
+   {
+    "kind": "passive",
+    "library_id": "Capacitors_SMD:C_0603",
+    "pads": 2,
+    "part": "C7",
+    "side": "back",
+    "unrouted_ends": 1,
+    "value": "0.1u",
+    "x_mm": 138.1,
+    "y_mm": 86.65
+   },
+   {
+    "kind": "passive",
+    "library_id": "Capacitors_SMD:C_0603",
+    "pads": 2,
+    "part": "C8",
+    "side": "back",
+    "unrouted_ends": 2,
+    "value": "0.1u",
+    "x_mm": 131.1,
+    "y_mm": 89.4
+   },
+   {
+    "kind": "passive",
+    "library_id": "Capacitors_SMD:C_0603",
+    "pads": 2,
+    "part": "C12",
+    "side": "back",
+    "unrouted_ends": 2,
+    "value": "1u",
+    "x_mm": 129.9,
+    "y_mm": 82.2
+   },
+   {
+    "kind": "passive",
+    "library_id": "Capacitors_SMD:C_0603",
+    "pads": 2,
+    "part": "C14",
+    "side": "back",
+    "unrouted_ends": 1,
+    "value": "0.1u",
+    "x_mm": 128.5,
+    "y_mm": 82.2
+   },
+   {
+    "kind": "passive",
+    "library_id": "Capacitors_SMD:C_0603",
+    "pads": 2,
+    "part": "C16",
+    "side": "back",
+    "unrouted_ends": 1,
+    "value": "0.1u",
+    "x_mm": 133.6,
+    "y_mm": 80.8
+   },
+   {
+    "kind": "passive",
+    "library_id": "Capacitors_SMD:C_0603",
+    "pads": 2,
+    "part": "C18",
+    "side": "back",
+    "unrouted_ends": 1,
+    "value": "0.1u",
+    "x_mm": 132.1,
+    "y_mm": 80.8
+   },
+   {
+    "kind": "passive",
+    "library_id": "Resistors_SMD:R_0603",
+    "pads": 2,
+    "part": "R8",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "49.9",
+    "x_mm": 140.15,
+    "y_mm": 74.1
+   },
+   {
+    "kind": "passive",
+    "library_id": "Resistors_SMD:R_0603",
+    "pads": 2,
+    "part": "R9",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "49.9",
+    "x_mm": 138.2,
+    "y_mm": 74.1
+   },
+   {
+    "kind": "passive",
+    "library_id": "Resistors_SMD:R_0603",
+    "pads": 2,
+    "part": "R12",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "10k",
+    "x_mm": 125.0,
+    "y_mm": 83.8
+   },
+   {
+    "kind": "passive",
+    "library_id": "Resistors_SMD:R_0603",
+    "pads": 2,
+    "part": "R18",
+    "side": "back",
+    "unrouted_ends": 1,
+    "value": "10k",
+    "x_mm": 128.1,
+    "y_mm": 84.4
+   },
+   {
+    "kind": "multi_pin",
+    "library_id": "Housings_DFN_QFN:QFN-64-1EP_9x9mm_Pitch0.5mm",
+    "pads": 80,
+    "part": "U1",
+    "side": "front",
+    "unrouted_ends": 26,
+    "value": "LAN9252",
+    "x_mm": 133.35,
+    "y_mm": 84.45
+   },
+   {
+    "kind": "passive",
+    "library_id": "Connect:GS3",
+    "pads": 3,
+    "part": "J4",
+    "side": "back",
+    "unrouted_ends": 1,
+    "value": "GS3",
+    "x_mm": 159.0,
+    "y_mm": 109.1
+   },
+   {
+    "kind": "passive",
+    "library_id": "Connect:GS3",
+    "pads": 3,
+    "part": "J5",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "GS3",
+    "x_mm": 109.5,
+    "y_mm": 82.5
+   },
+   {
+    "kind": "passive",
+    "library_id": "Connect:GS2",
+    "pads": 2,
+    "part": "J8",
+    "side": "back",
+    "unrouted_ends": 1,
+    "value": "GS2",
+    "x_mm": 147.46,
+    "y_mm": 96.7
+   }
+  ],
+  "result": {
+   "connections": 272,
+   "routed": 247,
+   "seconds": 0.07,
+   "tracks": 803,
+   "unrouted": 25,
+   "vias": 141
+  },
+  "rules": {
+   "clearance_mm": 0.2,
+   "copper_edge_clearance_mm": 0.5,
+   "min_track_width_mm": 0.2,
+   "track_width_mm": 0.25,
+   "via_diameter_mm": 0.6,
+   "via_drill_mm": 0.4
+  },
+  "unrouted": [
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 133,
+     "other_vias": 53,
+     "routed_copper_by_net": [
+      {
+       "net": "GND",
+       "track_mm": 126.136
+      },
+      {
+       "net": "+3V3",
+       "track_mm": 93.057
+      },
+      {
+       "net": "LAN9252_RST",
+       "track_mm": 41.285
+      },
+      {
+       "net": "SYNC0",
+       "track_mm": 30.99
+      },
+      {
+       "net": "PB0",
+       "track_mm": 27.664
+      },
+      {
+       "net": "SYNC1",
+       "track_mm": 27.03
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "21",
+     "part": "P2",
+     "x_mm": 101.6,
+     "y_mm": 106.68
+    },
+    "length_mm": 43.422,
+    "net": "LAN9252_IRQ",
+    "reason": "not_attempted",
+    "region_mm": [
+     100.1,
+     81.2,
+     139.3,
+     108.18
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "44",
+     "part": "U1",
+     "x_mm": 137.8,
+     "y_mm": 82.7
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 59,
+     "other_vias": 33,
+     "routed_copper_by_net": [
+      {
+       "net": "GND",
+       "track_mm": 43.138
+      },
+      {
+       "net": "SIO0",
+       "track_mm": 29.511
+      },
+      {
+       "net": "GPIO2",
+       "track_mm": 28.286
+      },
+      {
+       "net": "GPIO9",
+       "track_mm": 26.999
+      },
+      {
+       "net": "~SCS",
+       "track_mm": 26.988
+      },
+      {
+       "net": "GPIO11",
+       "track_mm": 24.748
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "19",
+     "part": "U1",
+     "x_mm": 130.6,
+     "y_mm": 88.9
+    },
+    "length_mm": 34.851,
+    "net": "SCK",
+    "reason": "not_attempted",
+    "region_mm": [
+     129.1,
+     87.4,
+     160.5,
+     110.6
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "2",
+     "part": "J4",
+     "x_mm": 159.0,
+     "y_mm": 109.1
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 19,
+     "other_vias": 13,
+     "routed_copper_by_net": [
+      {
+       "net": "GPIO13",
+       "track_mm": 35.593
+      },
+      {
+       "net": "GPIO12",
+       "track_mm": 32.599
+      },
+      {
+       "net": "GPIO11",
+       "track_mm": 10.922
+      },
+      {
+       "net": "+3V3",
+       "track_mm": 8.828
+      },
+      {
+       "net": "GPIO9",
+       "track_mm": 8.665
+      },
+      {
+       "net": "SIO0",
+       "track_mm": 8.304
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "4",
+     "part": "P1",
+     "x_mm": 134.62,
+     "y_mm": 122.555
+    },
+    "length_mm": 33.713,
+    "net": "GPIO15",
+    "reason": "not_attempted",
+    "region_mm": [
+     133.12,
+     87.4,
+     138.1,
+     124.055
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "31",
+     "part": "U1",
+     "x_mm": 136.6,
+     "y_mm": 88.9
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 81,
+     "other_vias": 32,
+     "routed_copper_by_net": [
+      {
+       "net": "GPIO11",
+       "track_mm": 31.036
+      },
+      {
+       "net": "GND",
+       "track_mm": 28.417
+      },
+      {
+       "net": "GPIO13",
+       "track_mm": 28.019
+      },
+      {
+       "net": "GPIO12",
+       "track_mm": 27.515
+      },
+      {
+       "net": "GPIO9",
+       "track_mm": 24.883
+      },
+      {
+       "net": "Net-(C12-Pad1)",
+       "track_mm": 22.127
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "11",
+     "part": "P1",
+     "x_mm": 132.08,
+     "y_mm": 112.395
+    },
+    "length_mm": 32.782,
+    "net": "GPIO3",
+    "reason": "not_attempted",
+    "region_mm": [
+     130.58,
+     78.5,
+     138.6,
+     113.895
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "49",
+     "part": "U1",
+     "x_mm": 137.1,
+     "y_mm": 80.0
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 14,
+     "other_vias": 12,
+     "routed_copper_by_net": [
+      {
+       "net": "GPIO13",
+       "track_mm": 35.093
+      },
+      {
+       "net": "GPIO12",
+       "track_mm": 30.798
+      },
+      {
+       "net": "GPIO11",
+       "track_mm": 10.422
+      },
+      {
+       "net": "SIO0",
+       "track_mm": 7.804
+      },
+      {
+       "net": "+3V3",
+       "track_mm": 7.606
+      },
+      {
+       "net": "GPIO9",
+       "track_mm": 7.034
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "6",
+     "part": "P1",
+     "x_mm": 134.62,
+     "y_mm": 120.015
+    },
+    "length_mm": 31.15,
+    "net": "GPIO14",
+    "reason": "not_attempted",
+    "region_mm": [
+     133.12,
+     87.4,
+     137.6,
+     121.515
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "30",
+     "part": "U1",
+     "x_mm": 136.1,
+     "y_mm": 88.9
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 16,
+     "other_vias": 10,
+     "routed_copper_by_net": [
+      {
+       "net": "GPIO11",
+       "track_mm": 22.747
+      },
+      {
+       "net": "GPIO13",
+       "track_mm": 20.787
+      },
+      {
+       "net": "GND",
+       "track_mm": 9.929
+      },
+      {
+       "net": "SIO0",
+       "track_mm": 7.264
+      },
+      {
+       "net": "GPIO4",
+       "track_mm": 6.397
+      },
+      {
+       "net": "GPIO2",
+       "track_mm": 5.4
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "7",
+     "part": "P1",
+     "x_mm": 132.08,
+     "y_mm": 117.475
+    },
+    "length_mm": 28.575,
+    "net": "GPIO5",
+    "reason": "not_attempted",
+    "region_mm": [
+     130.58,
+     87.4,
+     133.6,
+     118.975
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "22",
+     "part": "U1",
+     "x_mm": 132.1,
+     "y_mm": 88.9
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 46,
+     "other_vias": 24,
+     "routed_copper_by_net": [
+      {
+       "net": "GPIO9",
+       "track_mm": 25.583
+      },
+      {
+       "net": "GND",
+       "track_mm": 23.841
+      },
+      {
+       "net": "GPIO13",
+       "track_mm": 22.939
+      },
+      {
+       "net": "GPIO11",
+       "track_mm": 22.729
+      },
+      {
+       "net": "+3V3",
+       "track_mm": 20.616
+      },
+      {
+       "net": "GPIO12",
+       "track_mm": 20.598
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "15",
+     "part": "P1",
+     "x_mm": 132.08,
+     "y_mm": 107.315
+    },
+    "length_mm": 22.843,
+    "net": "GPIO1",
+    "reason": "not_attempted",
+    "region_mm": [
+     130.58,
+     83.7,
+     139.3,
+     108.815
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "39",
+     "part": "U1",
+     "x_mm": 137.8,
+     "y_mm": 85.2
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 10,
+     "other_vias": 10,
+     "routed_copper_by_net": [
+      {
+       "net": "GPIO13",
+       "track_mm": 25.479
+      },
+      {
+       "net": "GPIO12",
+       "track_mm": 23.011
+      },
+      {
+       "net": "SIO0",
+       "track_mm": 7.304
+      },
+      {
+       "net": "Net-(C12-Pad1)",
+       "track_mm": 6.338
+      },
+      {
+       "net": "GPIO11",
+       "track_mm": 5.971
+      },
+      {
+       "net": "GPIO9",
+       "track_mm": 5.826
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "14",
+     "part": "P1",
+     "x_mm": 134.62,
+     "y_mm": 109.855
+    },
+    "length_mm": 20.978,
+    "net": "GPIO10",
+    "reason": "not_attempted",
+    "region_mm": [
+     133.12,
+     87.4,
+     137.1,
+     111.355
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "29",
+     "part": "U1",
+     "x_mm": 135.6,
+     "y_mm": 88.9
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 33,
+     "other_vias": 12,
+     "routed_copper_by_net": [
+      {
+       "net": "GND",
+       "track_mm": 43.28
+      },
+      {
+       "net": "+3V3",
+       "track_mm": 35.462
+      },
+      {
+       "net": "LAN9252_RST",
+       "track_mm": 12.917
+      },
+      {
+       "net": "Net-(R21-Pad1)",
+       "track_mm": 5.912
+      },
+      {
+       "net": "SIO2",
+       "track_mm": 5.209
+      },
+      {
+       "net": "PB0",
+       "track_mm": 2.31
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "13",
+     "part": "U1",
+     "x_mm": 128.9,
+     "y_mm": 86.7
+    },
+    "length_mm": 19.849,
+    "net": "SIO1",
+    "reason": "not_attempted",
+    "region_mm": [
+     108.0,
+     81.0,
+     130.4,
+     88.2
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "2",
+     "part": "J5",
+     "x_mm": 109.5,
+     "y_mm": 82.5
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 41,
+     "other_vias": 24,
+     "routed_copper_by_net": [
+      {
+       "net": "GND",
+       "track_mm": 22.109
+      },
+      {
+       "net": "+3V3",
+       "track_mm": 20.616
+      },
+      {
+       "net": "GPIO13",
+       "track_mm": 20.399
+      },
+      {
+       "net": "GPIO9",
+       "track_mm": 19.233
+      },
+      {
+       "net": "GPIO11",
+       "track_mm": 18.816
+      },
+      {
+       "net": "GPIO12",
+       "track_mm": 18.058
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "17",
+     "part": "P1",
+     "x_mm": 132.08,
+     "y_mm": 104.775
+    },
+    "length_mm": 18.958,
+    "net": "GPIO0",
+    "reason": "not_attempted",
+    "region_mm": [
+     130.58,
+     85.2,
+     139.3,
+     106.275
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "36",
+     "part": "U1",
+     "x_mm": 137.8,
+     "y_mm": 86.7
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 29,
+     "other_vias": 22,
+     "routed_copper_by_net": [
+      {
+       "net": "GND",
+       "track_mm": 28.329
+      },
+      {
+       "net": "GPIO13",
+       "track_mm": 19.379
+      },
+      {
+       "net": "GPIO11",
+       "track_mm": 18.816
+      },
+      {
+       "net": "GPIO12",
+       "track_mm": 18.058
+      },
+      {
+       "net": "+3V3",
+       "track_mm": 15.187
+      },
+      {
+       "net": "SIO0",
+       "track_mm": 12.634
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu",
+      "B.Cu"
+     ],
+     "pad": "18",
+     "part": "P1",
+     "x_mm": 134.62,
+     "y_mm": 104.775
+    },
+    "length_mm": 18.008,
+    "net": "GPIO8",
+    "reason": "not_attempted",
+    "region_mm": [
+     127.4,
+     86.2,
+     136.12,
+     106.275
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "15",
+     "part": "U1",
+     "x_mm": 128.9,
+     "y_mm": 87.7
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 15,
+     "other_vias": 9,
+     "routed_copper_by_net": [
+      {
+       "net": "~SCS",
+       "track_mm": 14.863
+      },
+      {
+       "net": "Net-(C12-Pad1)",
+       "track_mm": 14.395
+      },
+      {
+       "net": "GPIO2",
+       "track_mm": 13.053
+      },
+      {
+       "net": "SIO0",
+       "track_mm": 12.558
+      },
+      {
+       "net": "+3V3",
+       "track_mm": 11.472
+      },
+      {
+       "net": "SIO2",
+       "track_mm": 10.78
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "35",
+     "part": "U1",
+     "x_mm": 137.8,
+     "y_mm": 87.2
+    },
+    "length_mm": 13.1,
+    "net": "SIO3",
+    "reason": "not_attempted",
+    "region_mm": [
+     136.3,
+     85.7,
+     148.32,
+     98.2
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "J8",
+     "x_mm": 146.82,
+     "y_mm": 96.7
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 19,
+     "other_vias": 9,
+     "routed_copper_by_net": [
+      {
+       "net": "/LAN9252/VDD33TXRX1",
+       "track_mm": 12.543
+      },
+      {
+       "net": "~SCS",
+       "track_mm": 11.668
+      },
+      {
+       "net": "+3V3",
+       "track_mm": 10.923
+      },
+      {
+       "net": "RX1_N",
+       "track_mm": 8.449
+      },
+      {
+       "net": "Net-(C12-Pad1)",
+       "track_mm": 7.785
+      },
+      {
+       "net": "RX1_P",
+       "track_mm": 6.738
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "1",
+     "part": "R8",
+     "x_mm": 140.15,
+     "y_mm": 74.85
+    },
+    "length_mm": 6.872,
+    "net": "TX1_N",
+    "reason": "not_attempted",
+    "region_mm": [
+     134.1,
+     73.35,
+     141.65,
+     81.5
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "52",
+     "part": "U1",
+     "x_mm": 135.6,
+     "y_mm": 80.0
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 43,
+     "other_vias": 10,
+     "routed_copper_by_net": [
+      {
+       "net": "GND",
+       "track_mm": 18.505
+      },
+      {
+       "net": "+3V3",
+       "track_mm": 16.638
+      },
+      {
+       "net": "GPIO7",
+       "track_mm": 2.654
+      },
+      {
+       "net": "SIO0",
+       "track_mm": 2.101
+      },
+      {
+       "net": "GPIO4",
+       "track_mm": 1.898
+      },
+      {
+       "net": "SYNC1",
+       "track_mm": 1.885
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "C12",
+     "x_mm": 129.9,
+     "y_mm": 82.95
+    },
+    "length_mm": 6.756,
+    "net": "Net-(C12-Pad1)",
+    "reason": "not_attempted",
+    "region_mm": [
+     128.4,
+     81.45,
+     134.6,
+     90.4
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "24",
+     "part": "U1",
+     "x_mm": 133.1,
+     "y_mm": 88.9
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 20,
+     "other_vias": 8,
+     "routed_copper_by_net": [
+      {
+       "net": "GND",
+       "track_mm": 6.422
+      },
+      {
+       "net": "GPIO13",
+       "track_mm": 5.047
+      },
+      {
+       "net": "Net-(C12-Pad1)",
+       "track_mm": 4.676
+      },
+      {
+       "net": "GPIO4",
+       "track_mm": 3.665
+      },
+      {
+       "net": "GPIO9",
+       "track_mm": 3.638
+      },
+      {
+       "net": "GPIO6",
+       "track_mm": 3.541
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "32",
+     "part": "U1",
+     "x_mm": 137.1,
+     "y_mm": 88.9
+    },
+    "length_mm": 6.129,
+    "net": "+3V3",
+    "reason": "not_attempted",
+    "region_mm": [
+     129.6,
+     87.4,
+     138.6,
+     91.65
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "C8",
+     "x_mm": 131.1,
+     "y_mm": 90.15
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 21,
+     "other_vias": 8,
+     "routed_copper_by_net": [
+      {
+       "net": "/LAN9252/VDD33TXRX1",
+       "track_mm": 12.093
+      },
+      {
+       "net": "+3V3",
+       "track_mm": 9.374
+      },
+      {
+       "net": "RX1_N",
+       "track_mm": 8.982
+      },
+      {
+       "net": "Net-(C12-Pad1)",
+       "track_mm": 7.785
+      },
+      {
+       "net": "RX1_P",
+       "track_mm": 6.738
+      },
+      {
+       "net": "~SCS",
+       "track_mm": 5.688
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "1",
+     "part": "R9",
+     "x_mm": 138.2,
+     "y_mm": 74.85
+    },
+    "length_mm": 6.011,
+    "net": "TX1_P",
+    "reason": "not_attempted",
+    "region_mm": [
+     133.6,
+     73.35,
+     139.7,
+     81.5
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "53",
+     "part": "U1",
+     "x_mm": 135.1,
+     "y_mm": 80.0
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 9,
+     "other_vias": 4,
+     "routed_copper_by_net": [
+      {
+       "net": "+3V3",
+       "track_mm": 11.045
+      },
+      {
+       "net": "Net-(R21-Pad1)",
+       "track_mm": 5.798
+      },
+      {
+       "net": "LAN9252_RST",
+       "track_mm": 5.541
+      },
+      {
+       "net": "GND",
+       "track_mm": 3.333
+      },
+      {
+       "net": "SIO2",
+       "track_mm": 1.51
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "1",
+     "part": "R12",
+     "x_mm": 125.0,
+     "y_mm": 84.55
+    },
+    "length_mm": 3.903,
+    "net": "Net-(R12-Pad1)",
+    "reason": "not_attempted",
+    "region_mm": [
+     123.5,
+     83.05,
+     130.4,
+     86.2
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "9",
+     "part": "U1",
+     "x_mm": 128.9,
+     "y_mm": 84.7
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 16,
+     "other_vias": 5,
+     "routed_copper_by_net": [
+      {
+       "net": "GND",
+       "track_mm": 12.58
+      },
+      {
+       "net": "GPIO7",
+       "track_mm": 2.654
+      },
+      {
+       "net": "SIO0",
+       "track_mm": 2.101
+      },
+      {
+       "net": "GPIO4",
+       "track_mm": 1.898
+      },
+      {
+       "net": "SYNC1",
+       "track_mm": 1.885
+      },
+      {
+       "net": "GPIO6",
+       "track_mm": 1.773
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "20",
+     "part": "U1",
+     "x_mm": 131.1,
+     "y_mm": 88.9
+    },
+    "length_mm": 2.78,
+    "net": "+3V3",
+    "reason": "not_attempted",
+    "region_mm": [
+     127.4,
+     85.7,
+     132.6,
+     90.4
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "14",
+     "part": "U1",
+     "x_mm": 128.9,
+     "y_mm": 87.2
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 10,
+     "other_vias": 3,
+     "routed_copper_by_net": [
+      {
+       "net": "+3V3",
+       "track_mm": 13.769
+      },
+      {
+       "net": "Net-(R21-Pad1)",
+       "track_mm": 3.162
+      },
+      {
+       "net": "LAN9252_RST",
+       "track_mm": 2.183
+      },
+      {
+       "net": "GND",
+       "track_mm": 1.833
+      },
+      {
+       "net": "Net-(C12-Pad1)",
+       "track_mm": 0.5
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "R18",
+     "x_mm": 127.35,
+     "y_mm": 84.4
+    },
+    "length_mm": 1.563,
+    "net": "Net-(R18-Pad1)",
+    "reason": "not_attempted",
+    "region_mm": [
+     125.85,
+     82.7,
+     130.4,
+     85.9
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "8",
+     "part": "U1",
+     "x_mm": 128.9,
+     "y_mm": 84.2
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 9,
+     "other_vias": 2,
+     "routed_copper_by_net": [
+      {
+       "net": "GND",
+       "track_mm": 4.411
+      },
+      {
+       "net": "GPIO4",
+       "track_mm": 3.665
+      },
+      {
+       "net": "GPIO6",
+       "track_mm": 3.541
+      },
+      {
+       "net": "SIO0",
+       "track_mm": 2.404
+      },
+      {
+       "net": "SYNC1",
+       "track_mm": 1.277
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "C8",
+     "x_mm": 131.1,
+     "y_mm": 90.15
+    },
+    "length_mm": 1.25,
+    "net": "+3V3",
+    "reason": "not_attempted",
+    "region_mm": [
+     129.6,
+     87.4,
+     132.6,
+     91.65
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "20",
+     "part": "U1",
+     "x_mm": 131.1,
+     "y_mm": 88.9
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 10,
+     "other_vias": 4,
+     "routed_copper_by_net": [
+      {
+       "net": "Net-(C12-Pad1)",
+       "track_mm": 5.129
+      },
+      {
+       "net": "GND",
+       "track_mm": 4.282
+      },
+      {
+       "net": "GPIO2",
+       "track_mm": 2.55
+      },
+      {
+       "net": "SYNC0",
+       "track_mm": 1.236
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "37",
+     "part": "U1",
+     "x_mm": 137.8,
+     "y_mm": 86.2
+    },
+    "length_mm": 1.142,
+    "net": "+3V3",
+    "reason": "not_attempted",
+    "region_mm": [
+     136.3,
+     84.7,
+     140.35,
+     88.15
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "C7",
+     "x_mm": 138.85,
+     "y_mm": 86.65
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 11,
+     "other_vias": 4,
+     "routed_copper_by_net": [
+      {
+       "net": "GND",
+       "track_mm": 9.168
+      },
+      {
+       "net": "+3V3",
+       "track_mm": 9.0
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "C12",
+     "x_mm": 129.9,
+     "y_mm": 82.95
+    },
+    "length_mm": 1.031,
+    "net": "Net-(C12-Pad1)",
+    "reason": "not_attempted",
+    "region_mm": [
+     127.4,
+     81.45,
+     131.4,
+     84.7
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "6",
+     "part": "U1",
+     "x_mm": 128.9,
+     "y_mm": 83.2
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 10,
+     "other_vias": 5,
+     "routed_copper_by_net": [
+      {
+       "net": "+3V3",
+       "track_mm": 10.065
+      },
+      {
+       "net": "GND",
+       "track_mm": 8.387
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "6",
+     "part": "U1",
+     "x_mm": 128.9,
+     "y_mm": 83.2
+    },
+    "length_mm": 0.472,
+    "net": "Net-(C12-Pad1)",
+    "reason": "not_attempted",
+    "region_mm": [
+     127.0,
+     81.45,
+     130.4,
+     84.7
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "C14",
+     "x_mm": 128.5,
+     "y_mm": 82.95
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 7,
+     "other_vias": 2,
+     "routed_copper_by_net": [
+      {
+       "net": "Net-(C17-Pad1)",
+       "track_mm": 1.635
+      },
+      {
+       "net": "Net-(R13-Pad1)",
+       "track_mm": 1.535
+      },
+      {
+       "net": "RX1_N",
+       "track_mm": 1.5
+      },
+      {
+       "net": "RX1_P",
+       "track_mm": 1.5
+      },
+      {
+       "net": "Net-(C12-Pad1)",
+       "track_mm": 0.24
+      },
+      {
+       "net": "GND",
+       "track_mm": 0.174
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "C16",
+     "x_mm": 133.6,
+     "y_mm": 80.05
+    },
+    "length_mm": 0.05,
+    "net": "Net-(C16-Pad1)",
+    "reason": "not_attempted",
+    "region_mm": [
+     132.1,
+     78.5,
+     135.1,
+     81.55
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "56",
+     "part": "U1",
+     "x_mm": 133.6,
+     "y_mm": 80.0
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 7,
+     "other_vias": 2,
+     "routed_copper_by_net": [
+      {
+       "net": "GND",
+       "track_mm": 2.107
+      },
+      {
+       "net": "Net-(C17-Pad1)",
+       "track_mm": 1.635
+      },
+      {
+       "net": "Net-(R13-Pad1)",
+       "track_mm": 1.535
+      },
+      {
+       "net": "TX2_P",
+       "track_mm": 1.501
+      },
+      {
+       "net": "RX2_N",
+       "track_mm": 1.5
+      },
+      {
+       "net": "RX2_P",
+       "track_mm": 1.5
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "B.Cu"
+     ],
+     "pad": "1",
+     "part": "C18",
+     "x_mm": 132.1,
+     "y_mm": 80.05
+    },
+    "length_mm": 0.05,
+    "net": "Net-(C16-Pad1)",
+    "reason": "not_attempted",
+    "region_mm": [
+     130.6,
+     78.5,
+     133.6,
+     81.55
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "59",
+     "part": "U1",
+     "x_mm": 132.1,
+     "y_mm": 80.0
+    },
+    "why": "open in the relaxed rounds too; the legalising round keeps only legal routes and does not search"
+   }
+  ],
+  "unrouted_by_net": [
+   {
+    "count": 4,
+    "name": "+3V3"
+   },
+   {
+    "count": 3,
+    "name": "Net-(C12-Pad1)"
+   },
+   {
+    "count": 2,
+    "name": "Net-(C16-Pad1)"
+   },
+   {
+    "count": 1,
+    "name": "GPIO0"
+   },
+   {
+    "count": 1,
+    "name": "GPIO1"
+   },
+   {
+    "count": 1,
+    "name": "GPIO10"
+   },
+   {
+    "count": 1,
+    "name": "GPIO14"
+   },
+   {
+    "count": 1,
+    "name": "GPIO15"
+   },
+   {
+    "count": 1,
+    "name": "GPIO3"
+   },
+   {
+    "count": 1,
+    "name": "GPIO5"
+   },
+   {
+    "count": 1,
+    "name": "GPIO8"
+   },
+   {
+    "count": 1,
+    "name": "LAN9252_IRQ"
+   },
+   {
+    "count": 1,
+    "name": "Net-(R12-Pad1)"
+   },
+   {
+    "count": 1,
+    "name": "Net-(R18-Pad1)"
+   },
+   {
+    "count": 1,
+    "name": "SCK"
+   },
+   {
+    "count": 1,
+    "name": "SIO1"
+   }
+  ],
+  "unrouted_by_part": [
+   {
+    "count": 26,
+    "name": "U1"
+   },
+   {
+    "count": 8,
+    "name": "P1"
+   },
+   {
+    "count": 2,
+    "name": "C12"
+   },
+   {
+    "count": 2,
+    "name": "C8"
+   },
+   {
+    "count": 1,
+    "name": "C14"
+   },
+   {
+    "count": 1,
+    "name": "C16"
+   },
+   {
+    "count": 1,
+    "name": "C18"
+   },
+   {
+    "count": 1,
+    "name": "C7"
+   },
+   {
+    "count": 1,
+    "name": "J4"
+   },
+   {
+    "count": 1,
+    "name": "J5"
+   },
+   {
+    "count": 1,
+    "name": "J8"
+   },
+   {
+    "count": 1,
+    "name": "P2"
+   },
+   {
+    "count": 1,
+    "name": "R12"
+   },
+   {
+    "count": 1,
+    "name": "R18"
+   },
+   {
+    "count": 1,
+    "name": "R8"
+   },
+   {
+    "count": 1,
+    "name": "R9"
+   }
+  ],
+  "unrouted_by_reason": [
+   {
+    "count": 25,
+    "name": "not_attempted"
+   }
+  ]
+ },
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 305,
+  "bends_per_connection": 0.7385,
+  "connections": 413,
+  "detour_length_mm": 2028.523534,
+  "detour_octile_mm": 1838.243844,
+  "detour_ratio": 1.1035,
+  "length_mm": 2028.523534,
+  "long_detours": 9,
+  "off_angle_segments": 157,
+  "segments": 803,
+  "short_segments": 76,
+  "stair_steps": 2,
+  "vias": 141
+ },
+ "time_limited": true,
+ "tracks": 803,
+ "tunnels": 0,
+ "variant": 2,
+ "variant_name": "rescue (fresh): fast bends, longest first (2x pitch on large boards)",
+ "variant_seconds": 0.068820522,
+ "variants": [
+  {
+   "best": false,
+   "name": "exact bends, shortest first",
+   "routed": 239,
+   "seconds": 120.868706134,
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 242,
+   "seconds": 120.094177363,
+   "variant": 1
+  },
+  {
+   "best": false,
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 237,
+   "seconds": 120.043191337,
+   "variant": 2
+  },
+  {
+   "best": false,
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 241,
+   "seconds": 120.033686818,
+   "variant": 3
+  },
+  {
+   "best": false,
+   "name": "exact bends, jittered order",
+   "routed": 236,
+   "seconds": 120.486457093,
+   "variant": 4
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 243,
+   "seconds": 120.091355695,
+   "variant": 5
+  },
+  {
+   "best": true,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 245,
+   "seconds": 120.174531669,
+   "variant": 6
+  },
+  {
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 241,
+   "seconds": 120.056361718,
+   "variant": 7
+  },
+  {
+   "best": false,
+   "name": "exact bends, shortest first",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 246,
+   "seconds": 0.079447179,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "fast bends, shortest first, crowded source",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 246,
+   "seconds": 0.075665052,
+   "stage": "rescue",
+   "variant": 1
+  },
+  {
+   "best": false,
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 246,
+   "seconds": 0.079792555,
+   "stage": "rescue",
+   "variant": 2
+  },
+  {
+   "best": true,
+   "name": "fast bends, jittered order, escape plan",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 246,
+   "seconds": 0.080405996,
+   "stage": "rescue",
+   "variant": 3
+  },
+  {
+   "best": false,
+   "name": "exact bends, jittered order",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 246,
+   "seconds": 0.076063548,
+   "stage": "rescue",
+   "variant": 4
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 246,
+   "seconds": 0.07763821,
+   "stage": "rescue",
+   "variant": 5
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 246,
+   "seconds": 0.083924071,
+   "stage": "rescue",
+   "variant": 6
+  },
+  {
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 246,
+   "seconds": 0.08094478,
+   "stage": "rescue",
+   "variant": 7
+  },
+  {
+   "best": false,
+   "name": "exact bends, shortest first",
+   "rescue_kept": true,
+   "rescue_mode": "fresh",
+   "routed": 247,
+   "seconds": 0.071538554,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "fast bends, shortest first, crowded source",
+   "rescue_kept": true,
+   "rescue_mode": "fresh",
+   "routed": 247,
+   "seconds": 0.069623752,
+   "stage": "rescue",
+   "variant": 1
+  },
+  {
+   "best": true,
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "rescue_kept": true,
+   "rescue_mode": "fresh",
+   "routed": 247,
+   "seconds": 0.068820522,
+   "stage": "rescue",
+   "variant": 2
+  },
+  {
+   "best": false,
+   "name": "fast bends, jittered order, escape plan",
+   "rescue_kept": true,
+   "rescue_mode": "fresh",
+   "routed": 247,
+   "seconds": 0.071313325,
+   "stage": "rescue",
+   "variant": 3
+  },
+  {
+   "best": false,
+   "name": "exact bends, jittered order",
+   "rescue_kept": true,
+   "rescue_mode": "fresh",
+   "routed": 247,
+   "seconds": 0.072402728,
+   "stage": "rescue",
+   "variant": 4
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "rescue_kept": true,
+   "rescue_mode": "fresh",
+   "routed": 247,
+   "seconds": 0.068384247,
+   "stage": "rescue",
+   "variant": 5
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "rescue_kept": true,
+   "rescue_mode": "fresh",
+   "routed": 247,
+   "seconds": 0.07108434,
+   "stage": "rescue",
+   "variant": 6
+  },
+  {
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
+   "rescue_kept": true,
+   "rescue_mode": "fresh",
+   "routed": 247,
+   "seconds": 0.070452829,
+   "stage": "rescue",
+   "variant": 7
+  }
+ ],
+ "vias": 141,
+ "why_open": {
+  "congested": 46,
+  "neck_down": 0,
+  "neck_pins": [],
+  "next": [
+   "46 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)"
+  ],
+  "pins": 46,
+  "proved": [],
+  "seconds": 0.732401484,
+  "soft_only": 0,
+  "via_in_pad": 0,
+  "walled_in": 0
+ },
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 10359078,
+   "commits": 223,
+   "expansions": 8931640,
+   "field_cells": 47606884,
+   "fields": 153,
+   "fixed_checks": 3503891,
+   "flood_cells": 1374027,
+   "rips": 0,
+   "searches": 462
+  },
+  "negotiation": {
+   "cell_checks": 87959257,
+   "commits": 370,
+   "expansions": 68858479,
+   "field_cells": 350189010,
+   "fields": 700,
+   "fixed_checks": 21049968,
+   "flood_cells": 21526110,
+   "rips": 395,
+   "searches": 1265
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 98318335,
+   "commits": 593,
+   "expansions": 77790119,
+   "field_cells": 397795894,
+   "fields": 853,
+   "fixed_checks": 24553859,
+   "flood_cells": 22900137,
+   "rips": 395,
+   "searches": 1727
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 59984054,
+   "commits": 3774,
+   "expansions": 120732565,
+   "field_cells": 686483840,
+   "fields": 2051,
+   "fixed_checks": 32952270,
+   "flood_cells": 8543040,
+   "rips": 0,
+   "searches": 6022
+  },
+  "negotiation": {
+   "cell_checks": 1991381902,
+   "commits": 7627,
+   "expansions": 1460852766,
+   "field_cells": 4912843362,
+   "fields": 12127,
+   "fixed_checks": 409084041,
+   "flood_cells": 1327067740,
+   "rips": 8207,
+   "searches": 31448
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 260,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 2051365956,
+   "commits": 11401,
+   "expansions": 1581585331,
+   "field_cells": 5599327202,
+   "fields": 14178,
+   "fixed_checks": 442036571,
+   "flood_cells": 1335610780,
+   "rips": 8207,
+   "searches": 37470
+  }
+ }
+}
