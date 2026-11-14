@@ -105,6 +105,11 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Large-neighbourhood search from <span class="tt">start</span> (legal): <span class="tt">windows</span> LNS windows (sizes and seeds from <span class="tt">o</span>; the stream is o.seed).  <a href="structtmk_1_1place_1_1LnsResult.html#details">More...</a><br /></td></tr>
 <tr class="memitem:WindowResult" id="r_WindowResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1WindowResult.html">WindowResult</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exact window (doc 04 §3 F, without CP-SAT): the best placement of <span class="tt">parts</span> (others fixed) over a candidate set per part (its own spot, the other window parts' spots, its HPWL-optimal spot; four rotations each), by branch and bound with an HPWL bound.  <a href="structtmk_1_1place_1_1WindowResult.html#details">More...</a><br /></td></tr>
+<tr class="memitem:ArmStats" id="r_ArmStats"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1ArmStats.html">ArmStats</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Per-arm statistics: trials and improving trials. Also the learned prior stored between runs.  <a href="structtmk_1_1place_1_1ArmStats.html#details">More...</a><br /></td></tr>
+<tr class="memitem:ClosureOptions" id="r_ClosureOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1ClosureOptions.html">ClosureOptions</a></td></tr>
+<tr class="memitem:ClosureTrial" id="r_ClosureTrial"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1ClosureTrial.html">ClosureTrial</a></td></tr>
+<tr class="memitem:ClosureResult" id="r_ClosureResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1ClosureResult.html">ClosureResult</a></td></tr>
 <tr class="memitem:CongestionOptions" id="r_CongestionOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1CongestionOptions.html">CongestionOptions</a></td></tr>
 <tr class="memitem:CongestionMap" id="r_CongestionMap"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1CongestionMap.html">CongestionMap</a></td></tr>
 <tr class="memitem:SpreadStats" id="r_SpreadStats"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1place_1_1SpreadStats.html">SpreadStats</a></td></tr>
@@ -153,10 +158,25 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:ab36346e676e818f15821e0c7aa12cd07" id="r_ab36346e676e818f15821e0c7aa12cd07"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab36346e676e818f15821e0c7aa12cd07">ArmTable</a> = std::array&lt;<a class="el" href="structtmk_1_1place_1_1ArmStats.html">ArmStats</a>, <a class="el" href="#a1d220950467f37e6041979f3ddae4713afdf71ddc141225f4540f6da468814db9">kArms</a>&gt;</td></tr>
 <tr class="memitem:a6081ab832fd32b412498c38357d5c480" id="r_a6081ab832fd32b412498c38357d5c480"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6081ab832fd32b412498c38357d5c480">RouteFn</a> = std::function&lt;<a class="el" href="structtmk_1_1place_1_1RouteEval.html">RouteEval</a>(const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a>&amp;)&gt;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
+<tr class="memitem:a1d220950467f37e6041979f3ddae4713" id="r_a1d220950467f37e6041979f3ddae4713"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d220950467f37e6041979f3ddae4713">Arm</a> : int { <br />
+&#160;&#160;<a class="el" href="#a1d220950467f37e6041979f3ddae4713af63cb4001dbf2467a7e6f67d2bfd4a62">kShift</a>
+, <a class="el" href="#a1d220950467f37e6041979f3ddae4713a32a7867b673c1cb29d8b103d5877221a">kRotate</a>
+, <a class="el" href="#a1d220950467f37e6041979f3ddae4713aa8f3e4b1d9a7eee4ca51ccd953dd63e0">kSwap</a>
+, <a class="el" href="#a1d220950467f37e6041979f3ddae4713a6850f48edf149f18e75a92e63cc99f6f">kFlip</a>
+, <br />
+&#160;&#160;<a class="el" href="#a1d220950467f37e6041979f3ddae4713a853e22353b46340025ed4de0d766fb5f">kRoom</a>
+, <a class="el" href="#a1d220950467f37e6041979f3ddae4713a997a1780a3334769467a52d5aac24c7c">kFar</a>
+, <a class="el" href="#a1d220950467f37e6041979f3ddae4713a0e15e1b61c292e714f059bfd23212289">kWindow</a>
+, <a class="el" href="#a1d220950467f37e6041979f3ddae4713a0d9299b5ddc1b054e947007966ff7a51">kReplace</a>
+, <br />
+&#160;&#160;<a class="el" href="#a1d220950467f37e6041979f3ddae4713afdf71ddc141225f4540f6da468814db9">kArms</a>
+<br />
+ }</td></tr>
 <tr class="memitem:a402b743aad4c77535fff84c378e3b4e1" id="r_a402b743aad4c77535fff84c378e3b4e1"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a402b743aad4c77535fff84c378e3b4e1">RotationModel</a> { <a class="el" href="#a402b743aad4c77535fff84c378e3b4e1a4457d440870ad6d42bab9082d9bf9b61">Fixed</a>
 , <a class="el" href="#a402b743aad4c77535fff84c378e3b4e1aed36a1ef76a59ee3f15180e0441188ad">Any</a>
  }</td></tr>
@@ -171,6 +191,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:a5e8b34497e4395bbae608464206bba40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cost used by the annealer, from scratch (reference path): weighted HPWL + α·crossings + β·RUDY overflow, all in the annealer's integer units.  <br /></td></tr>
 <tr class="memitem:a2ac76245f1507730f8f9b34ee95c5b70" id="r_a2ac76245f1507730f8f9b34ee95c5b70"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1place_1_1LnsResult.html">LnsResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ac76245f1507730f8f9b34ee95c5b70">lns_improve</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;start, const <a class="el" href="structtmk_1_1place_1_1AnnealOptions.html">AnnealOptions</a> &amp;o, int windows)</td></tr>
 <tr class="memitem:a05e2a5f6c59fbaeb83c04a70e81a0116" id="r_a05e2a5f6c59fbaeb83c04a70e81a0116"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1place_1_1WindowResult.html">WindowResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05e2a5f6c59fbaeb83c04a70e81a0116">solve_window</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;pl, const std::vector&lt; int &gt; &amp;parts, const <a class="el" href="structtmk_1_1place_1_1AnnealOptions.html">AnnealOptions</a> &amp;o, bool prune=true, long max_leaves=200 '000)</td></tr>
+<tr class="memitem:a2cab25974c8a03ad26809bdf23bd13d4" id="r_a2cab25974c8a03ad26809bdf23bd13d4"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2cab25974c8a03ad26809bdf23bd13d4">arm_name</a> (int arm)</td></tr>
+<tr class="memitem:a4b2fb72e1f702c8468af1c5188745d49" id="r_a4b2fb72e1f702c8468af1c5188745d49"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b2fb72e1f702c8468af1c5188745d49">arm_from_name</a> (const std::string &amp;name)</td></tr>
+<tr class="memdesc:a4b2fb72e1f702c8468af1c5188745d49"><td class="mdescLeft">&#160;</td><td class="mdescRight">-1 if unknown  <br /></td></tr>
+<tr class="memitem:a81687a6b9b2c628eef55bbaed5924a47" id="r_a81687a6b9b2c628eef55bbaed5924a47"><td class="memItemLeft" align="right" valign="top">std::array&lt; int, <a class="el" href="#a1d220950467f37e6041979f3ddae4713afdf71ddc141225f4540f6da468814db9">kArms</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81687a6b9b2c628eef55bbaed5924a47">default_prior_ppm</a> ()</td></tr>
+<tr class="memdesc:a81687a6b9b2c628eef55bbaed5924a47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Expected success rate of each arm before any trial on this board, in parts per million, and its cost in routes (window and replace also anneal).  <br /></td></tr>
+<tr class="memitem:a1f2bc5a5089a29b262c40b4b329aebb0" id="r_a1f2bc5a5089a29b262c40b4b329aebb0"><td class="memItemLeft" align="right" valign="top">std::array&lt; int, <a class="el" href="#a1d220950467f37e6041979f3ddae4713afdf71ddc141225f4540f6da468814db9">kArms</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f2bc5a5089a29b262c40b4b329aebb0">arm_cost</a> ()</td></tr>
+<tr class="memitem:af36af8a4f47699b87e84b0d25eb6f84e" id="r_af36af8a4f47699b87e84b0d25eb6f84e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1place_1_1ClosureResult.html">ClosureResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af36af8a4f47699b87e84b0d25eb6f84e">placement_closure</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;start, const <a class="el" href="structtmk_1_1place_1_1RouteEval.html">RouteEval</a> &amp;start_eval, const <a class="el" href="structtmk_1_1place_1_1ClosureOptions.html">ClosureOptions</a> &amp;o, const <a class="el" href="#a6081ab832fd32b412498c38357d5c480">RouteFn</a> &amp;<a class="el" href="namespacetmk_1_1route.html">route</a>)</td></tr>
 <tr class="memitem:a8ed37192bb97b7d9fc6bb42af3097b01" id="r_a8ed37192bb97b7d9fc6bb42af3097b01"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1place_1_1CongestionMap.html">CongestionMap</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ed37192bb97b7d9fc6bb42af3097b01">make_congestion_map</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, const <a class="el" href="structtmk_1_1place_1_1CongestionOptions.html">CongestionOptions</a> &amp;o={})</td></tr>
 <tr class="memitem:a299afc82934eb0f496bf593d014612e4" id="r_a299afc82934eb0f496bf593d014612e4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a299afc82934eb0f496bf593d014612e4">rudy_net</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, int net)</td></tr>
 <tr class="memdesc:a299afc82934eb0f496bf593d014612e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if the net contributes RUDY demand (signal nets with at least two pins).  <br /></td></tr>
@@ -286,6 +313,22 @@ Variables</h2></td></tr>
 <tr class="memitem:a2f755c17febdbf687dab7cb0f0667dd2" id="r_a2f755c17febdbf687dab7cb0f0667dd2"><td class="memItemLeft" align="right" valign="top">constexpr std::uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f755c17febdbf687dab7cb0f0667dd2">kFlipBit</a> = 4</td></tr>
 </table>
 <a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
+<a id="ab36346e676e818f15821e0c7aa12cd07" name="ab36346e676e818f15821e0c7aa12cd07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab36346e676e818f15821e0c7aa12cd07">&#9670;&#160;</a></span>ArmTable</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="#ab36346e676e818f15821e0c7aa12cd07">tmk::place::ArmTable</a> = std::array&lt;<a class="el" href="structtmk_1_1place_1_1ArmStats.html">ArmStats</a>, <a class="el" href="#a1d220950467f37e6041979f3ddae4713afdf71ddc141225f4540f6da468814db9">kArms</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="closure_8hpp_source.html#l00050">50</a> of file <a class="el" href="closure_8hpp_source.html">closure.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a6081ab832fd32b412498c38357d5c480" name="a6081ab832fd32b412498c38357d5c480"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6081ab832fd32b412498c38357d5c480">&#9670;&#160;</a></span>RouteFn</h2>
 
@@ -298,11 +341,38 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00033">33</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="routable_8hpp_source.html#l00034">34</a> of file <a class="el" href="routable_8hpp_source.html">routable.hpp</a>.</p>
 
 </div>
 </div>
 <a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
+<a id="a1d220950467f37e6041979f3ddae4713" name="a1d220950467f37e6041979f3ddae4713"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d220950467f37e6041979f3ddae4713">&#9670;&#160;</a></span>Arm</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a1d220950467f37e6041979f3ddae4713">tmk::place::Arm</a> : int</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a1d220950467f37e6041979f3ddae4713af63cb4001dbf2467a7e6f67d2bfd4a62" name="a1d220950467f37e6041979f3ddae4713af63cb4001dbf2467a7e6f67d2bfd4a62"></a>kShift&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d220950467f37e6041979f3ddae4713a32a7867b673c1cb29d8b103d5877221a" name="a1d220950467f37e6041979f3ddae4713a32a7867b673c1cb29d8b103d5877221a"></a>kRotate&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d220950467f37e6041979f3ddae4713aa8f3e4b1d9a7eee4ca51ccd953dd63e0" name="a1d220950467f37e6041979f3ddae4713aa8f3e4b1d9a7eee4ca51ccd953dd63e0"></a>kSwap&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d220950467f37e6041979f3ddae4713a6850f48edf149f18e75a92e63cc99f6f" name="a1d220950467f37e6041979f3ddae4713a6850f48edf149f18e75a92e63cc99f6f"></a>kFlip&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d220950467f37e6041979f3ddae4713a853e22353b46340025ed4de0d766fb5f" name="a1d220950467f37e6041979f3ddae4713a853e22353b46340025ed4de0d766fb5f"></a>kRoom&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d220950467f37e6041979f3ddae4713a997a1780a3334769467a52d5aac24c7c" name="a1d220950467f37e6041979f3ddae4713a997a1780a3334769467a52d5aac24c7c"></a>kFar&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d220950467f37e6041979f3ddae4713a0e15e1b61c292e714f059bfd23212289" name="a1d220950467f37e6041979f3ddae4713a0e15e1b61c292e714f059bfd23212289"></a>kWindow&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d220950467f37e6041979f3ddae4713a0d9299b5ddc1b054e947007966ff7a51" name="a1d220950467f37e6041979f3ddae4713a0d9299b5ddc1b054e947007966ff7a51"></a>kReplace&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1d220950467f37e6041979f3ddae4713afdf71ddc141225f4540f6da468814db9" name="a1d220950467f37e6041979f3ddae4713afdf71ddc141225f4540f6da468814db9"></a>kArms&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="closure_8hpp_source.html#l00042">42</a> of file <a class="el" href="closure_8hpp_source.html">closure.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a402b743aad4c77535fff84c378e3b4e1" name="a402b743aad4c77535fff84c378e3b4e1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a402b743aad4c77535fff84c378e3b4e1">&#9670;&#160;</a></span>RotationModel</h2>
 
@@ -495,6 +565,59 @@ template&lt;class Touch&gt; </div>
 
 </div>
 </div>
+<a id="a1f2bc5a5089a29b262c40b4b329aebb0" name="a1f2bc5a5089a29b262c40b4b329aebb0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f2bc5a5089a29b262c40b4b329aebb0">&#9670;&#160;</a></span>arm_cost()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt; int, <a class="el" href="#a1d220950467f37e6041979f3ddae4713afdf71ddc141225f4540f6da468814db9">kArms</a> &gt; tmk::place::arm_cost </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4b2fb72e1f702c8468af1c5188745d49" name="a4b2fb72e1f702c8468af1c5188745d49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b2fb72e1f702c8468af1c5188745d49">&#9670;&#160;</a></span>arm_from_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::place::arm_from_name </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>name</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>-1 if unknown </p>
+
+</div>
+</div>
+<a id="a2cab25974c8a03ad26809bdf23bd13d4" name="a2cab25974c8a03ad26809bdf23bd13d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cab25974c8a03ad26809bdf23bd13d4">&#9670;&#160;</a></span>arm_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * tmk::place::arm_name </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>arm</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a4db74605b9d1035c927bf01e8a47f60d" name="a4db74605b9d1035c927bf01e8a47f60d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4db74605b9d1035c927bf01e8a47f60d">&#9670;&#160;</a></span>better()</h2>
 
@@ -678,6 +801,26 @@ template&lt;class Touch&gt; </div>
 </div><div class="memdoc">
 
 <p>Number of crossing pairs of airwires that belong to different signal nets (reference: O(n²)). </p>
+
+</div>
+</div>
+<a id="a81687a6b9b2c628eef55bbaed5924a47" name="a81687a6b9b2c628eef55bbaed5924a47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81687a6b9b2c628eef55bbaed5924a47">&#9670;&#160;</a></span>default_prior_ppm()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt; int, <a class="el" href="#a1d220950467f37e6041979f3ddae4713afdf71ddc141225f4540f6da468814db9">kArms</a> &gt; tmk::place::default_prior_ppm </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Expected success rate of each arm before any trial on this board, in parts per million, and its cost in routes (window and replace also anneal). </p>
+<p>From the M8 results (doc 04 §8.3): small shifts and rotations closed most boards. </p>
 
 </div>
 </div>
@@ -1239,6 +1382,42 @@ template&lt;class Touch&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="structtmk_1_1place_1_1PlaceOptions.html">PlaceOptions</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af36af8a4f47699b87e84b0d25eb6f84e" name="af36af8a4f47699b87e84b0d25eb6f84e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af36af8a4f47699b87e84b0d25eb6f84e">&#9670;&#160;</a></span>placement_closure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1place_1_1ClosureResult.html">ClosureResult</a> tmk::place::placement_closure </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>start</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1place_1_1RouteEval.html">RouteEval</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>start_eval</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1place_1_1ClosureOptions.html">ClosureOptions</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>o</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="#a6081ab832fd32b412498c38357d5c480">RouteFn</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>route</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">

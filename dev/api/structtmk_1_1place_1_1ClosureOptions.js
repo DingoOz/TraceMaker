@@ -1,0 +1,24 @@
+var structtmk_1_1place_1_1ClosureOptions =
+[
+    [ "alpha_cross_mm", "structtmk_1_1place_1_1ClosureOptions.html#af691d2e703371c84b97f66da02a419b6", null ],
+    [ "beta", "structtmk_1_1place_1_1ClosureOptions.html#a73e4a87b2be5dae5380125220b75ef0c", null ],
+    [ "corridor", "structtmk_1_1place_1_1ClosureOptions.html#a3da86c6c248355b70f6602003786cd68", null ],
+    [ "disp_cost", "structtmk_1_1place_1_1ClosureOptions.html#a91deb5dd8c5f3fd389233d0ce111da46", null ],
+    [ "explore", "structtmk_1_1place_1_1ClosureOptions.html#acb2ccfa26479e8ca6a78e9bb7433767f", null ],
+    [ "log", "structtmk_1_1place_1_1ClosureOptions.html#a4abd570f937b179d0e6970076e6fa7c2", null ],
+    [ "max_routes", "structtmk_1_1place_1_1ClosureOptions.html#afc81a768835541aa3a94d746bc85341e", null ],
+    [ "on_accept", "structtmk_1_1place_1_1ClosureOptions.html#abfa67ffe46ba2ea09a402dc1a26179e5", null ],
+    [ "out_of_time", "structtmk_1_1place_1_1ClosureOptions.html#a27e8b48d9d13c0edd743b14017894874", null ],
+    [ "penalty", "structtmk_1_1place_1_1ClosureOptions.html#ab076e27f54d0c6188fa88872baf71d50", null ],
+    [ "pitch", "structtmk_1_1place_1_1ClosureOptions.html#a0709b3e3baa071ea7036f40d90c998e9", null ],
+    [ "place", "structtmk_1_1place_1_1ClosureOptions.html#a4e013332c31d08851642d49beb87590d", null ],
+    [ "prior", "structtmk_1_1place_1_1ClosureOptions.html#ae149b6403f63c7ef2e49f880ef9d6a91", null ],
+    [ "prior_cap", "structtmk_1_1place_1_1ClosureOptions.html#ac3560c816dada78eac3fe7444b33801a", null ],
+    [ "radical", "structtmk_1_1place_1_1ClosureOptions.html#ad0e73b7bf5322cb01d46621a6d0f0e43", null ],
+    [ "room", "structtmk_1_1place_1_1ClosureOptions.html#a5da34fbd98c5ec942aca108695e21fad", null ],
+    [ "room_gain", "structtmk_1_1place_1_1ClosureOptions.html#a0fff8a9b38c5e0b2a64ba727fb353dfa", null ],
+    [ "stall", "structtmk_1_1place_1_1ClosureOptions.html#a710181d698ef84c7235517bad7cb21da", null ],
+    [ "via_mm", "structtmk_1_1place_1_1ClosureOptions.html#ab8929b921751f7348a54b11f9f0141a1", null ],
+    [ "weight_boost", "structtmk_1_1place_1_1ClosureOptions.html#a20b6447fa5263f6a82037ed868702c9b", null ],
+    [ "window_per_incumbent", "structtmk_1_1place_1_1ClosureOptions.html#aa24cebbaf1636a5f1a387201942d0d9d", null ]
+];

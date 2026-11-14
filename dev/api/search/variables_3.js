@@ -36,7 +36,7 @@ var searchData=
   ['disabled_33',['disabled',['../structtmk_1_1crules_1_1RuleOverride.html#af51dd31971f54ee0475280f0dff854c6',1,'tmk::crules::RuleOverride']]],
   ['discarded_34',['discarded',['../structtmk_1_1passes_1_1StitchResult.html#a1e0a8a73e7ed378c748e3cbfae9411d4',1,'tmk::passes::StitchResult']]],
   ['disconnect_5fbytes_35',['disconnect_bytes',['../structtmk_1_1server_1_1ServerOptions.html#a6106c8bbd3f971257c146e40b16cbcbb',1,'tmk::server::ServerOptions']]],
-  ['disp_5fcost_36',['disp_cost',['../structtmk_1_1place_1_1EcoOptions.html#a963e216a1880f614c637b0fb85053da9',1,'tmk::place::EcoOptions']]],
+  ['disp_5fcost_36',['disp_cost',['../structtmk_1_1place_1_1ClosureOptions.html#a91deb5dd8c5f3fd389233d0ce111da46',1,'tmk::place::ClosureOptions::disp_cost'],['../structtmk_1_1place_1_1EcoOptions.html#a963e216a1880f614c637b0fb85053da9',1,'tmk::place::EcoOptions::disp_cost']]],
   ['distance_37',['distance',['../structtmk_1_1passes_1_1StitchOptions_1_1ReturnNet.html#a3c501f1d47f1278f4d9dba727cc5e861',1,'tmk::passes::StitchOptions::ReturnNet::distance'],['../structtmk_1_1passes_1_1StitchReturn.html#a7dbc5509e2188214c04bf8dd59909565',1,'tmk::passes::StitchReturn::distance']]],
   ['distance_5fmm_38',['distance_mm',['../structtmk_1_1analysis_1_1ReturnLayerChange.html#ab71b68cb2b5d31b66a7a406b470a71d5',1,'tmk::analysis::ReturnLayerChange::distance_mm'],['../structtmk_1_1analysis_1_1ReturnEnd.html#a20e5b317b3e1f8bb6f32558f446d7299',1,'tmk::analysis::ReturnEnd::distance_mm']]],
   ['dnp_39',['dnp',['../structtmk_1_1model_1_1Footprint.html#a7cf0de5ed0e05ec63287de0815632330',1,'tmk::model::Footprint::dnp'],['../structtmk_1_1model_1_1NetlistComponent.html#a20e5b6e0ade9996afaa7f3816dd71043',1,'tmk::model::NetlistComponent::dnp']]],

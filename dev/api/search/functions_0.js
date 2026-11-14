@@ -32,5 +32,8 @@ var searchData=
   ['area_29',['area',['../namespacetmk_1_1geom.html#ac70962e535627e9537615449f6ee28f2',1,'tmk::geom::area(const Ring &amp;r)'],['../namespacetmk_1_1geom.html#adadebcb42678d196fe96a0126a44e188',1,'tmk::geom::area(const Rings &amp;rs)']]],
   ['area_5fmatches_30',['area_matches',['../namespacetmk_1_1drc.html#a1b5415acd3683760e7e74dc3129b30bd',1,'tmk::drc']]],
   ['args_31',['args',['../classtmk_1_1app_1_1tui_1_1Model.html#a3f451f73292b81835e74951c02abf4f8',1,'tmk::app::tui::Model']]],
-  ['array_5frings_32',['array_rings',['../namespacetmk_1_1route.html#aa0381eb1b0f11577e1483980c401cb64',1,'tmk::route']]]
+  ['arm_5fcost_32',['arm_cost',['../namespacetmk_1_1place.html#a1f2bc5a5089a29b262c40b4b329aebb0',1,'tmk::place']]],
+  ['arm_5ffrom_5fname_33',['arm_from_name',['../namespacetmk_1_1place.html#a4b2fb72e1f702c8468af1c5188745d49',1,'tmk::place']]],
+  ['arm_5fname_34',['arm_name',['../namespacetmk_1_1place.html#a2cab25974c8a03ad26809bdf23bd13d4',1,'tmk::place']]],
+  ['array_5frings_35',['array_rings',['../namespacetmk_1_1route.html#aa0381eb1b0f11577e1483980c401cb64',1,'tmk::route']]]
 ];

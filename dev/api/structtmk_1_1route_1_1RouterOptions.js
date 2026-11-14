@@ -117,6 +117,7 @@ var structtmk_1_1route_1_1RouterOptions =
     [ "plane_informed", "structtmk_1_1route_1_1RouterOptions.html#ac2e1ed73e5ec90dcf1fc1e40f2c48052", null ],
     [ "polish_fraction", "structtmk_1_1route_1_1RouterOptions.html#a0665e700d1b29a7b840ca9e21354d37e", null ],
     [ "polish_trials", "structtmk_1_1route_1_1RouterOptions.html#afd870146215ec6d90e00b0bebf2455fc", null ],
+    [ "preferred_widths", "structtmk_1_1route_1_1RouterOptions.html#ab428bd0e8a1569f0b97163ae4d64fd2d", null ],
     [ "priority", "structtmk_1_1route_1_1RouterOptions.html#abc840f3817008bbb732e0ea5e85ebc5f", null ],
     [ "protect_coupled", "structtmk_1_1route_1_1RouterOptions.html#ae6532f032a944268e2f2849a81f3d1dc", null ],
     [ "radial_penalty_mm", "structtmk_1_1route_1_1RouterOptions.html#a8e33968c4d810f571dc1e186dcf8654b", null ],

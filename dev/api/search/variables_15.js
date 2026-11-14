@@ -26,7 +26,7 @@ var searchData=
   ['via_5fin_5fpad_5ffits_23',['via_in_pad_fits',['../structtmk_1_1analysis_1_1PinEscape.html#ad6555d4bd2fa473989692f4260100329',1,'tmk::analysis::PinEscape']]],
   ['via_5flayers_24',['via_layers',['../structtmk_1_1drc_1_1Connectivity.html#a35450e809b13a49c51cd9b8c95f5e571',1,'tmk::drc::Connectivity']]],
   ['via_5flength_25',['via_length',['../structtmk_1_1route_1_1BusMember.html#ab64a03301687c8c1e4666b1b7e1f176c',1,'tmk::route::BusMember']]],
-  ['via_5fmm_26',['via_mm',['../structtmk_1_1place_1_1AnnealOptions.html#ae95741822de844e56f5fadd495065364',1,'tmk::place::AnnealOptions::via_mm'],['../structtmk_1_1place_1_1PlaceOptions.html#ae3296233522839712465574fb74d51e3',1,'tmk::place::PlaceOptions::via_mm'],['../structtmk_1_1place_1_1EcoOptions.html#a9097d2cb830389e2900efe4ca924a465',1,'tmk::place::EcoOptions::via_mm']]],
+  ['via_5fmm_26',['via_mm',['../structtmk_1_1place_1_1AnnealOptions.html#ae95741822de844e56f5fadd495065364',1,'tmk::place::AnnealOptions::via_mm'],['../structtmk_1_1place_1_1ClosureOptions.html#ab8929b921751f7348a54b11f9f0141a1',1,'tmk::place::ClosureOptions::via_mm'],['../structtmk_1_1place_1_1PlaceOptions.html#ae3296233522839712465574fb74d51e3',1,'tmk::place::PlaceOptions::via_mm'],['../structtmk_1_1place_1_1EcoOptions.html#a9097d2cb830389e2900efe4ca924a465',1,'tmk::place::EcoOptions::via_mm']]],
   ['via_5foffset_27',['via_offset',['../structtmk_1_1route_1_1PairRule.html#a5ce489d4e17673611d4be8c6192a477b',1,'tmk::route::PairRule']]],
   ['via_5fok_28',['via_ok',['../structtmk_1_1route_1_1BundleHooks.html#a77a606704a85a745f01e238e923e5db1',1,'tmk::route::BundleHooks']]],
   ['via_5fonly_29',['via_only',['../structtmk_1_1route_1_1RingPlan.html#aec2e2605a733c3fc96d4d9d5e42cb90b',1,'tmk::route::RingPlan']]],

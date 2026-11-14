@@ -54,11 +54,12 @@ var searchData=
   ['footprint_5ftrusted_51',['footprint_trusted',['../structtmk_1_1app_1_1RouteJob.html#a0af467a0d3438899acd6d0cd625a8427',1,'tmk::app::RouteJob']]],
   ['footprint_5fwarn_5fonly_52',['footprint_warn_only',['../structtmk_1_1app_1_1RouteJob.html#aa2d86e0f2c43b6bf8d6c9f1f70dd6eb0',1,'tmk::app::RouteJob']]],
   ['footprints_53',['footprints',['../structtmk_1_1model_1_1Board.html#ae5516c59e0a0ea9ddfd4c9125e1164c7',1,'tmk::model::Board']]],
-  ['fp_54',['fp',['../structtmk_1_1place_1_1Part.html#a4215ae01b686340b89c1eec456c7d258',1,'tmk::place::Part']]],
-  ['free_55',['free',['../structtmk_1_1model_1_1Via.html#a7fb0ef826c78fe8367d901b7e5ca9696',1,'tmk::model::Via::free'],['../structtmk_1_1route_1_1BundleHooks.html#a4663774415ce1f4737bcbf900f6c0082',1,'tmk::route::BundleHooks::free'],['../structtmk_1_1route_1_1FanoutHeadHooks.html#a789889b0f5d29b670d698957f3e5bef9',1,'tmk::route::FanoutHeadHooks::free']]],
-  ['free_5fbytes_56',['free_bytes',['../structtmk_1_1gpu_1_1DeviceInfo.html#a4fdc286677233fcdfb2990d9dd4b753d',1,'tmk::gpu::DeviceInfo']]],
-  ['free_5fvia_57',['free_via',['../structtmk_1_1drc_1_1CopperItem.html#a0ae43a8dda218551e8e3be5727be840b',1,'tmk::drc::CopperItem']]],
-  ['from_58',['from',['../structtmk_1_1drc_1_1ViaHeights.html#a76f620b173330c59227286bca76a8747',1,'tmk::drc::ViaHeights::from'],['../structtmk_1_1route_1_1ViaHeights.html#a76f620b173330c59227286bca76a8747',1,'tmk::route::ViaHeights::from']]],
-  ['from_5flayer_59',['from_layer',['../structtmk_1_1analysis_1_1ReturnLayerChange.html#abd0d0cfc54777b390c1e35fe1beae29d',1,'tmk::analysis::ReturnLayerChange']]],
-  ['from_5fstackup_60',['from_stackup',['../structtmk_1_1crules_1_1LayerDelay.html#a63298d2b343589a0230c86f75d4a7fc4',1,'tmk::crules::LayerDelay']]]
+  ['forced_54',['forced',['../structtmk_1_1place_1_1ClosureTrial.html#a9597ce855c7cc74c17b2112f6ffd843a',1,'tmk::place::ClosureTrial']]],
+  ['fp_55',['fp',['../structtmk_1_1place_1_1Part.html#a4215ae01b686340b89c1eec456c7d258',1,'tmk::place::Part']]],
+  ['free_56',['free',['../structtmk_1_1model_1_1Via.html#a7fb0ef826c78fe8367d901b7e5ca9696',1,'tmk::model::Via::free'],['../structtmk_1_1route_1_1BundleHooks.html#a4663774415ce1f4737bcbf900f6c0082',1,'tmk::route::BundleHooks::free'],['../structtmk_1_1route_1_1FanoutHeadHooks.html#a789889b0f5d29b670d698957f3e5bef9',1,'tmk::route::FanoutHeadHooks::free']]],
+  ['free_5fbytes_57',['free_bytes',['../structtmk_1_1gpu_1_1DeviceInfo.html#a4fdc286677233fcdfb2990d9dd4b753d',1,'tmk::gpu::DeviceInfo']]],
+  ['free_5fvia_58',['free_via',['../structtmk_1_1drc_1_1CopperItem.html#a0ae43a8dda218551e8e3be5727be840b',1,'tmk::drc::CopperItem']]],
+  ['from_59',['from',['../structtmk_1_1drc_1_1ViaHeights.html#a76f620b173330c59227286bca76a8747',1,'tmk::drc::ViaHeights::from'],['../structtmk_1_1route_1_1ViaHeights.html#a76f620b173330c59227286bca76a8747',1,'tmk::route::ViaHeights::from']]],
+  ['from_5flayer_60',['from_layer',['../structtmk_1_1analysis_1_1ReturnLayerChange.html#abd0d0cfc54777b390c1e35fe1beae29d',1,'tmk::analysis::ReturnLayerChange']]],
+  ['from_5fstackup_61',['from_stackup',['../structtmk_1_1crules_1_1LayerDelay.html#a63298d2b343589a0230c86f75d4a7fc4',1,'tmk::crules::LayerDelay']]]
 ];

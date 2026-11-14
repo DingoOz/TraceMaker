@@ -140,6 +140,8 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ac68aa05e140878b4ff78e22e6e5b2572" id="r_ac68aa05e140878b4ff78e22e6e5b2572"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac68aa05e140878b4ff78e22e6e5b2572">split_hard</a> = false</td></tr>
 <tr class="memdesc:ac68aa05e140878b4ff78e22e6e5b2572"><td class="mdescLeft">&#160;</td><td class="mdescRight">such cells are closed to critical nets  <br /></td></tr>
 <tr class="memitem:ae31339bcb8fa1593e1bae86662425e3f" id="r_ae31339bcb8fa1593e1bae86662425e3f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae31339bcb8fa1593e1bae86662425e3f">si_rules</a> = false</td></tr>
+<tr class="memitem:a9910ccf1ee8c8cbfdad9f0109367840e" id="r_a9910ccf1ee8c8cbfdad9f0109367840e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9910ccf1ee8c8cbfdad9f0109367840e">critical_audit</a> = true</td></tr>
+<tr class="memdesc:a9910ccf1ee8c8cbfdad9f0109367840e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Report only (doc 18 §20 E4, doc 05 §81): with none of the options above, the nets &ndash;critical-auto would find are still audited after the route on a board with a plane, so every run report says whether their return paths are sound.  <br /></td></tr>
 <tr class="memitem:a7d2ccd04045f53f2e5023f2a0a8b6301" id="r_a7d2ccd04045f53f2e5023f2a0a8b6301"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7d2ccd04045f53f2e5023f2a0a8b6301">si_stitch</a> = true</td></tr>
 <tr class="memdesc:a7d2ccd04045f53f2e5023f2a0a8b6301"><td class="mdescLeft">&#160;</td><td class="mdescRight">With si_rules: layer changes of critical nets that the reference-return audit finds without a stitch get return-path stitching vias of their plane net (doc 05 §57); &ndash;no-si-stitch turns it off.  <br /></td></tr>
 <tr class="memitem:aca77e94e80d8ae901a8c35bd8f22ca9e" id="r_aca77e94e80d8ae901a8c35bd8f22ca9e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca77e94e80d8ae901a8c35bd8f22ca9e">footprint_refs</a></td></tr>
@@ -208,6 +210,10 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a1d30914b1b2024095f91a849154939b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">explain open connections: pins the fixed copper walls in (doc 20 §2.4); &ndash;no-why-open  <br /></td></tr>
 <tr class="memitem:aba75b81856dcd175e7f05e4544dcbad4" id="r_aba75b81856dcd175e7f05e4544dcbad4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aba75b81856dcd175e7f05e4544dcbad4">rescue_mode</a> = &quot;both&quot;</td></tr>
 <tr class="memdesc:aba75b81856dcd175e7f05e4544dcbad4"><td class="mdescLeft">&#160;</td><td class="mdescRight">&ndash;rescue-mode: warm (relax from the plain run's routes), fresh (from nothing), both (warm, then fresh; D163)  <br /></td></tr>
+<tr class="memitem:a16048e9defb18c3bef0284a252924dab" id="r_a16048e9defb18c3bef0284a252924dab"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a16048e9defb18c3bef0284a252924dab">time_total_s</a> = 0</td></tr>
+<tr class="memdesc:a16048e9defb18c3bef0284a252924dab"><td class="mdescLeft">&#160;</td><td class="mdescRight">&ndash;time-total S (D186, M23 E6): one wall-clock limit for the whole job.  <br /></td></tr>
+<tr class="memitem:a462e1b44a0a1702ab0139ff5fd8c2ab7" id="r_a462e1b44a0a1702ab0139ff5fd8c2ab7"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a462e1b44a0a1702ab0139ff5fd8c2ab7">rescue_share</a> = 0.75</td></tr>
+<tr class="memdesc:a462e1b44a0a1702ab0139ff5fd8c2ab7"><td class="mdescLeft">&#160;</td><td class="mdescRight">measured: 0.75 routed more than 0.5 and than &ndash;time T/3 per stage (bench/records/m23-e6)  <br /></td></tr>
 <tr class="memitem:aace167e293cc0cc7f1ac1401788449fa" id="r_aace167e293cc0cc7f1ac1401788449fa"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aace167e293cc0cc7f1ac1401788449fa">no_tracks_on</a></td></tr>
 <tr class="memdesc:aace167e293cc0cc7f1ac1401788449fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">&ndash;no-tracks-on / &ndash;layer-cost (doc 05 §29): copper layer names, and "LAYER=FACTOR" entries.  <br /></td></tr>
 <tr class="memitem:a50bc561d84cb48e8e697034dfeb293dc" id="r_a50bc561d84cb48e8e697034dfeb293dc"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50bc561d84cb48e8e697034dfeb293dc">layer_costs</a></td></tr>
@@ -221,6 +227,12 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a9d35bba2c5a0802a404b040864697b51" id="r_a9d35bba2c5a0802a404b040864697b51"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9d35bba2c5a0802a404b040864697b51">widen_power</a> = false</td></tr>
 <tr class="memdesc:a9d35bba2c5a0802a404b040864697b51"><td class="mdescLeft">&#160;</td><td class="mdescRight">After-route passes (doc 05 §39), all off by default.  <br /></td></tr>
 <tr class="memitem:a079af804d12f97a9693cff43ee37ec72" id="r_a079af804d12f97a9693cff43ee37ec72"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a079af804d12f97a9693cff43ee37ec72">widen_nets</a></td></tr>
+<tr class="memitem:a284c3de159d2b10f2aca99cf011d48df" id="r_a284c3de159d2b10f2aca99cf011d48df"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a284c3de159d2b10f2aca99cf011d48df">power_width_mm</a> = 0</td></tr>
+<tr class="memdesc:a284c3de159d2b10f2aca99cf011d48df"><td class="mdescLeft">&#160;</td><td class="mdescRight">&ndash;power-width MM (D184): supply nets (by name: GND*, VCC*, VDD*, VBUS*, VIN*, +..., 3V3 ...) get MM as their widening target unless a target is stated, every net with a target is routed at it first (RouterOptions::preferred_widths) and necked to its pads afterwards, and &ndash;widen-power runs.  <br /></td></tr>
+<tr class="memitem:ad07dc4c09c3ccfc8a2c656ee90787ccf" id="r_ad07dc4c09c3ccfc8a2c656ee90787ccf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad07dc4c09c3ccfc8a2c656ee90787ccf">octilinear</a> = false</td></tr>
+<tr class="memdesc:ad07dc4c09c3ccfc8a2c656ee90787ccf"><td class="mdescLeft">&#160;</td><td class="mdescRight">&ndash;octilinear (D187, M23 E3): new tracks off the eight directions become doglegs of two that are on them where the exact check allows, judged like the other passes (kept only if no net has more unconnected items).  <br /></td></tr>
+<tr class="memitem:aa98adfdc35a152cd24d46e4bf170d6a6" id="r_aa98adfdc35a152cd24d46e4bf170d6a6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa98adfdc35a152cd24d46e4bf170d6a6">octilinear_min_leg</a> = 0.5</td></tr>
+<tr class="memdesc:aa98adfdc35a152cd24d46e4bf170d6a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">&ndash;octilinear-min-leg: shortest leg, in track widths (0 = any); 0.5 measured (bench/records/m23-e3)  <br /></td></tr>
 <tr class="memitem:a2a2394b6fe0d70d594d2831368468468" id="r_a2a2394b6fe0d70d594d2831368468468"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a2394b6fe0d70d594d2831368468468">stitch_vias</a></td></tr>
 <tr class="memdesc:a2a2394b6fe0d70d594d2831368468468"><td class="mdescLeft">&#160;</td><td class="mdescRight">&ndash;stitch-vias: "planes" (vias of a plane's net on a grid where its fills overlap on two or more layers), "return" (a plane via near each via of the signals that need a reference plane: component rules of kind reference_plane, and &ndash;stitch-return "PATTERN=PLANE_NET"), or "all".  <br /></td></tr>
 <tr class="memitem:a339ca242d43d84573fc590e5abd3b077" id="r_a339ca242d43d84573fc590e5abd3b077"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a339ca242d43d84573fc590e5abd3b077">stitch_pitch_mm</a> = 0</td></tr>
@@ -252,7 +264,7 @@ Public Attributes</h2></td></tr>
 <p>Advice (doc 17, issue #26). </p>
 <p>The engine never talks to a model: it reads an advice file, and an advisor (any program that turns a stuck report into an advice file) is consulted only when the deterministic route leaves connections open. &ndash;advice FILE: typed hints (<a class="el" href="advice_8hpp.html" title="The advice file (design doc 17, issue #26): typed hints for the router, written by a person,...">src/advice/advice.hpp</a>); advised variants run next to the unadvised ones </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00097">97</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00101">101</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -270,7 +282,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;advice-out FILE: where the advice that was used is saved (default: &lt;out&gt;.advice.json) </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00103">103</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00107">107</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -288,7 +300,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;advice-variants N: advised variants (0 = the file's "variants", else 4) </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00098">98</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00102">102</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -306,7 +318,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;advisor CMD: a shell command that reads the stuck report on stdin and writes advice on stdout </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00099">99</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00103">103</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -324,7 +336,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;advisor-redact: the report names nets and parts by alias (N1, P3); the advice is mapped back </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00102">102</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00106">106</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -342,7 +354,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;advisor-rounds N: consult again with the result of the advised run while connections are left </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00101">101</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00105">105</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -360,7 +372,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;advisor-timeout S: the advisor's time limit (its wall time is not routing work) </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00100">100</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00104">104</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -376,7 +388,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00124">124</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00133">133</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -395,7 +407,7 @@ Public Attributes</h2></td></tr>
 <p>Buses (doc 05 §38): "NAME=PATTERN" groups (&ndash;bus), automatic detection (&ndash;buses) and the skew limit of the command-line groups in mm (&ndash;bus-skew-mm; 0 = none). </p>
 <p>A custom skew rule of the board wins over the option. </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00122">122</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00131">131</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -413,7 +425,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;component-rules (doc 15 §3.5): "off" (default), "report" or "soft" (detect; write the sidecar .kicad_dru next to the output), "on" (also route with the generated keep-outs as in-memory rule areas; never written into the output board). </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00071">71</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00075">75</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -432,7 +444,26 @@ Public Attributes</h2></td></tr>
 <p>&ndash;copper-layers N (doc 05 §53): route the board with N copper layers, inner layers added (or empty ones removed) in memory and in the output; 0 = as the file has them. </p>
 <p><span class="tt"><a class="el" href="namespacetmk_1_1route.html">route</a> --try-layers</span> sets it for each count it tries. </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00086">86</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00090">90</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9910ccf1ee8c8cbfdad9f0109367840e" name="a9910ccf1ee8c8cbfdad9f0109367840e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9910ccf1ee8c8cbfdad9f0109367840e">&#9670;&#160;</a></span>critical_audit</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::app::RouteJob::critical_audit = true</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Report only (doc 18 §20 E4, doc 05 §81): with none of the options above, the nets &ndash;critical-auto would find are still audited after the route on a board with a plane, so every run report says whether their return paths are sound. </p>
+<p>Nothing about the route changes; &ndash;no-critical-audit turns it off. </p>
+
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00053">53</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -557,7 +588,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00123">123</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00132">132</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -575,7 +606,7 @@ Public Attributes</h2></td></tr>
 
 <p>Zones without a fill (doc 05 §54): filled in memory before routing and routed with soft zones, so a plane net's pads drop a via into their plane instead of being joined by tracks; &ndash;no-fill-planes turns it off (the zones are then ignored while routing). </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00092">92</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00096">96</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -591,7 +622,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00059">59</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00063">63</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -610,7 +641,7 @@ Public Attributes</h2></td></tr>
 <p>&ndash;footprint-refs (issue #5, doc 05 §43): every footprint is checked against the datasheet land patterns of a reference library before the first track is routed; a discrepancy is an error and stops the job unless footprint_warn_only. </p>
 <p>the library: a directory or a JSON file; empty = no check </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00055">55</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00059">59</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -626,7 +657,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00057">57</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00061">61</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -644,7 +675,7 @@ Public Attributes</h2></td></tr>
 
 <p>trusted brand list; empty = trusted_brands.txt beside the references </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00056">56</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00060">60</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -660,7 +691,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00058">58</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00062">62</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -678,7 +709,7 @@ Public Attributes</h2></td></tr>
 
 <p>keep serving the viewer after routing; never returns (CLI only) </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00066">66</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00070">70</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -766,7 +797,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00115">115</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00124">124</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -782,7 +813,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00119">119</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00128">128</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -801,7 +832,7 @@ Public Attributes</h2></td></tr>
 <p>&ndash;layer-dir / &ndash;layer-diag-pen (doc 05 §29, issue #66, D174): "LAYER=h|v|none" entries, and "LAYER=PITCHES" entries or one bare value. </p>
 <p>Resolved against the board into opt.layer_dir / opt.layer_diag_pen; unknown layers are warnings. </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00118">118</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00127">127</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -819,7 +850,7 @@ Public Attributes</h2></td></tr>
 
 <p>Progress lines (the CLI's stdout text, one line per call, no trailing newline). Empty = silent. </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00140">140</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00157">157</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -838,7 +869,44 @@ Public Attributes</h2></td></tr>
 <p>&ndash;no-tracks-on / &ndash;layer-cost (doc 05 §29): copper layer names, and "LAYER=FACTOR" entries. </p>
 <p>Resolved against the board into opt.no_track_layers / opt.layer_cost_pm; an unknown layer or a bad factor throws. </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00114">114</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00123">123</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ad07dc4c09c3ccfc8a2c656ee90787ccf" name="ad07dc4c09c3ccfc8a2c656ee90787ccf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad07dc4c09c3ccfc8a2c656ee90787ccf">&#9670;&#160;</a></span>octilinear</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::app::RouteJob::octilinear = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&ndash;octilinear (D187, M23 E3): new tracks off the eight directions become doglegs of two that are on them where the exact check allows, judged like the other passes (kept only if no net has more unconnected items). </p>
+<p>Off by default. </p>
+
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00146">146</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aa98adfdc35a152cd24d46e4bf170d6a6" name="aa98adfdc35a152cd24d46e4bf170d6a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa98adfdc35a152cd24d46e4bf170d6a6">&#9670;&#160;</a></span>octilinear_min_leg</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tmk::app::RouteJob::octilinear_min_leg = 0.5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&ndash;octilinear-min-leg: shortest leg, in track widths (0 = any); 0.5 measured (bench/records/m23-e3) </p>
+
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00147">147</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -857,7 +925,7 @@ Public Attributes</h2></td></tr>
 <p>&ndash;only-net / &ndash;skip-net patterns (KiCad wildcards or regular expressions, as net-class patterns): only_nets keeps the nets that match any pattern, skip_nets leaves those that match unrouted. </p>
 <p>Resolved against the board into RouterOptions::skip_nets. </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00083">83</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00087">87</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -929,7 +997,7 @@ Public Attributes</h2></td></tr>
 
 <p>work budget of each pass, in exact checks (rule 5) </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00138">138</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00155">155</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -948,7 +1016,26 @@ Public Attributes</h2></td></tr>
 <p>&ndash;pour (doc 05 §53, M20 C3): zones to add before routing, "auto" or "NET\@LAYER" (<a class="el" href="namespacetmk_1_1passes.html#a358e1d8a371b9b3951378d161532ca1b" title="Resolves route --pour entries against the board:">passes::plan_pours</a>). </p>
 <p>They are routed with soft zones (switched on with them) and written into the output with the engine's fill. </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00089">89</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00093">93</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a284c3de159d2b10f2aca99cf011d48df" name="a284c3de159d2b10f2aca99cf011d48df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a284c3de159d2b10f2aca99cf011d48df">&#9670;&#160;</a></span>power_width_mm</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tmk::app::RouteJob::power_width_mm = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&ndash;power-width MM (D184): supply nets (by name: GND*, VCC*, VDD*, VBUS*, VIN*, +..., 3V3 ...) get MM as their widening target unless a target is stated, every net with a target is routed at it first (RouterOptions::preferred_widths) and necked to its pads afterwards, and &ndash;widen-power runs. </p>
+<p>0 = off. </p>
+
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00143">143</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -966,7 +1053,7 @@ Public Attributes</h2></td></tr>
 
 <p>events file for replay (ignored while viewing) </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00067">67</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00071">71</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -984,7 +1071,7 @@ Public Attributes</h2></td></tr>
 
 <p>With soft zones: refill the zones after routing and route what the refill left unconnected (doc 05 §36). </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00106">106</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00110">110</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1003,7 +1090,7 @@ Public Attributes</h2></td></tr>
 <p>&ndash;repair (issue #56, doc 05 §75, D172): connections still open at the end are tried again with the unlocked copper near them lifted (a window that grows on each failure) and routed again; an attempt is kept only if nothing that was joined comes apart and fewer connections are open. </p>
 <p>"auto" (default): only on a board that came with unlocked tracks or vias (a partly routed board, whose copper the plain run cannot move); "on": also on a board routed from nothing here; "off". </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00079">79</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00083">83</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1019,7 +1106,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00080">80</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00084">84</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1056,7 +1143,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;reroute: remove every unlocked track and via first and route the whole board again (locked copper, arcs and zones stay; rule 6). </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00074">74</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00078">78</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1075,7 +1162,7 @@ Public Attributes</h2></td></tr>
 <p>The relax rescue (doc 05 §68, D160): connections left open by the plain run are tried again with &ndash;relax on a budget of its own (&ndash;time again, and &ndash;work again with a work budget); the better result is kept. </p>
 <p>&ndash;no-rescue turns it off. </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00109">109</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00113">113</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1093,7 +1180,25 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;rescue-mode: warm (relax from the plain run's routes), fresh (from nothing), both (warm, then fresh; D163) </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00111">111</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00115">115</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a462e1b44a0a1702ab0139ff5fd8c2ab7" name="a462e1b44a0a1702ab0139ff5fd8c2ab7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a462e1b44a0a1702ab0139ff5fd8c2ab7">&#9670;&#160;</a></span>rescue_share</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tmk::app::RouteJob::rescue_share = 0.75</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>measured: 0.75 routed more than 0.5 and than &ndash;time T/3 per stage (bench/records/m23-e6) </p>
+
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00120">120</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1130,7 +1235,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;rules-override: user override file (JSON, doc 15 §6.3); empty = none </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00094">94</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00098">98</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1164,7 +1269,7 @@ Public Attributes</h2></td></tr>
 
 <p>With si_rules: layer changes of critical nets that the reference-return audit finds without a stitch get return-path stitching vias of their plane net (doc 05 §57); &ndash;no-si-stitch turns it off. </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00052">52</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00056">56</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1180,7 +1285,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00083">83</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00087">87</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1252,7 +1357,7 @@ Public Attributes</h2></td></tr>
 
 <p>0 = the rule's stitch_via_mm, else the catalogue value </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00136">136</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00153">153</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1270,7 +1375,7 @@ Public Attributes</h2></td></tr>
 
 <p>0 = the catalogue's stitch_via_within_mm </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00135">135</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00152">152</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1286,7 +1391,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00137">137</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00154">154</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1305,7 +1410,7 @@ Public Attributes</h2></td></tr>
 <p>&ndash;stitch-vias: "planes" (vias of a plane's net on a grid where its fills overlap on two or more layers), "return" (a plane via near each via of the signals that need a reference plane: component rules of kind reference_plane, and &ndash;stitch-return "PATTERN=PLANE_NET"), or "all". </p>
 <p>Empty = off. </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00134">134</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00151">151</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1323,7 +1428,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;stuck-report FILE: write the stuck report (of the run the advisor saw, else the final one) </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00104">104</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00108">108</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1342,6 +1447,25 @@ Public Attributes</h2></td></tr>
 <p>worker threads for the portfolio variants </p>
 
 <p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00022">22</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a16048e9defb18c3bef0284a252924dab" name="a16048e9defb18c3bef0284a252924dab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16048e9defb18c3bef0284a252924dab">&#9670;&#160;</a></span>time_total_s</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double tmk::app::RouteJob::time_total_s = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&ndash;time-total S (D186, M23 E6): one wall-clock limit for the whole job. </p>
+<p>Every stage that otherwise gets &ndash;time again (the relax rescue's passes, advisor rounds, repair windows, the refill and thermal repairs) gets at most what is left, and a stage with under a second left is skipped. With the rescue possible the plain run gets <span class="tt"><a class="el" href="#a462e1b44a0a1702ab0139ff5fd8c2ab7" title="measured: 0.75 routed more than 0.5 and than –time T/3 per stage (bench/records/m23-e6)">rescue_share</a></span> of it, else all. 0 = off (each stage gets &ndash;time). </p>
+
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00119">119</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1396,7 +1520,7 @@ Public Attributes</h2></td></tr>
 
 <p>pages that may frame the viewer (&ndash;view-embed); empty = none </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00064">64</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00068">68</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1414,7 +1538,7 @@ Public Attributes</h2></td></tr>
 
 <p>the viewer holds the scene on a routing stall (issue #8); &ndash;no-freeze says false in the board snapshot </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00060">60</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00064">64</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1432,7 +1556,7 @@ Public Attributes</h2></td></tr>
 
 <p>"" = $TM_VIEW_HOST, else loopback: a viewer on any other address needs a token (issue #4, D116) </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00061">61</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00065">65</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1450,7 +1574,7 @@ Public Attributes</h2></td></tr>
 
 <p>a non-loopback viewer without a token (&ndash;view-insecure) </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00063">63</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00067">67</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1466,7 +1590,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00065">65</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00069">69</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1484,7 +1608,7 @@ Public Attributes</h2></td></tr>
 
 <p>the token for a non-loopback viewer (empty = a random one) </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00062">62</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00066">66</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1502,7 +1626,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;warm-pcb: a routed board whose tracks and vias are the starting point (kept where legal under the input's rules; nets of one connection) </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00093">93</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00097">97</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1520,7 +1644,7 @@ Public Attributes</h2></td></tr>
 
 <p>explain open connections: pins the fixed copper walls in (doc 20 §2.4); &ndash;no-why-open </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00110">110</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00114">114</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1536,7 +1660,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00130">130</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00139">139</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>
@@ -1555,7 +1679,7 @@ Public Attributes</h2></td></tr>
 <p>After-route passes (doc 05 §39), all off by default. </p>
 <p>Each changes the new copper only through the router's exact check and is kept only if no net has more unconnected items with it than without (rule 4). &ndash;widen-power: new tracks narrower than their net class width go back up to it where there is room; nets with a target (&ndash;widen-net "PATTERN=WIDTH_MM", or a width the component rules computed) are widened towards it. </p>
 
-<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00129">129</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="route__job_8hpp_source.html#l00138">138</a> of file <a class="el" href="route__job_8hpp_source.html">route_job.hpp</a>.</p>
 
 </div>
 </div>

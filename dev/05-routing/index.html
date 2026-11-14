@@ -668,6 +668,8 @@
       
         
       
+        
+      
     
     
     
@@ -849,6 +851,41 @@
     
   
     Read a run report
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/placement-closure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Move parts until a board routes
   
 
     
@@ -2563,6 +2600,61 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#79-power-nets-wide-from-the-start-power-width-2026-11-13-d184-m23-e1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        79. Power nets wide from the start (--power-width, 2026-11-13, D184, M23 E1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#80-octilinear-doglegs-octilinear-2026-11-13-d187-m23-e3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        80. Octilinear doglegs (--octilinear, 2026-11-13, D187, M23 E3)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#81-return-path-audit-in-every-run-report-2026-11-13-d188-m23-e4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        81. Return-path audit in every run report (2026-11-13, D188, M23 E4)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#82-one-time-limit-for-the-whole-run-time-total-2026-11-13-d186-m23-e6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        82. One time limit for the whole run (--time-total, 2026-11-13, D186, M23 E6)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#83-throughput-cpu-fields-skip-the-rows-that-cannot-change-2026-11-13-d189-m23-e5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        83. Throughput: CPU fields skip the rows that cannot change (2026-11-13, D189, M23 E5)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4181,6 +4273,61 @@
     <span class="md-ellipsis">
       
         78. Pad-to-plane searches: the via term, causes with filled zones, measured (2026-11-13, D179)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#79-power-nets-wide-from-the-start-power-width-2026-11-13-d184-m23-e1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        79. Power nets wide from the start (--power-width, 2026-11-13, D184, M23 E1)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#80-octilinear-doglegs-octilinear-2026-11-13-d187-m23-e3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        80. Octilinear doglegs (--octilinear, 2026-11-13, D187, M23 E3)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#81-return-path-audit-in-every-run-report-2026-11-13-d188-m23-e4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        81. Return-path audit in every run report (2026-11-13, D188, M23 E4)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#82-one-time-limit-for-the-whole-run-time-total-2026-11-13-d186-m23-e6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        82. One time limit for the whole run (--time-total, 2026-11-13, D186, M23 E6)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#83-throughput-cpu-fields-skip-the-rows-that-cannot-change-2026-11-13-d189-m23-e5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        83. Throughput: CPU fields skip the rows that cannot change (2026-11-13, D189, M23 E5)
       
     </span>
   </a>
@@ -10199,6 +10346,227 @@ reading.</p>
 <strong>byte-identical boards</strong> to the base on all 33. No pad-to-plane search there reaches a point where the bound, the proof or the fallback
 changes a decision, so item 4 does nothing for the gate. The option stays off. With it, all eight items of M22 are built and off; the best
 arm (<code>--via-shove --escape-all</code>, §64) cut open connections by 3.5 % against the 15 % gate.</p>
+<h2 id="79-power-nets-wide-from-the-start-power-width-2026-11-13-d184-m23-e1">79. Power nets wide from the start (<code>--power-width</code>, 2026-11-13, D184, M23 E1)<a class="headerlink" href="#79-power-nets-wide-from-the-start-power-width-2026-11-13-d184-m23-e1" title="Permanent link">&para;</a></h2>
+<p><code>--widen-power</code> (§39.1) widens after routing where room is left; by then signals hold the channels a wide supply track needed. On
+robomezzi the router left power at 0.25 mm where the designer drew 0.6 to 2.5 mm, and the closure loop's safety check passed only with the
+designer's widths (<code>bench/records/closure</code>).</p>
+<ul>
+<li><strong>Which nets</strong> (<code>src/app/route_job.cpp</code>, <code>supply_net_name</code>): the last hierarchy component is GND, VCC, VDD, VSS, VEE, VBUS, VIN, VBAT,
+  VSYS, VMOT, VPP or PWR (an A/D/P prefix and an A/D/IO/Q suffix allowed, then <code>_</code>, <code>-</code>, <code>.</code>, <code>+</code>, a digit or nothing); a KiCad power
+  symbol's <code>+NAME</code>; or a voltage (3V3, 5V, -12V, 1.8V). Stricter than <code>crules::power_like_name</code> (D25), which also takes sense lines
+  (<code>/VInSense</code>) and KiCad's pin-derived names (<code>Net-(U4-…LOCAL_PWR…)</code>). Halves of coupled pairs are left out.</li>
+<li><strong>Target</strong>: <code>--power-width MM</code>, unless <code>--widen-net</code> or a component rule's <code>width_for_current</code> states one (the largest stated counts).
+  Every net whose target is wider than its class width is routed wide first (<code>RouterOptions::preferred_widths</code>).</li>
+<li><strong>Routing</strong>: such a connection is first searched strictly at its target. A strict search cannot rip anything, so wide power never
+  displaces a signal. If it fails, the connection is routed like any other at its class width, with the usual ladder (escapes, neck-down,
+  negotiation). Trying it in the first pass only lost width and gained nothing (below).</li>
+<li><strong>Pad necks</strong> (<code>passes::neck_at_pads</code>): a wide track ending in a narrower pad of its net is split, and the piece at the pad takes the pad's
+  smaller side (never below the class width) for half the pad's larger side plus 0.2 mm. Only 0/45/90° tracks are split, so the split
+  point lies exactly on the track and the result is copper the track already covered: no clearance can get worse.</li>
+<li>Then <code>--widen-power</code> (switched on by <code>--power-width</code>) tops up what was routed narrow where room is left.</li>
+</ul>
+<p><strong>Measured</strong> (<code>bench/records/m23-e1</code>): the power-wide set (<code>bench/sets/power-wide.txt</code>) is 30 PCBench boards drawn with seed 7 from the
+314 under 800 kB whose designer drew at least half of the supply copper (≥ 100 mm) at 0.5 mm or wider (<code>bench/power_widths.py</code> on
+<code>raw.kicad_pcb</code>). 3 M work, deterministic, KiCad-judged, <code>--power-width 0.5</code> against the base.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>routed / connections</th>
+<th>clean</th>
+<th>supply copper at ≥ 0.5 mm: base / <code>--power-width 0.5</code> / designer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>all 30</td>
+<td>3,946 → 3,944 / 4,038</td>
+<td>21 → 21</td>
+<td><strong>20 % / 94 % / 84 %</strong> (of 12,354 / 12,644 / 14,186 mm)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>No error added on any board, CPU −2.9 % at the same work. Of the 9 boards left open, two route more (ErgoDone +1, BTTF-TimeCircuits +2) and
+  two fewer (SPEX_HAB −4, Unifying −1): −2 of 4,038.</li>
+<li>Wide attempts in the first pass only (an experiment, removed): the same routed counts on those 9 boards, width share 94 % → 91 %.</li>
+<li><strong>Off by default.</strong> It changes every board with a supply net, and the gate of doc 18 §20.2 asks for equal completion; −2 is close to
+  that and not equal. It is the setting the KiCad plugin should offer (E2).</li>
+</ul>
+<h2 id="80-octilinear-doglegs-octilinear-2026-11-13-d187-m23-e3">80. Octilinear doglegs (<code>--octilinear</code>, 2026-11-13, D187, M23 E3)<a class="headerlink" href="#80-octilinear-doglegs-octilinear-2026-11-13-d187-m23-e3" title="Permanent link">&para;</a></h2>
+<p>The router's paths leave the lattice through any-angle smoothing (§10), so a finished board carries tracks at odd angles: on tiers A-B one new
+segment in seven (3,659 of 24,433). A designer reads them as unfinished, and a hand edit has to break each one.</p>
+<ul>
+<li><strong>What it does</strong> (<code>src/passes/octilinear.{hpp,cpp}</code>): every new, unlocked track more than 0.1° from an axis and from a diagonal
+  (<code>off_octilinear_segment</code>, integer arithmetic) is replaced by a dogleg of two tracks on the eight directions. There are two candidates, the
+  diagonal leg first (<code>a + d</code>) or the straight leg first (<code>b − d</code>); the first that passes is taken. Ends do not move, so connectivity, the
+  pads reached and the nets are unchanged.</li>
+<li><strong>The check</strong>: both legs must be free in the router's obstacle model (<code>Obstacles::segment_state</code>), against the board and all new copper,
+  including the doglegs already made, which update the model at once. This is the exact check used to commit a route (rule 1).</li>
+<li><strong>Not made</strong>: a leg shorter than <code>--octilinear-min-leg</code> track widths (default 0.5; a leg that short would be a jog of its own), and a
+  corner that turns acute with copper of the same net, layer and point (the neighbour's direction is taken from its own new legs if it was
+  replaced). Locked tracks are never touched (rule 6).</li>
+<li><strong>Budget</strong>: <code>--pass-work</code> exact checks; when they run out the remaining tracks stay as they are (rule 5).</li>
+<li><strong>Where</strong>: the first after-route pass (§39), after the pad necks of <code>--power-width</code> and before widening, judged like every after-route pass: kept only if no net has
+  more unconnected items after it (<code>no_worse</code>). The summary has <code>octilinear</code> (off-angle, replaced, no room, short leg, acute, checks).</li>
+</ul>
+<p><strong>Measured</strong> (<code>bench/records/m23-e3</code>): tiers A and B, 40 boards each, 3 M work, deterministic. Off-angle segments are counted on the boards as
+written (<code>bench/octilinear_count.py</code>, the engine's test).</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>routed</th>
+<th>clean</th>
+<th>DRC errors added</th>
+<th>off-angle segments</th>
+<th>shorter than their width</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>none</td>
+<td>7,740 / 8,017</td>
+<td>64</td>
+<td>0</td>
+<td>3,659</td>
+<td>1,777</td>
+</tr>
+<tr>
+<td>min leg 1 width</td>
+<td>7,740 / 8,017</td>
+<td>64</td>
+<td>0</td>
+<td>2,826 (−23 %)</td>
+<td>1,778</td>
+</tr>
+<tr>
+<td>min leg 0.5 width (default)</td>
+<td>7,740 / 8,017</td>
+<td>64</td>
+<td>0</td>
+<td><strong>2,245 (−39 %)</strong></td>
+<td>2,492</td>
+</tr>
+</tbody>
+</table>
+<p>Tier A alone −56 %, tier B −34 %, wall time the same. The gate of doc 18 §20.2 (a third fewer, no loss, no error added) is met with the half-width
+minimum, at the price of 712 more segments shorter than their width. <strong>Off by default in the engine</strong> (it changes the copper of every
+board) and <strong>on in the KiCad plugin</strong> (<code>"octilinear": true</code>, kicad_plugin/README.md). The rest are tracks where neither dogleg fits, mostly
+between the pins of fine-pitch parts.</p>
+<h2 id="81-return-path-audit-in-every-run-report-2026-11-13-d188-m23-e4">81. Return-path audit in every run report (2026-11-13, D188, M23 E4)<a class="headerlink" href="#81-return-path-audit-in-every-run-report-2026-11-13-d188-m23-e4" title="Permanent link">&para;</a></h2>
+<p>The reference-return audit (§42) analysed only nets the user named, and the critical-net rules (§44) only ran when asked. So a default run
+said nothing about whether a USB pair or a crystal line had copper under it.</p>
+<ul>
+<li><strong>Default</strong>: on a board with a zone of a net and more than one copper layer, and with none of the critical-net options given
+  (<code>--critical-auto</code>, <code>--critical-nets</code>, <code>--critical-first</code>, <code>--critical-via-cost</code>, <code>--critical-via-max</code>, <code>--split-cost</code>, <code>--split-hard</code>,
+  <code>--si-rules</code>), the nets <code>--critical-auto</code> would find (component roles: clocks, crystals, RF, USB, Ethernet, PCIe, DDR, ...; and named
+  differential pairs) are found and audited after the route on the refilled board. <code>--no-critical-audit</code> turns it off.</li>
+<li><strong>Report only</strong>: the nets are not passed to the router (no order, no via cost, no split cost), so the copper is the run's without it:
+  StickHub routed with and without it writes byte-identical boards.</li>
+<li><strong>Summary and report</strong>: <code>critical_nets</code> as in §44, with <code>"mode": "audit"</code>. The run report's audit section says how the nets were
+  found, and flags the board (a warning box) only for a return-path fault: a split crossed, a layer change with no return via or
+  capacitor within reach, or a detour over the listed threshold (2 mm). Open connections are not counted, since the Result section has them.
+  A board with no such net says that the nets were looked for and none was found.</li>
+</ul>
+<p><strong>Measured</strong> (<code>bench/records/m23-e4</code>): the 8 planes boards, one run each. 4 have critical nets (RoyalBlue54L-Feather 6, StickHub 18,
+interf_u 2, plane_smd 2): StickHub is flagged on 4 nets and interf_u on 1, while RoyalBlue and plane_smd get "no return-path fault". The other 4
+have no clock, pair or high-speed role and say so. The audit took no measurable time (StickHub 40 s with it, 44 s without; noise on a shared
+machine).</p>
+<h2 id="82-one-time-limit-for-the-whole-run-time-total-2026-11-13-d186-m23-e6">82. One time limit for the whole run (<code>--time-total</code>, 2026-11-13, D186, M23 E6)<a class="headerlink" href="#82-one-time-limit-for-the-whole-run-time-total-2026-11-13-d186-m23-e6" title="Permanent link">&para;</a></h2>
+<p><code>--time T</code> limits each stage: the plain run, each relax rescue pass (D160, D163), each advisor round and each repair. A board left open
+therefore took about three times T (the plugin at <code>--time 60</code>: 325 s, <code>bench/records/m23-e2</code>).</p>
+<ul>
+<li><strong><code>--time-total T</code></strong> (<code>src/app/route_job.cpp</code>): one deadline from the job's start. If the relax rescue may follow, the plain run gets
+  <code>--rescue-share</code> of T (default 0.75), otherwise all of it. Each rescue pass gets what is left divided by the passes still to run. The advisor
+  round, the repair windows, the refill repair and the thermal repair each get at most what is left. A stage with less than 1 s left is
+  skipped, and the log says so. <code>--time</code> keeps its meaning when <code>--time-total</code> is not given.</li>
+<li>The summary records <code>time_total_s</code>, and the live page's budget line shows the total and the plain run's share.</li>
+<li><strong>The KiCad plugin's default is <code>--time-total 120</code></strong> (it was <code>--time 120</code>).</li>
+</ul>
+<p><strong>Measured</strong> (<code>bench/records/m23-e6</code>): the 33 failing tier B-D boards, three arms at once on a loaded machine.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>routed / 16,935</th>
+<th>wall, median / max s</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--time 40</code> (each stage 40 s)</td>
+<td>15,871</td>
+<td>136 / 168</td>
+</tr>
+<tr>
+<td><code>--time-total 120</code>, share 0.5</td>
+<td>15,909</td>
+<td>126 / 144</td>
+</tr>
+<tr>
+<td><code>--time-total 120</code>, share 0.75</td>
+<td><strong>15,982</strong></td>
+<td>124 / 148</td>
+</tr>
+</tbody>
+</table>
+<p>At the same wall time, share 0.75 routes 111 more connections than the per-stage limit: a longer plain run is worth more than the rescue
+passes on these boards. <strong>Limit</strong>: the total is a target, not a hard stop. Stages stop at their own check points, and the relax pass's
+legalising stage does not stop on the time limit: 14 of 33 boards took more than 125 s, the most 148 s (P8000_WDC_Emulator, whose 30 s rescue
+took 45 s). Most of that was the load: on a quiet machine (<code>bench/records/m23-e5</code>, <code>e5t-new</code>, <code>e5c-new</code>) the same 33 boards end at a median of
+123 s and at most 134 s, 5 or 6 of them over 125 s, and P8000 at 124 s.</p>
+<h2 id="83-throughput-cpu-fields-skip-the-rows-that-cannot-change-2026-11-13-d189-m23-e5">83. Throughput: CPU fields skip the rows that cannot change (2026-11-13, D189, M23 E5)<a class="headerlink" href="#83-throughput-cpu-fields-skip-the-rows-that-cannot-change-2026-11-13-d189-m23-e5" title="Permanent link">&para;</a></h2>
+<p><strong>Is completion limited by search?</strong> On the 33 failing tier B-D boards (<code>pcbench-bd-fail</code>, no rescue), 40 M work routes 16,034 of 16,935
+connections against 15,409 at 5 M: open −41 %, better on 26 boards and worse on none. That is about +210 connections per doubling of the work.
+A few boards are not limited by it: DronPi routes 341 of 352 whether its best variant does 6 M or 87 M expansions.</p>
+<p><strong>Where the time goes</strong> (gprof, DronPi, one variant and thread, CPU fields; built with clones off, <code>-fno-ipa-sra -fno-ipa-cp
+-fno-partial-inlining</code>, since gprof otherwise charges a clone to the symbol before it). Fields 22 %, the search loop 13 %, the open list's heap 9 %,
+routed-copper checks 7 %, fixed-copper codes 6 %. The heap's share is mostly gprof's per-call cost: a 4-ary heap, which pops in the same
+order, gained 0.5 % of wall time and was not kept.</p>
+<p><strong>The change</strong> (<code>src/gpu/field_cpu.cpp</code>, <code>field_cpu</code>). The field is a fixpoint of line sweeps in eight directions plus a via step, repeated until
+a round changes nothing (§5.2). After the first rounds the changes are local, near obstacles, yet every round swept every row. Now a row
+is skipped when the step cannot change it:</p>
+<ul>
+<li>along a row, when the row has not changed since the same sweep (layer, direction) last processed it;</li>
+<li>across rows, when the row it is relaxed from has not changed since then (values only fall, so the row stays within its predecessor's
+  values plus the cost);</li>
+<li>in the via step, when no layer of the row has changed.</li>
+</ul>
+<p>A tick per (layer, row) records the last change, and a tick per (layer, direction, row) the last time it was processed. Every skipped step
+is one that would have changed nothing, so the field, each sweep's change flag and the round count are those of the line-by-line
+reference: <code>field_cpu_reference</code>, compared in <code>tests/test_gpu.cpp</code>. The GPU kernel is unchanged.</p>
+<p><strong>Measured</strong> (<code>bench/records/m23-e5</code>; every output byte-identical, the quick tier's 30 boards too):</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>before</th>
+<th>after</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPU field, ns per cell (DronPi / Aleste / mini_mass)</td>
+<td>79 / 63 / 53</td>
+<td>41 / 39 / 25</td>
+</tr>
+<tr>
+<td>one variant, one thread, <code>--no-gpu</code>, 10 M work, wall s (same boards)</td>
+<td>16.20 / 18.71 / 39.39</td>
+<td>14.81 / 18.11 / 28.64</td>
+</tr>
+<tr>
+<td>eight variants, 8 threads, GPU available, 20 M work, wall s (Aleste / mini_mass)</td>
+<td>36.34 / 61.07</td>
+<td>33.13 / 58.83</td>
+</tr>
+</tbody>
+</table>
+<p>Fields under 500 k cells still go to the CPU (D158): with every field on the CPU, mini_mass took 80 s. <strong>At equal wall time</strong>
+(<code>--time-total 120</code>, the 33 boards) the difference is not measurable: +13 connections with the GPU, −18 with <code>--no-gpu</code>, both within the
+noise of time-limited runs. The work curve above predicts about +15 to +20 for a speed-up of this size. The doc 18 gate is not met; the
+speed-up is kept because it is exact and makes every run faster.</p>
 
 
 

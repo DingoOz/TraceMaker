@@ -58,6 +58,7 @@ var structtmk_1_1route_1_1RouteResult =
     [ "via_shove_trials", "structtmk_1_1route_1_1RouteResult.html#a23f249a0a49f43296926cd907ca34ccb", null ],
     [ "via_shoves", "structtmk_1_1route_1_1RouteResult.html#a0abe52ab223350295480b0e03eda5d48", null ],
     [ "vias", "structtmk_1_1route_1_1RouteResult.html#afe80c8d02364f18a5906bd26dc0a655e", null ],
+    [ "wide", "structtmk_1_1route_1_1RouteResult.html#a31d00464be829501275a1c6e96be00c9", null ],
     [ "window_escalations", "structtmk_1_1route_1_1RouteResult.html#ac939d47bdbcedf09eb724a142251cb3d", null ],
     [ "work", "structtmk_1_1route_1_1RouteResult.html#a26ecc2cff8f90d41e8140f86ec106254", null ]
 ];

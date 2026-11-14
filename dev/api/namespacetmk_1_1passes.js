@@ -1,5 +1,7 @@
 var namespacetmk_1_1passes =
 [
+    [ "OctilinearOptions", "structtmk_1_1passes_1_1OctilinearOptions.html", "structtmk_1_1passes_1_1OctilinearOptions" ],
+    [ "OctilinearResult", "structtmk_1_1passes_1_1OctilinearResult.html", "structtmk_1_1passes_1_1OctilinearResult" ],
     [ "PourPlan", "structtmk_1_1passes_1_1PourPlan.html", "structtmk_1_1passes_1_1PourPlan" ],
     [ "RepairOptions", "structtmk_1_1passes_1_1RepairOptions.html", "structtmk_1_1passes_1_1RepairOptions" ],
     [ "RepairStep", "structtmk_1_1passes_1_1RepairStep.html", "structtmk_1_1passes_1_1RepairStep" ],
@@ -14,6 +16,9 @@ var namespacetmk_1_1passes =
     [ "WidenNet", "structtmk_1_1passes_1_1WidenNet.html", "structtmk_1_1passes_1_1WidenNet" ],
     [ "WidenResult", "structtmk_1_1passes_1_1WidenResult.html", "structtmk_1_1passes_1_1WidenResult" ],
     [ "measure_style", "namespacetmk_1_1passes.html#ad9c8875a09d7cf6713ded3307309d89d", null ],
+    [ "neck_at_pads", "namespacetmk_1_1passes.html#ac054ae882767ad733586957461b9a2a3", null ],
+    [ "octilinear_tracks", "namespacetmk_1_1passes.html#af677689f3a802a10bf96ad8a49f83ab2", null ],
+    [ "off_octilinear_segment", "namespacetmk_1_1passes.html#a2c7fb91252a1a7dbcb8dcc13db3225f5", null ],
     [ "open_connections", "namespacetmk_1_1passes.html#a8663223534d94b9d75b45a543781e375", null ],
     [ "plan_pours", "namespacetmk_1_1passes.html#a358e1d8a371b9b3951378d161532ca1b", null ],
     [ "repair_open", "namespacetmk_1_1passes.html#a7984fff7ce4986b0e945c0a841439348", null ],

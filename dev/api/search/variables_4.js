@@ -49,7 +49,7 @@ var searchData=
   ['escape_5fsecond_5fring_46',['escape_second_ring',['../structtmk_1_1route_1_1RouterOptions.html#a7a64022132400ec3ed59388660fdd666',1,'tmk::route::RouterOptions']]],
   ['escape_5fstubs_47',['escape_stubs',['../structtmk_1_1route_1_1RouterOptions.html#ac8234f7ec33de1ef44ed8bf951a7e8ac',1,'tmk::route::RouterOptions']]],
   ['escape_5fvia_5fkeep_5fmm_48',['escape_via_keep_mm',['../structtmk_1_1route_1_1RouterOptions.html#ab9aca4b966c56ef8bef531bc1ffc7494',1,'tmk::route::RouterOptions']]],
-  ['eval_49',['eval',['../structtmk_1_1place_1_1Candidate.html#a0e356f0a163d9131109434a9fe04525e',1,'tmk::place::Candidate::eval'],['../structtmk_1_1place_1_1EcoResult.html#ae50a7e365abc6571138abf605f5aebeb',1,'tmk::place::EcoResult::eval']]],
+  ['eval_49',['eval',['../structtmk_1_1place_1_1ClosureResult.html#a252f063f6404e66f786ca2eeae19fa3a',1,'tmk::place::ClosureResult::eval'],['../structtmk_1_1place_1_1Candidate.html#a0e356f0a163d9131109434a9fe04525e',1,'tmk::place::Candidate::eval'],['../structtmk_1_1place_1_1EcoResult.html#ae50a7e365abc6571138abf605f5aebeb',1,'tmk::place::EcoResult::eval']]],
   ['evictions_50',['evictions',['../structtmk_1_1place_1_1LegaliseStats.html#a61982f49c46ee90e06e9932b85f35e2f',1,'tmk::place::LegaliseStats']]],
   ['evidence_51',['evidence',['../structtmk_1_1crules_1_1RuleSpec.html#ad931631beef564295be247dfd31758a0',1,'tmk::crules::RuleSpec::evidence'],['../structtmk_1_1crules_1_1Instance.html#ad950316950ffb6066e02b04aa7e1c68f',1,'tmk::crules::Instance::evidence']]],
   ['exact_5fchecks_52',['exact_checks',['../structtmk_1_1place_1_1LegaliseStats.html#a6f34d578764055c0d5d678a5ad750599',1,'tmk::place::LegaliseStats']]],
@@ -64,9 +64,10 @@ var searchData=
   ['exit_5fcode_61',['exit_code',['../structtmk_1_1advice_1_1ProcessResult.html#acd358264f2bb6757b90fa3376c3f050e',1,'tmk::advice::ProcessResult']]],
   ['expansions_62',['expansions',['../structtmk_1_1route_1_1WorkCounts.html#a853ad7fb53b1cc40b76d068669caccb2',1,'tmk::route::WorkCounts::expansions'],['../structtmk_1_1route_1_1RouteResult.html#ab8dd829a46da230ceccb31463a5500cf',1,'tmk::route::RouteResult::expansions']]],
   ['expected_5fmm_63',['expected_mm',['../structtmk_1_1analysis_1_1FootprintIssue.html#a5b3458763696265b6aef87fced1433a5',1,'tmk::analysis::FootprintIssue']]],
-  ['extend_64',['extend',['../structtmk_1_1route_1_1BundleOptions.html#aacd9714a78432511b810c293ebb7cfd4',1,'tmk::route::BundleOptions']]],
-  ['extra_65',['extra',['../structtmk_1_1server_1_1Stats.html#a662a349fafdcf4b615fe66fa9b261d0b',1,'tmk::server::Stats']]],
-  ['extra_5frules_66',['extra_rules',['../structtmk_1_1route_1_1RouterOptions.html#a92c3a1d94239f0edb2ec6eb010ff78fd',1,'tmk::route::RouterOptions']]],
-  ['extra_5ftraces_67',['extra_traces',['../structtmk_1_1io_1_1SrjExport.html#a74bf22b9697267a99b9b8861c8dc85ef',1,'tmk::io::SrjExport']]],
-  ['extra_5fzones_68',['extra_zones',['../structtmk_1_1route_1_1RouterOptions.html#a4b90eebb66f46e9a8efdf2f40ae1de51',1,'tmk::route::RouterOptions']]]
+  ['explore_64',['explore',['../structtmk_1_1place_1_1ClosureOptions.html#acb2ccfa26479e8ca6a78e9bb7433767f',1,'tmk::place::ClosureOptions']]],
+  ['extend_65',['extend',['../structtmk_1_1route_1_1BundleOptions.html#aacd9714a78432511b810c293ebb7cfd4',1,'tmk::route::BundleOptions']]],
+  ['extra_66',['extra',['../structtmk_1_1server_1_1Stats.html#a662a349fafdcf4b615fe66fa9b261d0b',1,'tmk::server::Stats']]],
+  ['extra_5frules_67',['extra_rules',['../structtmk_1_1route_1_1RouterOptions.html#a92c3a1d94239f0edb2ec6eb010ff78fd',1,'tmk::route::RouterOptions']]],
+  ['extra_5ftraces_68',['extra_traces',['../structtmk_1_1io_1_1SrjExport.html#a74bf22b9697267a99b9b8861c8dc85ef',1,'tmk::io::SrjExport']]],
+  ['extra_5fzones_69',['extra_zones',['../structtmk_1_1route_1_1RouterOptions.html#a4b90eebb66f46e9a8efdf2f40ae1de51',1,'tmk::route::RouterOptions']]]
 ];

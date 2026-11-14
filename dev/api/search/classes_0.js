@@ -10,5 +10,6 @@ var searchData=
   ['annealoptions_7',['AnnealOptions',['../structtmk_1_1place_1_1AnnealOptions.html',1,'tmk::place']]],
   ['annealresult_8',['AnnealResult',['../structtmk_1_1place_1_1AnnealResult.html',1,'tmk::place']]],
   ['applied_9',['Applied',['../structtmk_1_1advice_1_1Applied.html',1,'tmk::advice']]],
-  ['arctrack_10',['ArcTrack',['../structtmk_1_1model_1_1ArcTrack.html',1,'tmk::model']]]
+  ['arctrack_10',['ArcTrack',['../structtmk_1_1model_1_1ArcTrack.html',1,'tmk::model']]],
+  ['armstats_11',['ArmStats',['../structtmk_1_1place_1_1ArmStats.html',1,'tmk::place']]]
 ];

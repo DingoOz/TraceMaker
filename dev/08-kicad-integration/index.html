@@ -668,6 +668,8 @@
       
         
       
+        
+      
     
     
     
@@ -849,6 +851,41 @@
     
   
     Read a run report
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/placement-closure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Move parts until a board routes
   
 
     
@@ -2743,8 +2780,16 @@ planning, the ramp) still take the class clearance floored at the board minimum;
   copper is routed again and the zones are refilled); <code>TRACEMAKER_REFILL=1</code> refills the zones. Removal, moves and
   new copper are one commit. Without <code>--reroute</code>, copper that the repair windows lifted (doc 05 §75, D172) comes in the
   items file under <code>removed</code> and is removed in the same commit; if one of those items is not on the open board, nothing is changed. KiCad records a zone refill as a step of its own, so with a refill the result takes
-  two undos; that is why refill is off unless footprints moved. Not built: a long-running <code>tracemakerd</code> (each run
-  starts the engine afresh). The plugin is tested offline against kicad-python 0.8 (<code>test_offline.py</code>).</li>
+  two undos; that is why refill is off unless footprints moved (a refill called inside the open commit is still its own step and fills
+  before the copper is pushed: D185). The long-running session is <code>tracemaker daemon</code> (D180), used by the "Route selected nets" action.
+  The plugin is tested offline against kicad-python 0.8 (<code>test_offline.py</code>).</li>
+<li><strong>Settings per project and the run report (2026-11-13, D185).</strong> Both actions read <code>tracemaker.json</code> in the project folder
+  (<code>kicad_plugin/tracemaker_settings.py</code>, strict: an unknown key stops the action); the environment variables above win over it. The plugin's
+  defaults route supply nets at 0.5 mm (<code>--power-width</code>, doc 05 §79) and write the run report (<code>route --report</code>) to
+  <code>~/.cache/tracemaker/reports/</code>, opened in the web browser (<code>"report": "project"</code> also keeps it next to the board). Options the Python
+  module does not take send the run to the binary instead of being dropped. Since D186 and D187 the defaults also give the run one time limit
+  (<code>--time-total 120</code>, doc 05 §82) and turn off-angle tracks into doglegs (<code>"octilinear": true</code>, <code>--octilinear</code>, doc 05 §80); since D188 every
+  run report on a board with a plane has the return-path audit of its critical nets (doc 05 §81).</li>
 <li><strong>Round trip in a running KiCad GUI</strong> (<code>scripts/kicad_gui_roundtrip.py</code>, KiCad 10.0.6): pcbnew from the Docker
   image runs on an Xvfb display with the API server enabled (<code>kicad_common.json</code>), the first-run wizard is
   clicked away through XTEST, and the plugin talks to the live board over the API socket. On

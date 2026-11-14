@@ -95,6 +95,8 @@ $(function(){initNavTree('namespacetmk_1_1passes.html','',''); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:OctilinearOptions" id="r_OctilinearOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1OctilinearOptions.html">OctilinearOptions</a></td></tr>
+<tr class="memitem:OctilinearResult" id="r_OctilinearResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1OctilinearResult.html">OctilinearResult</a></td></tr>
 <tr class="memitem:PourPlan" id="r_PourPlan"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1PourPlan.html">PourPlan</a></td></tr>
 <tr class="memitem:RepairOptions" id="r_RepairOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1RepairOptions.html">RepairOptions</a></td></tr>
 <tr class="memitem:RepairStep" id="r_RepairStep"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1RepairStep.html">RepairStep</a></td></tr>
@@ -113,6 +115,10 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:af677689f3a802a10bf96ad8a49f83ab2" id="r_af677689f3a802a10bf96ad8a49f83ab2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1passes_1_1OctilinearResult.html">OctilinearResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af677689f3a802a10bf96ad8a49f83ab2">octilinear_tracks</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;board, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;tracks, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt; &amp;vias, const <a class="el" href="structtmk_1_1passes_1_1OctilinearOptions.html">OctilinearOptions</a> &amp;opt)</td></tr>
+<tr class="memdesc:af677689f3a802a10bf96ad8a49f83ab2"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">board</span> is the board as the router saw it (without the new copper); <span class="tt">tracks</span> and <span class="tt">vias</span> are the run's new copper.  <br /></td></tr>
+<tr class="memitem:a2c7fb91252a1a7dbcb8dcc13db3225f5" id="r_a2c7fb91252a1a7dbcb8dcc13db3225f5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c7fb91252a1a7dbcb8dcc13db3225f5">off_octilinear_segment</a> (<a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> a, <a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a> b)</td></tr>
+<tr class="memdesc:a2c7fb91252a1a7dbcb8dcc13db3225f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when a→b is more than 0.1 degree off the eight directions (the style metric's test, passes/style.cpp).  <br /></td></tr>
 <tr class="memitem:a358e1d8a371b9b3951378d161532ca1b" id="r_a358e1d8a371b9b3951378d161532ca1b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1passes_1_1PourPlan.html">PourPlan</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a358e1d8a371b9b3951378d161532ca1b">plan_pours</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const std::vector&lt; std::string &gt; &amp;specs, std::vector&lt; std::string &gt; *notes=nullptr)</td></tr>
 <tr class="memdesc:a358e1d8a371b9b3951378d161532ca1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolves <span class="tt"><a class="el" href="namespacetmk_1_1route.html">route</a> --pour</span> entries against the board:  <br /></td></tr>
 <tr class="memitem:a8663223534d94b9d75b45a543781e375" id="r_a8663223534d94b9d75b45a543781e375"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8663223534d94b9d75b45a543781e375">open_connections</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules)</td></tr>
@@ -127,6 +133,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:a9023db0c98a5a505ecc443e634b4ee38"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <span class="tt">style</span> object of the route summary and of <span class="tt">tracemaker style --json</span>.  <br /></td></tr>
 <tr class="memitem:afc476d3de3956a6900bb891fa14895e2" id="r_afc476d3de3956a6900bb891fa14895e2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1passes_1_1WidenResult.html">WidenResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc476d3de3956a6900bb891fa14895e2">widen_tracks</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;board, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;tracks, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt; &amp;vias, const <a class="el" href="structtmk_1_1passes_1_1WidenOptions.html">WidenOptions</a> &amp;opt)</td></tr>
 <tr class="memdesc:afc476d3de3956a6900bb891fa14895e2"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">board</span> is the board as the router saw it (without the new copper); <span class="tt">tracks</span> and <span class="tt">vias</span> are the run's new copper.  <br /></td></tr>
+<tr class="memitem:ac054ae882767ad733586957461b9a2a3" id="r_ac054ae882767ad733586957461b9a2a3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac054ae882767ad733586957461b9a2a3">neck_at_pads</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;board, std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;tracks, const std::vector&lt; <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> &gt; &amp;floor_by_net)</td></tr>
+<tr class="memdesc:ac054ae882767ad733586957461b9a2a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pad necks for tracks routed wide (D184): a new track wider than a pad of its net that it ends in is split, and the piece at the pad gets the pad's smaller side as its width (never less than <span class="tt">floor</span> of its net, the width the router would have used), so the wide copper starts just outside the pad, as a designer draws it.  <br /></td></tr>
 </table>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
 <a id="ad9c8875a09d7cf6713ded3307309d89d" name="ad9c8875a09d7cf6713ded3307309d89d"></a>
@@ -165,6 +173,97 @@ Functions</h2></td></tr>
 
 <p>Measures <span class="tt">tracks</span>, <span class="tt">arcs</span> and <span class="tt">vias</span> (any subset of a board's copper, e.g. </p>
 <p>only what a run added). <span class="tt">b</span> supplies the pads that end connections. The result does not depend on the order of the three lists. </p>
+
+</div>
+</div>
+<a id="ac054ae882767ad733586957461b9a2a3" name="ac054ae882767ad733586957461b9a2a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac054ae882767ad733586957461b9a2a3">&#9670;&#160;</a></span>neck_at_pads()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::passes::neck_at_pads </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>board</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>tracks</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>floor_by_net</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pad necks for tracks routed wide (D184): a new track wider than a pad of its net that it ends in is split, and the piece at the pad gets the pad's smaller side as its width (never less than <span class="tt">floor</span> of its net, the width the router would have used), so the wide copper starts just outside the pad, as a designer draws it. </p>
+<p>The neck runs from the end point for half the pad's larger side plus 0.2 mm (the whole track if it is shorter). Only tracks at 0, 45 or 90 degrees are split, so the split point lies exactly on the track and the result is copper the track already covered: no clearance can get worse and nothing needs checking again. Returns the number of necks made. </p>
+
+</div>
+</div>
+<a id="af677689f3a802a10bf96ad8a49f83ab2" name="af677689f3a802a10bf96ad8a49f83ab2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af677689f3a802a10bf96ad8a49f83ab2">&#9670;&#160;</a></span>octilinear_tracks()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1passes_1_1OctilinearResult.html">OctilinearResult</a> tmk::passes::octilinear_tracks </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>board</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rules</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>tracks</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>vias</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1passes_1_1OctilinearOptions.html">OctilinearOptions</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>opt</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><span class="tt">board</span> is the board as the router saw it (without the new copper); <span class="tt">tracks</span> and <span class="tt">vias</span> are the run's new copper. </p>
+<p>On return <span class="tt">tracks</span> holds the doglegs in place of the tracks they replace (each replaced track becomes two, in its place in the order). </p>
+
+</div>
+</div>
+<a id="a2c7fb91252a1a7dbcb8dcc13db3225f5" name="a2c7fb91252a1a7dbcb8dcc13db3225f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c7fb91252a1a7dbcb8dcc13db3225f5">&#9670;&#160;</a></span>off_octilinear_segment()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::passes::off_octilinear_segment </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a></td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">model::Point</a></td>          <td class="paramname"><span class="paramname"><em>b</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>True when a→b is more than 0.1 degree off the eight directions (the style metric's test, passes/style.cpp). </p>
 
 </div>
 </div>

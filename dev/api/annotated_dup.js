@@ -181,6 +181,8 @@ var annotated_dup =
         [ "Point", "structtmk_1_1model_1_1Point.html", "structtmk_1_1model_1_1Point" ]
       ] ],
       [ "passes", "namespacetmk_1_1passes.html", [
+        [ "OctilinearOptions", "structtmk_1_1passes_1_1OctilinearOptions.html", "structtmk_1_1passes_1_1OctilinearOptions" ],
+        [ "OctilinearResult", "structtmk_1_1passes_1_1OctilinearResult.html", "structtmk_1_1passes_1_1OctilinearResult" ],
         [ "PourPlan", "structtmk_1_1passes_1_1PourPlan.html", "structtmk_1_1passes_1_1PourPlan" ],
         [ "RepairOptions", "structtmk_1_1passes_1_1RepairOptions.html", "structtmk_1_1passes_1_1RepairOptions" ],
         [ "RepairStep", "structtmk_1_1passes_1_1RepairStep.html", "structtmk_1_1passes_1_1RepairStep" ],
@@ -206,6 +208,10 @@ var annotated_dup =
         [ "AnnealResult", "structtmk_1_1place_1_1AnnealResult.html", "structtmk_1_1place_1_1AnnealResult" ],
         [ "LnsResult", "structtmk_1_1place_1_1LnsResult.html", "structtmk_1_1place_1_1LnsResult" ],
         [ "WindowResult", "structtmk_1_1place_1_1WindowResult.html", "structtmk_1_1place_1_1WindowResult" ],
+        [ "ArmStats", "structtmk_1_1place_1_1ArmStats.html", "structtmk_1_1place_1_1ArmStats" ],
+        [ "ClosureOptions", "structtmk_1_1place_1_1ClosureOptions.html", "structtmk_1_1place_1_1ClosureOptions" ],
+        [ "ClosureTrial", "structtmk_1_1place_1_1ClosureTrial.html", "structtmk_1_1place_1_1ClosureTrial" ],
+        [ "ClosureResult", "structtmk_1_1place_1_1ClosureResult.html", "structtmk_1_1place_1_1ClosureResult" ],
         [ "CongestionOptions", "structtmk_1_1place_1_1CongestionOptions.html", "structtmk_1_1place_1_1CongestionOptions" ],
         [ "CongestionMap", "structtmk_1_1place_1_1CongestionMap.html", "structtmk_1_1place_1_1CongestionMap" ],
         [ "SpreadStats", "structtmk_1_1place_1_1SpreadStats.html", "structtmk_1_1place_1_1SpreadStats" ],
