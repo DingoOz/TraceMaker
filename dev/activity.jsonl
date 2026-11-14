@@ -235,3 +235,4 @@
 {"ts": "2026-11-13T08:44:37+00:00", "kind": "milestone", "text": "M23 E3, E4, E6 built: --octilinear (-39 % off-angle, no loss), default return-path audit in every run report, --time-total (plugin default, share 0.75)"}
 {"ts": "2026-11-13T10:43:21+00:00", "kind": "note", "text": "M23 E5 step 1: CPU fields skip unchanged rows (D189): field cells 53-79 -> 25-41 ns, runs 3-27 % faster, byte-identical; equal-time gain below noise"}
 {"ts": "2026-11-13T15:02:09+00:00", "kind": "decision", "text": "D190 placement closure: tracemaker-place --mode closure (bandit over kinds of placement change, product route as judge); 14 incomplete boards 58 -> 32 open at 10 M, 4 complete; vs 4x route budget 40 -> 30 open, 3 -> 4 clean (bench/records/m24-closure)"}
+{"ts": "2026-11-14T07:49:16+00:00", "kind": "note", "text": "Roadmap: M24 (move parts pinned by hand-placement overlaps, from closure's no-candidates boards) and M25 (explain the default route's decisions) planned"}
