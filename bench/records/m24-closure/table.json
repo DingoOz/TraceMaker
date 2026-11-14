@@ -1,0 +1,1675 @@
+{
+ "boards": [
+  "1Bitsy_1bitsy",
+  "96boards-robomezzi_96boards-robomezzi",
+  "ErgodoneWithHole_ErgoDone",
+  "Hardware_Playground_Touch_Switch_2ch_PCB",
+  "Hardware_Playground_sd_wav_pcm5100",
+  "Hardware_Playground_serial_gw_ATMEGA328P",
+  "bullion_bullion",
+  "front-end-modules_LimeSDR_Sony",
+  "kitspace_ardfpga",
+  "kitspace_teensy-fx",
+  "mechkeys_58r-mxalps",
+  "memsarray_mems_modules",
+  "motor-high-current-sensors_CurrentSensorPCB_line",
+  "phone_amp_phone_amp"
+ ],
+ "runs": {
+  "closure-human10m": {
+   "1Bitsy_1bitsy": {
+    "open": 1,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "96boards-robomezzi_96boards-robomezzi": {
+    "open": 2,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "ErgodoneWithHole_ErgoDone": {
+    "open": 3,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "Hardware_Playground_Touch_Switch_2ch_PCB": {
+    "open": 3,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "Hardware_Playground_sd_wav_pcm5100": {
+    "open": 3,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "Hardware_Playground_serial_gw_ATMEGA328P": {
+    "open": 1,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "bullion_bullion": {
+    "open": 13,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "front-end-modules_LimeSDR_Sony": {
+    "open": 2,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "kitspace_ardfpga": {
+    "open": 7,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "kitspace_teensy-fx": {
+    "open": 5,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "mechkeys_58r-mxalps": {
+    "open": 6,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "memsarray_mems_modules": {
+    "open": 1,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "motor-high-current-sensors_CurrentSensorPCB_line": {
+    "open": 6,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "phone_amp_phone_amp": {
+    "open": 5,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   }
+  },
+  "closure-human40m": {
+   "1Bitsy_1bitsy": {
+    "open": 0,
+    "clean": true,
+    "place_s": null,
+    "complete": true,
+    "place_added": {}
+   },
+   "96boards-robomezzi_96boards-robomezzi": {
+    "open": 2,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "ErgodoneWithHole_ErgoDone": {
+    "open": 2,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "Hardware_Playground_Touch_Switch_2ch_PCB": {
+    "open": 0,
+    "clean": true,
+    "place_s": null,
+    "complete": true,
+    "place_added": {}
+   },
+   "Hardware_Playground_sd_wav_pcm5100": {
+    "open": 2,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "Hardware_Playground_serial_gw_ATMEGA328P": {
+    "open": 0,
+    "clean": true,
+    "place_s": null,
+    "complete": true,
+    "place_added": {}
+   },
+   "bullion_bullion": {
+    "open": 13,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "front-end-modules_LimeSDR_Sony": {
+    "open": 1,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "kitspace_ardfpga": {
+    "open": 4,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "kitspace_teensy-fx": {
+    "open": 2,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "mechkeys_58r-mxalps": {
+    "open": 4,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "memsarray_mems_modules": {
+    "open": 1,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "motor-high-current-sensors_CurrentSensorPCB_line": {
+    "open": 5,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "phone_amp_phone_amp": {
+    "open": 4,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   }
+  },
+  "closure-place10m": {
+   "1Bitsy_1bitsy": {
+    "open": 3,
+    "clean": false,
+    "place_s": 574.5,
+    "complete": false,
+    "place_added": {},
+    "trials": 8,
+    "kept": 1,
+    "stop": "no candidates",
+    "moved": 1,
+    "arms": {
+     "far": {
+      "pulls": 1,
+      "wins": 1
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 1,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "far: J1 shift -y 1.50 mm (6 -> 4)"
+    ]
+   },
+   "96boards-robomezzi_96boards-robomezzi": {
+    "open": 1,
+    "clean": false,
+    "place_s": 1780.4,
+    "complete": false,
+    "place_added": {},
+    "trials": 40,
+    "kept": 1,
+    "stop": "route budget",
+    "moved": 110,
+    "arms": {
+     "far": {
+      "pulls": 6,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 1
+     },
+     "room": {
+      "pulls": 3,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 7,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 7,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 6,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 7,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "replace: new placement of the whole board (3) (2 -> 1)"
+    ]
+   },
+   "ErgodoneWithHole_ErgoDone": {
+    "open": 2,
+    "clean": false,
+    "place_s": 1291.0,
+    "complete": false,
+    "place_added": {},
+    "trials": 10,
+    "kept": 1,
+    "stop": "no candidates",
+    "moved": 1,
+    "arms": {
+     "far": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 1,
+      "wins": 1
+     },
+     "shift": {
+      "pulls": 1,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "rotate: SW1:9 rotate 180 (3 -> 2)"
+    ]
+   },
+   "Hardware_Playground_Touch_Switch_2ch_PCB": {
+    "open": 2,
+    "clean": false,
+    "place_s": 508.6,
+    "complete": false,
+    "place_added": {},
+    "trials": 30,
+    "kept": 3,
+    "stop": "no candidates",
+    "moved": 2,
+    "arms": {
+     "far": {
+      "pulls": 7,
+      "wins": 1
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 1,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 5,
+      "wins": 2
+     },
+     "swap": {
+      "pulls": 6,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 5,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "shift: X3 shift -y 1.00 mm (5 -> 4)",
+     "far: X3 shift -y 2.00 mm (4 -> 3)",
+     "shift: L2 shift -x 0.50 mm (3 -> 2)"
+    ]
+   },
+   "Hardware_Playground_sd_wav_pcm5100": {
+    "open": 2,
+    "clean": false,
+    "place_s": 611.1,
+    "complete": false,
+    "place_added": {},
+    "trials": 19,
+    "kept": 1,
+    "stop": "no candidates",
+    "moved": 1,
+    "arms": {
+     "far": {
+      "pulls": 6,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 1,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 4,
+      "wins": 1
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "shift: C11 shift +x 1.00 mm (3 -> 2)"
+    ]
+   },
+   "Hardware_Playground_serial_gw_ATMEGA328P": {
+    "open": 1,
+    "clean": false,
+    "place_s": 289.2,
+    "complete": false,
+    "place_added": {},
+    "trials": 4,
+    "kept": 0,
+    "stop": "no candidates",
+    "moved": 0,
+    "arms": {
+     "far": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": []
+   },
+   "bullion_bullion": {
+    "open": 13,
+    "clean": false,
+    "place_s": 519.4,
+    "complete": false,
+    "place_added": {},
+    "trials": 40,
+    "kept": 0,
+    "stop": "route budget",
+    "moved": 0,
+    "arms": {
+     "far": {
+      "pulls": 8,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 8,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 8,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 8,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": []
+   },
+   "front-end-modules_LimeSDR_Sony": {
+    "open": 1,
+    "clean": false,
+    "place_s": 1875.5,
+    "complete": false,
+    "place_added": {},
+    "trials": 28,
+    "kept": 3,
+    "stop": "time limit",
+    "moved": 3,
+    "arms": {
+     "far": {
+      "pulls": 3,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 3,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 6,
+      "wins": 1
+     },
+     "shift": {
+      "pulls": 9,
+      "wins": 2
+     },
+     "swap": {
+      "pulls": 3,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "shift: R60 shift -y 1.00 mm (8 -> 6)",
+     "shift: R61 shift +y 1.00 mm (6 -> 3)",
+     "rotate: C82 rotate 90 (3 -> 2)"
+    ]
+   },
+   "kitspace_ardfpga": {
+    "open": 4,
+    "clean": false,
+    "place_s": 1126.6,
+    "complete": false,
+    "place_added": {},
+    "trials": 40,
+    "kept": 3,
+    "stop": "route budget",
+    "moved": 4,
+    "arms": {
+     "far": {
+      "pulls": 11,
+      "wins": 2
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 5,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 8,
+      "wins": 1
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "swap: R10 swap R11 (11 -> 10)",
+     "far: U1 shift +x 1.50 mm (10 -> 9)",
+     "far: RN3 shift +x 2.00 mm (9 -> 8)"
+    ]
+   },
+   "kitspace_teensy-fx": {
+    "open": 2,
+    "clean": false,
+    "place_s": 1278.6,
+    "complete": false,
+    "place_added": {},
+    "trials": 40,
+    "kept": 4,
+    "stop": "route budget",
+    "moved": 6,
+    "arms": {
+     "far": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 8,
+      "wins": 1
+     },
+     "swap": {
+      "pulls": 13,
+      "wins": 3
+     },
+     "window": {
+      "pulls": 5,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "swap: D10 swap D16 (11 -> 9)",
+     "swap: D16 swap D18 (9 -> 8)",
+     "swap: D4 swap D11 (8 -> 7)",
+     "shift: U3 shift +y 0.50 mm (7 -> 6)"
+    ]
+   },
+   "mechkeys_58r-mxalps": {
+    "open": 7,
+    "clean": false,
+    "place_s": 1815.6,
+    "complete": false,
+    "place_added": {},
+    "trials": 37,
+    "kept": 2,
+    "stop": "time limit",
+    "moved": 2,
+    "arms": {
+     "far": {
+      "pulls": 5,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 9,
+      "wins": 1
+     },
+     "shift": {
+      "pulls": 9,
+      "wins": 1
+     },
+     "swap": {
+      "pulls": 5,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 5,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "rotate: R3 rotate 180 (11 -> 10)",
+     "shift: D8 shift +x 1.00 mm (10 -> 8)"
+    ]
+   },
+   "memsarray_mems_modules": {
+    "open": 1,
+    "clean": false,
+    "place_s": 162.8,
+    "complete": false,
+    "place_added": {},
+    "trials": 34,
+    "kept": 0,
+    "stop": "no candidates",
+    "moved": 0,
+    "arms": {
+     "far": {
+      "pulls": 10,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 12,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": []
+   },
+   "motor-high-current-sensors_CurrentSensorPCB_line": {
+    "open": 3,
+    "clean": false,
+    "place_s": 1978.9,
+    "complete": false,
+    "place_added": {
+     "courtyards_overlap": 1
+    },
+    "trials": 27,
+    "kept": 1,
+    "stop": "time limit",
+    "moved": 200,
+    "arms": {
+     "far": {
+      "pulls": 3,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 3,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 5,
+      "wins": 1
+     }
+    },
+    "changes": [
+     "window: re-place 14 parts around the failures (seed 1) (11 -> 6)"
+    ]
+   },
+   "phone_amp_phone_amp": {
+    "open": 5,
+    "clean": false,
+    "place_s": 795.3,
+    "complete": false,
+    "place_added": {
+     "malformed_courtyard": 4
+    },
+    "trials": 30,
+    "kept": 2,
+    "stop": "no candidates",
+    "moved": 2,
+    "arms": {
+     "far": {
+      "pulls": 8,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 16,
+      "wins": 2
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "shift: R12 shift -x 1.00 mm (9 -> 8)",
+     "shift: U3 shift +x 0.50 mm (8 -> 6)"
+    ]
+   }
+  },
+  "closure-route10m": {
+   "1Bitsy_1bitsy": {
+    "open": 0,
+    "clean": true,
+    "place_s": 129.4,
+    "complete": true,
+    "place_added": {},
+    "trials": 1,
+    "kept": 1,
+    "stop": "complete",
+    "moved": 1,
+    "arms": {
+     "far": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 1,
+      "wins": 1
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 0,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "shift: C15 shift +y 0.50 mm (1 -> 0)"
+    ]
+   },
+   "96boards-robomezzi_96boards-robomezzi": {
+    "open": 2,
+    "clean": false,
+    "place_s": 1843.5,
+    "complete": false,
+    "place_added": {},
+    "trials": 13,
+    "kept": 0,
+    "stop": "time limit",
+    "moved": 0,
+    "arms": {
+     "far": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 1,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 2,
+      "wins": 0
+     }
+    },
+    "changes": []
+   },
+   "ErgodoneWithHole_ErgoDone": {
+    "open": 2,
+    "clean": false,
+    "place_s": 1463.5,
+    "complete": false,
+    "place_added": {},
+    "trials": 10,
+    "kept": 1,
+    "stop": "no candidates",
+    "moved": 1,
+    "arms": {
+     "far": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 1,
+      "wins": 1
+     },
+     "shift": {
+      "pulls": 1,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "rotate: SW1:9 rotate 180 (3 -> 2)"
+    ]
+   },
+   "Hardware_Playground_Touch_Switch_2ch_PCB": {
+    "open": 0,
+    "clean": true,
+    "place_s": 154.7,
+    "complete": true,
+    "place_added": {},
+    "trials": 1,
+    "kept": 1,
+    "stop": "complete",
+    "moved": 1,
+    "arms": {
+     "far": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 1,
+      "wins": 1
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 0,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "shift: X3 shift -y 1.00 mm (3 -> 0)"
+    ]
+   },
+   "Hardware_Playground_sd_wav_pcm5100": {
+    "open": 2,
+    "clean": false,
+    "place_s": 1571.8,
+    "complete": false,
+    "place_added": {},
+    "trials": 19,
+    "kept": 1,
+    "stop": "no candidates",
+    "moved": 1,
+    "arms": {
+     "far": {
+      "pulls": 6,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 1,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 4,
+      "wins": 1
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "shift: C11 shift +x 1.00 mm (3 -> 2)"
+    ]
+   },
+   "Hardware_Playground_serial_gw_ATMEGA328P": {
+    "open": 1,
+    "clean": false,
+    "place_s": 471.6,
+    "complete": false,
+    "place_added": {},
+    "trials": 4,
+    "kept": 0,
+    "stop": "no candidates",
+    "moved": 0,
+    "arms": {
+     "far": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": []
+   },
+   "bullion_bullion": {
+    "open": 12,
+    "clean": false,
+    "place_s": 1458.3,
+    "complete": false,
+    "place_added": {},
+    "trials": 40,
+    "kept": 1,
+    "stop": "route budget",
+    "moved": 8,
+    "arms": {
+     "far": {
+      "pulls": 7,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 8,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 8,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 8,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 5,
+      "wins": 1
+     }
+    },
+    "changes": [
+     "window: re-place 8 parts around the failures (seed 1) (13 -> 12)"
+    ]
+   },
+   "front-end-modules_LimeSDR_Sony": {
+    "open": 0,
+    "clean": false,
+    "place_s": 482.6,
+    "complete": true,
+    "place_added": {},
+    "trials": 2,
+    "kept": 2,
+    "stop": "complete",
+    "moved": 2,
+    "arms": {
+     "far": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 2,
+      "wins": 2
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 0,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "shift: C78 shift -x 0.50 mm (2 -> 1)",
+     "shift: C38 shift -y 0.50 mm (1 -> 0)"
+    ]
+   },
+   "kitspace_ardfpga": {
+    "open": 5,
+    "clean": false,
+    "place_s": 1803.3,
+    "complete": false,
+    "place_added": {},
+    "trials": 20,
+    "kept": 1,
+    "stop": "time limit",
+    "moved": 1,
+    "arms": {
+     "far": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 3,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 6,
+      "wins": 1
+     },
+     "swap": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 3,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "shift: RN3 shift +x 1.00 mm (7 -> 5)"
+    ]
+   },
+   "kitspace_teensy-fx": {
+    "open": 1,
+    "clean": false,
+    "place_s": 1869.4,
+    "complete": false,
+    "place_added": {},
+    "trials": 15,
+    "kept": 2,
+    "stop": "time limit",
+    "moved": 3,
+    "arms": {
+     "far": {
+      "pulls": 1,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 4,
+      "wins": 1
+     },
+     "shift": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 4,
+      "wins": 1
+     },
+     "window": {
+      "pulls": 2,
+      "wins": 0
+     }
+    },
+    "changes": [
+     "rotate: RV8 rotate 270 (5 -> 2)",
+     "swap: D5 swap D4 (2 -> 1)"
+    ]
+   },
+   "mechkeys_58r-mxalps": {
+    "open": 0,
+    "clean": true,
+    "place_s": 1444.9,
+    "complete": true,
+    "place_added": {},
+    "trials": 11,
+    "kept": 3,
+    "stop": "complete",
+    "moved": 16,
+    "arms": {
+     "far": {
+      "pulls": 1,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 1,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 1,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 3,
+      "wins": 1
+     },
+     "shift": {
+      "pulls": 2,
+      "wins": 1
+     },
+     "swap": {
+      "pulls": 1,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 2,
+      "wins": 1
+     }
+    },
+    "changes": [
+     "rotate: R3 rotate 180 (6 -> 5)",
+     "window: re-place 15 parts around the failures (seed 2) (5 -> 2)",
+     "shift: PROGRAM shift +y 0.50 mm (2 -> 0)"
+    ]
+   },
+   "memsarray_mems_modules": {
+    "open": 1,
+    "clean": false,
+    "place_s": 793.2,
+    "complete": false,
+    "place_added": {},
+    "trials": 34,
+    "kept": 0,
+    "stop": "no candidates",
+    "moved": 0,
+    "arms": {
+     "far": {
+      "pulls": 10,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 12,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": []
+   },
+   "motor-high-current-sensors_CurrentSensorPCB_line": {
+    "open": 1,
+    "clean": false,
+    "place_s": 2060.7,
+    "complete": false,
+    "place_added": {},
+    "trials": 16,
+    "kept": 3,
+    "stop": "time limit",
+    "moved": 30,
+    "arms": {
+     "far": {
+      "pulls": 4,
+      "wins": 1
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 1,
+      "wins": 1
+     },
+     "rotate": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 2,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 3,
+      "wins": 1
+     }
+    },
+    "changes": [
+     "far: D2 shift +y 4.00 mm (6 -> 4)",
+     "window: re-place 34 parts around the failures (seed 1) (4 -> 3)",
+     "room: room around a failed pad at (87.20, 131.09): C68,C69 pushed 1.00 mm (3 -> 1)"
+    ]
+   },
+   "phone_amp_phone_amp": {
+    "open": 5,
+    "clean": false,
+    "place_s": 1462.8,
+    "complete": false,
+    "place_added": {},
+    "trials": 20,
+    "kept": 0,
+    "stop": "no candidates",
+    "moved": 0,
+    "arms": {
+     "far": {
+      "pulls": 8,
+      "wins": 0
+     },
+     "flip": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "replace": {
+      "pulls": 4,
+      "wins": 0
+     },
+     "room": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "rotate": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "shift": {
+      "pulls": 8,
+      "wins": 0
+     },
+     "swap": {
+      "pulls": 0,
+      "wins": 0
+     },
+     "window": {
+      "pulls": 4,
+      "wins": 0
+     }
+    },
+    "changes": []
+   }
+  },
+  "closure-route10m-then40m": {
+   "1Bitsy_1bitsy": {
+    "open": 0,
+    "clean": true,
+    "place_s": null,
+    "complete": true,
+    "place_added": {}
+   },
+   "96boards-robomezzi_96boards-robomezzi": {
+    "open": 2,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "ErgodoneWithHole_ErgoDone": {
+    "open": 2,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "Hardware_Playground_Touch_Switch_2ch_PCB": {
+    "open": 0,
+    "clean": true,
+    "place_s": null,
+    "complete": true,
+    "place_added": {}
+   },
+   "Hardware_Playground_sd_wav_pcm5100": {
+    "open": 2,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "Hardware_Playground_serial_gw_ATMEGA328P": {
+    "open": 0,
+    "clean": true,
+    "place_s": null,
+    "complete": true,
+    "place_added": {}
+   },
+   "bullion_bullion": {
+    "open": 12,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "front-end-modules_LimeSDR_Sony": {
+    "open": 0,
+    "clean": false,
+    "place_s": null,
+    "complete": true,
+    "place_added": {}
+   },
+   "kitspace_ardfpga": {
+    "open": 5,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "kitspace_teensy-fx": {
+    "open": 1,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "mechkeys_58r-mxalps": {
+    "open": 0,
+    "clean": true,
+    "place_s": null,
+    "complete": true,
+    "place_added": {}
+   },
+   "memsarray_mems_modules": {
+    "open": 1,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "motor-high-current-sensors_CurrentSensorPCB_line": {
+    "open": 1,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   },
+   "phone_amp_phone_amp": {
+    "open": 4,
+    "clean": false,
+    "place_s": null,
+    "complete": false,
+    "place_added": {}
+   }
+  }
+ }
+}

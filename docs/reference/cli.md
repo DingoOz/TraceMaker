@@ -274,6 +274,14 @@ OPTIONS:
           --vias-off-pads-below FLOAT
                               Pad width (mm) below which --keep-vias-off-pads applies (default
                               2)
+          --time-total FLOAT:NONNEGATIVE
+                              One time limit for the whole run, seconds: the plain run gets
+                              --rescue-share of it when the relax rescue may follow, and every
+                              later stage (rescue passes, advisor rounds, repairs) at most what
+                              is left; without it each stage gets --time again (D186). 0 = off
+          --rescue-share FLOAT:FLOAT in [0.01 - 1]
+                              With --time-total: the plain run's share of it when the relax
+                              rescue may follow (default 0.75)
           --no-rescue{false}  Do not route again with --relax when connections are left open
                               (by default the rescue runs, each pass on a budget of its own,
                               --time and --work again, and a result is kept only if it is
@@ -427,6 +435,10 @@ OPTIONS:
                               the nets found by --critical-auto follow in their own tiers
           --critical-auto     Critical nets from the component rules' roles (clock, crystal,
                               USB, Ethernet, PCIe, DDR ...) and from differential pairs
+          --no-critical-audit{false}
+                              No reference-return audit of the nets --critical-auto would find;
+                              by default they are audited after the route, report only, on a
+                              board with a plane (doc 05 §81)
           --critical-first    Route the critical nets before all others, tier by tier (clocks
                               and crystals, differential links, memory buses); --first-nets
                               stay in front
@@ -501,6 +513,18 @@ OPTIONS:
                               class width back up to it where there is room, and nets with a
                               target (--widen-net, or a width the component rules computed)
                               towards the target (doc 05 §39)
+          --power-width FLOAT:FLOAT in [0 - 20]
+                              Route supply nets (GND*, VCC*, VDD*, VBUS*, VIN*, +..., 3V3, ...)
+                              at this width (mm) where it fits, necked to their pads, and every
+                              net with a --widen-net or component-rule target at that target;
+                              the rest of a net falls back to its class width, then
+                              --widen-power tops up (doc 05 §79). 0 = off
+          --octilinear        After routing: replace new tracks that run off the eight
+                              directions by doglegs of two tracks on them where the exact check
+                              allows and no corner turns acute (doc 05 §80)
+          --octilinear-min-leg FLOAT:FLOAT in [0 - 20]
+                              With --octilinear: the shortest leg a dogleg may have, in track
+                              widths (default 0.5; 0 = any)
           --widen-net TEXT ...
                               With --widen-power: target width for nets as PATTERN=WIDTH_MM,
                               e.g. '+5V=0.8' or 'VBUS*=1' (repeatable)
@@ -1014,7 +1038,7 @@ OPTIONS:
   -h,     --help              Print this help message and exit
   -o,     --output TEXT REQUIRED
                               Output .kicad_pcb
-          --mode TEXT:{full,refine,auto,routable,eco}
+          --mode TEXT:{full,refine,auto,routable,eco,closure}
                               full (place from scratch) or refine (improve the current
                               placement)
           --time FLOAT        Wall-time stop for the annealer, seconds (0 = none; budgets are
@@ -1106,8 +1130,25 @@ OPTIONS:
                               routable/eco: placement advice file (JSON: seeds = proposed
                               placements, eco = proposed moves; doc 17 stage 4), each kept only
                               if it routes more
-          --loop-time FLOAT   routable: wall-time stop in seconds; checked between seeds and
-                              routes, keeps the best placement so far (0 = none)
+          --closure-routes INT
+                              closure: trial placements routed at most (doc 04 §11)
+          --closure-stall INT closure: trials without improvement before a radical one
+                              (re-place around the failures or the whole board)
+          --closure-judge TEXT:{route,portfolio}
+                              closure: what routes each trial: route = `tracemaker route --work
+                              <--route-check> --no-kb` (the product route; default), portfolio
+                              = the in-memory portfolio check of routable/eco
+          --closure-router TEXT
+                              closure: the tracemaker binary for the route judge (default:
+                              beside tracemaker-place)
+          --closure-route-args TEXT
+                              closure: extra `tracemaker route` options for the route judge
+                              (one string)
+          --closure-learn TEXT
+                              closure: learned prior of the move-type bandit (JSON); read
+                              before the run if it exists, updated after it
+          --loop-time FLOAT   routable/closure: wall-time stop in seconds; checked between
+                              seeds and routes, keeps the best placement so far (0 = none)
 ```
 
 ## `tracemaker-view`

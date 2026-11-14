@@ -12,8 +12,8 @@ read, the rules and the session's caches. Each action:
 Any change to the board between actions (an edit, an undo, a refill) changes the fingerprint, and the next action starts a fresh session from
 the board as it is. The daemon is started on first use and exits after 30 minutes without a client.
 
-Environment (besides those of tracemaker_route.py: TRACEMAKER):
-  TRACEMAKER_NET_WORK     search work for the route (default 2000000)
+Settings: "net_work" in the project's `tracemaker.json` (tracemaker_settings.py). Environment (besides tracemaker_route.py's TRACEMAKER):
+  TRACEMAKER_NET_WORK     search work for the route (default 2000000; wins over the file)
   TRACEMAKER_SOCKET       daemon socket (default: `tracemaker daemon --print-socket`)
 """
 from __future__ import annotations
@@ -140,6 +140,7 @@ def route_in_daemon(sock_path: str, key: str, fp: str, save_copy, nets: list[str
 def main() -> int:
     from kipy import KiCad
 
+    import tracemaker_settings
     from tracemaker_route import build_items, find_binary
 
     exe = find_binary()
@@ -158,6 +159,11 @@ def main() -> int:
         project_dir = board.get_project().path
     except Exception:  # noqa: BLE001 - a board without a project: the rules come from the board alone
         project_dir = None
+    try:
+        settings, _ = tracemaker_settings.load(project_dir)
+    except tracemaker_settings.SettingsError as e:
+        print(f"TraceMaker: {e}", file=sys.stderr)
+        return 1
     key = os.path.join(project_dir or "", board.name)
     fp = fingerprint(board, project_dir)
 
@@ -167,7 +173,7 @@ def main() -> int:
         return path
 
     t0 = time.time()
-    res, diff, sid, reused = route_in_daemon(sock_path, key, fp, save_copy, nets, int(os.environ.get("TRACEMAKER_NET_WORK", "2000000")))
+    res, diff, sid, reused = route_in_daemon(sock_path, key, fp, save_copy, nets, settings["net_work"])
     if not res.get("committed"):
         print(f"TraceMaker: {', '.join(nets)}: nothing added ({res.get('reason', 'no route')}); {res.get('open_after', '?')} connections left open "
               f"({time.time() - t0:.1f} s, {'warm' if reused else 'new'} session)")

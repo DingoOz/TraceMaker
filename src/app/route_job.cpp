@@ -11,6 +11,7 @@
 #include <ctime>
 #include <filesystem>
 #include <fstream>
+#include <regex>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -45,6 +46,7 @@
 #include "passes/pour.hpp"
 #include "passes/stitch.hpp"
 #include "passes/style.hpp"
+#include "passes/octilinear.hpp"
 #include "passes/widen.hpp"
 #include "report/render.hpp"
 #include "report/run_report.hpp"
@@ -54,6 +56,19 @@
 
 namespace tmk::app {
 namespace {
+
+// A supply net by its name (D184): the last hierarchy component is GND, VCC, VDD, VSS, VEE, VBUS, VIN, VBAT, VSYS, VMOT, VPP or PWR
+// (optionally with an A/D/P prefix and an A/D/IO/Q suffix, then '_', '-', '.', '+', a digit or nothing), starts with '+', or is a voltage
+// such as 3V3, 5V, -12V or 1.8V. Stricter than crules::power_like_name (D25, a soft placer objective), which also takes sense lines
+// (VInSense) and KiCad's pin-derived names (Net-(U4-LOCAL_PWR...)): widening those costs room for nothing.
+bool supply_net_name(std::string_view name) {
+  static const std::regex word(R"(^(A|D|P)?(GND|VCC|VDD|VSS|VEE|VBUS|VIN|VBAT|VBATT|VSYS|VMOT|VPP|PWR)(A|D|IO|Q)?([-_.+0-9].*)?$)", std::regex::icase);
+  static const std::regex volts(R"(^[+-]?[0-9]+([.,][0-9]+)?V([0-9]+)?(_.*)?$)", std::regex::icase);
+  const std::string leaf(crules::net_leaf(name));
+  if (leaf.empty()) return false;
+  if (leaf[0] == '+') return true;
+  return std::regex_match(leaf, word) || std::regex_match(leaf, volts);
+}
 
 __attribute__((format(printf, 1, 2))) std::string fmt(const char* f, ...) {
   char buf[1024];
@@ -224,11 +239,21 @@ RouteJobResult run_route_job(RouteJob job) {
     if (job.log) job.log(line);
   };
   auto& opt = job.opt;
+  // --time-total (D186): one deadline for the job. `cap` gives a stage at most what is left of it.
+  const auto job_t0 = std::chrono::steady_clock::now();
+  auto total_left = [&] { return job.time_total_s - std::chrono::duration<double>(std::chrono::steady_clock::now() - job_t0).count(); };
+  auto cap = [&](double s) { return job.time_total_s > 0 ? std::min(s, total_left()) : s; };
+  constexpr double kMinStage = 1.0;  // seconds: a stage with less than this left is skipped
+  if (job.time_total_s < 0) throw std::invalid_argument("--time-total: expected seconds (> 0), or 0 for off");
+  if (!(job.rescue_share > 0 && job.rescue_share <= 1)) throw std::invalid_argument("--rescue-share: expected a fraction in (0, 1]");
+  if (job.time_total_s > 0) opt.time_limit_s = job.time_total_s * (job.rescue && !opt.relax ? job.rescue_share : 1.0);
   // The live page (core/live.hpp): what this job is and where it is.
   live::field("board", job.in);
   if (!job.out.empty()) live::field("output", job.out);
-  live::field("budget", (opt.work_budget > 0 ? fmt("%ld work, ", opt.work_budget) : std::string()) + fmt("--time %.0f s, %d thread%s", opt.time_limit_s,
-                        job.threads, job.threads == 1 ? "" : "s") + (opt.relax ? ", relax" : ""));
+  live::field("budget", (opt.work_budget > 0 ? fmt("%ld work, ", opt.work_budget) : std::string()) +
+                            (job.time_total_s > 0 ? fmt("--time-total %.0f s (plain run %.0f s), ", job.time_total_s, opt.time_limit_s)
+                                                  : fmt("--time %.0f s, ", opt.time_limit_s)) +
+                            fmt("%d thread%s", job.threads, job.threads == 1 ? "" : "s") + (opt.relax ? ", relax" : ""));
   if (job.view) live::field("viewer port", std::to_string(job.view_port));
   live::field("stage", "reading the board");
   auto lb = io::read_board_file(job.in);
@@ -419,6 +444,8 @@ RouteJobResult run_route_job(RouteJob job) {
   const bool stitch_return = job.stitch_vias == "return" || job.stitch_vias == "all";
   std::vector<passes::WidenOptions::Target> widen_targets;
   std::vector<passes::StitchOptions::ReturnNet> stitch_returns;
+  if (job.power_width_mm < 0 || job.power_width_mm > 20) throw std::invalid_argument("--power-width: expected a width in millimetres (0 to 20)");
+  if (job.power_width_mm > 0) job.widen_power = true;  // routed wide first, then topped up where room is left
   // "PATTERN=VALUE": the nets whose name matches the pattern (KiCad wildcards), and the text after the last '='.
   auto pattern_nets = [&](const std::string& opt_name, const std::string& entry, std::string& value) {
     const auto eq = entry.rfind('=');
@@ -575,6 +602,37 @@ RouteJobResult run_route_job(RouteJob job) {
       log("component rules: generated custom rules written to " + side);
     }
   }
+  // --power-width (D184): supply nets get the width unless a target is stated, and every net with a target is routed at it first.
+  std::vector<Coord> wide_floor;  // by net: the class width a wide net is necked to at its pads
+  if (job.power_width_mm > 0) {
+    const Coord pw = static_cast<Coord>(std::llround(job.power_width_mm * 1e6));
+    std::vector<Coord> best(lb.board.nets.size(), 0);
+    for (const auto& t : widen_targets)
+      if (static_cast<std::size_t>(t.net) < best.size()) best[static_cast<std::size_t>(t.net)] = std::max(best[static_cast<std::size_t>(t.net)], t.width);
+    std::vector<std::uint8_t> paired(lb.board.nets.size(), 0);
+    for (const auto& [a, b2] : opt.pair_nets) paired[static_cast<std::size_t>(a)] = paired[static_cast<std::size_t>(b2)] = 1;
+    int supply = 0;
+    for (const auto& n : lb.board.nets)
+      if (n.id > 0 && !paired[static_cast<std::size_t>(n.id)] && best[static_cast<std::size_t>(n.id)] == 0 && supply_net_name(n.name)) {
+        widen_targets.push_back({n.id, pw, "power"});
+        best[static_cast<std::size_t>(n.id)] = pw;
+        ++supply;
+      }
+    wide_floor.assign(lb.board.nets.size(), 0);
+    std::string names;
+    int wide = 0;
+    for (const auto& n : lb.board.nets) {
+      const auto i = static_cast<std::size_t>(n.id);
+      if (n.id <= 0 || best[i] == 0 || paired[i]) continue;
+      const Coord cw = std::max(rules.class_for(n.name).track_width, rules.minimums.track_width);
+      if (best[i] <= cw) continue;
+      opt.preferred_widths.push_back({n.name, best[i]});
+      wide_floor[i] = cw;
+      ++wide;
+      if (names.size() < 200) names += (names.empty() ? "" : ", ") + n.name + fmt(" %.2f", nm_to_mm(best[i]));
+    }
+    log(fmt("power widths: %d supply nets at %.2f mm; %d nets routed wide first%s%s", supply, job.power_width_mm, wide, wide ? ": " : "", names.c_str()));
+  }
   // Custom rules the router cannot apply (unreadable conditions, position-dependent disallow rules) are named
   // here, not only by `tracemaker drc`: the routed board may break them (rule 6).
   std::vector<std::string> engine_warnings;  // kept for the run report's list of what was not read
@@ -663,13 +721,22 @@ RouteJobResult run_route_job(RouteJob job) {
       log("warning: net class " + c.name + " names tuning profile " + c.tuning_profile + ", which the project does not define (KiCad: missing_tuning_profile)");
   // Critical nets (issue #24, doc 05 §44): the names the user gave and, with --critical-auto, the nets the component rules' roles make critical.
   std::vector<crules::CriticalNet> critical;
+  bool critical_audit_only = false;
   {
     const bool si = job.si_rules;
     const bool want_auto = job.critical_auto || si;
     const bool want_first = job.critical_first || si;
     const double via_mult = job.critical_via_given || !si ? job.critical_via_mult : 3.0;
     const double split = job.split_cost_given || !si ? job.split_cost : 4.0;
-    if (!job.critical_nets.empty() || want_auto) {
+    // Audit only: no critical option given, a plane to audit against. The nets are found as --critical-auto finds them and handed to nothing but the
+    // audit after the route, so the copper is the run's without it.
+    bool plane = false;
+    for (const auto& z : lb.board.zones) plane = plane || (!z.rule_area && z.net > 0);
+    plane = plane && lb.board.copper_count() > 1;
+    const bool audit_only = job.critical_audit && plane && job.critical_nets.empty() && !want_auto && !want_first && !job.critical_via_given &&
+                            !job.split_cost_given && !job.split_hard && job.critical_via_max == 0;
+    critical_audit_only = audit_only;
+    if (!job.critical_nets.empty() || want_auto || audit_only) {
       std::map<model::NetId, crules::CriticalNet> found;
       for (const auto& n : lb.board.nets) {
         if (n.id <= 0 || n.name.empty()) continue;
@@ -679,7 +746,7 @@ RouteJobResult run_route_job(RouteJob job) {
             break;
           }
       }
-      if (want_auto) {
+      if (want_auto || audit_only) {
         const auto& cat = crules::builtin_catalogue();
         crules::Overrides ov;  // the user's override file (doc 15 §6.3) changes what a part is, and so which nets are critical
         if (!job.rules_override.empty()) ov = crules::load_overrides_file(job.rules_override, cat);
@@ -693,6 +760,11 @@ RouteJobResult run_route_job(RouteJob job) {
       for (const auto& [id, c] : found) critical.push_back(c);
       std::stable_sort(critical.begin(), critical.end(), [](const crules::CriticalNet& a, const crules::CriticalNet& c) { return a.tier < c.tier; });
     }
+    if (audit_only) {
+      if (!critical.empty())
+        log(fmt("critical nets: %zu found (component roles and differential pairs), audited after the route only; --critical-auto and the options of "
+                "doc 05 §44 route them with care, --no-critical-audit skips the audit", critical.size()));
+    } else {
     for (const auto& c : critical) opt.critical.emplace_back(lb.board.nets[static_cast<std::size_t>(c.net)].name, c.tier);
     opt.critical_first = want_first && !critical.empty();
     opt.critical_via_mult = via_mult;
@@ -716,6 +788,7 @@ RouteJobResult run_route_job(RouteJob job) {
       log(fmt("critical nets: %zu%s%s", critical.size(), lines.empty() ? "" : " - ", lines.c_str()));
       log(fmt("  routed first: %s; via cost x%.3g; over a plane void: %s", opt.critical_first ? "yes" : "no", opt.critical_via_mult,
               opt.split_hard ? "not allowed" : opt.split_cost > 0 ? fmt("+%.3g pitches per lattice step", opt.split_cost).c_str() : "free"));
+    }
     }
   }
   if (!job.warm_pcb.empty()) {  // copper of an earlier solution (looser rules, legalised): the router keeps what is legal
@@ -893,9 +966,18 @@ RouteJobResult run_route_job(RouteJob job) {
     nlohmann::json pass_rows = nlohmann::json::array();
     double rescue_s = 0;
     int last_routed = res.routed;
-    for (const bool warm : passes) {
+    for (std::size_t pi = 0; pi < passes.size(); ++pi) {
+      const bool warm = passes[pi];
       if (res.routed >= res.connections) break;
       route::RouterOptions o2 = opt;
+      if (job.time_total_s > 0) {  // the passes left share what is left of the job's time (D186)
+        const double left = total_left();
+        if (left < kMinStage) {
+          log(fmt("rescue: skipped, --time-total (%.0f s) is used up", job.time_total_s));
+          break;
+        }
+        o2.time_limit_s = left / static_cast<double>(passes.size() - pi);
+      }
       o2.relax = true;
       o2.relax_late = false;
       o2.sink = nullptr;
@@ -911,7 +993,7 @@ RouteJobResult run_route_job(RouteJob job) {
       if (opt.sink) opt.sink->publish(server::stage("rescue", "begin", fmt("%s: %d connections open", mode, res.connections - res.routed)));
       log(fmt("rescue (%s): %d of %d connections are open; routing again with relax (%s%s)", mode, res.connections - res.routed, res.connections,
               warm ? "from the plain routes, " : "from nothing, ",
-              opt.work_budget > 0 ? fmt("%d round%s of %ld work", o2.rounds, o2.rounds == 1 ? "" : "s", o2.round_work).c_str() : fmt("up to %.0f s", opt.time_limit_s).c_str()));
+              opt.work_budget > 0 ? fmt("%d round%s of %ld work", o2.rounds, o2.rounds == 1 ? "" : "s", o2.round_work).c_str() : fmt("up to %.0f s", o2.time_limit_s).c_str()));
       route_t0 = std::chrono::steady_clock::now();
       if (warm || passes.size() == 1) live::field("first pass", fmt("%d of %d routed", routed_before, res.connections));
       live_stage = fmt("rescue (%s): ", mode);
@@ -1025,6 +1107,13 @@ RouteJobResult run_route_job(RouteJob job) {
       route::RouterOptions o2 = opt;
       o2.advice = ap.set;
       o2.sink = nullptr;
+      if (job.time_total_s > 0) {
+        if (total_left() < kMinStage) {
+          stop(fmt("--time-total (%.0f s) is used up", job.time_total_s));
+          break;
+        }
+        o2.time_limit_s = cap(o2.time_limit_s);
+      }
       route_t0 = std::chrono::steady_clock::now();
       live_stage = fmt("advisor round %d: ", round);
       Run next = run_once(o2, round, false);
@@ -1067,7 +1156,9 @@ RouteJobResult run_route_job(RouteJob job) {
   nlohmann::json repair_summary;
   std::optional<model::Board> board_before_repair;  // the input as read, for the report's DRC "before" when the repair lifted some of it
   nlohmann::json removed_items;                      // the input's tracks and vias the repair lifted, in the --emit-items layout
-  if (job.repair != "off" && (job.repair == "on" || input_copper) && res.routed < res.connections) {
+  if (job.repair != "off" && (job.repair == "on" || input_copper) && res.routed < res.connections && job.time_total_s > 0 && total_left() < kMinStage)
+    log(fmt("repair: skipped, --time-total (%.0f s) is used up", job.time_total_s));
+  else if (job.repair != "off" && (job.repair == "on" || input_copper) && res.routed < res.connections) {
     live::field("stage", "repair windows");
     if (opt.sink) opt.sink->publish(server::stage("repair", "begin", fmt("%d connections open", res.connections - res.routed)));
     passes::RepairOptions ro = job.repair_opt;
@@ -1078,6 +1169,7 @@ RouteJobResult run_route_job(RouteJob job) {
     }
     for (const auto& g : opt.buses) ro.keep_nets.insert(ro.keep_nets.end(), g.nets.begin(), g.nets.end());
     if (ro.time_limit_s <= 0) ro.time_limit_s = opt.time_limit_s;
+    ro.time_limit_s = std::max(cap(ro.time_limit_s), 0.0);
     log(fmt("repair: %d of %d connections are open; lifting the unlocked copper within %s mm of each and routing again (%ld work per attempt)",
             res.connections - res.routed, res.connections, [&] {
               std::string r;
@@ -1145,7 +1237,7 @@ RouteJobResult run_route_job(RouteJob job) {
     refill_summary = {{"zones", rf.zones}, {"unconnected", before}, {"warnings", rf.warnings}};
     unconnected_after_refill = before;
     // The repair has the first pass's work budget but only what is left of the time limit (rule 5).
-    const double time_left = opt.time_limit_s - std::chrono::duration<double>(std::chrono::steady_clock::now() - route_t0).count();
+    const double time_left = cap(opt.time_limit_s - std::chrono::duration<double>(std::chrono::steady_clock::now() - route_t0).count());
     if (before > 0 && job.refill_repair && time_left <= 0) log("refill repair: skipped, the time limit is used up");
     if (before > 0 && job.refill_repair && time_left > 0) {
       route::RouterOptions o2 = opt;
@@ -1206,7 +1298,7 @@ RouteJobResult run_route_job(RouteJob job) {
                     pad.number.c_str());
       }
       log(fmt("thermal reliefs: %zu starved by the new copper (%s)", starved.size(), pads.c_str()));
-      const double thermal_time = opt.time_limit_s - std::chrono::duration<double>(std::chrono::steady_clock::now() - route_t0).count();
+      const double thermal_time = cap(opt.time_limit_s - std::chrono::duration<double>(std::chrono::steady_clock::now() - route_t0).count());
       if (job.refill_repair && thermal_time <= 0) log("thermal repair: skipped, the time limit is used up");
       if (job.refill_repair && thermal_time > 0) {
         const Coord clearance = std::max(rules.minimums.clearance, rules.classes.empty() ? Coord{0} : rules.default_class().clearance);
@@ -1270,7 +1362,7 @@ RouteJobResult run_route_job(RouteJob job) {
         int tried = 0, kept_pads = 0;
         std::size_t ripped = 0;
         for (std::size_t i = 0; i < starved.size() && s_cur > 0; ++i) {
-          const double left = opt.time_limit_s - std::chrono::duration<double>(std::chrono::steady_clock::now() - route_t0).count();
+          const double left = cap(opt.time_limit_s - std::chrono::duration<double>(std::chrono::steady_clock::now() - route_t0).count());
           if (left <= 0) {
             log("thermal repair: stopped, the time limit is used up");
             break;
@@ -1335,7 +1427,7 @@ RouteJobResult run_route_job(RouteJob job) {
   // After-route passes (doc 05 §39). Each works on the routed copper as a transaction: its result is judged by
   // the number of unconnected items (after a refill when fills are soft or vias were added) and dropped if that
   // number went up.
-  nlohmann::json widen_summary, stitch_summary;
+  nlohmann::json widen_summary, stitch_summary, octilinear_summary;
   bool plane_zones = false;
   for (const auto& z : route_board->zones) plane_zones = plane_zones || (!z.rule_area && z.net > 0);
   const bool si_stitch = job.si_rules && job.si_stitch && !critical.empty() && plane_zones && route_board->copper_count() > 1;
@@ -1370,6 +1462,29 @@ RouteJobResult run_route_job(RouteJob job) {
       return true;
     };
     auto mm = [](Coord v) { return fmt("%.3f", nm_to_mm(v)); };
+    if (!wide_floor.empty()) {  // tracks routed wide (D184) are necked to the pads they end in before anything is topped up
+      const int necks = passes::neck_at_pads(*route_board, res.tracks, wide_floor);
+      int wide_tracks = 0;
+      for (const auto& t : res.tracks)
+        wide_tracks += static_cast<std::size_t>(t.net) < wide_floor.size() && wide_floor[static_cast<std::size_t>(t.net)] > 0 && t.width > wide_floor[static_cast<std::size_t>(t.net)];
+      log(fmt("power widths: %d tracks wider than their class, %d necks at pads", wide_tracks, necks));
+    }
+    if (job.octilinear) {  // before widening: the doglegs are checked at the widths they were routed at, then widened like any track
+      passes::OctilinearOptions oo;
+      oo.soft_zones = opt.soft_zones;
+      oo.work_limit = job.pass_work;
+      oo.min_leg_widths = job.octilinear_min_leg;
+      auto straight = res.tracks;
+      const auto orr = passes::octilinear_tracks(*route_board, rules, straight, res.vias, oo);
+      bool kept = orr.replaced > 0;
+      if (kept) kept = no_worse(judge(res.tracks, res.vias, opt.soft_zones), judge(straight, res.vias, opt.soft_zones));
+      log(fmt("octilinear: %d of %d off-angle tracks replaced by doglegs (%d with no room, %d with a short leg, %d with an acute corner), %ld checks%s%s",
+              orr.replaced, orr.off_angle, orr.no_room, orr.short_leg, orr.acute, orr.checks, orr.out_of_work ? " (work budget used up)" : "",
+              orr.replaced > 0 && !kept ? "; discarded: a net has more unconnected items with it" : ""));
+      octilinear_summary = {{"off_angle", orr.off_angle}, {"replaced", kept ? orr.replaced : 0}, {"no_room", orr.no_room}, {"short_leg", orr.short_leg},
+                            {"acute", orr.acute}, {"checks", orr.checks}, {"kept", kept}};
+      if (kept) res.tracks = std::move(straight);
+    }
     if (job.widen_power) {
       if (opt.sink) opt.sink->publish(server::stage("widen", "begin", "power track widening"));
       passes::WidenOptions wo;
@@ -1585,7 +1700,7 @@ RouteJobResult run_route_job(RouteJob job) {
   }
   // Critical nets after the route (issue #24): vias, length and the plane crossings of each, so the three rules can be judged on the board they produced.
   nlohmann::json critical_summary;
-  if (!critical.empty()) {
+  if (!critical.empty() || critical_audit_only) {  // audit only with none found: the report says the board was looked at
     std::map<model::NetId, int> vias_by_net;
     std::map<model::NetId, double> length_by_net;
     for (const auto& v : res.vias) ++vias_by_net[v.net];
@@ -1607,6 +1722,7 @@ RouteJobResult run_route_job(RouteJob job) {
       }
     }
     critical_summary = nlohmann::json::object();
+    critical_summary["mode"] = critical_audit_only ? "audit" : "route";  // audit: found and audited by default, the route did not treat them apart
     critical_summary["options"] = {{"first", opt.critical_first}, {"via_mult", opt.critical_via_mult}, {"split_cost", opt.split_cost}, {"split_hard", opt.split_hard},
                                    {"via_max", job.critical_via_max}};
     critical_summary["nets"] = nlohmann::json::array();
@@ -1798,6 +1914,7 @@ RouteJobResult run_route_job(RouteJob job) {
   if (!why_open.is_null()) out.summary["why_open"] = why_open;
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
   if (!widen_summary.is_null()) out.summary["widen"] = widen_summary;
+  if (!octilinear_summary.is_null()) out.summary["octilinear"] = octilinear_summary;
   if (!stitch_summary.is_null()) out.summary["stitch"] = stitch_summary;
   if (!pour_summary.is_null()) out.summary["pours"] = pour_summary;
   out.summary["copper_layers"] = lb.board.copper_count();
@@ -1873,7 +1990,7 @@ RouteJobResult run_route_job(RouteJob job) {
     char date[32];
     std::strftime(date, sizeof date, "%Y-%m-%dT%H:%M:%SZ", std::gmtime(&now));
     out.summary["run"] = {{"version", std::string(version())}, {"board", name},  {"input", job.in},          {"output", job.out},
-                          {"date", date},                      {"seed", opt.seed}, {"work_budget", opt.work_budget}, {"time_limit_s", opt.time_limit_s},
+                          {"date", date},                      {"seed", opt.seed}, {"work_budget", opt.work_budget}, {"time_limit_s", opt.time_limit_s}, {"time_total_s", job.time_total_s},
                           {"variants", variants},              {"threads", threads}};
     if (!job.options_given.is_null()) out.summary["run"]["options"] = job.options_given;
   }

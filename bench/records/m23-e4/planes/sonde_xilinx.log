@@ -1,0 +1,265 @@
+live view: http://127.0.0.1:8855/
+portfolio: 8 variants on 4 threads
+searches: 28 ok (105993 expansions), 17 failed (980930 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 27 connections improved
+restarts 0; legality checks 164056; rips 0, passes 1, boxed-in 11, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 6, 6 proved no path, 13551 cells visited
+failed-search expansions: strict confined 0, strict wide 980930, negotiated confined 0, negotiated wide 0
+searches: 31 ok (270417 expansions), 16 failed (747919 expansions); fields 0 GPU + 2 CPU (0.02 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 31 connections improved
+restarts 0; legality checks 156027; rips 0, passes 1, boxed-in 8, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 1 proved unreachable, 3300 cells visited
+late reachability proofs: 4, 4 proved no path, 7476 cells visited
+failed-search expansions: strict confined 0, strict wide 744619, negotiated confined 0, negotiated wide 0
+searches: 33 ok (174725 expansions), 114 failed (693915 expansions); fields 0 GPU + 29 CPU (0.37 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 33 connections improved
+restarts 0; legality checks 993789; rips 1, passes 2, boxed-in 38, nogood skips 0, history cells 22, transactions 0 kept of 0
+reachability checks: 24, 21 proved unreachable, 300538 cells visited
+failed-search expansions: strict confined 0, strict wide 545736, negotiated confined 0, negotiated wide 0
+searches: 39 ok (65439 expansions), 93 failed (1034150 expansions); fields 0 GPU + 24 CPU (0.59 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 41 connections improved
+restarts 0; legality checks 1164536; rips 0, passes 2, boxed-in 43, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 26, 26 proved unreachable, 608688 cells visited
+failed-search expansions: strict confined 0, strict wide 311375, negotiated confined 0, negotiated wide 114087
+searches: 39 ok (114383 expansions), 98 failed (840036 expansions); fields 1 GPU + 14 CPU (0.44 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 40 connections improved
+restarts 0; legality checks 1045265; rips 0, passes 2, boxed-in 36, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 24, 23 proved unreachable, 407887 cells visited
+failed-search expansions: strict confined 0, strict wide 364894, negotiated confined 0, negotiated wide 114087
+searches: 39 ok (65439 expansions), 93 failed (1034150 expansions); fields 0 GPU + 24 CPU (0.39 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 41 connections improved
+restarts 0; legality checks 1164536; rips 0, passes 2, boxed-in 43, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 26, 26 proved unreachable, 608688 cells visited
+failed-search expansions: strict confined 0, strict wide 311375, negotiated confined 0, negotiated wide 114087
+searches: 39 ok (70083 expansions), 93 failed (1034150 expansions); fields 0 GPU + 24 CPU (0.36 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 41 connections improved
+restarts 0; legality checks 1169083; rips 0, passes 2, boxed-in 43, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 26, 26 proved unreachable, 608688 cells visited
+failed-search expansions: strict confined 0, strict wide 311375, negotiated confined 0, negotiated wide 114087
+searches: 36 ok (111636 expansions), 38 failed (889083 expansions); fields 4 GPU + 51 CPU (1.67 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 38 connections improved
+restarts 0; legality checks 1038366; rips 0, passes 1, boxed-in 18, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 7, 7 proved unreachable, 314747 cells visited
+failed-search expansions: strict confined 0, strict wide 574336, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 28 in 2.1 s
+  variant 1 fast bends, shortest first, crowded source routed 39 in 5.8 s  <- best
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 32 in 5.0 s
+  variant 3 fast bends, jittered order, escape plan routed 39 in 5.9 s
+  variant 4 exact bends, jittered order    routed 31 in 2.8 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 36 in 6.9 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 39 in 4.6 s
+  variant 7 fast bends, dear vias, crowded source routed 39 in 4.2 s
+rescue (warm): 9 of 48 connections are open; routing again with relax (from the plain routes, 1 round of 1000000 work)
+portfolio: 8 variants on 4 threads
+warm start: 39 saved routes taken over, 0 not legal under these rules
+warm start: 39 saved routes taken over, 0 not legal under these rules
+warm start: 39 saved routes taken over, 0 not legal under these rules
+warm start: 39 saved routes taken over, 0 not legal under these rules
+searches: 1 ok (33914 expansions), 20 failed (1050010 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 2 connections improved
+restarts 0; legality checks 148028; rips 0, passes 1, boxed-in 11, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 2, 2 proved no path, 5711 cells visited
+failed-search expansions: strict confined 0, strict wide 656820, negotiated confined 0, negotiated wide 393190
+warm start: 39 saved routes taken over, 0 not legal under these rules
+searches: 4 ok (25664 expansions), 56 failed (1016486 expansions); fields 0 GPU + 14 CPU (0.08 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 4 connections improved
+restarts 0; legality checks 1110708; rips 1, passes 1, boxed-in 22, nogood skips 0, history cells 16, transactions 0 kept of 0
+reachability checks: 11, 10 proved unreachable, 704227 cells visited
+failed-search expansions: strict confined 0, strict wide 229783, negotiated confined 0, negotiated wide 103230
+warm start: 39 saved routes taken over, 0 not legal under these rules
+searches: 2 ok (144071 expansions), 17 failed (858699 expansions); fields 0 GPU + 3 CPU (0.03 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 3 connections improved
+restarts 0; legality checks 145024; rips 0, passes 1, boxed-in 8, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 20754 cells visited
+late reachability proofs: 1, 1 proved no path, 2852 cells visited
+failed-search expansions: strict confined 0, strict wide 590342, negotiated confined 0, negotiated wide 268357
+warm start: 39 saved routes taken over, 0 not legal under these rules
+searches: 0 ok (0 expansions), 15 failed (1226796 expansions); fields 0 GPU + 6 CPU (0.06 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1 connections improved
+restarts 0; legality checks 1298076; rips 0, passes 1, boxed-in 3, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 9, 9 proved unreachable, 1155540 cells visited
+failed-search expansions: strict confined 0, strict wide 71256, negotiated confined 0, negotiated wide 0
+warm start: 39 saved routes taken over, 0 not legal under these rules
+searches: 2 ok (7003 expansions), 48 failed (1121157 expansions); fields 0 GPU + 6 CPU (0.03 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 3 connections improved
+restarts 0; legality checks 1193537; rips 0, passes 1, boxed-in 19, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 8, 8 proved unreachable, 853510 cells visited
+failed-search expansions: strict confined 0, strict wide 164417, negotiated confined 0, negotiated wide 103230
+searches: 2 ok (7003 expansions), 48 failed (1121157 expansions); fields 0 GPU + 6 CPU (0.02 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 3 connections improved
+restarts 0; legality checks 1193537; rips 0, passes 1, boxed-in 19, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 8, 8 proved unreachable, 853510 cells visited
+failed-search expansions: strict confined 0, strict wide 164417, negotiated confined 0, negotiated wide 103230
+searches: 2 ok (25956 expansions), 37 failed (1008587 expansions); fields 0 GPU + 38 CPU (0.44 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 3 connections improved
+restarts 0; legality checks 1065998; rips 0, passes 1, boxed-in 17, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 1 proved unreachable, 44804 cells visited
+failed-search expansions: strict confined 0, strict wide 552847, negotiated confined 0, negotiated wide 410936
+searches: 2 ok (7114 expansions), 48 failed (1121157 expansions); fields 0 GPU + 6 CPU (0.03 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 3 connections improved
+restarts 0; legality checks 1193720; rips 0, passes 1, boxed-in 19, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 8, 8 proved unreachable, 853510 cells visited
+failed-search expansions: strict confined 0, strict wide 164417, negotiated confined 0, negotiated wide 103230
+ramp stage 1/2 (clearance -0.1016 mm): 42 of 48 routed
+warm start: 39 saved routes taken over, 3 not legal under these rules
+warm start: 39 saved routes taken over, 3 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 39 saved routes taken over, 3 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 39 saved routes taken over, 3 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 39 saved routes taken over, 3 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 39 saved routes taken over, 3 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 39 saved routes taken over, 3 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 39 saved routes taken over, 3 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 39 in 0.1 s
+  variant 1 fast bends, shortest first, crowded source routed 39 in 0.1 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 39 in 0.1 s
+  variant 3 fast bends, jittered order, escape plan routed 39 in 0.1 s  <- best
+  variant 4 exact bends, jittered order    routed 39 in 0.1 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 39 in 0.1 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 39 in 0.1 s
+  variant 7 fast bends, dear vias, crowded source routed 39 in 0.1 s
+rescue (warm): 39 -> 39 routed (no gain: the result before stands)
+rescue (fresh): 9 of 48 connections are open; routing again with relax (from nothing, 1 round of 1000000 work)
+portfolio: 8 variants on 4 threads
+searches: 29 ok (160152 expansions), 13 failed (922982 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 28 connections improved
+restarts 0; legality checks 160331; rips 0, passes 1, boxed-in 10, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 8, 8 proved no path, 19033 cells visited
+failed-search expansions: strict confined 0, strict wide 922982, negotiated confined 0, negotiated wide 0
+searches: 31 ok (330506 expansions), 11 failed (682590 expansions); fields 0 GPU + 2 CPU (0.02 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 31 connections improved
+restarts 0; legality checks 152863; rips 0, passes 1, boxed-in 6, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 4, 4 proved no path, 8014 cells visited
+failed-search expansions: strict confined 0, strict wide 682590, negotiated confined 0, negotiated wide 0
+searches: 41 ok (130588 expansions), 85 failed (857699 expansions); fields 0 GPU + 23 CPU (0.25 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 43 connections improved
+restarts 0; legality checks 1056201; rips 0, passes 2, boxed-in 34, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 16, 15 proved unreachable, 278440 cells visited
+failed-search expansions: strict confined 0, strict wide 500003, negotiated confined 0, negotiated wide 103230
+searches: 35 ok (189801 expansions), 105 failed (685542 expansions); fields 0 GPU + 27 CPU (0.25 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 36 connections improved
+restarts 0; legality checks 965901; rips 1, passes 2, boxed-in 34, nogood skips 0, history cells 17, transactions 0 kept of 0
+reachability checks: 20, 16 proved unreachable, 273064 cells visited
+failed-search expansions: strict confined 0, strict wide 537261, negotiated confined 0, negotiated wide 0
+searches: 43 ok (144321 expansions), 83 failed (739348 expansions); fields 1 GPU + 28 CPU (0.47 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 46 connections improved
+restarts 0; legality checks 968956; rips 0, passes 2, boxed-in 36, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 28, 25 proved unreachable, 482402 cells visited
+failed-search expansions: strict confined 0, strict wide 273435, negotiated confined 0, negotiated wide 103230
+searches: 43 ok (144321 expansions), 83 failed (739348 expansions); fields 1 GPU + 28 CPU (0.48 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 46 connections improved
+restarts 0; legality checks 968956; rips 0, passes 2, boxed-in 36, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 28, 25 proved unreachable, 482402 cells visited
+failed-search expansions: strict confined 0, strict wide 273435, negotiated confined 0, negotiated wide 103230
+searches: 43 ok (149269 expansions), 83 failed (739348 expansions); fields 1 GPU + 28 CPU (0.52 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 46 connections improved
+restarts 0; legality checks 973814; rips 0, passes 2, boxed-in 36, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 28, 25 proved unreachable, 482402 cells visited
+failed-search expansions: strict confined 0, strict wide 273435, negotiated confined 0, negotiated wide 103230
+searches: 37 ok (186433 expansions), 31 failed (800979 expansions); fields 3 GPU + 48 CPU (0.91 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 39 connections improved
+restarts 0; legality checks 1053248; rips 0, passes 1, boxed-in 11, nogood skips 0, history cells 0, transactions 0 kept of 0
+reachability checks: 6, 5 proved unreachable, 303735 cells visited
+failed-search expansions: strict confined 0, strict wide 585733, negotiated confined 0, negotiated wide 0
+ramp stage 1/2 (clearance -0.1016 mm): 43 of 48 routed
+warm start: 38 saved routes taken over, 5 not legal under these rules
+warm start: 38 saved routes taken over, 5 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 38 saved routes taken over, 5 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 38 saved routes taken over, 5 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 38 saved routes taken over, 5 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 38 saved routes taken over, 5 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 38 saved routes taken over, 5 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 38 saved routes taken over, 5 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 38 in 0.1 s
+  variant 1 fast bends, shortest first, crowded source routed 38 in 0.1 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 38 in 0.1 s
+  variant 3 fast bends, jittered order, escape plan routed 38 in 0.1 s  <- best
+  variant 4 exact bends, jittered order    routed 38 in 0.1 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 38 in 0.1 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 38 in 0.1 s
+  variant 7 fast bends, dear vias, crowded source routed 38 in 0.1 s
+rescue (fresh): 39 -> 38 routed (no gain: the result before stands)
+routed 39/48 connections, 97 tracks, 3 vias, pitch 0.100 mm, 1099589 expansions, 30.19 s (best variant 5.84 s)
+  unrouted: /VCC_SENSE-ERROR*: R1.2 -> J1.15  (boxed in (target); escapes/neck-down: boxed in (target); negotiated: boxed in (target); given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /TD0-DONE: P1.3 -> J2.2  (boxed in (target); escapes/neck-down: boxed in (target); negotiated: boxed in (target); given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /TDI-DIN: P1.4 -> J2.3  (boxed in (target); escapes/neck-down: boxed in (target); negotiated: boxed in (target); given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /TCK-CCLK: P1.5 -> J2.4  (boxed in (target); escapes/neck-down: boxed in (target); negotiated: boxed in (target); given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(U1A-O): R14.2 -> U2.2  (boxed in; escapes/neck-down: out of budget; negotiated: out of budget)
+  unrouted: Net-(U1A-O): U2.2 -> U1.3  (no path in window)
+  unrouted: Net-(U1A-O): U2.2 -> R2.2  (no path in window)
+  unrouted: Net-(U1B-O): R11.2 -> C2.1  (no path in window)
+  unrouted: Net-(U1D-O): C4.1 -> U1.11  (boxed in; escapes/neck-down: no path in window)
+  needs a narrower track or via: J1.15 (/VCC_SENSE-ERROR*) is walled in on B.Cu for its class's 0.635 mm track and 1.65 mm via (J1.14, J1.16, the board edge, the GND zone fill), but a track of 0.217 mm gets out (a neck-down).
+  open by the router's settings: J2.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J2.3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J2.4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+why open: 16 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 1 only for the class's track or via, 3 only by zone fills or copper graphics, 12 open through congestion (5.59 s)
+  next: route again with --soft-zones: 3 pins are walled in only by zone fills
+  next: 1 pin gets out only with a track or via smaller than the net class's (the board's minimums allow them; see each pin's text): check that the net is not in --no-neck-nets, or lower the class's track width or via size
+  next: 12 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 15806715 expansions, 9697473 flood cells, 20539200 cell checks, 14591794 fixed-copper checks, 65619604 field cells in 442 fields, 601 commits, 3 rips
+report: DRC before and after (zones refilled): 0 routing errors added (0.3 s)
+report written to /tmp/claude-1000/-home-dingo-Programming-TraceMaker/0eb5330d-7327-41fa-97b4-5a919efd08e3/scratchpad/e4/planes/sonde_xilinx.html (its numbers are the fields of /tmp/claude-1000/-home-dingo-Programming-TraceMaker/0eb5330d-7327-41fa-97b4-5a919efd08e3/scratchpad/e4/planes/sonde_xilinx.json)

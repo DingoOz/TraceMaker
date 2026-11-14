@@ -1,0 +1,16 @@
+# Placement closure evaluation (doc 04 §11, D190): boards the router leaves incomplete with the human placement,
+# near misses of pcbench-bd-fail (1-7 open at 10M) and the hard boards of doc 04 §8.3.
+Hardware_Playground_serial_gw_ATMEGA328P
+memsarray_mems_modules
+96boards-robomezzi_96boards-robomezzi
+front-end-modules_LimeSDR_Sony
+ErgodoneWithHole_ErgoDone
+Hardware_Playground_sd_wav_pcm5100
+kitspace_teensy-fx
+motor-high-current-sensors_CurrentSensorPCB_line
+mechkeys_58r-mxalps
+kitspace_ardfpga
+1Bitsy_1bitsy
+phone_amp_phone_amp
+Hardware_Playground_Touch_Switch_2ch_PCB
+bullion_bullion

@@ -1,0 +1,54 @@
+run e6-a-time40: 33 boards, pcbench-bd-fail, 40 s per board, 2 jobs
+      EtherCAT_shield_v1_EtherCAT_shield_v1        routed 246/272 unconn 25 added {} 122.3s  FR-RC12 clean=False
+      Hardware_Playground_E3_Pcb_rev0.3            routed 322/341 unconn 6 added {} 128.6s  FR-RC12 clean=False
+      Hardware_Playground_serial_gw_ATMEGA328P     routed 171/172 unconn 1 added {} 120.9s  FR-RC12 clean=False
+      MicroMaple_MicroMaple                        routed 102/111 unconn 9 added {} 122.0s  FR-RC12 clean=False
+      fifogfx_c64cart                              routed 64/104 unconn 40 added {} 124.6s  FR-RC12 clean=True
+      kitspace_OtterPill                           routed 126/137 unconn 11 added {} 124.3s  FR-RC12 clean=False
+      kitspace_ardfpga                             routed 207/214 unconn 7 added {} 126.1s  FR-RC12 clean=False
+      kitspace_teensy-fx                           routed 191/196 unconn 5 added {} 135.5s  FR-RC12 clean=False
+      memsarray_mems_modules                       routed 9/10 unconn 1 added {} 112.8s  FR-RC12 clean=False
+      kitspace_test-jig                            routed 260/292 unconn 32 added {} 162.8s  FR-RC12 clean=False
+      poncho_fpga_fpga-dongle                      routed 376/413 unconn 37 added {} 134.7s  FR-RC12 clean=False
+      96boards-robomezzi_96boards-robomezzi        routed 280/282 unconn 2 added {} 143.2s  FR-RC12 clean=False
+      DronPi_dronPi                                routed 341/352 unconn 11 added {} 132.6s  FR-RC12 clean=False
+CLEAN Hardware_Playground_multisensor_cr2032       routed 205/205 unconn 0 added {} 23.3s  FR-RC12 clean=False
+      ErgodoneWithHole_ErgoDone                    routed 354/356 unconn 2 added {} 149.8s  FR-RC12 clean=False
+      Hardware_Playground_sd_wav_pcm5100           routed 393/396 unconn 3 added {} 123.1s  FR-RC12 clean=False
+      P8000_WDC_Emulator_P8000_WDC_Emulator        routed 320/361 unconn 41 added {} 149.4s  FR-RC12 clean=True
+      PCIE-to-MXM-Adapter_PCIEx1toMXM3.0           routed 158/188 unconn 30 added {} 131.5s  FR-RC12 clean=True
+      kitspace_d20_tri_r0.3                        routed 404/553 unconn 148 added {} 134.5s  FR-RC12 clean=False
+      mechkeys_58r-mxalps                          routed 357/361 unconn 4 added {} 139.0s  FR-RC12 clean=False
+      motor-high-current-sensors_CurrentSensorPCB_ routed 466/472 unconn 3 added {} 130.6s  FR-RC12 clean=False
+      rvi_v2x_hardware_V2X                         routed 455/479 unconn 24 added {} 127.4s  FR-RC12 clean=False
+      zx-sizif-512-ext_sizif512ext                 routed 433/498 unconn 65 added {} 127.6s  FR-RC12 clean=False
+      Aleste-520EX_aleste                          routed 1324/1616 unconn 292 added {} 131.3s  FR-RC12 clean=False
+      CoreOne-xCORE200-Original_CoreOne            routed 785/807 unconn 22 added {} 131.8s  FR-RC12 clean=False
+      KiCad-Library_Teensy_test_layout             routed 1240/1268 unconn 28 added {} 135.5s  FR-RC12 clean=False
+      LeeChee_1800                                 routed 1123/1160 unconn 37 added {} 143.7s  FR-RC12 clean=False
+      MonApollo_analog-board                       routed 1117/1190 unconn 73 added {} 161.0s  FR-RC12 clean=False
+      TCKB_Kicad_TCKB                              routed 573/597 unconn 24 added {} 135.5s  FR-RC12 clean=False
+      dorkyboard_keyboard                          routed 821/830 unconn 9 added {} 137.6s  FR-RC12 clean=False
+      front-end-modules_LimeSDR_Sony               routed 810/814 unconn 4 added {} 127.4s  FR-RC12 clean=True
+      mechkeys_LFK78                               routed 854/893 unconn 39 added {} 159.1s  FR-RC12 clean=False
+      mini_mass_prog_bench_prog_rig                routed 984/995 unconn 11 added {} 132.3s  FR-RC12 clean=False
+# Benchmark e6-a-time40
+
+pcbench-bd-fail, 33 boards, 40 s per board.
+
+| Metric | TraceMaker | Freerouting 2.5.0-RC12 | Freerouting 2.4.1 |
+|---|--:|--:|--:|
+| Clean pass (KiCad DRC) | 3.0% | 12.1% | 0.0% |
+| Mean completion | 91.1% | | |
+| Route CPU time, all boards | 27,916 s | | |
+
+Both clean: 0; only TraceMaker: 1; only Freerouting: 4.
+Boards with added DRC errors: 0 ({}).
+
+Style of the routed copper (doc 05 §39, informational):
+
+| Routing | Boards | Bends per connection | Acute angles | Stair-steps | Short segments | Off-angle segments | Detour ratio | Long detours |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|
+| TraceMaker | 33 | 0.86 | 6 | 138 | 3886 | 8638 | 1.099 | 607 |
+| TraceMaker, boards with a reference | 33 | 0.86 | 6 | 138 | 3886 | 8638 | 1.099 | 607 |
+| Reference routing | 33 | 1.35 | 70 | 911 | 11278 | 4830 | 1.124 | 583 |

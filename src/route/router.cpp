@@ -282,6 +282,11 @@ struct Router::Impl {
   // legal where the class via does not fit (e.g. between BGA balls or in a dense LED matrix). Only used when
   // the class via is blocked; never below a 0.2 mm drill, which every board house drills.
   std::vector<std::uint8_t> no_neck;  // by net id: RouterOptions::no_neck_nets
+  std::vector<Coord> preferred;       // by net id: RouterOptions::preferred_widths (0 = none)
+  Coord preferred_width(NetId net) const {
+    const auto i = static_cast<std::size_t>(net);
+    return i < preferred.size() && preferred[i] > class_width(net) ? preferred[i] : 0;
+  }
   bool necking_allowed(NetId net) const { const auto i = static_cast<std::size_t>(net); return i >= no_neck.size() || !no_neck[i]; }
   Coord neck_via_drill(NetId net) const { return !necking_allowed(net) ? class_via_drill(net) : std::min(class_via_drill(net), std::max<Coord>(rules.minimums.through_hole_diameter, 200'000)); }
   Coord neck_via_diameter(NetId net) const {
@@ -362,6 +367,12 @@ struct Router::Impl {
           first_rank[key.first] = static_cast<int>(first_rank.size());
           if (std::getenv("TM_DEBUG_BUNDLE")) std::fprintf(stderr, "supply first: %s (%d perimeter pins)\n", b.nets[static_cast<std::size_t>(key.first)].name.c_str(), n);
         }
+    }
+    if (!opt.preferred_widths.empty()) {
+      preferred.assign(b.nets.size(), 0);
+      for (std::size_t n = 0; n < b.nets.size(); ++n)
+        for (const auto& [name, w] : opt.preferred_widths)
+          if (name == b.nets[n].name) preferred[n] = std::max(preferred[n], w);
     }
     if (!opt.no_neck_nets.empty()) {
       no_neck.assign(b.nets.size(), 0);
@@ -7012,6 +7023,14 @@ struct Router::Impl {
         const bool lane = !conn_bundle.empty() && conn_bundle[static_cast<std::size_t>(ci)] >= 0;
         stall_probe.valid = false;  // a probe is of this attempt only
         bool ok = lane && route_bus_lane(ci);
+        // A net with a preferred width tries it first, strictly (it must not rip anything to be wide); failing that, the class width
+        // and the usual ladder below (D184).
+        if (!ok && !lane && preferred_width(st.c.net) > 0) {
+          width_override = preferred_width(st.c.net);
+          ok = search_and_commit(st.c, false);
+          width_override = 0;
+          if (ok) ++res.wide;
+        }
         if (!ok) ok = search_and_commit(st.c, false);
         std::string reason = why;
         // Escalation for pads boxed in by fixed copper: forced off-lattice escapes, then a neck-down to the

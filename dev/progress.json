@@ -946,6 +946,85 @@
           "done": true
         }
       ]
+    },
+    {
+      "id": "M23",
+      "title": "Finished and usable boards",
+      "status": "in_progress",
+      "gate": "Each item's gate in docs/18 section 20.2, KiCad-judged, no loss of routed connections or clean boards at equal work (D183)",
+      "deliverables": "E1 power nets wide from the start; E2 plugin settings file, one undo with refill, report shown; E3 off-angle cleanup; E4 return-path and plane-gap check; E5 throughput",
+      "tasks": [
+        {
+          "text": "E1: --power-width (D184, doc 05 section 79): supply copper at >= 0.5 mm 20 % -> 94 % on the power-wide set, clean 21 -> 21, -2 of 4,038 connections; off by default",
+          "done": true
+        },
+        {
+          "text": "E2: per-project tracemaker.json for both actions, power width 0.5 and the run report in the browser by default; a refill cannot join the route's undo step in KiCad 10.0.6 (D185)",
+          "done": true
+        },
+        {
+          "text": "E3: --octilinear doglegs (D187, doc 05 section 80): off-angle segments -39 % on tiers A-B, routed/clean/DRC unchanged; on in the plugin",
+          "done": true
+        },
+        {
+          "text": "E4: default report-only audit of the critical nets on boards with a plane (D188, doc 05 section 81); every planes board's report has it, copper byte-identical",
+          "done": true
+        },
+        {
+          "text": "E5: throughput: CPU fields skip rows that cannot change (D189, doc 05 section 83), 3-27 % faster and byte-identical; equal-time gain below noise, gate not met (open)",
+          "done": false
+        },
+        {
+          "text": "E6: --time-total with rescue share 0.75 (D186, doc 05 section 82): +111 of 16,935 at equal wall time; plugin default; relax legaliser can still overrun (max +28 s)",
+          "done": true
+        },
+        {
+          "text": "Placement closure (D190, doc 04 section 11): tracemaker-place --mode closure, UCB bandit over 8 kinds of change judged by the product route; 14 incomplete boards: 58 -> 32 open at 10 M, 40 -> 30 open and 3 -> 4 clean vs human at 40 M",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "M24",
+      "title": "Move parts a hand placement has pinned down",
+      "status": "todo",
+      "gate": "The three closure boards blocked by model overlaps (serial_gw, phone_amp, memsarray) get legal moves; no KiCad DRC error added by placement; no board worse than D190 at equal routes",
+      "deliverables": "Exact courtyard polygons in the placer's legality model; a part in an existing overlap may move when the overlap does not grow (KiCad-judged); placement closure rerun on bench/records/m24-closure's 14 boards",
+      "tasks": [
+        {
+          "text": "Exact courtyard polygons in the legality model",
+          "done": false
+        },
+        {
+          "text": "Move rule for parts already in an overlap (overlap must not grow, KiCad-judged; D190 shows the relaxed rule made real errors)",
+          "done": false
+        },
+        {
+          "text": "Rerun closure on the 14 boards; serial_gw, phone_amp, memsarray no longer stop with no candidates",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "M25",
+      "title": "How the default route decides, explained",
+      "status": "todo",
+      "gate": "Every step traces to code, a doc section and a decision record; example numbers from a recorded run; mkdocs --strict and docs_check pass",
+      "deliverables": "Explanation page following one board through a default tracemaker route run, step by step, with the option, doc section, decision and report/event for each step",
+      "tasks": [
+        {
+          "text": "Map the default route pipeline in order from the code (rules, ordering, global plan, escapes, portfolio, search, rip-up, repair, rescue, cleanup, exact check, write)",
+          "done": false
+        },
+        {
+          "text": "Record one real board's run and take each step's numbers from it",
+          "done": false
+        },
+        {
+          "text": "Write the page under docs/explanation and add it to mkdocs nav",
+          "done": false
+        }
+      ]
     }
   ]
 }

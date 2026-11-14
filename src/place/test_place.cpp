@@ -14,6 +14,7 @@
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "place/anneal.hpp"
+#include "place/closure.hpp"
 #include "place/global.hpp"
 #include "place/legalize.hpp"
 #include "place/lower_bound.hpp"
@@ -953,6 +954,135 @@ TEST_CASE("routability loop: with absolute seed legality illegal seeds are refer
     CHECK(r.best.label == "input");
     CHECK_FALSE(r.best.legal);
   }
+}
+
+TEST_CASE("placement closure: only improving trials kept, locked parts fixed, legal, deterministic, learns", "[place][closure]") {
+  Problem p = random_problem(30, 81, 30 * MM);
+  std::vector<int> locked;
+  for (std::size_t i = 0; i < p.parts.size(); ++i)
+    if (p.parts[i].movable && i % 4 == 0) {
+      p.parts[i].movable = false;
+      locked.push_back(static_cast<int>(i));
+    }
+  const Placement start = legal_start(p);
+  int calls = 0;
+  const RouteFn route = fake_router(p, 10 * MM, &calls);
+  const RouteEval e0 = route(start);
+  REQUIRE(e0.unrouted() > 0);
+  ClosureOptions o;
+  o.max_routes = 25;
+  o.stall = 4;
+  o.place.threads = 2;
+  o.place.runs = 2;
+  o.place.effort = 0.3;
+  int radical_calls = 0;
+  o.radical = [&](int k) -> std::optional<Placement> {  // a "whole-board placement": the start legalised again with another seed
+    ++radical_calls;
+    if (k >= 2) return std::nullopt;
+    PlaceOptions po;
+    po.mode = "refine";
+    po.seed = 100 + static_cast<std::uint64_t>(k);
+    po.threads = 2;
+    po.runs = 2;
+    po.effort = 0.3;
+    Placement x = start;
+    return tmk::place::place(p, x, po).legal ? x : Placement{};
+  };
+  calls = 0;
+  const ClosureResult r = placement_closure(p, start, e0, o, route);
+  CHECK(r.routes == calls);
+  CHECK(r.routes <= o.max_routes);
+  CHECK(r.eval.unrouted() <= e0.unrouted());
+  CHECK(route(r.pl).unrouted() == r.eval.unrouted());  // the reported result is the router's on the returned placement
+  CHECK(all_legal(p, r.pl));
+  for (int i : locked) {
+    CHECK(r.pl.pos[z(i)] == start.pos[z(i)]);
+    CHECK(r.pl.rot[z(i)] == start.rot[z(i)]);
+  }
+  // Each kept trial strictly improves on the one before; statistics add up.
+  int last = e0.unrouted(), pulls = 0, wins = 0;
+  for (const auto& t : r.trials)
+    if (t.accepted) {
+      CHECK(t.after < t.before);
+      CHECK(t.before == last);
+      last = t.after;
+    }
+  CHECK(last == r.eval.unrouted());
+  for (const auto& s : r.stats) {
+    pulls += s.pulls;
+    wins += s.wins;
+  }
+  CHECK(wins == r.accepted);
+  CHECK(pulls >= r.routes);
+  if (r.eval.unrouted() > 0) CHECK((r.stop == "route budget" || r.stop == "no candidates"));
+  else CHECK(r.stop == "complete");
+  // Deterministic.
+  const ClosureResult r2 = placement_closure(p, start, e0, o, route);
+  CHECK(r2.pl.pos == r.pl.pos);
+  CHECK(r2.pl.rot == r.pl.rot);
+  CHECK(r2.trials.size() == r.trials.size());
+  // A complete input is returned as it is, without a route.
+  RouteEval done = e0;
+  done.routed = done.connections;
+  done.failed.clear();
+  calls = 0;
+  CHECK(placement_closure(p, start, done, o, route).routes == 0);
+  CHECK(calls == 0);
+  // A learned prior that says only "rotate" pays steers the first trial there.
+  ArmTable prior{};
+  for (auto& a : prior) a = {50, 0};
+  prior[kRotate] = {50, 40};
+  o.prior = &prior;
+  o.max_routes = 1;
+  const ClosureResult r3 = placement_closure(p, start, e0, o, route);
+  REQUIRE(r3.trials.size() == 1);
+  CHECK(r3.trials[0].arm == kRotate);
+}
+
+TEST_CASE("placement closure: a start with overlaps gets no new one (a moved part must be conflict-free)", "[place][closure]") {
+  Problem p = random_problem(30, 81, 30 * MM);
+  Placement bad = legal_start(p);
+  // Overlap pairs of movable parts, as hand placements often have in the placer's conservative model.
+  int made = 0;
+  for (std::size_t i = 0; i + 1 < p.parts.size() && made < 4; i += 2)
+    if (p.parts[i].movable && p.parts[i + 1].movable) {
+      bad.pos[i] = bad.pos[i + 1];
+      ++made;
+    }
+  REQUIRE(measure(p, bad).overlaps > 0);
+  const RouteFn route = fake_router(p, 10 * MM);
+  const RouteEval e0 = route(bad);
+  REQUIRE(e0.unrouted() > 0);
+  ClosureOptions o;
+  o.max_routes = 20;
+  o.place.threads = 2;
+  o.place.runs = 2;
+  o.place.effort = 0.3;
+  const ClosureResult r = placement_closure(p, bad, e0, o, route);
+  const Metrics m = measure(p, r.pl, &bad);
+  CHECK(m.new_overlaps == 0);
+  CHECK(m.new_outside == 0);
+}
+
+TEST_CASE("placement closure: the stall rule escalates to a radical trial", "[place][closure]") {
+  Problem p = random_problem(30, 81, 30 * MM);
+  const Placement start = legal_start(p);
+  // A router that never improves: every trial fails, so after `stall` trials a radical arm must be chosen.
+  const RouteFn fixed = fake_router(p, 10 * MM);
+  const RouteEval e0 = fixed(start);
+  REQUIRE(e0.unrouted() > 0);
+  const RouteFn never = [&](const Placement&) { return e0; };
+  ClosureOptions o;
+  o.max_routes = 6;
+  o.stall = 3;
+  o.radical = [&](int) -> std::optional<Placement> { return start; };
+  const ClosureResult r = placement_closure(p, start, e0, o, never);
+  REQUIRE(r.trials.size() >= 4);
+  for (int i = 0; i < 3; ++i) CHECK_FALSE(r.trials[z(i)].forced);
+  CHECK(r.trials[3].forced);
+  CHECK((r.trials[3].arm == kWindow || r.trials[3].arm == kReplace));
+  CHECK(r.accepted == 0);
+  CHECK(r.pl.pos == start.pos);
 }
 
 TEST_CASE("minimal repair: only parts in a conflict move, and the result is legal", "[place][m8]") {

@@ -1,0 +1,28 @@
+== after
+ok   KiCad started and opened its API socket
+ok   the API answers (first-run wizard dismissed)
+ok   the board has zones (5)
+TraceMaker: settings from defaults and TRACEMAKER_ARGS, TRACEMAKER_REFILL, TRACEMAKER_REPORT
+TraceMaker: added 529 tracks and 17 vias, removed 27 old ones
+TraceMaker: zones refilled
+ok   the plugin ran against the live board
+ok   copper added: tracks 140 -> 643
+ok   the fills changed (the refill ran)
+after 1 undo(s): tracks 643, vias 35, fills as before
+after 2 undo(s): tracks 140, vias 19, fills as before
+ok   2 undo(s) bring back the input's copper and fills (after)
+== in-commit
+ok   KiCad started and opened its API socket
+ok   the API answers (first-run wizard dismissed)
+ok   the board has zones (5)
+TraceMaker: settings from defaults and TRACEMAKER_ARGS, TRACEMAKER_REFILL, TRACEMAKER_REPORT
+TraceMaker: zones refilled inside the commit
+TraceMaker: added 529 tracks and 17 vias, removed 27 old ones
+ok   the plugin ran against the live board
+ok   copper added: tracks 140 -> 643
+ok   the fills changed (the refill ran)
+after 1 undo(s): tracks 140, vias 19, fills changed
+after 2 undo(s): tracks 140, vias 19, fills as before
+ok   2 undo(s) bring back the input's copper and fills (in-commit)
+
+[exited with code 0]

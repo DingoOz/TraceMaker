@@ -1,0 +1,257 @@
+{
+  "after": {
+    "conflicts": [
+      "C24/U1",
+      "C25/C1",
+      "C3/U1",
+      "C23/U1",
+      "C15/C9",
+      "C15/X2",
+      "C12/U7",
+      "C4/C2",
+      "C16/R8",
+      "R7/C10",
+      "R9/U5",
+      "R9/C9",
+      "C22/U1",
+      "C21/U1",
+      "C10/X2",
+      "C9/C14",
+      "C9/X2"
+    ],
+    "crossings": 29,
+    "fixed_outside": 2,
+    "fixed_overlaps": 0,
+    "flipped": 0,
+    "hpwl_mm": 566.031,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 17,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 493.41319999999996
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [
+      "C24/U1",
+      "C25/C1",
+      "C3/U1",
+      "C23/U1",
+      "C15/C9",
+      "C15/X2",
+      "C12/U7",
+      "C4/C2",
+      "C16/R8",
+      "R7/C10",
+      "R9/U5",
+      "R9/C9",
+      "C22/U1",
+      "C21/U1",
+      "C10/X2",
+      "C9/C14",
+      "C9/X2"
+    ],
+    "crossings": 29,
+    "fixed_outside": 2,
+    "fixed_overlaps": 0,
+    "flipped": 0,
+    "hpwl_mm": 568.029,
+    "new_outside": 0,
+    "new_overlaps": 17,
+    "outside": 0,
+    "overlaps": 17,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 495.4112
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 1.8928028614546801,
+    "lb_any_rotation_mm": 260.6786,
+    "lb_fixed_rotation_mm": 285.2846,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "closure": {
+    "accepted": 1,
+    "arms": {
+      "far": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "flip": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "replace": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "room": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "rotate": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "shift": {
+        "pulls": 1,
+        "wins": 1
+      },
+      "swap": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "window": {
+        "pulls": 0,
+        "wins": 0
+      }
+    },
+    "judge": "route",
+    "prior": null,
+    "routes": 1,
+    "stop": "complete",
+    "trials": [
+      {
+        "accepted": true,
+        "after": 0,
+        "arm": "shift",
+        "before": 3,
+        "escalated": false,
+        "what": "X3 shift -y 1.00 mm"
+      }
+    ]
+  },
+  "fixed_parts": [
+    {
+      "reason": "locked",
+      "ref": "U2"
+    },
+    {
+      "reason": "locked",
+      "ref": "LED3"
+    },
+    {
+      "reason": "locked",
+      "ref": "LED4"
+    },
+    {
+      "reason": "locked",
+      "ref": "LED2"
+    },
+    {
+      "reason": "locked",
+      "ref": "LED1"
+    },
+    {
+      "reason": "locked",
+      "ref": "U7"
+    },
+    {
+      "reason": "locked",
+      "ref": "U1"
+    },
+    {
+      "reason": "locked",
+      "ref": "CN1"
+    },
+    {
+      "reason": "locked",
+      "ref": "R5"
+    },
+    {
+      "reason": "locked",
+      "ref": "R6"
+    },
+    {
+      "reason": "locked",
+      "ref": "Noname_4"
+    },
+    {
+      "reason": "locked",
+      "ref": "Noname_3"
+    },
+    {
+      "reason": "locked",
+      "ref": "Noname_2"
+    },
+    {
+      "reason": "locked",
+      "ref": "Noname_1"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/Hardware_Playground_Touch_Switch_2ch_PCB/unrouted.kicad_pcb",
+  "kept": "closure",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "closure",
+  "movable": 42,
+  "moved": 1,
+  "nets": 60,
+  "notes": [
+    "input not legal: 17 conflict(s) involving movable parts (C24/U1, C25/C1, C3/U1, C23/U1, C15/C9, C15/X2, ...); compared as it is (--repair-input compares its minimal repair instead)"
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/closure-route10m/boards/Hardware_Playground_Touch_Switch_2ch_PCB.placed.kicad_pcb",
+  "parts": 56,
+  "pins": 193,
+  "rounds": 0,
+  "route_check": {
+    "connections": 116,
+    "connections_input": 116,
+    "connections_output": 116,
+    "kept_input": false,
+    "routed_input": 113,
+    "routed_output": 116,
+    "work": 10000000
+  },
+  "route_input": {
+    "connections": 116,
+    "routed": 113,
+    "seconds": 94.312040351,
+    "unrouted": 3
+  },
+  "route_output": {
+    "connections": 116,
+    "routed": 116,
+    "seconds": 60.271411483,
+    "unrouted": 0
+  },
+  "routes": 2,
+  "seconds": {},
+  "seconds_total": 154.624837069,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

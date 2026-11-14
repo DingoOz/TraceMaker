@@ -1,0 +1,463 @@
+live view: http://127.0.0.1:8842/
+portfolio: 8 variants on 4 threads
+searches: 24 ok (77429 expansions), 203 failed (922814 expansions); fields 0 GPU + 13 CPU (0.10 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 17 connections improved
+restarts 0; legality checks 178705; rips 0, passes 1, boxed-in 173, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 5, 5 proved no path, 20992 cells visited
+failed-search expansions: strict confined 0, strict wide 922814, negotiated confined 0, negotiated wide 0
+searches: 24 ok (77429 expansions), 207 failed (926282 expansions); fields 0 GPU + 17 CPU (0.09 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 17 connections improved
+restarts 0; legality checks 160273; rips 0, passes 1, boxed-in 177, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 5, 5 proved no path, 20992 cells visited
+failed-search expansions: strict confined 0, strict wide 926282, negotiated confined 0, negotiated wide 0
+searches: 1083 ok (459173 expansions), 720 failed (541902 expansions); fields 0 GPU + 116 CPU (1.23 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 45; legality checks 1079909; rips 0, passes 1, boxed-in 616, nogood skips 8, history cells 0, transactions 0 kept of 0
+reachability checks: 198, 198 proved unreachable, 169260 cells visited
+failed-search expansions: strict confined 0, strict wide 189796, negotiated confined 0, negotiated wide 182846
+searches: 1136 ok (490674 expansions), 496 failed (363016 expansions); fields 0 GPU + 106 CPU (1.61 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 17 connections improved
+restarts 46; legality checks 963153; rips 0, passes 1, boxed-in 436, nogood skips 188, history cells 0, transactions 0 kept of 0
+reachability checks: 20, 20 proved unreachable, 10370 cells visited
+failed-search expansions: strict confined 0, strict wide 169800, negotiated confined 0, negotiated wide 182846
+searches: 1136 ok (491435 expansions), 542 failed (385666 expansions); fields 0 GPU + 108 CPU (1.55 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 17 connections improved
+restarts 46; legality checks 986202; rips 0, passes 1, boxed-in 464, nogood skips 160, history cells 0, transactions 0 kept of 0
+reachability checks: 46, 46 proved unreachable, 18646 cells visited
+failed-search expansions: strict confined 0, strict wide 184174, negotiated confined 0, negotiated wide 182846
+searches: 1136 ok (490674 expansions), 496 failed (363016 expansions); fields 0 GPU + 106 CPU (1.13 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 17 connections improved
+restarts 46; legality checks 963153; rips 0, passes 1, boxed-in 436, nogood skips 188, history cells 0, transactions 0 kept of 0
+reachability checks: 20, 20 proved unreachable, 10370 cells visited
+failed-search expansions: strict confined 0, strict wide 169800, negotiated confined 0, negotiated wide 182846
+searches: 1136 ok (490674 expansions), 496 failed (363016 expansions); fields 0 GPU + 106 CPU (1.52 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 17 connections improved
+restarts 46; legality checks 963153; rips 0, passes 1, boxed-in 436, nogood skips 188, history cells 0, transactions 0 kept of 0
+reachability checks: 20, 20 proved unreachable, 10370 cells visited
+failed-search expansions: strict confined 0, strict wide 169800, negotiated confined 0, negotiated wide 182846
+searches: 24 ok (14183 expansions), 446 failed (1020082 expansions); fields 20 GPU + 424 CPU (5.81 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 0; legality checks 1111462; rips 0, passes 2, boxed-in 395, nogood skips 148, history cells 0, transactions 0 kept of 0
+reachability checks: 20, 20 proved unreachable, 41046 cells visited
+failed-search expansions: strict confined 0, strict wide 670394, negotiated confined 0, negotiated wide 308642
+  variant 0 exact bends, shortest first    routed 24 in 2.0 s
+  variant 1 fast bends, shortest first, crowded source routed 24 in 4.8 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 24 in 4.6 s
+  variant 3 fast bends, jittered order, escape plan routed 24 in 5.1 s
+  variant 4 exact bends, jittered order    routed 24 in 1.7 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 24 in 11.8 s  <- best
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 24 in 5.5 s
+  variant 7 fast bends, dear vias, crowded source routed 24 in 3.9 s
+rescue (warm): 104 of 128 connections are open; routing again with relax (from the plain routes, 1 round of 1000000 work)
+portfolio: 8 variants on 4 threads
+warm start: 24 saved routes taken over, 0 not legal under these rules
+warm start: 24 saved routes taken over, 0 not legal under these rules
+warm start: 24 saved routes taken over, 0 not legal under these rules
+warm start: 24 saved routes taken over, 0 not legal under these rules
+searches: 2 ok (20 expansions), 270 failed (1009175 expansions); fields 0 GPU + 4 CPU (0.02 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 7 connections improved
+restarts 0; legality checks 164080; rips 0, passes 1, boxed-in 239, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 509882, negotiated confined 0, negotiated wide 499293
+warm start: 24 saved routes taken over, 0 not legal under these rules
+searches: 2 ok (20 expansions), 264 failed (1003950 expansions); fields 0 GPU + 4 CPU (0.01 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 7 connections improved
+restarts 0; legality checks 163190; rips 0, passes 1, boxed-in 232, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 500092, negotiated confined 0, negotiated wide 503858
+warm start: 24 saved routes taken over, 0 not legal under these rules
+searches: 669 ok (384277 expansions), 492 failed (623158 expansions); fields 4 GPU + 200 CPU (2.43 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 26; legality checks 1111158; rips 0, passes 1, boxed-in 408, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 310806, negotiated confined 0, negotiated wide 312352
+warm start: 24 saved routes taken over, 0 not legal under these rules
+searches: 664 ok (384763 expansions), 492 failed (623158 expansions); fields 4 GPU + 200 CPU (2.64 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 26; legality checks 1112063; rips 0, passes 1, boxed-in 408, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 310806, negotiated confined 0, negotiated wide 312352
+warm start: 24 saved routes taken over, 0 not legal under these rules
+searches: 659 ok (384897 expansions), 492 failed (623034 expansions); fields 4 GPU + 200 CPU (2.60 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 26; legality checks 1112077; rips 0, passes 1, boxed-in 408, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 310682, negotiated confined 0, negotiated wide 312352
+searches: 664 ok (384763 expansions), 492 failed (622958 expansions); fields 4 GPU + 200 CPU (2.84 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 26; legality checks 1111811; rips 0, passes 1, boxed-in 408, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 310606, negotiated confined 0, negotiated wide 312352
+searches: 2 ok (42 expansions), 402 failed (1051542 expansions); fields 0 GPU + 400 CPU (4.46 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 0; legality checks 1145198; rips 0, passes 1, boxed-in 335, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 558010, negotiated confined 0, negotiated wide 493532
+searches: 633 ok (378798 expansions), 492 failed (623158 expansions); fields 4 GPU + 200 CPU (3.38 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 25; legality checks 1109508; rips 0, passes 1, boxed-in 408, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 310806, negotiated confined 0, negotiated wide 312352
+ramp stage 1/2 (clearance -0.0600 mm): 26 of 128 routed
+warm start: 25 saved routes taken over, 1 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 25 saved routes taken over, 1 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 25 saved routes taken over, 1 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 25 saved routes taken over, 1 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 25 saved routes taken over, 1 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 25 saved routes taken over, 1 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 25 saved routes taken over, 1 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 25 saved routes taken over, 1 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 25 in 0.0 s  <- best
+  variant 1 fast bends, shortest first, crowded source routed 25 in 0.1 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 25 in 0.1 s
+  variant 3 fast bends, jittered order, escape plan routed 25 in 0.1 s
+  variant 4 exact bends, jittered order    routed 25 in 0.0 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 25 in 0.0 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 25 in 0.0 s
+  variant 7 fast bends, dear vias, crowded source routed 25 in 0.0 s
+rescue (warm): 24 -> 25 routed (the relax result is kept)
+rescue (fresh): 103 of 128 connections are open; routing again with relax (from nothing, 1 round of 1000000 work)
+portfolio: 8 variants on 4 threads
+searches: 26 ok (119693 expansions), 191 failed (928516 expansions); fields 0 GPU + 47 CPU (0.33 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 21 connections improved
+restarts 0; legality checks 160311; rips 0, passes 1, boxed-in 163, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 1, 1 proved no path, 4999 cells visited
+failed-search expansions: strict confined 0, strict wide 928516, negotiated confined 0, negotiated wide 0
+searches: 26 ok (119693 expansions), 195 failed (959186 expansions); fields 0 GPU + 51 CPU (0.38 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 21 connections improved
+restarts 0; legality checks 164967; rips 0, passes 1, boxed-in 165, nogood skips 0, history cells 0, transactions 0 kept of 0
+late reachability proofs: 1, 1 proved no path, 4999 cells visited
+failed-search expansions: strict confined 0, strict wide 959186, negotiated confined 0, negotiated wide 0
+searches: 130 ok (74785 expansions), 732 failed (927310 expansions); fields 4 GPU + 226 CPU (2.70 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 21 connections improved
+restarts 4; legality checks 1028734; rips 0, passes 1, boxed-in 608, nogood skips 4, history cells 0, transactions 0 kept of 0
+reachability checks: 198, 198 proved unreachable, 288316 cells visited
+failed-search expansions: strict confined 0, strict wide 326642, negotiated confined 0, negotiated wide 312352
+searches: 673 ok (390015 expansions), 492 failed (618472 expansions); fields 4 GPU + 182 CPU (3.43 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 25; legality checks 1105253; rips 0, passes 1, boxed-in 424, nogood skips 188, history cells 0, transactions 0 kept of 0
+reachability checks: 16, 16 proved unreachable, 14618 cells visited
+failed-search expansions: strict confined 0, strict wide 291502, negotiated confined 0, negotiated wide 312352
+searches: 580 ok (344863 expansions), 542 failed (655450 expansions); fields 4 GPU + 200 CPU (3.61 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 22; legality checks 1091367; rips 0, passes 1, boxed-in 452, nogood skips 160, history cells 0, transactions 0 kept of 0
+reachability checks: 42, 42 proved unreachable, 29812 cells visited
+failed-search expansions: strict confined 0, strict wide 313286, negotiated confined 0, negotiated wide 312352
+searches: 673 ok (390015 expansions), 492 failed (618296 expansions); fields 4 GPU + 182 CPU (3.06 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 25; legality checks 1105051; rips 0, passes 1, boxed-in 424, nogood skips 188, history cells 0, transactions 0 kept of 0
+reachability checks: 16, 16 proved unreachable, 14618 cells visited
+failed-search expansions: strict confined 0, strict wide 291326, negotiated confined 0, negotiated wide 312352
+searches: 631 ok (383914 expansions), 492 failed (618472 expansions); fields 4 GPU + 182 CPU (3.80 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 24; legality checks 1101985; rips 0, passes 1, boxed-in 424, nogood skips 188, history cells 0, transactions 0 kept of 0
+reachability checks: 16, 16 proved unreachable, 14618 cells visited
+failed-search expansions: strict confined 0, strict wide 291502, negotiated confined 0, negotiated wide 312352
+searches: 26 ok (12938 expansions), 404 failed (990662 expansions); fields 22 GPU + 386 CPU (6.45 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 10 connections improved
+restarts 0; legality checks 1076672; rips 0, passes 2, boxed-in 359, nogood skips 124, history cells 0, transactions 0 kept of 0
+reachability checks: 16, 16 proved unreachable, 38096 cells visited
+failed-search expansions: strict confined 0, strict wide 737894, negotiated confined 0, negotiated wide 214672
+ramp stage 1/2 (clearance -0.0600 mm): 26 of 128 routed
+warm start: 22 saved routes taken over, 4 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 14 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 22 saved routes taken over, 4 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 14 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 22 saved routes taken over, 4 not legal under these rules
+warm start: 22 saved routes taken over, 4 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 14 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 14 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 22 saved routes taken over, 4 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 14 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 22 saved routes taken over, 4 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 14 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 22 saved routes taken over, 4 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 14 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 22 saved routes taken over, 4 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 14 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 22 in 0.1 s
+  variant 1 fast bends, shortest first, crowded source routed 22 in 0.1 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 22 in 0.1 s  <- best
+  variant 3 fast bends, jittered order, escape plan routed 22 in 0.1 s
+  variant 4 exact bends, jittered order    routed 22 in 0.0 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 22 in 0.0 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 22 in 0.0 s
+  variant 7 fast bends, dear vias, crowded source routed 22 in 0.1 s
+rescue (fresh): 25 -> 22 routed (no gain: the result before stands)
+routed 25/128 connections, 52 tracks, 2 vias, pitch 0.050 mm, 1009195 expansions, 48.40 s (best variant 0.04 s)
+  unrouted: +5V: D25.2 -> C19.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: J4.1 -> C27.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: C18.1 -> J4.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: C19.1 -> J8.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: C20.1 -> J5.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: J3.1 -> C16.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: C15.1 -> J6.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: J2.1 -> C14.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U4D+: D8.2 -> J5.3  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)
+  unrouted: VIN: U2.3 -> JP1.2  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: J7.1 -> C17.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: VIN: C21.1 -> D24.2  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: U1.36 -> C7.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: U1.20 -> C10.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(U1-REXT): R6.1 -> U1.27  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +1V8: C13.1 -> U1.28  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: U1.26 -> C5.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: C6.1 -> U1.31  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LC: D21.RA -> D18.GK  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +1V8: U1.25 -> C4.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: VIN: JP1.2 -> C21.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +1V8: U1.21 -> C12.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: C8.1 -> U1.15  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: R5.1 -> C9.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: C20.1 -> zone  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(U1-VBUS_SENSE): R1.2 -> U1.41  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: C9.1 -> U1.42  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(U1-TEST3#): R4.2 -> U1.45  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(U1-EXT_RST#): U1.40 -> R3.2  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LED7: R13.2 -> U1.46  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(U1-TEST1#): U1.43 -> R5.2  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LED6: R12.2 -> U1.47  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D15-1): D15.GA -> D15.RK  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LC: D15.GK -> D15.RA  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LC: D16.GK -> D16.RA  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LC: D19.RA -> D19.GK  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LC: D19.RA -> D20.GK  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LC: D20.RA -> D21.GK  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LC: D17.GK -> D17.RA  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LC: D18.GK -> D18.RA  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D16-1): D16.GA -> D16.RK  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D19-1): D19.GA -> D19.RK  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D20-1): D20.GA -> D20.RK  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D21-1): D21.GA -> D21.RK  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D17-1): D17.GA -> D17.RK  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D18-1): D18.GA -> D18.RK  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +1V8: C11.1 -> U1.6  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LED4: R10.2 -> U1.7  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: U1.8 -> C1.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LED5: R11.2 -> U1.48  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LED3: U1.5 -> R9.2  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: U1.9 -> C3.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LED2: R8.2 -> U1.4  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(U1-VBUS_SENSE): R2.1 -> R1.2  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LED1: R7.2 -> U1.3  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: J5.1 -> C38.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: C17.1 -> C18.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: C16.1 -> C15.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: C10.1 -> C8.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: C9.1 -> R3.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U6D+: J7.3 -> U1.35  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(U2-CAP): U2.7 -> C28.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: J2.1 -> C22.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: C7.1 -> C6.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /XI: Y1.1 -> U1.22  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U1D+: J2.3 -> U1.19  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +1V8: U1.21 -> U1.25  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: J7.1 -> R1.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: U1.31 -> U1.26  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U5D-: J6.2 -> U1.32  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U2D-: J3.2 -> U1.16  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U6D-: J7.2 -> U1.34  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: J3.1 -> U1.8  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: U1.15 -> U1.9  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /XO: Y1.3 -> U1.23  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: U1.26 -> U1.20  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: J6.1 -> C30.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +3.3V: U1.42 -> U1.36  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U2D+: J3.3 -> U1.17  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U1D-: J2.2 -> U1.18  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: J7.1 -> J3.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +5V: J6.1 -> J2.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /D+: J1.3 -> D23.2  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U5D+: J6.3 -> U1.33  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(J1-Pin_1): J1.1 -> JP1.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /D-: J1.2 -> D22.2  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /D-: D22.2 -> U1.29  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /D+: D23.2 -> U1.30  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D19-1): D19.GA -> R11.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U7D+: J8.3 -> U1.38  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: +1V8: U1.6 -> U1.21  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D20-1): D20.GA -> R12.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U7D-: J8.2 -> U1.37  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D15-1): D15.GA -> R7.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U3D-: J4.2 -> U1.13  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /LC: D15.RA -> U1.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D21-1): D21.GA -> R13.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U3D+: J4.3 -> U1.14  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D16-1): D16.GA -> R8.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D17-1): D17.GA -> R9.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U4D-: J5.2 -> U1.11  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: Net-(D18-1): D18.GA -> R10.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  unrouted: /U4D+: J5.3 -> U1.12  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)
+  open by the router's settings: J7.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J8.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C18.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C16.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D15.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D15.RA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D15.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C14.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D16.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D16.RA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D16.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C15.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J2.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D19.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D19.GK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D19.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J5.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C20.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D20.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D20.GK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D20.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C17.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D21.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D21.GK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D21.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J4.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J6.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C19.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D17.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D17.RA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D17.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D18.GA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D18.GK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D18.RA is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D18.RK is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J3.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R7.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R7.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D23.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C11.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R13.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R13.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.7 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R4.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C8.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R11.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R11.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C6.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R6.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D24.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R10.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R10.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R8.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R8.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C28.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C3.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C5.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: Y1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: Y1.3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R12.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R12.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D22.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.5 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.6 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.7 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.9 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.11 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.12 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.13 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.14 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.15 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.16 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.17 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.18 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.19 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.20 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.21 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.22 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.23 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.25 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.26 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.27 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.28 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.29 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.30 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.31 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.32 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.33 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.34 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.35 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.36 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.37 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.38 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.40 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.41 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.42 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.43 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.45 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.46 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.47 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.48 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: JP1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: JP1.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R1.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R9.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R9.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C38.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C7.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C9.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C10.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C12.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R5.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R3.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R3.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C21.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+why open: 154 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 121 only by zone fills or copper graphics, 33 open through congestion (43.90 s)
+  next: route again with --soft-zones: 121 pins are walled in only by zone fills
+  next: 33 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 23067318 expansions, 712122 flood cells, 20250107 cell checks, 10440295 fixed-copper checks, 590826488 field cells in 3942 fields, 11759 commits, 0 rips

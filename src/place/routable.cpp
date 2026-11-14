@@ -8,13 +8,13 @@
 #include <map>
 
 #include "place/anneal.hpp"
+#include "place/eco_util.hpp"
 #include "place/wirelength.hpp"
 
 namespace tmk::place {
 
-namespace {
+namespace detail {
 
-constexpr Coord kLattice = 10'000;
 Coord snap(Coord v) { return (v >= 0 ? (v + kLattice / 2) : (v - kLattice / 2)) / kLattice * kLattice; }
 Point snap(Point q) { return Point{snap(q.x), snap(q.y)}; }
 Point centre(const Part& pt, int r) {
@@ -27,18 +27,6 @@ std::string fmt_mm(Coord v) {
   return buf;
 }
 
-// One ECO move: one part (b < 0) or a swap of two parts.
-struct EcoMove {
-  int a = -1, b = -1;
-  Point pa, pb;
-  std::uint8_t ra = 0, rb = 0;
-  std::string what;
-  std::int64_t score = 0;
-  std::size_t order = 0;
-  std::array<std::int64_t, 8> key() const { return {a, pa.x, pa.y, ra, b, pb.x, pb.y, rb}; }
-};
-
-// Problem copy with the failed nets' weights boosted (ranking and re-placement only; reports use the original).
 Problem boosted(const Problem& p, const std::vector<std::string>& nets, int boost) {
   Problem q = p;
   if (boost <= 1) return q;
@@ -51,7 +39,6 @@ Problem boosted(const Problem& p, const std::vector<std::string>& nets, int boos
   return q;
 }
 
-// Movable parts at the ends of failed connections or with bodies near their boxes (sorted, unique).
 std::vector<int> parts_near(const Problem& p, const Placement& pl, const std::vector<RouteEval::Failure>& failed, Coord corridor) {
   std::vector<Box> boxes;
   std::vector<int> out;
@@ -78,7 +65,6 @@ std::vector<int> parts_near(const Problem& p, const Placement& pl, const std::ve
   return out;
 }
 
-// Distance from a point to a part's body box (0 inside).
 Coord box_dist(const Problem& p, int part, const Placement& pl, Point q) {
   const Box& g = p.parts[z(part)].geom[pl.rot[z(part)]].body;
   const Point o = pl.pos[z(part)];
@@ -94,6 +80,23 @@ void say(const std::function<void(const std::string&)>& log, const std::string& 
 std::string describe(const RouteEval& e) {
   return std::to_string(e.unrouted()) + " unrouted (" + std::to_string(e.routed) + "/" + std::to_string(e.connections) + ")";
 }
+
+}  // namespace detail
+
+using namespace detail;
+
+namespace {
+
+// One ECO move: one part (b < 0) or a swap of two parts.
+struct EcoMove {
+  int a = -1, b = -1;
+  Point pa, pb;
+  std::uint8_t ra = 0, rb = 0;
+  std::string what;
+  std::int64_t score = 0;
+  std::size_t order = 0;
+  std::array<std::int64_t, 8> key() const { return {a, pa.x, pa.y, ra, b, pb.x, pb.y, rb}; }
+};
 
 }  // namespace
 

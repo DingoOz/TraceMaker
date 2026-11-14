@@ -26,6 +26,7 @@ struct RouteEval {
     int part_a = -1, part_b = -1;  // parts at both ends (-1: a zone or an unknown reference)
     Point a, b;                    // end points (pad positions; b = a for zone connections)
     std::string net;
+    std::string reason;  // the router's code (boxed_in, out_of_budget, ...; empty when unknown)
   };
   std::vector<Failure> failed;
   double seconds = 0;
