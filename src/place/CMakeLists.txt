@@ -8,7 +8,7 @@ find_package(nlohmann_json 3 REQUIRED)
 find_package(Threads REQUIRED)
 
 add_library(tm_place STATIC problem.cpp legality.cpp wirelength.cpp lower_bound.cpp global.cpp legalize.cpp congestion.cpp anneal.cpp
-            tempering.cpp lns.cpp placer.cpp routable.cpp place_advice.cpp)
+            tempering.cpp lns.cpp placer.cpp routable.cpp closure.cpp place_advice.cpp)
 add_library(tm::place ALIAS tm_place)
 target_link_libraries(tm_place PUBLIC tm::model tm::geom tm::core nlohmann_json::nlohmann_json PRIVATE tm::crules tm::drc tm::io Eigen3::Eigen Threads::Threads)
 tm_set_warnings(tm_place)

@@ -39,6 +39,10 @@ def main() -> int:
     ap.add_argument("--package", help="run the plugin from this PCM package (scripts/make_release.py) unpacked, with the engine it carries and no TRACEMAKER variable")
     ap.add_argument("--nets", default="", help="route these nets one after the other with the 'route selected nets' action through the daemon "
                     "(comma separated; doc 19 §10) instead of the whole board")
+    ap.add_argument("--refill", default="", choices=["", "after", "in-commit"],
+                    help="refill zones with the routes (TRACEMAKER_REFILL=1) and count the undos back to the input. KiCad 10.0.6 records a refill as a step "
+                         "of its own: 2 undos. in-commit: the refill called inside the open commit (D185: still 2 undos, and it fills before the copper "
+                         "is pushed; the plugin does not do it)")
     ap.add_argument("--place", default="", help="also let the plugin move footprints first (TRACEMAKER_PLACE: refine, auto, ...)")
     a = ap.parse_args()
     try:
@@ -152,8 +156,13 @@ def main() -> int:
             return nets_roundtrip(a, g, sock, env, board, check, ctrl, shot, src) if ok else 1
         if a.place:
             env["TRACEMAKER_PLACE"] = a.place
+        if a.refill:
+            return refill_roundtrip(a, g, sock, env, board, check, ctrl, plugin_py)
+        env.update(BROWSER="true", TRACEMAKER_REPORT="project")  # the report is kept next to the board; no browser is opened
         p = subprocess.run([sys.executable, str(plugin_py)], env=env, capture_output=True, text=True, timeout=3600)
-        print("\n".join(line for line in p.stdout.splitlines() if line.startswith(("routed", "TraceMaker"))))
+        print("\n".join(line for line in p.stdout.splitlines() if line.startswith(("routed", "TraceMaker", "power widths"))))
+        rep = g / "proj" / (src.stem + ".tracemaker-report.html")
+        check(rep.exists() and rep.stat().st_size > 1000, f"the run report was written next to the board ({rep.name})")
         if p.returncode != 0:
             print(p.stderr[-1500:])
         check(p.returncode == 0, "the plugin ran against the live board")
@@ -194,6 +203,48 @@ def main() -> int:
     finally:
         subprocess.run(["docker", "rm", "-f", NAME], capture_output=True)
         xvfb.terminate()
+
+
+def fill_signature(board) -> str:
+    """A digest of every zone's filled polygons (what a refill changes)."""
+    import hashlib
+    h = hashlib.sha256()
+    for z in sorted(board.get_zones(), key=lambda z: z.proto.SerializeToString(deterministic=True)):
+        for layer, polys in sorted(z.filled_polygons.items()):
+            h.update(str(layer).encode())
+            for poly in polys:
+                h.update(poly.proto.SerializeToString(deterministic=True))
+    return h.hexdigest()
+
+
+def refill_roundtrip(a, g, sock, env, board, check, ctrl, plugin_py) -> int:
+    """--refill after|in-commit: routes with a zone refill and counts the undos it takes to get the input's copper and fills back."""
+    from kipy import KiCad
+    t0, v0, f0 = len(board.get_tracks()), len(board.get_vias()), fill_signature(board)
+    check(bool(board.get_zones()), f"the board has zones ({len(board.get_zones())})")
+    env = dict(env, TRACEMAKER_REFILL="1", TRACEMAKER_REPORT="off")
+    if a.refill == "in-commit":
+        env["TRACEMAKER_REFILL_IN_COMMIT"] = "1"  # honoured only by the plugin version of the D185 experiment
+    p = subprocess.run([sys.executable, str(plugin_py)], env=env, capture_output=True, text=True, timeout=3600)
+    print("\n".join(line for line in p.stdout.splitlines() if line.startswith("TraceMaker")))
+    if p.stderr.strip():
+        print(p.stderr[-800:])
+    check(p.returncode == 0, "the plugin ran against the live board")
+    board = KiCad(socket_path=sock).get_board()
+    t1, f1 = len(board.get_tracks()), fill_signature(board)
+    check(t1 != t0, f"copper added: tracks {t0} -> {t1}")
+    check(f1 != f0, "the fills changed (the refill ran)")
+    undos = 0
+    for _ in range(3):
+        ctrl("z")
+        undos += 1
+        board = KiCad(socket_path=sock).get_board()
+        t, v, f = len(board.get_tracks()), len(board.get_vias()), fill_signature(board)
+        print(f"after {undos} undo(s): tracks {t}, vias {v}, fills {'as before' if f == f0 else 'changed'}")
+        if (t, v, f) == (t0, v0, f0):
+            break
+    check((t, v, f) == (t0, v0, f0), f"{undos} undo(s) bring back the input's copper and fills ({a.refill})")
+    return 0
 
 
 def drc_of(path: pathlib.Path) -> tuple:

@@ -1,0 +1,69 @@
+portfolio: 8 variants on 8 threads
+searches: 758 ok (17369417 expansions), 24 failed (2106169 expansions); fields 0 GPU + 473 CPU (1.68 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 791 connections improved
+restarts 0; legality checks 3998305; rips 0, passes 1, boxed-in 22, nogood skips 11, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 0 proved unreachable, 210750 cells visited
+late reachability proofs: 78, 21 proved no path, 665839 cells visited
+failed-search expansions: strict confined 0, strict wide 2106169, negotiated confined 0, negotiated wide 0
+searches: 793 ok (17594818 expansions), 18 failed (1800000 expansions); fields 0 GPU + 502 CPU (2.04 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 823 connections improved
+restarts 0; legality checks 3961523; rips 0, passes 1, boxed-in 18, nogood skips 9, history cells 0, transactions 0 kept of 0
+late reachability proofs: 74, 18 proved no path, 652529 cells visited
+failed-search expansions: strict confined 0, strict wide 1800000, negotiated confined 0, negotiated wide 0
+searches: 971 ok (12946412 expansions), 104 failed (923381 expansions); fields 0 GPU + 335 CPU (7.10 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 19521265; rips 4, passes 2, boxed-in 64, nogood skips 32, history cells 4, transactions 0 kept of 0
+reachability checks: 15, 9 proved unreachable, 7526355 cells visited
+late reachability proofs: 11, 2 proved no path, 90346 cells visited
+failed-search expansions: strict confined 0, strict wide 847375, negotiated confined 0, negotiated wide 0
+searches: 998 ok (8153644 expansions), 92 failed (8584045 expansions); fields 0 GPU + 344 CPU (11.38 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 18413777; rips 26, passes 2, boxed-in 68, nogood skips 34, history cells 36, transactions 0 kept of 0
+reachability checks: 39, 30 proved unreachable, 10096418 cells visited
+late reachability proofs: 8, 2 proved no path, 60650 cells visited
+failed-search expansions: strict confined 0, strict wide 3368445, negotiated confined 0, negotiated wide 0
+searches: 982 ok (18527902 expansions), 19 failed (1572434 expansions); fields 0 GPU + 691 CPU (13.54 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1045 connections improved
+restarts 0; legality checks 21408917; rips 0, passes 1, boxed-in 16, nogood skips 8, history cells 0, transactions 0 kept of 0
+reachability checks: 1, 1 proved unreachable, 446339 cells visited
+late reachability proofs: 53, 10 proved no path, 437475 cells visited
+failed-search expansions: strict confined 0, strict wide 1126095, negotiated confined 0, negotiated wide 0
+searches: 990 ok (15767490 expansions), 36 failed (3830144 expansions); fields 0 GPU + 709 CPU (32.60 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 21824711; rips 10, passes 2, boxed-in 27, nogood skips 14, history cells 19, transactions 0 kept of 0
+reachability checks: 9, 8 proved unreachable, 3827119 cells visited
+late reachability proofs: 19, 0 proved no path, 190033 cells visited
+failed-search expansions: strict confined 0, strict wide 3003026, negotiated confined 0, negotiated wide 0
+searches: 985 ok (13418005 expansions), 63 failed (6878372 expansions); fields 0 GPU + 726 CPU (37.72 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 21201604; rips 7, passes 2, boxed-in 46, nogood skips 23, history cells 3, transactions 0 kept of 0
+reachability checks: 18, 13 proved unreachable, 6752528 cells visited
+late reachability proofs: 21, 4 proved no path, 173189 cells visited
+failed-search expansions: strict confined 0, strict wide 3512285, negotiated confined 0, negotiated wide 0
+searches: 984 ok (14670238 expansions), 65 failed (7083615 expansions); fields 0 GPU + 727 CPU (39.15 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 22656204; rips 8, passes 2, boxed-in 48, nogood skips 24, history cells 30, transactions 0 kept of 0
+reachability checks: 18, 13 proved unreachable, 6754632 cells visited
+late reachability proofs: 25, 6 proved no path, 194695 cells visited
+failed-search expansions: strict confined 0, strict wide 3713872, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 758 in 16.3 s
+  variant 1 fast bends, shortest first, crowded source routed 979 in 74.9 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 963 in 28.3 s
+  variant 3 fast bends, jittered order, escape plan routed 981 in 45.5 s
+  variant 4 exact bends, jittered order    routed 793 in 17.5 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 975 in 34.4 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 986 in 72.4 s  <- best
+  variant 7 fast bends, dear vias, crowded source routed 977 in 78.6 s
+routed 986/995 connections, 4649 tracks, 274 vias, pitch 0.065 mm, 22787668 expansions, 78.94 s (best variant 72.39 s)
+  unrouted: /USB_D-: R4.2 -> U2.3  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: Net-(C16-Pad1): Y1.1 -> U2.16  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /LCD_HV_DnC: R6.14 -> U2.25  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /FLASH_HV_nS: R6.11 -> U2.28  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #8/LED1: D76.1 -> U2.39  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #0/I2C_SCL: U2.18 -> U27.14  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood))
+  unrouted: /Programming Socket #2/INT: U2.31 -> U12.13  ()
+  unrouted: /Programming Socket #1/INT: U2.32 -> U9.13  ()
+  unrouted: /Programming Socket #0/INT: U2.36 -> U6.13  ()
+why open: 18 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 0 only by zone fills or copper graphics, 18 open through congestion (0.34 s)
+  next: 18 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 137925193 expansions, 38078897 flood cells, 132974463 cell checks, 100318866 fixed-copper checks, 4275270424 field cells in 4507 fields, 7461 commits, 55 rips

@@ -1,0 +1,32 @@
+# Power-wide set (doc 05 §79, D184): 30 PCBench boards (seed 7) of the 314 under 800 kB whose designer drew at least half of the supply-net
+# copper (>= 100 mm) at 0.5 mm or wider (bench/power_widths.py on raw.kicad_pcb).
+CPU-Power-Supply-Mod_CPU_Power_Supply_Mod
+DustSensorShield_DustSensorShield
+E202VAR-Natural-Radio-Receiver_e202var-vlf-radio-receiver
+ESP_nRF_Relay_Relay_WiFi_nRF24
+EUC-VESC_electronics_BJT
+ErgodoneWithHole_ErgoDone
+HW-ESP8266_Roomba_ESP8266_Roomba_panel_x_3
+Hangul-Clock_Hangul
+Hardware_Playground_pro_mini
+Hardware_Playground_rpi_zero_ws2812
+Horticulture_Light_EQ_3-Band_3 channel led driver rev0.4
+LadybugLiteBlue_HW_LadybugBlueLite
+NeoWall_NeoWall
+SPEX_HAB_Mainboard_Hardware_Power
+SmartLaserCO2-PCB_WaterCool
+Teensy-Hats_Temperature-Monitor-Hat
+digital_clock_led_clock_3_and_4_digit
+hardware-designs_nixie-combo
+kitspace_12_24_boost_converter
+kitspace_8_switch_array
+kitspace_OtterScreen
+kitspace_Unifying
+kitspace_esp8266
+open-source-multimeter_board
+rgb-strip-controller__autosave-rgb-strip
+scimpy_crossover
+solar-lora_solar-lora
+temperature-alarm_controller
+timecircuits-hardware_BTTF-TimeCircuits
+tinyDriverP_tinybot

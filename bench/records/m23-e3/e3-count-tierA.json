@@ -1,0 +1,792 @@
+{
+ "boards": [
+  "655_testboard",
+  "C-BISCUIT_buck-reg-5v",
+  "CubeSAT-Reaction-Wheel_Edison_Motor_Servo",
+  "Dekada_dekada_TopoR_curves",
+  "ESP8266-MQTT-battery-monitor-hw_battery-monitor",
+  "ESP_WiFiSwitch_WifiSwitch",
+  "HES-V2__autosave-hes",
+  "Hangul-Clock_Hangul",
+  "Hardware_Playground_rpi_zero_ws2812",
+  "Inkjet__autosave-InkjetDriver",
+  "LogicBoxen_LogicBoxen",
+  "Photodiode_dethead",
+  "QRPCard_QRPCard",
+  "SmartLaserCO2-PCB__autosave-SmartLaserShield",
+  "TTNEnschedeMote_ArduinoNanoRN2483",
+  "WordClock_v2.0_WordClock_v2",
+  "atmel-programmer_atmel_programmer",
+  "breakout-boards_swd-and-uart",
+  "custom_cpu--ALU_custom_cpu--ALU",
+  "devttys0_IRis",
+  "esp-serial-terminal_esp-com",
+  "esp8266_envmonitor_environment-monitor-1.2",
+  "fan_controller_fan_controller",
+  "kika-in-space_DS8500",
+  "kitspace_4_switch_array",
+  "kitspace_8_switch_array",
+  "kitspace_Potentiometer_mount_4LED",
+  "kitspace_aquarius",
+  "kitspace_pmt_combiner",
+  "kitspace_threeboard",
+  "komputer-klavier_KomputerKlavier",
+  "mearm-base-pcb_ServoPCB",
+  "mechkeys_1800-controller",
+  "mini-whip_mini-whip-power-feed",
+  "mosavr_pcie1x_backplane",
+  "opentilt_opentilt1",
+  "phone_rtty_interface_phone_rtty_rev_a",
+  "scimpy_volumebuffer",
+  "spisolator_spisolator",
+  "uC3Moy_uC3Moy"
+ ],
+ "totals": {
+  "bench/results/e3-base-tierA": {
+   "segments": 7620,
+   "off_angle": 768,
+   "off_angle_mm": 561.1,
+   "short": 457
+  },
+  "bench/results/e3-oct-tierA": {
+   "segments": 7878,
+   "off_angle": 510,
+   "off_angle_mm": 331.28000000000003,
+   "short": 457
+  },
+  "bench/results/e3-oct05-tierA": {
+   "segments": 8049,
+   "off_angle": 339,
+   "off_angle_mm": 225.89,
+   "short": 659
+  }
+ },
+ "per_board": {
+  "bench/results/e3-base-tierA": {
+   "655_testboard": {
+    "segments": 270,
+    "off_angle": 19,
+    "off_angle_mm": 14.35,
+    "short": 16
+   },
+   "C-BISCUIT_buck-reg-5v": {
+    "segments": 133,
+    "off_angle": 12,
+    "off_angle_mm": 8.63,
+    "short": 10
+   },
+   "CubeSAT-Reaction-Wheel_Edison_Motor_Servo": {
+    "segments": 17,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "Dekada_dekada_TopoR_curves": {
+    "segments": 200,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 45
+   },
+   "ESP8266-MQTT-battery-monitor-hw_battery-monitor": {
+    "segments": 253,
+    "off_angle": 46,
+    "off_angle_mm": 32.47,
+    "short": 23
+   },
+   "ESP_WiFiSwitch_WifiSwitch": {
+    "segments": 66,
+    "off_angle": 6,
+    "off_angle_mm": 4.56,
+    "short": 1
+   },
+   "HES-V2__autosave-hes": {
+    "segments": 59,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 1
+   },
+   "Hangul-Clock_Hangul": {
+    "segments": 632,
+    "off_angle": 59,
+    "off_angle_mm": 38.46,
+    "short": 6
+   },
+   "Hardware_Playground_rpi_zero_ws2812": {
+    "segments": 106,
+    "off_angle": 2,
+    "off_angle_mm": 1.61,
+    "short": 9
+   },
+   "Inkjet__autosave-InkjetDriver": {
+    "segments": 267,
+    "off_angle": 56,
+    "off_angle_mm": 44.64,
+    "short": 18
+   },
+   "LogicBoxen_LogicBoxen": {
+    "segments": 416,
+    "off_angle": 50,
+    "off_angle_mm": 26.73,
+    "short": 45
+   },
+   "Photodiode_dethead": {
+    "segments": 83,
+    "off_angle": 7,
+    "off_angle_mm": 3.21,
+    "short": 3
+   },
+   "QRPCard_QRPCard": {
+    "segments": 239,
+    "off_angle": 42,
+    "off_angle_mm": 23.46,
+    "short": 21
+   },
+   "SmartLaserCO2-PCB__autosave-SmartLaserShield": {
+    "segments": 330,
+    "off_angle": 34,
+    "off_angle_mm": 25.39,
+    "short": 28
+   },
+   "TTNEnschedeMote_ArduinoNanoRN2483": {
+    "segments": 123,
+    "off_angle": 9,
+    "off_angle_mm": 12.57,
+    "short": 29
+   },
+   "WordClock_v2.0_WordClock_v2": {
+    "segments": 158,
+    "off_angle": 26,
+    "off_angle_mm": 31.01,
+    "short": 2
+   },
+   "atmel-programmer_atmel_programmer": {
+    "segments": 141,
+    "off_angle": 8,
+    "off_angle_mm": 6.68,
+    "short": 3
+   },
+   "breakout-boards_swd-and-uart": {
+    "segments": 36,
+    "off_angle": 1,
+    "off_angle_mm": 0.48,
+    "short": 0
+   },
+   "custom_cpu--ALU_custom_cpu--ALU": {
+    "segments": 287,
+    "off_angle": 16,
+    "off_angle_mm": 11.29,
+    "short": 5
+   },
+   "devttys0_IRis": {
+    "segments": 136,
+    "off_angle": 8,
+    "off_angle_mm": 3.83,
+    "short": 19
+   },
+   "esp-serial-terminal_esp-com": {
+    "segments": 167,
+    "off_angle": 19,
+    "off_angle_mm": 15.69,
+    "short": 7
+   },
+   "esp8266_envmonitor_environment-monitor-1.2": {
+    "segments": 83,
+    "off_angle": 12,
+    "off_angle_mm": 13.23,
+    "short": 1
+   },
+   "fan_controller_fan_controller": {
+    "segments": 345,
+    "off_angle": 26,
+    "off_angle_mm": 12.71,
+    "short": 16
+   },
+   "kika-in-space_DS8500": {
+    "segments": 102,
+    "off_angle": 9,
+    "off_angle_mm": 6.33,
+    "short": 6
+   },
+   "kitspace_4_switch_array": {
+    "segments": 56,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "kitspace_8_switch_array": {
+    "segments": 120,
+    "off_angle": 4,
+    "off_angle_mm": 3.31,
+    "short": 2
+   },
+   "kitspace_Potentiometer_mount_4LED": {
+    "segments": 17,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "kitspace_aquarius": {
+    "segments": 552,
+    "off_angle": 101,
+    "off_angle_mm": 82.71,
+    "short": 30
+   },
+   "kitspace_pmt_combiner": {
+    "segments": 78,
+    "off_angle": 3,
+    "off_angle_mm": 4.53,
+    "short": 0
+   },
+   "kitspace_threeboard": {
+    "segments": 367,
+    "off_angle": 40,
+    "off_angle_mm": 27.66,
+    "short": 8
+   },
+   "komputer-klavier_KomputerKlavier": {
+    "segments": 199,
+    "off_angle": 2,
+    "off_angle_mm": 1.92,
+    "short": 3
+   },
+   "mearm-base-pcb_ServoPCB": {
+    "segments": 64,
+    "off_angle": 4,
+    "off_angle_mm": 3.73,
+    "short": 5
+   },
+   "mechkeys_1800-controller": {
+    "segments": 445,
+    "off_angle": 72,
+    "off_angle_mm": 44.4,
+    "short": 19
+   },
+   "mini-whip_mini-whip-power-feed": {
+    "segments": 63,
+    "off_angle": 19,
+    "off_angle_mm": 11.99,
+    "short": 15
+   },
+   "mosavr_pcie1x_backplane": {
+    "segments": 410,
+    "off_angle": 19,
+    "off_angle_mm": 12.45,
+    "short": 47
+   },
+   "opentilt_opentilt1": {
+    "segments": 58,
+    "off_angle": 3,
+    "off_angle_mm": 2.65,
+    "short": 0
+   },
+   "phone_rtty_interface_phone_rtty_rev_a": {
+    "segments": 121,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 4
+   },
+   "scimpy_volumebuffer": {
+    "segments": 191,
+    "off_angle": 6,
+    "off_angle_mm": 5.12,
+    "short": 6
+   },
+   "spisolator_spisolator": {
+    "segments": 108,
+    "off_angle": 21,
+    "off_angle_mm": 15.93,
+    "short": 3
+   },
+   "uC3Moy_uC3Moy": {
+    "segments": 122,
+    "off_angle": 7,
+    "off_angle_mm": 7.37,
+    "short": 1
+   }
+  },
+  "bench/results/e3-oct-tierA": {
+   "655_testboard": {
+    "segments": 271,
+    "off_angle": 18,
+    "off_angle_mm": 13.13,
+    "short": 16
+   },
+   "C-BISCUIT_buck-reg-5v": {
+    "segments": 138,
+    "off_angle": 7,
+    "off_angle_mm": 4.03,
+    "short": 10
+   },
+   "CubeSAT-Reaction-Wheel_Edison_Motor_Servo": {
+    "segments": 17,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "Dekada_dekada_TopoR_curves": {
+    "segments": 200,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 45
+   },
+   "ESP8266-MQTT-battery-monitor-hw_battery-monitor": {
+    "segments": 268,
+    "off_angle": 31,
+    "off_angle_mm": 14.27,
+    "short": 23
+   },
+   "ESP_WiFiSwitch_WifiSwitch": {
+    "segments": 70,
+    "off_angle": 2,
+    "off_angle_mm": 0.48,
+    "short": 1
+   },
+   "HES-V2__autosave-hes": {
+    "segments": 59,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 1
+   },
+   "Hangul-Clock_Hangul": {
+    "segments": 652,
+    "off_angle": 39,
+    "off_angle_mm": 23.12,
+    "short": 6
+   },
+   "Hardware_Playground_rpi_zero_ws2812": {
+    "segments": 107,
+    "off_angle": 1,
+    "off_angle_mm": 0.94,
+    "short": 9
+   },
+   "Inkjet__autosave-InkjetDriver": {
+    "segments": 299,
+    "off_angle": 24,
+    "off_angle_mm": 13.72,
+    "short": 18
+   },
+   "LogicBoxen_LogicBoxen": {
+    "segments": 424,
+    "off_angle": 42,
+    "off_angle_mm": 20.52,
+    "short": 45
+   },
+   "Photodiode_dethead": {
+    "segments": 84,
+    "off_angle": 6,
+    "off_angle_mm": 2.47,
+    "short": 3
+   },
+   "QRPCard_QRPCard": {
+    "segments": 258,
+    "off_angle": 23,
+    "off_angle_mm": 10.09,
+    "short": 21
+   },
+   "SmartLaserCO2-PCB__autosave-SmartLaserShield": {
+    "segments": 338,
+    "off_angle": 26,
+    "off_angle_mm": 20.3,
+    "short": 28
+   },
+   "TTNEnschedeMote_ArduinoNanoRN2483": {
+    "segments": 124,
+    "off_angle": 8,
+    "off_angle_mm": 10.67,
+    "short": 29
+   },
+   "WordClock_v2.0_WordClock_v2": {
+    "segments": 170,
+    "off_angle": 14,
+    "off_angle_mm": 16.0,
+    "short": 2
+   },
+   "atmel-programmer_atmel_programmer": {
+    "segments": 147,
+    "off_angle": 2,
+    "off_angle_mm": 1.67,
+    "short": 3
+   },
+   "breakout-boards_swd-and-uart": {
+    "segments": 36,
+    "off_angle": 1,
+    "off_angle_mm": 0.48,
+    "short": 0
+   },
+   "custom_cpu--ALU_custom_cpu--ALU": {
+    "segments": 301,
+    "off_angle": 2,
+    "off_angle_mm": 0.09,
+    "short": 5
+   },
+   "devttys0_IRis": {
+    "segments": 136,
+    "off_angle": 8,
+    "off_angle_mm": 3.83,
+    "short": 19
+   },
+   "esp-serial-terminal_esp-com": {
+    "segments": 173,
+    "off_angle": 13,
+    "off_angle_mm": 7.93,
+    "short": 7
+   },
+   "esp8266_envmonitor_environment-monitor-1.2": {
+    "segments": 90,
+    "off_angle": 5,
+    "off_angle_mm": 5.6,
+    "short": 1
+   },
+   "fan_controller_fan_controller": {
+    "segments": 347,
+    "off_angle": 24,
+    "off_angle_mm": 10.39,
+    "short": 16
+   },
+   "kika-in-space_DS8500": {
+    "segments": 106,
+    "off_angle": 5,
+    "off_angle_mm": 2.52,
+    "short": 6
+   },
+   "kitspace_4_switch_array": {
+    "segments": 56,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "kitspace_8_switch_array": {
+    "segments": 120,
+    "off_angle": 4,
+    "off_angle_mm": 3.31,
+    "short": 2
+   },
+   "kitspace_Potentiometer_mount_4LED": {
+    "segments": 17,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "kitspace_aquarius": {
+    "segments": 577,
+    "off_angle": 76,
+    "off_angle_mm": 64.73,
+    "short": 30
+   },
+   "kitspace_pmt_combiner": {
+    "segments": 81,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "kitspace_threeboard": {
+    "segments": 379,
+    "off_angle": 28,
+    "off_angle_mm": 18.53,
+    "short": 8
+   },
+   "komputer-klavier_KomputerKlavier": {
+    "segments": 201,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 3
+   },
+   "mearm-base-pcb_ServoPCB": {
+    "segments": 64,
+    "off_angle": 4,
+    "off_angle_mm": 3.73,
+    "short": 5
+   },
+   "mechkeys_1800-controller": {
+    "segments": 468,
+    "off_angle": 49,
+    "off_angle_mm": 28.83,
+    "short": 19
+   },
+   "mini-whip_mini-whip-power-feed": {
+    "segments": 67,
+    "off_angle": 15,
+    "off_angle_mm": 6.07,
+    "short": 15
+   },
+   "mosavr_pcie1x_backplane": {
+    "segments": 419,
+    "off_angle": 10,
+    "off_angle_mm": 6.51,
+    "short": 47
+   },
+   "opentilt_opentilt1": {
+    "segments": 58,
+    "off_angle": 3,
+    "off_angle_mm": 2.65,
+    "short": 0
+   },
+   "phone_rtty_interface_phone_rtty_rev_a": {
+    "segments": 121,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 4
+   },
+   "scimpy_volumebuffer": {
+    "segments": 195,
+    "off_angle": 2,
+    "off_angle_mm": 1.61,
+    "short": 6
+   },
+   "spisolator_spisolator": {
+    "segments": 112,
+    "off_angle": 17,
+    "off_angle_mm": 12.28,
+    "short": 3
+   },
+   "uC3Moy_uC3Moy": {
+    "segments": 128,
+    "off_angle": 1,
+    "off_angle_mm": 0.78,
+    "short": 1
+   }
+  },
+  "bench/results/e3-oct05-tierA": {
+   "655_testboard": {
+    "segments": 276,
+    "off_angle": 13,
+    "off_angle_mm": 9.03,
+    "short": 22
+   },
+   "C-BISCUIT_buck-reg-5v": {
+    "segments": 141,
+    "off_angle": 4,
+    "off_angle_mm": 2.36,
+    "short": 15
+   },
+   "CubeSAT-Reaction-Wheel_Edison_Motor_Servo": {
+    "segments": 17,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "Dekada_dekada_TopoR_curves": {
+    "segments": 200,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 45
+   },
+   "ESP8266-MQTT-battery-monitor-hw_battery-monitor": {
+    "segments": 283,
+    "off_angle": 16,
+    "off_angle_mm": 4.85,
+    "short": 38
+   },
+   "ESP_WiFiSwitch_WifiSwitch": {
+    "segments": 70,
+    "off_angle": 2,
+    "off_angle_mm": 0.48,
+    "short": 1
+   },
+   "HES-V2__autosave-hes": {
+    "segments": 59,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 1
+   },
+   "Hangul-Clock_Hangul": {
+    "segments": 671,
+    "off_angle": 20,
+    "off_angle_mm": 12.84,
+    "short": 26
+   },
+   "Hardware_Playground_rpi_zero_ws2812": {
+    "segments": 107,
+    "off_angle": 1,
+    "off_angle_mm": 0.94,
+    "short": 9
+   },
+   "Inkjet__autosave-InkjetDriver": {
+    "segments": 306,
+    "off_angle": 17,
+    "off_angle_mm": 10.54,
+    "short": 28
+   },
+   "LogicBoxen_LogicBoxen": {
+    "segments": 435,
+    "off_angle": 31,
+    "off_angle_mm": 15.95,
+    "short": 63
+   },
+   "Photodiode_dethead": {
+    "segments": 84,
+    "off_angle": 6,
+    "off_angle_mm": 2.47,
+    "short": 3
+   },
+   "QRPCard_QRPCard": {
+    "segments": 265,
+    "off_angle": 16,
+    "off_angle_mm": 7.22,
+    "short": 31
+   },
+   "SmartLaserCO2-PCB__autosave-SmartLaserShield": {
+    "segments": 344,
+    "off_angle": 20,
+    "off_angle_mm": 15.66,
+    "short": 36
+   },
+   "TTNEnschedeMote_ArduinoNanoRN2483": {
+    "segments": 125,
+    "off_angle": 7,
+    "off_angle_mm": 8.14,
+    "short": 30
+   },
+   "WordClock_v2.0_WordClock_v2": {
+    "segments": 175,
+    "off_angle": 9,
+    "off_angle_mm": 11.94,
+    "short": 10
+   },
+   "atmel-programmer_atmel_programmer": {
+    "segments": 149,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 5
+   },
+   "breakout-boards_swd-and-uart": {
+    "segments": 37,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 1
+   },
+   "custom_cpu--ALU_custom_cpu--ALU": {
+    "segments": 301,
+    "off_angle": 2,
+    "off_angle_mm": 0.09,
+    "short": 5
+   },
+   "devttys0_IRis": {
+    "segments": 141,
+    "off_angle": 3,
+    "off_angle_mm": 1.16,
+    "short": 25
+   },
+   "esp-serial-terminal_esp-com": {
+    "segments": 178,
+    "off_angle": 8,
+    "off_angle_mm": 5.33,
+    "short": 14
+   },
+   "esp8266_envmonitor_environment-monitor-1.2": {
+    "segments": 92,
+    "off_angle": 3,
+    "off_angle_mm": 3.81,
+    "short": 3
+   },
+   "fan_controller_fan_controller": {
+    "segments": 351,
+    "off_angle": 20,
+    "off_angle_mm": 8.15,
+    "short": 20
+   },
+   "kika-in-space_DS8500": {
+    "segments": 106,
+    "off_angle": 5,
+    "off_angle_mm": 2.52,
+    "short": 6
+   },
+   "kitspace_4_switch_array": {
+    "segments": 56,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "kitspace_8_switch_array": {
+    "segments": 123,
+    "off_angle": 1,
+    "off_angle_mm": 0.97,
+    "short": 5
+   },
+   "kitspace_Potentiometer_mount_4LED": {
+    "segments": 17,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "kitspace_aquarius": {
+    "segments": 598,
+    "off_angle": 55,
+    "off_angle_mm": 53.09,
+    "short": 51
+   },
+   "kitspace_pmt_combiner": {
+    "segments": 81,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "kitspace_threeboard": {
+    "segments": 392,
+    "off_angle": 15,
+    "off_angle_mm": 8.67,
+    "short": 23
+   },
+   "komputer-klavier_KomputerKlavier": {
+    "segments": 201,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 3
+   },
+   "mearm-base-pcb_ServoPCB": {
+    "segments": 65,
+    "off_angle": 3,
+    "off_angle_mm": 2.94,
+    "short": 6
+   },
+   "mechkeys_1800-controller": {
+    "segments": 487,
+    "off_angle": 30,
+    "off_angle_mm": 18.27,
+    "short": 41
+   },
+   "mini-whip_mini-whip-power-feed": {
+    "segments": 68,
+    "off_angle": 14,
+    "off_angle_mm": 5.14,
+    "short": 16
+   },
+   "mosavr_pcie1x_backplane": {
+    "segments": 426,
+    "off_angle": 3,
+    "off_angle_mm": 2.13,
+    "short": 54
+   },
+   "opentilt_opentilt1": {
+    "segments": 59,
+    "off_angle": 2,
+    "off_angle_mm": 1.94,
+    "short": 2
+   },
+   "phone_rtty_interface_phone_rtty_rev_a": {
+    "segments": 121,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 4
+   },
+   "scimpy_volumebuffer": {
+    "segments": 195,
+    "off_angle": 2,
+    "off_angle_mm": 1.61,
+    "short": 6
+   },
+   "spisolator_spisolator": {
+    "segments": 118,
+    "off_angle": 11,
+    "off_angle_mm": 7.65,
+    "short": 9
+   },
+   "uC3Moy_uC3Moy": {
+    "segments": 129,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 2
+   }
+  }
+ }
+}

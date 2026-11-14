@@ -1,0 +1,52 @@
+{
+ "board": "plane_smd",
+ "critical_nets": {
+  "detour_listed_over_mm": 2.0,
+  "mode": "audit",
+  "nets": [
+   {
+    "detour_mm": 0.0,
+    "length_mm": 7.728,
+    "missing_stitches": 0,
+    "name": "XOUT",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [],
+    "why": "Quartz crystal with load capacitors (crystal xout)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 11.252,
+    "missing_stitches": 0,
+    "name": "XIN",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [],
+    "why": "Quartz crystal with load capacitors (crystal xin)"
+   }
+  ],
+  "options": {
+   "first": false,
+   "split_cost": 0.0,
+   "split_hard": false,
+   "via_max": 0,
+   "via_mult": 1.0
+  },
+  "totals": {
+   "missing_stitches": 0,
+   "nets": 2,
+   "over_via_limit": 0,
+   "vias": 0,
+   "void_crossings": 0
+  }
+ },
+ "seconds": 36.992374454
+}

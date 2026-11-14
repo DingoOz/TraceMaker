@@ -518,7 +518,29 @@ Section Builder::si() {
   if (pairs_asked && !src_.has("/pairs")) text(s, {t("Differential pairs were asked for, and the board has none to measure.")});
   if (bus_asked && !src_.has("/buses")) text(s, {t("Buses were asked for, and none was found.")});
   if (rp_asked && !src_.has("/return_paths")) text(s, {t("Return paths were asked for, and no net was found for them.")});
-  if (src_.has("/critical_nets")) {
+  if (src_.has("/critical_nets") && src_.str("/critical_nets/mode") == "audit") {
+    // Found and audited by default (doc 05 §81): say so, and flag the section only when a net has a warning.
+    // A flag is a return-path fault: a split crossed, a layer change with no return via or capacitor in reach, or a detour over the listed threshold.
+    // Open connections are the Result's; a short detour round an antipad is listed, not flagged.
+    std::size_t flagged = 0;
+    const double over = src_.has("/critical_nets/detour_listed_over_mm") ? src_.num("/critical_nets/detour_listed_over_mm") : 2.0;
+    for (std::size_t i = 0; i < src_.size("/critical_nets/nets"); ++i) {
+      const std::string n = idx("/critical_nets/nets", i);
+      flagged += src_.num(n + "/splits") > 0 || src_.num(n + "/missing_stitches") > 0 || src_.num(n + "/detour_mm") > over;
+    }
+    if (src_.size("/critical_nets/nets") > 0)
+      text(s, {t("These critical nets were found from the component rules' roles and the differential pairs, and audited after the route; the route did not treat "
+               "them apart (--critical-auto and the options of doc 05 §44 do; --no-critical-audit skips this).")});
+    if (src_.size("/critical_nets/nets") == 0)
+      text(s, {t("Critical nets were looked for after the route (--no-critical-audit skips this). The board has no such net (no clock, crystal, RF, USB, Ethernet, PCIe, DDR or similar role, and no differential pair), so there was nothing to audit.")});
+    else if (flagged > 0)
+      warn(s, {t(std::to_string(flagged) + " of them cross a split of their reference plane, change layers with no return via or capacitor within reach, "
+                 "or detour round a void by more than the listed threshold: see the Warnings column.")});
+    else
+      text(s, {t("No return-path fault: no audited net crosses a split, every layer change has a return via or capacitor within reach, and no detour is over "
+                 "the listed threshold.")});
+  }
+  if (src_.size("/critical_nets/nets") > 0) {
     text(s, {t("Critical nets: "), src_.v("/critical_nets/totals/nets"), t(" nets, "), src_.v("/critical_nets/totals/vias"), t(" vias, "),
              src_.v("/critical_nets/totals/void_crossings"), t(" crossings of a reference-plane void.")});
     if (src_.has("/critical_nets/totals/missing_stitches")) {

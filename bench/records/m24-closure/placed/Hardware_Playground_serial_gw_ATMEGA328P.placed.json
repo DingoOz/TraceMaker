@@ -1,0 +1,549 @@
+{
+  "after": {
+    "conflicts": [
+      "X1/U4",
+      "C7/U4",
+      "SW1/V43_3",
+      "C2/U4",
+      "C1/U4",
+      "C3/U4",
+      "C4/U4",
+      "C6/U4",
+      "C8/U4",
+      "C10/U4",
+      "C11/U4",
+      "IC1/U4",
+      "R1/U4",
+      "U1/U4",
+      "U2/U4",
+      "U3/U4",
+      "U4/V19_18",
+      "U4/V20_18",
+      "U4/V21_18",
+      "U4/V28_18",
+      "U4/V29_18"
+    ],
+    "crossings": 19,
+    "fixed_outside": 0,
+    "fixed_overlaps": 35,
+    "flipped": 0,
+    "hpwl_mm": 452.29798,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 21,
+    "side_vias": 25,
+    "weighted_hpwl_mm": 365.48501999999996
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [
+      "X1/U4",
+      "C7/U4",
+      "SW1/V43_3",
+      "C2/U4",
+      "C1/U4",
+      "C3/U4",
+      "C4/U4",
+      "C6/U4",
+      "C8/U4",
+      "C10/U4",
+      "C11/U4",
+      "IC1/U4",
+      "R1/U4",
+      "U1/U4",
+      "U2/U4",
+      "U3/U4",
+      "U4/V19_18",
+      "U4/V20_18",
+      "U4/V21_18",
+      "U4/V28_18",
+      "U4/V29_18"
+    ],
+    "crossings": 19,
+    "fixed_outside": 0,
+    "fixed_overlaps": 35,
+    "flipped": 0,
+    "hpwl_mm": 452.29798,
+    "new_outside": 0,
+    "new_overlaps": 21,
+    "outside": 0,
+    "overlaps": 21,
+    "side_vias": 25,
+    "weighted_hpwl_mm": 365.48501999999996
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 5.936797656579263,
+    "lb_any_rotation_mm": 61.562653999999995,
+    "lb_fixed_rotation_mm": 125.893164,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "closure": {
+    "accepted": 0,
+    "arms": {
+      "far": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "flip": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "replace": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "room": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "rotate": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "shift": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "swap": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "window": {
+        "pulls": 4,
+        "wins": 0
+      }
+    },
+    "judge": "route",
+    "prior": null,
+    "routes": 4,
+    "stop": "no candidates",
+    "trials": [
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "window",
+        "before": 1,
+        "escalated": false,
+        "what": "re-place 2 parts around the failures (seed 1)"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "window",
+        "before": 1,
+        "escalated": false,
+        "what": "re-place 2 parts around the failures (seed 2)"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "window",
+        "before": 1,
+        "escalated": false,
+        "what": "re-place 2 parts around the failures (seed 3)"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "window",
+        "before": 1,
+        "escalated": false,
+        "what": "re-place 2 parts around the failures (seed 4)"
+      }
+    ]
+  },
+  "fixed_parts": [
+    {
+      "reason": "edge connector",
+      "ref": "P1"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P2"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "CON1"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V5_3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V9_3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V10_3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V43_3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V8_4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V9_4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V10_4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_5"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V2_7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V4_7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V2_8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V3_8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V4_8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V2_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V3_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V4_9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V2_10"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V3_10"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V4_10"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V2_11"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V3_11"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V4_11"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V2_12"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V3_12"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V4_12"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V2_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V3_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V4_13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V2_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V3_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V4_14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V2_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V3_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V4_15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V2_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V3_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V5_17"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V19_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V20_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V21_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V28_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V29_18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V5_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V6_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V7_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V10_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V11_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V12_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V13_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V14_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V15_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V16_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V17_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V18_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V19_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V20_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V21_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V22_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V23_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V24_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V25_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V26_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V27_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V28_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V29_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V30_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V31_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V32_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V33_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V34_20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "V35_20"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/Hardware_Playground_serial_gw_ATMEGA328P/unrouted.kicad_pcb",
+  "kept": "input",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "closure",
+  "movable": 35,
+  "moved": 0,
+  "nets": 46,
+  "notes": [
+    "input not legal: 21 conflict(s) involving movable parts (X1/U4, C7/U4, SW1/V43_3, C2/U4, C1/U4, C3/U4, ...); compared as it is (--repair-input compares its minimal repair instead)"
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/closure-route10m/boards/Hardware_Playground_serial_gw_ATMEGA328P.placed.kicad_pcb",
+  "parts": 114,
+  "pins": 233,
+  "rounds": 0,
+  "route_check": {
+    "connections": 172,
+    "connections_input": 172,
+    "connections_output": 172,
+    "kept_input": true,
+    "routed_input": 171,
+    "routed_output": 171,
+    "work": 10000000
+  },
+  "route_input": {
+    "connections": 172,
+    "routed": 171,
+    "seconds": 63.966649048,
+    "unrouted": 1
+  },
+  "route_output": {
+    "connections": 172,
+    "routed": 171,
+    "seconds": 63.966649048,
+    "unrouted": 1
+  },
+  "routes": 5,
+  "seconds": {},
+  "seconds_total": 471.587151292,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

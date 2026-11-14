@@ -1,0 +1,9 @@
+# 8 variants, --threads 8, --work 20000000, --no-kb --no-rescue, GPU (RTX 5060 Ti) available; wall seconds, 2026-11-13 quiet machine
+# board  binary  fields  wall_s
+mini_mass_prog_bench_prog_rig  e5 (before)  default (< 500 k cells on CPU)  61.07
+mini_mass_prog_bench_prog_rig  e5f (after)  default (< 500 k cells on CPU)  58.83
+mini_mass_prog_bench_prog_rig  e5f (after)  all on CPU                      79.94
+Aleste-520EX_aleste            e5 (before)  default                          36.34
+Aleste-520EX_aleste            e5f (after)  default                          33.13
+Aleste-520EX_aleste            e5f (after)  all on CPU                       33.23
+# Output boards: one md5 per board for all three (md5.txt).

@@ -56,4 +56,11 @@ struct WidenResult {
 WidenResult widen_tracks(const model::Board& board, const model::DesignRules& rules, std::vector<model::Track>& tracks,
                          const std::vector<model::Via>& vias, const WidenOptions& opt);
 
+// Pad necks for tracks routed wide (D184): a new track wider than a pad of its net that it ends in is split, and the piece at the pad gets
+// the pad's smaller side as its width (never less than `floor` of its net, the width the router would have used), so the wide copper
+// starts just outside the pad, as a designer draws it. The neck runs from the end point for half the pad's larger side plus 0.2 mm (the
+// whole track if it is shorter). Only tracks at 0, 45 or 90 degrees are split, so the split point lies exactly on the track and the result
+// is copper the track already covered: no clearance can get worse and nothing needs checking again. Returns the number of necks made.
+int neck_at_pads(const model::Board& board, std::vector<model::Track>& tracks, const std::vector<Coord>& floor_by_net);
+
 }  // namespace tmk::passes

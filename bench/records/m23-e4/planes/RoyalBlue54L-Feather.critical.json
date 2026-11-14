@@ -1,0 +1,120 @@
+{
+ "board": "RoyalBlue54L-Feather",
+ "critical_nets": {
+  "detour_listed_over_mm": 2.0,
+  "mode": "audit",
+  "nets": [
+   {
+    "detour_mm": 0.0,
+    "length_mm": 0.0,
+    "missing_stitches": 0,
+    "name": "Net-(U1-P1.01{slash}XL2)",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xout)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 0.0,
+    "missing_stitches": 0,
+    "name": "Net-(U1-P1.00{slash}XL1)",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xin)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.326,
+    "missing_stitches": 0,
+    "name": "Net-(U5-XC1)",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xin)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 1.204,
+    "missing_stitches": 0,
+    "name": "Net-(U5-XC2)",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 1,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "1 connection not routed"
+    ],
+    "why": "Quartz crystal with load capacitors (crystal xout)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 0.0,
+    "missing_stitches": 0,
+    "name": "/Debugger/D+",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 4,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "4 connections not routed"
+    ],
+    "why": "USB 2.0 (Full/High Speed) port (usb2 dp)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 0.0,
+    "missing_stitches": 0,
+    "name": "/Debugger/D-",
+    "splits": 0,
+    "tier": 2,
+    "uncovered_mm": 0.0,
+    "unrouted": 4,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [
+     "4 connections not routed"
+    ],
+    "why": "USB 2.0 (Full/High Speed) port (usb2 dm)"
+   }
+  ],
+  "options": {
+   "first": false,
+   "split_cost": 0.0,
+   "split_hard": false,
+   "via_max": 0,
+   "via_mult": 1.0
+  },
+  "totals": {
+   "missing_stitches": 0,
+   "nets": 6,
+   "over_via_limit": 0,
+   "vias": 0,
+   "void_crossings": 0
+  }
+ },
+ "seconds": 222.241699356
+}

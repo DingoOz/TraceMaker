@@ -111,7 +111,7 @@ def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -
         p = subprocess.run([str(PLACE), str(src), "-o", str(placed), "--mode", PLACE_MODE, "--route-check", str(PLACE_WORK),
                             "--threads", str(PLACE_THREADS), "--json", str(js)]
                            + (["--component-rules", PLACE_CRULES] if PLACE_CRULES else []) + PLACE_ARGS
-                           + (["--loop-time", str(int(PLACE_TIMEOUT * 0.6))] if PLACE_MODE == "routable" else []), capture_output=True, text=True, timeout=PLACE_TIMEOUT,
+                           + (["--loop-time", str(int(PLACE_TIMEOUT * 0.6))] if PLACE_MODE in ("routable", "closure") else []), capture_output=True, text=True, timeout=PLACE_TIMEOUT,
                            env=LIVE.env(name) if LIVE else None)
         res["place_exit"] = p.returncode
     except subprocess.TimeoutExpired:
@@ -304,7 +304,7 @@ def main() -> int:
     ap.add_argument("--threads", type=int, help="router threads per board (default with --work: the cores per job, at most 8, "
                     "since the output does not depend on it, but 1 with --halving in the route options, where it does; "
                     "without --work it is also the portfolio size, default 1)")
-    ap.add_argument("--place", choices=["auto", "routable", "eco", "refine", "full"], help="let TraceMaker move components first")
+    ap.add_argument("--place", choices=["auto", "routable", "eco", "refine", "full", "closure"], help="let TraceMaker move components first")
     ap.add_argument("--place-timeout", type=int, default=900)
     ap.add_argument("--place-work", type=int, default=3_000_000)
     ap.add_argument("--place-crules", choices=["off", "report", "soft", "on"], help="component rules during placement (doc 15)")

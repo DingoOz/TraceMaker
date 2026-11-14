@@ -1,0 +1,31 @@
+portfolio: 8 variants on 1 thread
+searches: 345 ok (4160061 expansions), 174 failed (3938100 expansions); fields 0 GPU + 119 CPU (2.98 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 8989688; rips 10, passes 2, boxed-in 126, nogood skips 0, history cells 27, transactions 0 kept of 0
+reachability checks: 53, 45 proved unreachable, 2871413 cells visited
+late reachability proofs: 9, 3 proved no path, 64797 cells visited
+failed-search expansions: strict confined 0, strict wide 1520248, negotiated confined 0, negotiated wide 1499648
+  variant 7 fast bends, dear vias, crowded source routed 335 in 15.4 s  <- best
+routed 335/352 connections, 1607 tracks, 123 vias, pitch 0.075 mm, 10116167 expansions, 15.38 s (best variant 15.35 s)
+  unrouted: GND: IC2.20 -> IC2.18  (boxed in; escapes/neck-down: boxed in)
+  unrouted: SPI_CLK: IC3.8 -> IC2.23  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +3v3: IC2.8 -> IC2.13  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Net-(C13-Pad1): IC2.10 -> C13.1  (boxed in; escapes/neck-down: boxed in)
+  unrouted: GND: IC2.20 -> C14.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: +3v3: IC2.1 -> IC2.8  (boxed in; escapes/neck-down: boxed in)
+  unrouted: GND: C11.2 -> IC2.20  (boxed in; escapes/neck-down: boxed in)
+  unrouted: SPI_MISO: IC3.6 -> IC2.9  (boxed in (target); escapes/neck-down: boxed in (target))
+  unrouted: BBB_+3v3: IC1.7 -> R33.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: SPI_MISO: IC2.9 -> IC8.15  (boxed in; escapes/neck-down: boxed in)
+  unrouted: SPI_CLK: IC2.23 -> IC8.13  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Net-(IC6-Pad7): IC6.7 -> R38.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Net-(IC6-Pad6): IC6.6 -> R37.2  (boxed in; escapes/neck-down: boxed in)
+  unrouted: Net-(IC9-Pad4): IC9.4 -> R57.1  (no path in window)
+  unrouted: SPI_CS_MPU: J1.26 -> IC2.22  (boxed in; escapes/neck-down: boxed in)
+  unrouted: SPI_CS_CAN: J1.38 -> IC8.16  (no path in window)
+  unrouted: PWM_EN: J1.13 -> R20.2  (boxed in (target); escapes/neck-down: boxed in (target))
+  needs a narrower track or via: IC2.8 (+3v3) is walled in on F.Cu for its class's 0.45 mm track and 0.8 mm via, but a track of 0.278 mm gets out (a neck-down).
+why open: 29 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 1 only for the class's track or via, 0 only by zone fills or copper graphics, 28 open through congestion (0.76 s)
+  next: 1 pin gets out only with a track or via smaller than the net class's (the board's minimums allow them; see each pin's text): check that the net is not in --no-neck-nets, or lower the class's track width or via size
+  next: 28 pins are open through congestion: more search (the relax rescue without --no-rescue, --work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 7179957 expansions, 2936210 flood cells, 8989151 cell checks, 3967441 fixed-copper checks, 37655858 field cells in 119 fields, 345 commits, 10 rips

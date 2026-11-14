@@ -1,0 +1,792 @@
+{
+ "boards": [
+  "APM-RPi-Shield_APM-RPi-Shield",
+  "EtherCAT_shield_v1_EtherCAT_shield_v1",
+  "Hardware_Playground_E3_Pcb_rev0.3",
+  "Hardware_Playground_serial_gw_ATMEGA328P",
+  "Hypfer-RGB-W-LED-Controller_led_strip_controller",
+  "KiCad-Like-a-Pro-Tutorial_rf24-breakout-v1",
+  "MicroMaple_MicroMaple",
+  "NavigationThing_NavigationThing",
+  "PCB_small_halogen_replacement",
+  "ProtoHead_v4_Protohead_v4_FAB_rc1",
+  "Prototyping_Workshop_Prototyping_PCB",
+  "Radio-FM-TEA5767_radio tea5767",
+  "TOBS_HybridChargeController",
+  "TPS63001-Breakout_TPS63001 Breakout 25x25",
+  "WemosLoraTracker_wemosGPSrfm",
+  "avr_ledprojector_avr_ledprojection-0402",
+  "bumps_bumps",
+  "cat-trainer_teensy_base_pcb",
+  "digital_clock_led_clock_3_and_4_digit",
+  "espeverywhere_espeverywhere",
+  "fifogfx_c64cart",
+  "gamelights_leds",
+  "kitspace_BalthazarPSU3",
+  "kitspace_OtterPill",
+  "kitspace_USBI2C01",
+  "kitspace_ardfpga",
+  "kitspace_sympetrum-v2%20FF1.1",
+  "kitspace_sympetrum-v2%20NFF1.1",
+  "kitspace_teensy-fx",
+  "kitspace_test-jig",
+  "memsarray_mems_modules",
+  "motor-3xdrv8833-hw_ver1",
+  "ourglass__autosave-watch-v4",
+  "poncho_fpga_fpga-dongle",
+  "retroreflectors_SALSAFLOCK",
+  "royer_royer",
+  "rxadc_14_rxadc_14",
+  "scimpy_amp",
+  "wavegen_wavegen",
+  "yamsek.kicad_i2c_bridge_primary"
+ ],
+ "totals": {
+  "bench/results/e3-base-tierB": {
+   "segments": 16813,
+   "off_angle": 2891,
+   "off_angle_mm": 2779.73,
+   "short": 1320
+  },
+  "bench/results/e3-oct-tierB": {
+   "segments": 17388,
+   "off_angle": 2316,
+   "off_angle_mm": 2281.04,
+   "short": 1321
+  },
+  "bench/results/e3-oct05-tierB": {
+   "segments": 17798,
+   "off_angle": 1906,
+   "off_angle_mm": 2015.18,
+   "short": 1833
+  }
+ },
+ "per_board": {
+  "bench/results/e3-base-tierB": {
+   "APM-RPi-Shield_APM-RPi-Shield": {
+    "segments": 462,
+    "off_angle": 41,
+    "off_angle_mm": 26.43,
+    "short": 25
+   },
+   "EtherCAT_shield_v1_EtherCAT_shield_v1": {
+    "segments": 742,
+    "off_angle": 171,
+    "off_angle_mm": 126.81,
+    "short": 66
+   },
+   "Hardware_Playground_E3_Pcb_rev0.3": {
+    "segments": 946,
+    "off_angle": 198,
+    "off_angle_mm": 306.22,
+    "short": 75
+   },
+   "Hardware_Playground_serial_gw_ATMEGA328P": {
+    "segments": 495,
+    "off_angle": 64,
+    "off_angle_mm": 44.81,
+    "short": 24
+   },
+   "Hypfer-RGB-W-LED-Controller_led_strip_controller": {
+    "segments": 185,
+    "off_angle": 5,
+    "off_angle_mm": 6.3,
+    "short": 8
+   },
+   "KiCad-Like-a-Pro-Tutorial_rf24-breakout-v1": {
+    "segments": 38,
+    "off_angle": 2,
+    "off_angle_mm": 1.66,
+    "short": 0
+   },
+   "MicroMaple_MicroMaple": {
+    "segments": 390,
+    "off_angle": 42,
+    "off_angle_mm": 24.22,
+    "short": 44
+   },
+   "NavigationThing_NavigationThing": {
+    "segments": 241,
+    "off_angle": 15,
+    "off_angle_mm": 9.49,
+    "short": 7
+   },
+   "PCB_small_halogen_replacement": {
+    "segments": 120,
+    "off_angle": 16,
+    "off_angle_mm": 15.84,
+    "short": 21
+   },
+   "ProtoHead_v4_Protohead_v4_FAB_rc1": {
+    "segments": 89,
+    "off_angle": 12,
+    "off_angle_mm": 6.1,
+    "short": 9
+   },
+   "Prototyping_Workshop_Prototyping_PCB": {
+    "segments": 181,
+    "off_angle": 4,
+    "off_angle_mm": 3.65,
+    "short": 34
+   },
+   "Radio-FM-TEA5767_radio tea5767": {
+    "segments": 211,
+    "off_angle": 20,
+    "off_angle_mm": 24.44,
+    "short": 6
+   },
+   "TOBS_HybridChargeController": {
+    "segments": 624,
+    "off_angle": 87,
+    "off_angle_mm": 52.14,
+    "short": 40
+   },
+   "TPS63001-Breakout_TPS63001 Breakout 25x25": {
+    "segments": 60,
+    "off_angle": 6,
+    "off_angle_mm": 2.9,
+    "short": 9
+   },
+   "WemosLoraTracker_wemosGPSrfm": {
+    "segments": 162,
+    "off_angle": 26,
+    "off_angle_mm": 23.24,
+    "short": 7
+   },
+   "avr_ledprojector_avr_ledprojection-0402": {
+    "segments": 840,
+    "off_angle": 343,
+    "off_angle_mm": 132.13,
+    "short": 240
+   },
+   "bumps_bumps": {
+    "segments": 931,
+    "off_angle": 156,
+    "off_angle_mm": 342.73,
+    "short": 130
+   },
+   "cat-trainer_teensy_base_pcb": {
+    "segments": 184,
+    "off_angle": 8,
+    "off_angle_mm": 7.48,
+    "short": 5
+   },
+   "digital_clock_led_clock_3_and_4_digit": {
+    "segments": 649,
+    "off_angle": 62,
+    "off_angle_mm": 70.57,
+    "short": 28
+   },
+   "espeverywhere_espeverywhere": {
+    "segments": 285,
+    "off_angle": 43,
+    "off_angle_mm": 25.66,
+    "short": 9
+   },
+   "fifogfx_c64cart": {
+    "segments": 226,
+    "off_angle": 20,
+    "off_angle_mm": 11.83,
+    "short": 16
+   },
+   "gamelights_leds": {
+    "segments": 100,
+    "off_angle": 19,
+    "off_angle_mm": 12.53,
+    "short": 8
+   },
+   "kitspace_BalthazarPSU3": {
+    "segments": 525,
+    "off_angle": 80,
+    "off_angle_mm": 45.72,
+    "short": 47
+   },
+   "kitspace_OtterPill": {
+    "segments": 485,
+    "off_angle": 252,
+    "off_angle_mm": 254.2,
+    "short": 52
+   },
+   "kitspace_USBI2C01": {
+    "segments": 241,
+    "off_angle": 21,
+    "off_angle_mm": 16.87,
+    "short": 9
+   },
+   "kitspace_ardfpga": {
+    "segments": 899,
+    "off_angle": 167,
+    "off_angle_mm": 173.44,
+    "short": 27
+   },
+   "kitspace_sympetrum-v2%20FF1.1": {
+    "segments": 537,
+    "off_angle": 129,
+    "off_angle_mm": 93.67,
+    "short": 18
+   },
+   "kitspace_sympetrum-v2%20NFF1.1": {
+    "segments": 401,
+    "off_angle": 69,
+    "off_angle_mm": 39.66,
+    "short": 8
+   },
+   "kitspace_teensy-fx": {
+    "segments": 682,
+    "off_angle": 102,
+    "off_angle_mm": 120.02,
+    "short": 41
+   },
+   "kitspace_test-jig": {
+    "segments": 718,
+    "off_angle": 88,
+    "off_angle_mm": 74.49,
+    "short": 30
+   },
+   "memsarray_mems_modules": {
+    "segments": 32,
+    "off_angle": 14,
+    "off_angle_mm": 8.82,
+    "short": 6
+   },
+   "motor-3xdrv8833-hw_ver1": {
+    "segments": 824,
+    "off_angle": 122,
+    "off_angle_mm": 118.56,
+    "short": 47
+   },
+   "ourglass__autosave-watch-v4": {
+    "segments": 476,
+    "off_angle": 95,
+    "off_angle_mm": 40.93,
+    "short": 41
+   },
+   "poncho_fpga_fpga-dongle": {
+    "segments": 1332,
+    "off_angle": 160,
+    "off_angle_mm": 137.78,
+    "short": 65
+   },
+   "retroreflectors_SALSAFLOCK": {
+    "segments": 163,
+    "off_angle": 94,
+    "off_angle_mm": 272.03,
+    "short": 9
+   },
+   "royer_royer": {
+    "segments": 88,
+    "off_angle": 3,
+    "off_angle_mm": 4.03,
+    "short": 8
+   },
+   "rxadc_14_rxadc_14": {
+    "segments": 334,
+    "off_angle": 38,
+    "off_angle_mm": 28.57,
+    "short": 29
+   },
+   "scimpy_amp": {
+    "segments": 318,
+    "off_angle": 15,
+    "off_angle_mm": 13.39,
+    "short": 25
+   },
+   "wavegen_wavegen": {
+    "segments": 488,
+    "off_angle": 59,
+    "off_angle_mm": 48.62,
+    "short": 42
+   },
+   "yamsek.kicad_i2c_bridge_primary": {
+    "segments": 109,
+    "off_angle": 23,
+    "off_angle_mm": 11.75,
+    "short": 5
+   }
+  },
+  "bench/results/e3-oct-tierB": {
+   "APM-RPi-Shield_APM-RPi-Shield": {
+    "segments": 469,
+    "off_angle": 34,
+    "off_angle_mm": 20.88,
+    "short": 25
+   },
+   "EtherCAT_shield_v1_EtherCAT_shield_v1": {
+    "segments": 754,
+    "off_angle": 159,
+    "off_angle_mm": 118.69,
+    "short": 66
+   },
+   "Hardware_Playground_E3_Pcb_rev0.3": {
+    "segments": 958,
+    "off_angle": 186,
+    "off_angle_mm": 295.19,
+    "short": 75
+   },
+   "Hardware_Playground_serial_gw_ATMEGA328P": {
+    "segments": 511,
+    "off_angle": 48,
+    "off_angle_mm": 25.25,
+    "short": 24
+   },
+   "Hypfer-RGB-W-LED-Controller_led_strip_controller": {
+    "segments": 190,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 8
+   },
+   "KiCad-Like-a-Pro-Tutorial_rf24-breakout-v1": {
+    "segments": 40,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "MicroMaple_MicroMaple": {
+    "segments": 404,
+    "off_angle": 28,
+    "off_angle_mm": 12.05,
+    "short": 44
+   },
+   "NavigationThing_NavigationThing": {
+    "segments": 243,
+    "off_angle": 13,
+    "off_angle_mm": 8.02,
+    "short": 7
+   },
+   "PCB_small_halogen_replacement": {
+    "segments": 120,
+    "off_angle": 16,
+    "off_angle_mm": 15.84,
+    "short": 21
+   },
+   "ProtoHead_v4_Protohead_v4_FAB_rc1": {
+    "segments": 90,
+    "off_angle": 11,
+    "off_angle_mm": 5.06,
+    "short": 9
+   },
+   "Prototyping_Workshop_Prototyping_PCB": {
+    "segments": 183,
+    "off_angle": 2,
+    "off_angle_mm": 1.48,
+    "short": 34
+   },
+   "Radio-FM-TEA5767_radio tea5767": {
+    "segments": 221,
+    "off_angle": 10,
+    "off_angle_mm": 9.56,
+    "short": 6
+   },
+   "TOBS_HybridChargeController": {
+    "segments": 653,
+    "off_angle": 58,
+    "off_angle_mm": 29.85,
+    "short": 40
+   },
+   "TPS63001-Breakout_TPS63001 Breakout 25x25": {
+    "segments": 63,
+    "off_angle": 3,
+    "off_angle_mm": 0.88,
+    "short": 9
+   },
+   "WemosLoraTracker_wemosGPSrfm": {
+    "segments": 177,
+    "off_angle": 11,
+    "off_angle_mm": 5.92,
+    "short": 7
+   },
+   "avr_ledprojector_avr_ledprojection-0402": {
+    "segments": 856,
+    "off_angle": 327,
+    "off_angle_mm": 111.95,
+    "short": 240
+   },
+   "bumps_bumps": {
+    "segments": 950,
+    "off_angle": 137,
+    "off_angle_mm": 327.83,
+    "short": 130
+   },
+   "cat-trainer_teensy_base_pcb": {
+    "segments": 185,
+    "off_angle": 7,
+    "off_angle_mm": 6.64,
+    "short": 5
+   },
+   "digital_clock_led_clock_3_and_4_digit": {
+    "segments": 668,
+    "off_angle": 43,
+    "off_angle_mm": 45.2,
+    "short": 28
+   },
+   "espeverywhere_espeverywhere": {
+    "segments": 305,
+    "off_angle": 23,
+    "off_angle_mm": 10.13,
+    "short": 9
+   },
+   "fifogfx_c64cart": {
+    "segments": 234,
+    "off_angle": 12,
+    "off_angle_mm": 5.49,
+    "short": 16
+   },
+   "gamelights_leds": {
+    "segments": 105,
+    "off_angle": 14,
+    "off_angle_mm": 7.21,
+    "short": 8
+   },
+   "kitspace_BalthazarPSU3": {
+    "segments": 547,
+    "off_angle": 58,
+    "off_angle_mm": 27.61,
+    "short": 47
+   },
+   "kitspace_OtterPill": {
+    "segments": 490,
+    "off_angle": 247,
+    "off_angle_mm": 250.68,
+    "short": 52
+   },
+   "kitspace_USBI2C01": {
+    "segments": 252,
+    "off_angle": 10,
+    "off_angle_mm": 6.57,
+    "short": 9
+   },
+   "kitspace_ardfpga": {
+    "segments": 950,
+    "off_angle": 116,
+    "off_angle_mm": 140.16,
+    "short": 27
+   },
+   "kitspace_sympetrum-v2%20FF1.1": {
+    "segments": 592,
+    "off_angle": 74,
+    "off_angle_mm": 45.07,
+    "short": 18
+   },
+   "kitspace_sympetrum-v2%20NFF1.1": {
+    "segments": 431,
+    "off_angle": 39,
+    "off_angle_mm": 22.03,
+    "short": 8
+   },
+   "kitspace_teensy-fx": {
+    "segments": 707,
+    "off_angle": 77,
+    "off_angle_mm": 92.55,
+    "short": 42
+   },
+   "kitspace_test-jig": {
+    "segments": 744,
+    "off_angle": 62,
+    "off_angle_mm": 52.56,
+    "short": 30
+   },
+   "memsarray_mems_modules": {
+    "segments": 38,
+    "off_angle": 8,
+    "off_angle_mm": 4.22,
+    "short": 6
+   },
+   "motor-3xdrv8833-hw_ver1": {
+    "segments": 845,
+    "off_angle": 101,
+    "off_angle_mm": 91.49,
+    "short": 47
+   },
+   "ourglass__autosave-watch-v4": {
+    "segments": 516,
+    "off_angle": 55,
+    "off_angle_mm": 21.24,
+    "short": 41
+   },
+   "poncho_fpga_fpga-dongle": {
+    "segments": 1360,
+    "off_angle": 132,
+    "off_angle_mm": 116.66,
+    "short": 65
+   },
+   "retroreflectors_SALSAFLOCK": {
+    "segments": 170,
+    "off_angle": 87,
+    "off_angle_mm": 266.31,
+    "short": 9
+   },
+   "royer_royer": {
+    "segments": 89,
+    "off_angle": 2,
+    "off_angle_mm": 2.7,
+    "short": 8
+   },
+   "rxadc_14_rxadc_14": {
+    "segments": 339,
+    "off_angle": 33,
+    "off_angle_mm": 25.14,
+    "short": 29
+   },
+   "scimpy_amp": {
+    "segments": 320,
+    "off_angle": 13,
+    "off_angle_mm": 10.97,
+    "short": 25
+   },
+   "wavegen_wavegen": {
+    "segments": 503,
+    "off_angle": 44,
+    "off_angle_mm": 36.01,
+    "short": 42
+   },
+   "yamsek.kicad_i2c_bridge_primary": {
+    "segments": 116,
+    "off_angle": 16,
+    "off_angle_mm": 5.95,
+    "short": 5
+   }
+  },
+  "bench/results/e3-oct05-tierB": {
+   "APM-RPi-Shield_APM-RPi-Shield": {
+    "segments": 482,
+    "off_angle": 21,
+    "off_angle_mm": 10.91,
+    "short": 39
+   },
+   "EtherCAT_shield_v1_EtherCAT_shield_v1": {
+    "segments": 785,
+    "off_angle": 128,
+    "off_angle_mm": 103.78,
+    "short": 109
+   },
+   "Hardware_Playground_E3_Pcb_rev0.3": {
+    "segments": 978,
+    "off_angle": 166,
+    "off_angle_mm": 284.3,
+    "short": 102
+   },
+   "Hardware_Playground_serial_gw_ATMEGA328P": {
+    "segments": 521,
+    "off_angle": 38,
+    "off_angle_mm": 21.25,
+    "short": 41
+   },
+   "Hypfer-RGB-W-LED-Controller_led_strip_controller": {
+    "segments": 190,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 8
+   },
+   "KiCad-Like-a-Pro-Tutorial_rf24-breakout-v1": {
+    "segments": 40,
+    "off_angle": 0,
+    "off_angle_mm": 0.0,
+    "short": 0
+   },
+   "MicroMaple_MicroMaple": {
+    "segments": 409,
+    "off_angle": 23,
+    "off_angle_mm": 8.88,
+    "short": 49
+   },
+   "NavigationThing_NavigationThing": {
+    "segments": 245,
+    "off_angle": 11,
+    "off_angle_mm": 7.33,
+    "short": 11
+   },
+   "PCB_small_halogen_replacement": {
+    "segments": 128,
+    "off_angle": 8,
+    "off_angle_mm": 6.88,
+    "short": 37
+   },
+   "ProtoHead_v4_Protohead_v4_FAB_rc1": {
+    "segments": 91,
+    "off_angle": 10,
+    "off_angle_mm": 4.07,
+    "short": 10
+   },
+   "Prototyping_Workshop_Prototyping_PCB": {
+    "segments": 183,
+    "off_angle": 2,
+    "off_angle_mm": 1.48,
+    "short": 34
+   },
+   "Radio-FM-TEA5767_radio tea5767": {
+    "segments": 227,
+    "off_angle": 4,
+    "off_angle_mm": 3.9,
+    "short": 12
+   },
+   "TOBS_HybridChargeController": {
+    "segments": 687,
+    "off_angle": 24,
+    "off_angle_mm": 10.75,
+    "short": 81
+   },
+   "TPS63001-Breakout_TPS63001 Breakout 25x25": {
+    "segments": 64,
+    "off_angle": 2,
+    "off_angle_mm": 0.31,
+    "short": 10
+   },
+   "WemosLoraTracker_wemosGPSrfm": {
+    "segments": 178,
+    "off_angle": 10,
+    "off_angle_mm": 5.43,
+    "short": 8
+   },
+   "avr_ledprojector_avr_ledprojection-0402": {
+    "segments": 889,
+    "off_angle": 294,
+    "off_angle_mm": 96.81,
+    "short": 288
+   },
+   "bumps_bumps": {
+    "segments": 954,
+    "off_angle": 133,
+    "off_angle_mm": 324.93,
+    "short": 134
+   },
+   "cat-trainer_teensy_base_pcb": {
+    "segments": 189,
+    "off_angle": 3,
+    "off_angle_mm": 2.54,
+    "short": 10
+   },
+   "digital_clock_led_clock_3_and_4_digit": {
+    "segments": 695,
+    "off_angle": 16,
+    "off_angle_mm": 13.4,
+    "short": 55
+   },
+   "espeverywhere_espeverywhere": {
+    "segments": 314,
+    "off_angle": 14,
+    "off_angle_mm": 5.02,
+    "short": 18
+   },
+   "fifogfx_c64cart": {
+    "segments": 238,
+    "off_angle": 8,
+    "off_angle_mm": 2.3,
+    "short": 20
+   },
+   "gamelights_leds": {
+    "segments": 107,
+    "off_angle": 12,
+    "off_angle_mm": 5.5,
+    "short": 10
+   },
+   "kitspace_BalthazarPSU3": {
+    "segments": 558,
+    "off_angle": 47,
+    "off_angle_mm": 20.89,
+    "short": 61
+   },
+   "kitspace_OtterPill": {
+    "segments": 515,
+    "off_angle": 222,
+    "off_angle_mm": 231.96,
+    "short": 89
+   },
+   "kitspace_USBI2C01": {
+    "segments": 253,
+    "off_angle": 9,
+    "off_angle_mm": 5.98,
+    "short": 10
+   },
+   "kitspace_ardfpga": {
+    "segments": 963,
+    "off_angle": 103,
+    "off_angle_mm": 134.0,
+    "short": 41
+   },
+   "kitspace_sympetrum-v2%20FF1.1": {
+    "segments": 611,
+    "off_angle": 55,
+    "off_angle_mm": 33.28,
+    "short": 37
+   },
+   "kitspace_sympetrum-v2%20NFF1.1": {
+    "segments": 451,
+    "off_angle": 19,
+    "off_angle_mm": 10.92,
+    "short": 31
+   },
+   "kitspace_teensy-fx": {
+    "segments": 727,
+    "off_angle": 57,
+    "off_angle_mm": 79.79,
+    "short": 71
+   },
+   "kitspace_test-jig": {
+    "segments": 750,
+    "off_angle": 56,
+    "off_angle_mm": 50.19,
+    "short": 38
+   },
+   "memsarray_mems_modules": {
+    "segments": 41,
+    "off_angle": 5,
+    "off_angle_mm": 2.17,
+    "short": 9
+   },
+   "motor-3xdrv8833-hw_ver1": {
+    "segments": 863,
+    "off_angle": 83,
+    "off_angle_mm": 80.74,
+    "short": 67
+   },
+   "ourglass__autosave-watch-v4": {
+    "segments": 530,
+    "off_angle": 41,
+    "off_angle_mm": 15.06,
+    "short": 55
+   },
+   "poncho_fpga_fpga-dongle": {
+    "segments": 1376,
+    "off_angle": 116,
+    "off_angle_mm": 106.42,
+    "short": 85
+   },
+   "retroreflectors_SALSAFLOCK": {
+    "segments": 181,
+    "off_angle": 76,
+    "off_angle_mm": 254.3,
+    "short": 21
+   },
+   "royer_royer": {
+    "segments": 90,
+    "off_angle": 1,
+    "off_angle_mm": 0.91,
+    "short": 10
+   },
+   "rxadc_14_rxadc_14": {
+    "segments": 347,
+    "off_angle": 25,
+    "off_angle_mm": 20.74,
+    "short": 39
+   },
+   "scimpy_amp": {
+    "segments": 322,
+    "off_angle": 11,
+    "off_angle_mm": 9.54,
+    "short": 28
+   },
+   "wavegen_wavegen": {
+    "segments": 506,
+    "off_angle": 41,
+    "off_angle_mm": 34.05,
+    "short": 45
+   },
+   "yamsek.kicad_i2c_bridge_primary": {
+    "segments": 120,
+    "off_angle": 12,
+    "off_angle_mm": 4.47,
+    "short": 10
+   }
+  }
+ }
+}

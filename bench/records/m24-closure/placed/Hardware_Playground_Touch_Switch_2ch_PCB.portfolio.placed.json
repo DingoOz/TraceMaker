@@ -1,0 +1,488 @@
+{
+  "after": {
+    "conflicts": [
+      "C24/U1",
+      "C25/C1",
+      "C3/U1",
+      "C23/U1",
+      "C15/C9",
+      "C15/X2",
+      "C12/U7",
+      "C4/C2",
+      "C16/R8",
+      "R7/C10",
+      "R9/U5",
+      "R9/C9",
+      "C22/U1",
+      "C21/U1",
+      "C10/X2",
+      "C9/C14",
+      "C9/X2"
+    ],
+    "crossings": 28,
+    "fixed_outside": 2,
+    "fixed_overlaps": 0,
+    "flipped": 0,
+    "hpwl_mm": 561.065,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 17,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 488.44719999999995
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [
+      "C24/U1",
+      "C25/C1",
+      "C3/U1",
+      "C23/U1",
+      "C15/C9",
+      "C15/X2",
+      "C12/U7",
+      "C4/C2",
+      "C16/R8",
+      "R7/C10",
+      "R9/U5",
+      "R9/C9",
+      "C22/U1",
+      "C21/U1",
+      "C10/X2",
+      "C9/C14",
+      "C9/X2"
+    ],
+    "crossings": 29,
+    "fixed_outside": 2,
+    "fixed_overlaps": 0,
+    "flipped": 0,
+    "hpwl_mm": 568.029,
+    "new_outside": 0,
+    "new_overlaps": 17,
+    "outside": 0,
+    "overlaps": 17,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 495.4112
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 1.8737525826822763,
+    "lb_any_rotation_mm": 260.6786,
+    "lb_fixed_rotation_mm": 285.2846,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "closure": {
+    "accepted": 3,
+    "arms": {
+      "far": {
+        "pulls": 7,
+        "wins": 1
+      },
+      "flip": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "replace": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "room": {
+        "pulls": 1,
+        "wins": 0
+      },
+      "rotate": {
+        "pulls": 2,
+        "wins": 0
+      },
+      "shift": {
+        "pulls": 5,
+        "wins": 2
+      },
+      "swap": {
+        "pulls": 6,
+        "wins": 0
+      },
+      "window": {
+        "pulls": 5,
+        "wins": 0
+      }
+    },
+    "prior": null,
+    "routes": 30,
+    "stop": "no candidates",
+    "trials": [
+      {
+        "accepted": true,
+        "after": 4,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "X3 shift -y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "shift",
+        "before": 4,
+        "escalated": false,
+        "what": "X3 shift -y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "rotate",
+        "before": 4,
+        "escalated": false,
+        "what": "H1 rotate 90"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "room",
+        "before": 4,
+        "escalated": false,
+        "what": "room around a failed pad at (80.73, 64.52): R2,R1 pushed 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "swap",
+        "before": 4,
+        "escalated": false,
+        "what": "C19 swap C18"
+      },
+      {
+        "accepted": true,
+        "after": 3,
+        "arm": "far",
+        "before": 4,
+        "escalated": false,
+        "what": "X3 shift -y 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "far",
+        "before": 3,
+        "escalated": false,
+        "what": "L2 shift +x 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "window",
+        "before": 3,
+        "escalated": false,
+        "what": "re-place 14 parts around the failures (seed 1)"
+      },
+      {
+        "accepted": true,
+        "after": 2,
+        "arm": "shift",
+        "before": 3,
+        "escalated": false,
+        "what": "L2 shift -x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "shift",
+        "before": 2,
+        "escalated": false,
+        "what": "L2 shift +x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "replace",
+        "before": 2,
+        "escalated": false,
+        "what": "new placement of the whole board (1)"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "C15 shift -y 3.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "shift",
+        "before": 2,
+        "escalated": false,
+        "what": "L2 shift +x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "rotate",
+        "before": 2,
+        "escalated": false,
+        "what": "L2 rotate 180"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "C15 shift -y 4.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 7,
+        "arm": "window",
+        "before": 2,
+        "escalated": true,
+        "what": "re-place 12 parts around the failures (seed 2)"
+      },
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "swap",
+        "before": 2,
+        "escalated": false,
+        "what": "L2 swap C8"
+      },
+      {
+        "accepted": false,
+        "after": 7,
+        "arm": "replace",
+        "before": 2,
+        "escalated": false,
+        "what": "new placement of the whole board (2)"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "C9 shift -y 4.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 7,
+        "arm": "window",
+        "before": 2,
+        "escalated": true,
+        "what": "re-place 12 parts around the failures (seed 3)"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "swap",
+        "before": 2,
+        "escalated": false,
+        "what": "L2 swap C5"
+      },
+      {
+        "accepted": false,
+        "after": 3,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "L2 shift +x 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 11,
+        "arm": "replace",
+        "before": 2,
+        "escalated": false,
+        "what": "new placement of the whole board (3)"
+      },
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "window",
+        "before": 2,
+        "escalated": true,
+        "what": "re-place 12 parts around the failures (seed 4)"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "far",
+        "before": 2,
+        "escalated": false,
+        "what": "L2 shift +x 3.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "swap",
+        "before": 2,
+        "escalated": false,
+        "what": "L2 swap C7"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "replace",
+        "before": 2,
+        "escalated": false,
+        "what": "new placement of the whole board (4)"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "window",
+        "before": 2,
+        "escalated": true,
+        "what": "re-place 12 parts around the failures (seed 5)"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "swap",
+        "before": 2,
+        "escalated": false,
+        "what": "L2 swap L3"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "swap",
+        "before": 2,
+        "escalated": false,
+        "what": "L2 swap C17"
+      }
+    ]
+  },
+  "fixed_parts": [
+    {
+      "reason": "locked",
+      "ref": "U2"
+    },
+    {
+      "reason": "locked",
+      "ref": "LED3"
+    },
+    {
+      "reason": "locked",
+      "ref": "LED4"
+    },
+    {
+      "reason": "locked",
+      "ref": "LED2"
+    },
+    {
+      "reason": "locked",
+      "ref": "LED1"
+    },
+    {
+      "reason": "locked",
+      "ref": "U7"
+    },
+    {
+      "reason": "locked",
+      "ref": "U1"
+    },
+    {
+      "reason": "locked",
+      "ref": "CN1"
+    },
+    {
+      "reason": "locked",
+      "ref": "R5"
+    },
+    {
+      "reason": "locked",
+      "ref": "R6"
+    },
+    {
+      "reason": "locked",
+      "ref": "Noname_4"
+    },
+    {
+      "reason": "locked",
+      "ref": "Noname_3"
+    },
+    {
+      "reason": "locked",
+      "ref": "Noname_2"
+    },
+    {
+      "reason": "locked",
+      "ref": "Noname_1"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/Hardware_Playground_Touch_Switch_2ch_PCB/unrouted.kicad_pcb",
+  "kept": "closure",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "closure",
+  "movable": 42,
+  "moved": 2,
+  "nets": 60,
+  "notes": [
+    "input not legal: 17 conflict(s) involving movable parts (C24/U1, C25/C1, C3/U1, C23/U1, C15/C9, C15/X2, ...); compared as it is (--repair-input compares its minimal repair instead)"
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/closure-place10m/boards/Hardware_Playground_Touch_Switch_2ch_PCB.placed.kicad_pcb",
+  "parts": 56,
+  "pins": 193,
+  "rounds": 0,
+  "route_check": {
+    "connections": 116,
+    "connections_input": 116,
+    "connections_output": 116,
+    "kept_input": false,
+    "routed_input": 111,
+    "routed_output": 114,
+    "work": 10000000
+  },
+  "route_input": {
+    "connections": 116,
+    "routed": 111,
+    "seconds": 14.135306055,
+    "unrouted": 5
+  },
+  "route_output": {
+    "connections": 116,
+    "routed": 114,
+    "seconds": 19.292833831,
+    "unrouted": 2
+  },
+  "routes": 31,
+  "seconds": {},
+  "seconds_total": 508.456862652,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

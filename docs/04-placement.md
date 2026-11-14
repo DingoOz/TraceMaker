@@ -504,7 +504,7 @@ no more connections unrouted there.
 GPU parallel tempering (CPU only), CP-SAT (replaced by the exact window B&B), the router rungs R4 exact window
 solve / R5 trial ordering / R6 cut proofs (they live in `src/route`, outside this placement change), ECO driven by
 the router's own `PlacementRequest` during routing (ECO runs between complete routes instead), side flipping in ECO,
-decoupling-cap slot moves, the bandit over ECO move types (doc 06).
+decoupling-cap slot moves, the bandit over ECO move types (doc 06). The bandit over move types, side flips as a move and escalation to re-placement were built later as `--mode closure` (§11, D190).
 
 ## 9. Side assignment (D48, 2026-10-05)
 
@@ -609,3 +609,102 @@ has one board to act on (kitspace_hack) and does not close it; on the developmen
 (§8). *CP-SAT windows*: OR-tools is not available as a C++ library here, and exact windows by branch and bound
 already equal full enumeration (§8).
 
+
+## 11. Placement closure: move parts until the board routes (D190, 2026-11-13)
+
+`tracemaker-place in.kicad_pcb -o out.kicad_pcb --mode closure [--route-check W] [--closure-routes 40] [--closure-stall 6]
+[--closure-learn prior.json] [--closure-judge route|portfolio] [--closure-route-args "..."] [--loop-time S] [--flip]`.
+
+1. The input is routed. If everything routes, the input is written unchanged.
+2. Otherwise a bandit chooses the next change to the placement, and the changed placement is routed. The change is
+   kept only when fewer connections stay unrouted.
+3. This repeats until the board routes completely, the trial budget or the time limit runs out, or no candidate is
+   left.
+
+Code: `src/place/closure.{hpp,cpp}`, CLI in `place_main.cpp`, tests `[closure]` in `test_place.cpp`.
+
+**The judge.** By default each trial is routed by the product route itself: `tracemaker route --work W --no-kb` on
+the trial placement, which is written next to the output with the input's project files. `W` is `--route-check`
+(default 3 M); `--closure-route-args` adds route options. The trial is judged by the route summary's counts and
+failures. Every kept change is therefore an improvement of exactly the route a user runs with that budget, and the
+final verification of §8.3b is skipped. `--closure-judge portfolio` uses the in-memory portfolio check of `routable`
+and `eco` instead, with the final verification. The first evaluation below shows why that is not the default: the
+two routes disagree on which placement is better.
+
+**Research.** These approaches were considered:
+
+- *Routability-driven global placement*, where cell inflation, RUDY penalties or electrostatic density stand in for
+  congestion (RePlAce, DREAMPlace, NS-Place, Cypress at ISPD 2025). It predicts congestion but not this router's
+  failures. Here it already exists as `routable`'s RUDY seeds and penalty rounds (§3 G, §8).
+- *Router-in-the-loop incremental placement*, as in ECO flows and the LIRE estimator of CoPR (DAC 2013). It moves
+  only what touches the failures and keeps the designer's intent. Here it exists as `eco` (§4), with one fixed kind
+  of move list.
+- *Learned placement*, such as RL agents (RL_PCB, DATE 2024) or GNN routability predictors. These need training
+  data per router and board family, and nothing such a model learns can be checked the way a route can.
+- *Adaptive operator selection*: ALNS (Ropke and Pisinger 2006) and bandits (UCB1, Auer et al. 2002). These learn
+  online which kind of change pays off. ALNS weights adapt per segment and need many iterations; a route costs
+  seconds to minutes, so a run has 20–40 trials.
+
+**Choice.** A UCB1 bandit over eight kinds of change, from slight to radical. It has a prior, so it starts
+exploiting after a few trials, and a stall rule that forces escalation. The router judges every trial, and only an
+improvement is committed (rules 1 and 4).
+
+| Arm | Change | Cost (routes) |
+|---|---|--:|
+| shift | one part next to a failed connection, 1–2 pitches (0.5 mm) in x or y | 1 |
+| rotate | one part turned 90/180/270° about its body centre | 1 |
+| swap | two interchangeable parts exchange places | 1 |
+| flip | one part to the other side (only with `--flip`, D48) | 1 |
+| room | every movable neighbour of a failed pad pushed away from it at once (pads reported `boxed_in` first) | 1 |
+| far | one part 3–8 pitches away | 1 |
+| window | refine annealing of the parts near the failures, failed nets boosted, capacity around them shrunk | 2 |
+| replace | a new full-mode placement of the whole board with the routability term (seed + k, at most 4) | 3 |
+
+- **Ranking inside an arm.** The ECO estimate of §4: annealing cost with the failed nets boosted, over a capacity
+  map shrunk at the failures, plus a displacement charge, with credit for room cleared around failed pads. A moved
+  part must have no conflict at its new place, even one with a part it already overlapped: KiCad reports a changed
+  overlap as a new error (seen on 1Bitsy with a first version that allowed it). Overlaps the input already has stay
+  where nothing moves. Moves already routed are not tried again.
+- **Bandit.** Each arm's value is (wins + prior) / (pulls + prior pulls) ÷ cost, plus 0.5·√(ln(1+N)/n). The arithmetic
+  is fixed point and ties go to the lower arm. The built-in prior comes from §8.3: shift 35 %, rotate and room 30 %,
+  window 30 %, replace 25 %, the rest 20 %. `--closure-learn FILE` replaces it with the trials and wins of earlier
+  runs (at most 4 pseudo-trials per arm) and adds this run's numbers to the file afterwards. This is how the bandit
+  learns across boards.
+- **Escalation.** After `--closure-stall` trials (default 6) without improvement, the next trial is radical (window
+  or replace). After a failed radical trial the small arms get three trials again. Once a radical change is kept,
+  the small arms work on the new placement.
+- **Determinism.** Every choice depends only on routed results with a work budget. Wall time only stops the job
+  (`--loop-time`, checked between trials).
+
+**Results** (`bench/records/m24-closure`; 14 PCBench boards the router leaves incomplete with the human placement; route
+`--work`, KiCad 10 as judge; closure with `--route-check 10000000 --loop-time 1800`).
+
+| Run | Open | Complete | Clean |
+|---|--:|--:|--:|
+| human placement, route 10 M | 58 | 0 | 0 |
+| human placement, route 40 M (control: more router effort instead) | 40 | 3 | 3 |
+| closure, portfolio judge, route 10 M | 47 | 0 | 0 |
+| **closure, route judge, route 10 M** | **32** | **4** | **3** |
+| **closure, route judge, route 40 M** | **30** | **5** | **4** |
+
+- **At equal route budget, placement closure leaves 10 fewer connections open than the human placement.** It makes
+  two more boards complete (58r-mxalps 4 → 0, LimeSDR 1 → 0) and cuts CurrentSensor from 5 to 1. It is worse on one
+  board (ardfpga 4 → 5).
+- **Changes were mostly slight.** Kept changes were a 0.5–1 mm shift, a rotation, a swap, or a pair of capacitors
+  pushed from a boxed-in pad. Escalation won twice, both times as a window re-place of 15–34 parts. Whole-board
+  re-placement never won.
+- **Closure cannot help where no change is legal.** On serial_gw, phone_amp and memsarray the parts next to the
+  failures overlap neighbours in the placer's model, and a moved part must have no conflict, so these ran out of
+  candidates. A larger route budget closed serial_gw instead.
+- **Cost:** 1,461 s per board at the median (up to the 1,800 s loop limit plus one trial), about 10–15 routes.
+- **The portfolio judge was worse** than the human placement under the product route on 2 boards and made none
+  complete. That is why the product route is the default judge.
+
+**Not built.**
+
+- *Rerouting only the nets next to a change* (§4 step 3). It would make a trial cost seconds instead of a full route
+  on large boards; robomezzi got 13 trials in 30 minutes.
+- *Exact courtyard polygons in the legality model*, so that hand placements KiCad accepts have no conflicts there.
+  This would give serial_gw, phone_amp and memsarray candidates.
+- *Using the router's `PlacementRequest`* (cut geometry) to propose moves instead of geometry around the failed
+  pads.

@@ -1,0 +1,36 @@
+{
+  "arms": {
+    "far": {
+      "pulls": 41,
+      "wins": 1
+    },
+    "flip": {
+      "pulls": 0,
+      "wins": 0
+    },
+    "replace": {
+      "pulls": 32,
+      "wins": 0
+    },
+    "room": {
+      "pulls": 6,
+      "wins": 1
+    },
+    "rotate": {
+      "pulls": 28,
+      "wins": 3
+    },
+    "shift": {
+      "pulls": 51,
+      "wins": 7
+    },
+    "swap": {
+      "pulls": 19,
+      "wins": 1
+    },
+    "window": {
+      "pulls": 37,
+      "wins": 3
+    }
+  }
+}

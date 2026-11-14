@@ -1,0 +1,22 @@
+{
+ "board": "pp",
+ "critical_nets": {
+  "detour_listed_over_mm": 2.0,
+  "mode": "audit",
+  "nets": [],
+  "options": {
+   "first": false,
+   "split_cost": 0.0,
+   "split_hard": false,
+   "via_max": 0,
+   "via_mult": 1.0
+  },
+  "totals": {
+   "nets": 0,
+   "over_via_limit": 0,
+   "vias": 0,
+   "void_crossings": 0
+  }
+ },
+ "seconds": 12.727389313
+}

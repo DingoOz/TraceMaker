@@ -11,6 +11,7 @@ code: []
 > **Update (2026-10-24): D3, the run report, was built (§9, D136).**
 > **Update (2026-10-27): C3, pours and the layer-count advisor, was built (§10, D138).**
 > **Update (2026-11-08): A3, the Kookabus boards, is a private fixture set (§19, D176); §7's open question is answered.**
+> **Update (2026-11-13): group E, features for a finished and usable KiCad board, researched after M16-M22 (§20, D183).**
 > **Status (2026-10-15): adopted as the roadmap's M17–M21 on the owner's answers in §7 (decision D118). Nothing here is built.** The
 > candidates keep the numbers they have in §4; §5 is the order that the answers gave. This note changes no code. Evidence tags: **[R]** checked in this repository (file or doc named), **[W]** from a web source (vendor
 > claims are marked as self-reported), **[A]** my estimate or assumption.
@@ -399,4 +400,82 @@ At 3 M work with `--refill`, 1 of 6 boards is clean (Kookabus-03) and completion
 DRC-clean designer layouts; `--si-rules` changes almost nothing and `--diff-pairs` costs completion on three boards (Kookabus-06's sense
 pairs coupled 95.9 %, the designer's 42.6 %). What these boards need is completion (M22), not high speed. The one real high-speed Kookabus
 design, the CSI-2 vision board Kookabus-05, has no layout yet; it is the board to revisit B1/B2 on.
+
+## 20. Group E: from routed to finished and usable (research, 2026-11-13, D183)
+
+Asked for after the roadmap's workable items were done: which new features help a KiCad user end with a board that is fully routed **and**
+useful. Two sources, read the same day. **[R]** this repository's records: the 2026-11-13 tier runs (`bench/records/m17` §5), M22 and doc
+20, the closure loop (`bench/records/closure`), the plugin and its docs. **[W]** user threads (KiCad forum, EEVblog, Hacker News, Hackaday
+comments, one r/KiCad post through a mirror: anecdotal) and tool pages, mostly vendors describing themselves (self-reported).
+
+### 20.1 What the evidence says
+
+- **Completion is a search-throughput problem, not a placement or rule problem [R].** Of 740 pins open on the eleven boards the 120 s tier
+  run left open, 735 are classed *congested* (more search or more layers), 5 *neck_down*, none walled in (`why_open` in each
+  `*.route.json`). M22 found every repair within a few connections of the base given about 10 % more work (§18). Nothing new to propose
+  here beyond what §18 already says: more search per second.
+- **A routed board is not yet a usable one [R].**
+  - **Power at signal width.** robomezzi's power was routed at 0.25 mm where its designer used 0.6 to 2.5 mm, and the closure loop's
+    safety check passed only with the designer's widths (`bench/records/closure`). `--widen-power` (doc 05 §39.1, D092) widens *after*
+    routing where room is left, so it cannot get back a channel that signals have already taken. It is off by default, and it has no
+    target unless one is stated.
+  - **Style.** Tier B has 2,472 off-angle segments against the references' 853 (`txn-base-tierB/report.md`).
+  - **Stale fills.** The written board keeps its old zone fills: the user refills (B) before DRC, and with the plugin's refill that is a
+    second undo step (`kicad_plugin/README.md`).
+- **The plugin is configured by environment variables before KiCad starts and reports to stdout [R]** (`kicad_plugin/tracemaker_route.py`).
+  There is no dialog, no saved per-project setting, and no report the user is shown.
+- **What users ask for, in order of how often it came up [W]:**
+  1. less cleanup than routing by hand;
+  2. routing inside KiCad, with control;
+  3. route this net or region, keeping the rest;
+  4. respect power and pours;
+  5. DRC-clean output;
+  6. constraints from the design's intent, not typed in;
+  7. "routed is not works": return paths, IR drop, decoupling.
+
+  Freerouting 2.5 (October 2026, self-reported 75 % clean on PCBench) now has a KiCad 10 IPC mode, pour awareness and an MCP server.
+  Quilter generates power pours and shows IR drop. Flux sizes power traces from current. DeepPCB and VelaTrace check each route with DRC.
+
+### 20.2 Candidates, in the order to build them
+
+| # | Feature | Evidence | Size | Gate |
+|---|---|---|---|---|
+| E1 | **Power nets wide from the start.** Supply nets (from component rules and net names) get a target width (stated, IPC-2221 from a stated current, or a default) and are routed at it, necked down to the class width only where the wide track does not fit; `--widen-power` then tops up | robomezzi 0.25 against 0.6-2.5 mm; `--widen-power` ran with no loss on 30 quick boards but only widens where room is left [R]; user point 4 [W] | M | On boards whose designer drew power wider than the class width: length of power copper at its target width up, with completion and clean count equal at equal work (KiCad-judged) |
+| E2 | **The plugin as a KiCad tool:** settings saved per project (a `<project>.tracemaker.json` the plugin reads; no environment variables needed), zones refilled in the same commit as the routes (one undo), and the run report written next to the board and opened in a browser | §20.1 plugin [R]; user points 2, 5 [W] | S-M | In the GUI round trip: one undo removes routes and refill; the settings file changes the run; the report opens |
+| E3 | **Fewer off-angle segments:** a cleanup pass that replaces off-angle and short jogs with 0/45/90 runs where the exact check allows | 2,472 against 853 [R]; user point 1 [W] | M | Off-angle segments down by a third on tiers A-B at no loss of routed connections or added DRC errors |
+| E4 | **Return-path check in every run report:** the reference-return audit exists (doc 05 §42, issue #7: voids, splits and layer changes, measured), but it analyses only nets that are named. The open part is choosing the nets automatically (clocks, buses, pairs, component-rule high-speed nets) and putting the result in the run report | user point 7 [W]; doc 05 §42 analyses nothing by default [R] (the first draft of this row missed §42) | S | In the report of every planes-set board; no flag on boards whose audit is clean |
+| E6 | **A time limit that means the whole run** (found while building E2): `--time` is given again to each relax rescue pass (D160, D163), so a board left open takes about three times what the user set (plugin, `--time 60`: 325 s). A total budget split between the plain run and the rescue, or the plugin saying how long it may take | `bench/records/m17` §5, `bench/records/m23-e2` [R] | S | The plugin's run ends within its stated time, with completion at equal time no worse than now |
+| E5 | **Throughput** (the §18 conclusion): profile the 120 s runs of the eleven open boards and cut the cost per expansion | §20.1 completion [R] | L | More routed at equal wall time on the open boards, results byte-identical at equal work |
+
+Not proposed: IR-drop simulation (a pour-resistance estimate could follow E1, after E4); fab and assembly checks (JLCPCB rule sets exist,
+D146; CPL/BOM export belongs to KiCad plugins that already do it); a learned router (§6).
+
+**E1 built (2026-11-13, D184, doc 05 §79).** `--power-width MM`, off by default. On 30 boards whose designers drew power wide, supply copper
+at ≥ 0.5 mm goes from 20 % to 94 % (the designers: 84 %), with 21 clean boards before and after, no error added, and −2 of 4,038 connections
+(`bench/records/m23-e1`). E2 makes it a plugin setting.
+
+**E2 built (2026-11-13, D185).** Both KiCad actions read a per-project `tracemaker.json` (environment variables still win). The plugin's
+defaults route power at 0.5 mm and open the run report in the browser. In KiCad 10.0.6, one undo still removes the routes, and a refill
+cannot join that step: called inside the open commit it is still its own step (`bench/records/m23-e2`). E6 was added because of what this
+run showed.
+
+**E3 built (2026-11-13, D187, doc 05 §80).** `--octilinear` splits off-angle tracks into 0/45/90° doglegs where the exact check allows. On
+tiers A-B, off-angle segments fall by 39 % (3,659 → 2,245) with routed, clean and DRC errors unchanged: the gate is met with legs down to half a
+track width. Off in the engine, on in the plugin (`bench/records/m23-e3`).
+
+**E4 built (2026-11-13, D188, doc 05 §81).** On a board with a plane, the nets `--critical-auto` would find are audited after every route,
+report only (the copper is byte-identical), and the run report flags only a return-path fault. On the planes set every board's report has the
+section: 2 boards flagged, 2 clean, and 4 with no critical net (`bench/records/m23-e4`).
+
+**E6 built (2026-11-13, D186, doc 05 §82).** `--time-total T` is one limit for the run, with the plain run getting 0.75 of it; the plugin
+uses `--time-total 120`. At equal wall time it routed 111 more of 16,935 connections than the per-stage limit. The gate is met in part: the
+run ends near its stated time (median 124 s for 120 s) and no longer at three times it, but the relax pass's legalising stage can still overrun,
+by up to 28 s on these boards (`bench/records/m23-e6`). That run shared an overloaded machine; on a quiet one the 33 boards end at a
+median of 123 s and at most 134 s (`bench/records/m23-e5`).
+
+**E5, first step (2026-11-13, D189, doc 05 §83).** More search does route more: 8× the work leaves 41 % fewer connections open on the 33
+failing boards. The CPU field now skips rows that cannot change: field cells cost half as much (25-41 ns instead of 53-79), and runs are
+3-27 % faster with byte-identical results. At equal wall time the gain is below the noise (+13 and −18 of 16,935), so the gate is not met.
+What is left: the search loop, the routed-copper checks and the fixed-copper codes, each under a sixth of the time, and none with a single
+large cost.
 

@@ -3618,3 +3618,154 @@ Measured on the M22 gate set (33 `pcbench-bd-fail` boards, 10 M work, 8 variants
 changes a decision, so item 4 does nothing for the gate. The option stays off. With it, all eight items of M22 are built and off; the best
 arm (`--via-shove --escape-all`, §64) cut open connections by 3.5 % against the 15 % gate.
 
+
+## 79. Power nets wide from the start (`--power-width`, 2026-11-13, D184, M23 E1)
+
+`--widen-power` (§39.1) widens after routing where room is left; by then signals hold the channels a wide supply track needed. On
+robomezzi the router left power at 0.25 mm where the designer drew 0.6 to 2.5 mm, and the closure loop's safety check passed only with the
+designer's widths (`bench/records/closure`).
+
+- **Which nets** (`src/app/route_job.cpp`, `supply_net_name`): the last hierarchy component is GND, VCC, VDD, VSS, VEE, VBUS, VIN, VBAT,
+  VSYS, VMOT, VPP or PWR (an A/D/P prefix and an A/D/IO/Q suffix allowed, then `_`, `-`, `.`, `+`, a digit or nothing); a KiCad power
+  symbol's `+NAME`; or a voltage (3V3, 5V, -12V, 1.8V). Stricter than `crules::power_like_name` (D25), which also takes sense lines
+  (`/VInSense`) and KiCad's pin-derived names (`Net-(U4-…LOCAL_PWR…)`). Halves of coupled pairs are left out.
+- **Target**: `--power-width MM`, unless `--widen-net` or a component rule's `width_for_current` states one (the largest stated counts).
+  Every net whose target is wider than its class width is routed wide first (`RouterOptions::preferred_widths`).
+- **Routing**: such a connection is first searched strictly at its target. A strict search cannot rip anything, so wide power never
+  displaces a signal. If it fails, the connection is routed like any other at its class width, with the usual ladder (escapes, neck-down,
+  negotiation). Trying it in the first pass only lost width and gained nothing (below).
+- **Pad necks** (`passes::neck_at_pads`): a wide track ending in a narrower pad of its net is split, and the piece at the pad takes the pad's
+  smaller side (never below the class width) for half the pad's larger side plus 0.2 mm. Only 0/45/90° tracks are split, so the split
+  point lies exactly on the track and the result is copper the track already covered: no clearance can get worse.
+- Then `--widen-power` (switched on by `--power-width`) tops up what was routed narrow where room is left.
+
+**Measured** (`bench/records/m23-e1`): the power-wide set (`bench/sets/power-wide.txt`) is 30 PCBench boards drawn with seed 7 from the
+314 under 800 kB whose designer drew at least half of the supply copper (≥ 100 mm) at 0.5 mm or wider (`bench/power_widths.py` on
+`raw.kicad_pcb`). 3 M work, deterministic, KiCad-judged, `--power-width 0.5` against the base.
+
+| | routed / connections | clean | supply copper at ≥ 0.5 mm: base / `--power-width 0.5` / designer |
+|---|---|---|---|
+| all 30 | 3,946 → 3,944 / 4,038 | 21 → 21 | **20 % / 94 % / 84 %** (of 12,354 / 12,644 / 14,186 mm) |
+
+- No error added on any board, CPU −2.9 % at the same work. Of the 9 boards left open, two route more (ErgoDone +1, BTTF-TimeCircuits +2) and
+  two fewer (SPEX_HAB −4, Unifying −1): −2 of 4,038.
+- Wide attempts in the first pass only (an experiment, removed): the same routed counts on those 9 boards, width share 94 % → 91 %.
+- **Off by default.** It changes every board with a supply net, and the gate of doc 18 §20.2 asks for equal completion; −2 is close to
+  that and not equal. It is the setting the KiCad plugin should offer (E2).
+
+
+## 80. Octilinear doglegs (`--octilinear`, 2026-11-13, D187, M23 E3)
+
+The router's paths leave the lattice through any-angle smoothing (§10), so a finished board carries tracks at odd angles: on tiers A-B one new
+segment in seven (3,659 of 24,433). A designer reads them as unfinished, and a hand edit has to break each one.
+
+- **What it does** (`src/passes/octilinear.{hpp,cpp}`): every new, unlocked track more than 0.1° from an axis and from a diagonal
+  (`off_octilinear_segment`, integer arithmetic) is replaced by a dogleg of two tracks on the eight directions. There are two candidates, the
+  diagonal leg first (`a + d`) or the straight leg first (`b − d`); the first that passes is taken. Ends do not move, so connectivity, the
+  pads reached and the nets are unchanged.
+- **The check**: both legs must be free in the router's obstacle model (`Obstacles::segment_state`), against the board and all new copper,
+  including the doglegs already made, which update the model at once. This is the exact check used to commit a route (rule 1).
+- **Not made**: a leg shorter than `--octilinear-min-leg` track widths (default 0.5; a leg that short would be a jog of its own), and a
+  corner that turns acute with copper of the same net, layer and point (the neighbour's direction is taken from its own new legs if it was
+  replaced). Locked tracks are never touched (rule 6).
+- **Budget**: `--pass-work` exact checks; when they run out the remaining tracks stay as they are (rule 5).
+- **Where**: the first after-route pass (§39), after the pad necks of `--power-width` and before widening, judged like every after-route pass: kept only if no net has
+  more unconnected items after it (`no_worse`). The summary has `octilinear` (off-angle, replaced, no room, short leg, acute, checks).
+
+**Measured** (`bench/records/m23-e3`): tiers A and B, 40 boards each, 3 M work, deterministic. Off-angle segments are counted on the boards as
+written (`bench/octilinear_count.py`, the engine's test).
+
+| | routed | clean | DRC errors added | off-angle segments | shorter than their width |
+|---|---|---|---|---|---|
+| none | 7,740 / 8,017 | 64 | 0 | 3,659 | 1,777 |
+| min leg 1 width | 7,740 / 8,017 | 64 | 0 | 2,826 (−23 %) | 1,778 |
+| min leg 0.5 width (default) | 7,740 / 8,017 | 64 | 0 | **2,245 (−39 %)** | 2,492 |
+
+Tier A alone −56 %, tier B −34 %, wall time the same. The gate of doc 18 §20.2 (a third fewer, no loss, no error added) is met with the half-width
+minimum, at the price of 712 more segments shorter than their width. **Off by default in the engine** (it changes the copper of every
+board) and **on in the KiCad plugin** (`"octilinear": true`, kicad_plugin/README.md). The rest are tracks where neither dogleg fits, mostly
+between the pins of fine-pitch parts.
+
+## 81. Return-path audit in every run report (2026-11-13, D188, M23 E4)
+
+The reference-return audit (§42) analysed only nets the user named, and the critical-net rules (§44) only ran when asked. So a default run
+said nothing about whether a USB pair or a crystal line had copper under it.
+
+- **Default**: on a board with a zone of a net and more than one copper layer, and with none of the critical-net options given
+  (`--critical-auto`, `--critical-nets`, `--critical-first`, `--critical-via-cost`, `--critical-via-max`, `--split-cost`, `--split-hard`,
+  `--si-rules`), the nets `--critical-auto` would find (component roles: clocks, crystals, RF, USB, Ethernet, PCIe, DDR, ...; and named
+  differential pairs) are found and audited after the route on the refilled board. `--no-critical-audit` turns it off.
+- **Report only**: the nets are not passed to the router (no order, no via cost, no split cost), so the copper is the run's without it:
+  StickHub routed with and without it writes byte-identical boards.
+- **Summary and report**: `critical_nets` as in §44, with `"mode": "audit"`. The run report's audit section says how the nets were
+  found, and flags the board (a warning box) only for a return-path fault: a split crossed, a layer change with no return via or
+  capacitor within reach, or a detour over the listed threshold (2 mm). Open connections are not counted, since the Result section has them.
+  A board with no such net says that the nets were looked for and none was found.
+
+**Measured** (`bench/records/m23-e4`): the 8 planes boards, one run each. 4 have critical nets (RoyalBlue54L-Feather 6, StickHub 18,
+interf_u 2, plane_smd 2): StickHub is flagged on 4 nets and interf_u on 1, while RoyalBlue and plane_smd get "no return-path fault". The other 4
+have no clock, pair or high-speed role and say so. The audit took no measurable time (StickHub 40 s with it, 44 s without; noise on a shared
+machine).
+
+## 82. One time limit for the whole run (`--time-total`, 2026-11-13, D186, M23 E6)
+
+`--time T` limits each stage: the plain run, each relax rescue pass (D160, D163), each advisor round and each repair. A board left open
+therefore took about three times T (the plugin at `--time 60`: 325 s, `bench/records/m23-e2`).
+
+- **`--time-total T`** (`src/app/route_job.cpp`): one deadline from the job's start. If the relax rescue may follow, the plain run gets
+  `--rescue-share` of T (default 0.75), otherwise all of it. Each rescue pass gets what is left divided by the passes still to run. The advisor
+  round, the repair windows, the refill repair and the thermal repair each get at most what is left. A stage with less than 1 s left is
+  skipped, and the log says so. `--time` keeps its meaning when `--time-total` is not given.
+- The summary records `time_total_s`, and the live page's budget line shows the total and the plain run's share.
+- **The KiCad plugin's default is `--time-total 120`** (it was `--time 120`).
+
+**Measured** (`bench/records/m23-e6`): the 33 failing tier B-D boards, three arms at once on a loaded machine.
+
+| | routed / 16,935 | wall, median / max s |
+|---|---|---|
+| `--time 40` (each stage 40 s) | 15,871 | 136 / 168 |
+| `--time-total 120`, share 0.5 | 15,909 | 126 / 144 |
+| `--time-total 120`, share 0.75 | **15,982** | 124 / 148 |
+
+At the same wall time, share 0.75 routes 111 more connections than the per-stage limit: a longer plain run is worth more than the rescue
+passes on these boards. **Limit**: the total is a target, not a hard stop. Stages stop at their own check points, and the relax pass's
+legalising stage does not stop on the time limit: 14 of 33 boards took more than 125 s, the most 148 s (P8000_WDC_Emulator, whose 30 s rescue
+took 45 s). Most of that was the load: on a quiet machine (`bench/records/m23-e5`, `e5t-new`, `e5c-new`) the same 33 boards end at a median of
+123 s and at most 134 s, 5 or 6 of them over 125 s, and P8000 at 124 s.
+
+## 83. Throughput: CPU fields skip the rows that cannot change (2026-11-13, D189, M23 E5)
+
+**Is completion limited by search?** On the 33 failing tier B-D boards (`pcbench-bd-fail`, no rescue), 40 M work routes 16,034 of 16,935
+connections against 15,409 at 5 M: open −41 %, better on 26 boards and worse on none. That is about +210 connections per doubling of the work.
+A few boards are not limited by it: DronPi routes 341 of 352 whether its best variant does 6 M or 87 M expansions.
+
+**Where the time goes** (gprof, DronPi, one variant and thread, CPU fields; built with clones off, `-fno-ipa-sra -fno-ipa-cp
+-fno-partial-inlining`, since gprof otherwise charges a clone to the symbol before it). Fields 22 %, the search loop 13 %, the open list's heap 9 %,
+routed-copper checks 7 %, fixed-copper codes 6 %. The heap's share is mostly gprof's per-call cost: a 4-ary heap, which pops in the same
+order, gained 0.5 % of wall time and was not kept.
+
+**The change** (`src/gpu/field_cpu.cpp`, `field_cpu`). The field is a fixpoint of line sweeps in eight directions plus a via step, repeated until
+a round changes nothing (§5.2). After the first rounds the changes are local, near obstacles, yet every round swept every row. Now a row
+is skipped when the step cannot change it:
+
+- along a row, when the row has not changed since the same sweep (layer, direction) last processed it;
+- across rows, when the row it is relaxed from has not changed since then (values only fall, so the row stays within its predecessor's
+  values plus the cost);
+- in the via step, when no layer of the row has changed.
+
+A tick per (layer, row) records the last change, and a tick per (layer, direction, row) the last time it was processed. Every skipped step
+is one that would have changed nothing, so the field, each sweep's change flag and the round count are those of the line-by-line
+reference: `field_cpu_reference`, compared in `tests/test_gpu.cpp`. The GPU kernel is unchanged.
+
+**Measured** (`bench/records/m23-e5`; every output byte-identical, the quick tier's 30 boards too):
+
+| | before | after |
+|---|---|---|
+| CPU field, ns per cell (DronPi / Aleste / mini_mass) | 79 / 63 / 53 | 41 / 39 / 25 |
+| one variant, one thread, `--no-gpu`, 10 M work, wall s (same boards) | 16.20 / 18.71 / 39.39 | 14.81 / 18.11 / 28.64 |
+| eight variants, 8 threads, GPU available, 20 M work, wall s (Aleste / mini_mass) | 36.34 / 61.07 | 33.13 / 58.83 |
+
+Fields under 500 k cells still go to the CPU (D158): with every field on the CPU, mini_mass took 80 s. **At equal wall time**
+(`--time-total 120`, the 33 boards) the difference is not measurable: +13 connections with the GPU, −18 with `--no-gpu`, both within the
+noise of time-limited runs. The work curve above predicts about +15 to +20 for a speed-up of this size. The doc 18 gate is not met; the
+speed-up is kept because it is exact and makes every run faster.

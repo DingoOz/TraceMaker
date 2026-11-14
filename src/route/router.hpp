@@ -262,6 +262,10 @@ struct RouterOptions {
   // Nets that are never narrowed below their class width nor given the neck-down via (power nets in a rule-relaxed routing: they have the least margin,
   // so the relaxation is spent on signals only). Empty = every net may be necked down.
   std::vector<std::string> no_neck_nets;
+  // Preferred widths (doc 05 §79, D184): a connection of one of these nets is first searched strictly at this width (wider than its
+  // class width; narrower entries are ignored) and, if that fails, routed as any other connection at its class width. Power nets that
+  // should be wide get their channel before the signals take it, which `--widen-power` after routing cannot do.
+  std::vector<std::pair<std::string, Coord>> preferred_widths;
   // Buses (doc 05 §38): groups of nets routed lane by lane. The connections of a group between two components are
   // routed one after the other in the order of their pins, each steered along the neighbour routed before it, on
   // the same layers; nets outside the groups do not rip them. `skew` > 0: meanders in the clean-up bring the
@@ -386,6 +390,7 @@ struct RouteResult {
   long nogood_skips = 0;        // attempts skipped because an identical attempt already failed
   int via_retried = 0;          // connections routed by the via retry (D153)
   int necked = 0;               // connections routed at the neck-down width
+  int wide = 0;                 // connections routed at their preferred width (RouterOptions::preferred_widths)
   int restarts = 0;
   int lns_fixed = 0;            // open connections closed by the regional rebuild (doc 16 F4)
   int rescue_tried = 0, rescued = 0;  // pin rescues (D155): radii tried, and connections routed by one

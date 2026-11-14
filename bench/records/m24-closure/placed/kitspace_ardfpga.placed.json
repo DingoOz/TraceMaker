@@ -1,0 +1,351 @@
+{
+  "after": {
+    "conflicts": [],
+    "crossings": 292,
+    "fixed_outside": 1,
+    "fixed_overlaps": 1,
+    "flipped": 0,
+    "hpwl_mm": 2024.7639,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 0,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 1803.41388
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [],
+    "crossings": 311,
+    "fixed_outside": 1,
+    "fixed_overlaps": 1,
+    "flipped": 0,
+    "hpwl_mm": 2024.7559,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 0,
+    "side_vias": 0,
+    "weighted_hpwl_mm": 1803.4058799999998
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 8.318385723446292,
+    "lb_any_rotation_mm": 216.79854,
+    "lb_fixed_rotation_mm": 521.88479,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "closure": {
+    "accepted": 1,
+    "arms": {
+      "far": {
+        "pulls": 2,
+        "wins": 0
+      },
+      "flip": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "replace": {
+        "pulls": 2,
+        "wins": 0
+      },
+      "room": {
+        "pulls": 2,
+        "wins": 0
+      },
+      "rotate": {
+        "pulls": 3,
+        "wins": 0
+      },
+      "shift": {
+        "pulls": 6,
+        "wins": 1
+      },
+      "swap": {
+        "pulls": 2,
+        "wins": 0
+      },
+      "window": {
+        "pulls": 3,
+        "wins": 0
+      }
+    },
+    "judge": "route",
+    "prior": null,
+    "routes": 20,
+    "stop": "time limit",
+    "trials": [
+      {
+        "accepted": true,
+        "after": 5,
+        "arm": "shift",
+        "before": 7,
+        "escalated": false,
+        "what": "RN3 shift +x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "U1 shift +x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "rotate",
+        "before": 5,
+        "escalated": false,
+        "what": "R6 rotate 270"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "room",
+        "before": 5,
+        "escalated": false,
+        "what": "room around a failed pad at (115.43, 100.84): RN3,U3 pushed 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "swap",
+        "before": 5,
+        "escalated": false,
+        "what": "R3 swap R7"
+      },
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "far",
+        "before": 5,
+        "escalated": false,
+        "what": "U1 shift +x 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "U1 shift -y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 15,
+        "arm": "window",
+        "before": 5,
+        "escalated": true,
+        "what": "re-place 12 parts around the failures (seed 1)"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "replace",
+        "before": 5,
+        "escalated": false,
+        "what": "new placement of the whole board (1)"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "U2 shift -x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "rotate",
+        "before": 5,
+        "escalated": false,
+        "what": "R6 rotate 180"
+      },
+      {
+        "accepted": false,
+        "after": 13,
+        "arm": "window",
+        "before": 5,
+        "escalated": true,
+        "what": "re-place 12 parts around the failures (seed 2)"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "room",
+        "before": 5,
+        "escalated": false,
+        "what": "room around a failed pad at (115.43, 100.84): RN3,U3 pushed 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "swap",
+        "before": 5,
+        "escalated": false,
+        "what": "CD1 swap CD2"
+      },
+      {
+        "accepted": false,
+        "after": 11,
+        "arm": "far",
+        "before": 5,
+        "escalated": false,
+        "what": "U1 shift +x 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 19,
+        "arm": "replace",
+        "before": 5,
+        "escalated": true,
+        "what": "new placement of the whole board (2)"
+      },
+      {
+        "accepted": false,
+        "after": 11,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "R6 shift +y 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 7,
+        "arm": "rotate",
+        "before": 5,
+        "escalated": false,
+        "what": "R7 rotate 180"
+      },
+      {
+        "accepted": false,
+        "after": 11,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "U2 shift -x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 16,
+        "arm": "window",
+        "before": 5,
+        "escalated": true,
+        "what": "re-place 12 parts around the failures (seed 3)"
+      }
+    ]
+  },
+  "fixed_parts": [
+    {
+      "reason": "edge connector",
+      "ref": "J1"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J2"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J3"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J4"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J5"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_5"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_4"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_3"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_2"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_ardfpga/unrouted.kicad_pcb",
+  "kept": "closure",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "closure",
+  "movable": 64,
+  "moved": 1,
+  "nets": 95,
+  "notes": [],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/closure-route10m/boards/kitspace_ardfpga.placed.kicad_pcb",
+  "parts": 73,
+  "pins": 320,
+  "rounds": 0,
+  "route_check": {
+    "connections": 214,
+    "connections_input": 214,
+    "connections_output": 214,
+    "kept_input": false,
+    "routed_input": 207,
+    "routed_output": 209,
+    "work": 10000000
+  },
+  "route_input": {
+    "connections": 214,
+    "routed": 207,
+    "seconds": 93.626620676,
+    "unrouted": 7
+  },
+  "route_output": {
+    "connections": 214,
+    "routed": 209,
+    "seconds": 85.30061009,
+    "unrouted": 5
+  },
+  "routes": 21,
+  "seconds": {},
+  "seconds_total": 1803.236807478,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

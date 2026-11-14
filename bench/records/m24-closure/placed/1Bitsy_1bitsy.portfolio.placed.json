@@ -1,0 +1,606 @@
+{
+  "after": {
+    "conflicts": [
+      "REF**_20/C11",
+      "REF**_20/R2",
+      "REF**_19/C5",
+      "REF**_19/L1",
+      "REF**_18/C16",
+      "REF**_18/C18",
+      "C1/D1",
+      "C2/C4",
+      "C2/L1",
+      "C2/U2",
+      "C3/X3",
+      "C3/REF**_11",
+      "C4/U2",
+      "C4/SW1",
+      "C5/L1",
+      "C5/P34",
+      "C5/P35",
+      "C5/U2",
+      "C8/U2",
+      "C9/P3",
+      "C9/P5",
+      "C10/P35",
+      "C10/P36",
+      "C10/U2",
+      "C11/U2",
+      "C12/U2",
+      "C13/REF**_11",
+      "C14/U2",
+      "C15/R1",
+      "C16/C18",
+      "C17/R2",
+      "C17/U2",
+      "C17/X3",
+      "C18/X3",
+      "D1/P24",
+      "L1/U2",
+      "R2/U2",
+      "R3/R4",
+      "R5/SW1",
+      "U1/X3",
+      "X2/REF**_4",
+      "C7/REF**_15",
+      "X1/REF**_14",
+      "X1/REF**_6"
+    ],
+    "crossings": 129,
+    "fixed_outside": 10,
+    "fixed_overlaps": 36,
+    "flipped": 0,
+    "hpwl_mm": 811.27,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 44,
+    "side_vias": 16,
+    "weighted_hpwl_mm": 745.962
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [
+      "REF**_20/C11",
+      "REF**_20/R2",
+      "REF**_19/C5",
+      "REF**_19/L1",
+      "REF**_18/C16",
+      "REF**_18/C18",
+      "C1/D1",
+      "C2/C4",
+      "C2/L1",
+      "C2/U2",
+      "C3/X3",
+      "C3/REF**_11",
+      "C4/U2",
+      "C4/SW1",
+      "C5/L1",
+      "C5/P34",
+      "C5/P35",
+      "C5/U2",
+      "C8/U2",
+      "C9/P3",
+      "C9/P5",
+      "C10/P35",
+      "C10/P36",
+      "C10/U2",
+      "C11/U2",
+      "C12/U2",
+      "C13/REF**_11",
+      "C14/U2",
+      "C15/R1",
+      "C16/C18",
+      "C17/R2",
+      "C17/U2",
+      "C17/X3",
+      "C18/X3",
+      "D1/P24",
+      "L1/U2",
+      "R2/U2",
+      "R3/R4",
+      "R5/SW1",
+      "U1/X3",
+      "X2/REF**_4",
+      "C7/REF**_15",
+      "X1/REF**_14",
+      "X1/REF**_6"
+    ],
+    "crossings": 130,
+    "fixed_outside": 10,
+    "fixed_overlaps": 36,
+    "flipped": 0,
+    "hpwl_mm": 812.67,
+    "new_outside": 0,
+    "new_overlaps": 44,
+    "outside": 0,
+    "overlaps": 44,
+    "side_vias": 16,
+    "weighted_hpwl_mm": 747.362
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 1.2029161721451056,
+    "lb_any_rotation_mm": 620.1279999999999,
+    "lb_fixed_rotation_mm": 639.427,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "closure": {
+    "accepted": 1,
+    "arms": {
+      "far": {
+        "pulls": 1,
+        "wins": 1
+      },
+      "flip": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "replace": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "room": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "rotate": {
+        "pulls": 1,
+        "wins": 0
+      },
+      "shift": {
+        "pulls": 2,
+        "wins": 0
+      },
+      "swap": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "window": {
+        "pulls": 4,
+        "wins": 0
+      }
+    },
+    "prior": null,
+    "routes": 8,
+    "stop": "no candidates",
+    "trials": [
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "shift",
+        "before": 6,
+        "escalated": false,
+        "what": "C15 shift +y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 7,
+        "arm": "rotate",
+        "before": 6,
+        "escalated": false,
+        "what": "LED1 rotate 180"
+      },
+      {
+        "accepted": true,
+        "after": 4,
+        "arm": "far",
+        "before": 6,
+        "escalated": false,
+        "what": "J1 shift -y 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "window",
+        "before": 4,
+        "escalated": false,
+        "what": "re-place 11 parts around the failures (seed 1)"
+      },
+      {
+        "accepted": false,
+        "after": 4,
+        "arm": "shift",
+        "before": 4,
+        "escalated": false,
+        "what": "R5 shift -y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 13,
+        "arm": "window",
+        "before": 4,
+        "escalated": false,
+        "what": "re-place 11 parts around the failures (seed 2)"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "window",
+        "before": 4,
+        "escalated": false,
+        "what": "re-place 11 parts around the failures (seed 3)"
+      },
+      {
+        "accepted": false,
+        "after": 12,
+        "arm": "window",
+        "before": 4,
+        "escalated": false,
+        "what": "re-place 11 parts around the failures (seed 4)"
+      }
+    ]
+  },
+  "fixed_parts": [
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_20"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_19"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_18"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_17"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P1"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P5"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P8"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P9"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P10"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P11"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P12"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P13"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P14"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P15"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P16"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P17"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P18"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P19"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P20"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P21"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P22"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P23"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "P24"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P25"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P26"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P27"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P28"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P29"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P30"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P31"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P32"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P33"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P34"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P35"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P36"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P37"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P38"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P39"
+    },
+    {
+      "reason": "locked",
+      "ref": "U2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P40"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P41"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P42"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P53"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P43"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P44"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P45"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P46"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P47"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P48"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P49"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P50"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P51"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P52"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P54"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "P55"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_15"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_14"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_13"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_12"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_11"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_10"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_9"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_8"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_7"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_6"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_5"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_4"
+    },
+    {
+      "reason": "unannotated (REF**)",
+      "ref": "REF**_2"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/1Bitsy_1bitsy/unrouted.kicad_pcb",
+  "kept": "closure",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "closure",
+  "movable": 32,
+  "moved": 1,
+  "nets": 78,
+  "notes": [
+    "input not legal: 44 conflict(s) involving movable parts (REF**_20/C11, REF**_20/R2, REF**_19/C5, REF**_19/L1, REF**_18/C16, REF**_18/C18, ...); compared as it is (--repair-input compares its minimal repair instead)"
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/closure-place10m/boards/1Bitsy_1bitsy.placed.kicad_pcb",
+  "parts": 106,
+  "pins": 253,
+  "rounds": 0,
+  "route_check": {
+    "connections": 160,
+    "connections_input": 160,
+    "connections_output": 160,
+    "kept_input": false,
+    "routed_input": 154,
+    "routed_output": 156,
+    "work": 10000000
+  },
+  "route_input": {
+    "connections": 160,
+    "routed": 154,
+    "seconds": 21.616271913,
+    "unrouted": 6
+  },
+  "route_output": {
+    "connections": 160,
+    "routed": 156,
+    "seconds": 18.477677117,
+    "unrouted": 4
+  },
+  "routes": 9,
+  "seconds": {},
+  "seconds_total": 574.324267181,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

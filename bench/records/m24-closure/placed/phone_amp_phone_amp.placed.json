@@ -1,0 +1,429 @@
+{
+  "after": {
+    "conflicts": [
+      "J1/F1",
+      "J5/F1",
+      "J2/U2",
+      "J3/U1",
+      "U2/R7",
+      "U2/R13",
+      "U2/C6",
+      "U2/C14",
+      "U1/R9",
+      "U1/C3",
+      "U1/C11",
+      "U1/C9",
+      "C12/outline",
+      "C15/outline",
+      "R4/outline",
+      "R3/outline",
+      "C7/outline",
+      "R7/outline",
+      "R15/outline",
+      "C1/outline",
+      "R2/outline",
+      "C5/outline",
+      "R5/outline",
+      "R13/outline",
+      "C6/outline",
+      "R6/outline",
+      "R10/outline",
+      "C13/outline",
+      "R9/outline",
+      "C14/outline",
+      "R14/outline",
+      "C16/outline",
+      "C10/outline",
+      "C3/outline",
+      "C11/outline",
+      "R1/outline",
+      "C8/outline",
+      "R8/outline",
+      "C9/outline",
+      "C4/outline",
+      "C2/outline",
+      "R12/outline",
+      "R11/outline"
+    ],
+    "crossings": 34,
+    "fixed_outside": 6,
+    "fixed_overlaps": 4,
+    "flipped": 0,
+    "hpwl_mm": 412.09,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 31,
+    "overlaps": 12,
+    "side_vias": 8,
+    "weighted_hpwl_mm": 330.076
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [
+      "J1/F1",
+      "J5/F1",
+      "J2/U2",
+      "J3/U1",
+      "U2/R7",
+      "U2/R13",
+      "U2/C6",
+      "U2/C14",
+      "U1/R9",
+      "U1/C3",
+      "U1/C11",
+      "U1/C9",
+      "C12/outline",
+      "C15/outline",
+      "R4/outline",
+      "R3/outline",
+      "C7/outline",
+      "R7/outline",
+      "R15/outline",
+      "C1/outline",
+      "R2/outline",
+      "C5/outline",
+      "R5/outline",
+      "R13/outline",
+      "C6/outline",
+      "R6/outline",
+      "R10/outline",
+      "C13/outline",
+      "R9/outline",
+      "C14/outline",
+      "R14/outline",
+      "C16/outline",
+      "C10/outline",
+      "C3/outline",
+      "C11/outline",
+      "R1/outline",
+      "C8/outline",
+      "R8/outline",
+      "C9/outline",
+      "C4/outline",
+      "C2/outline",
+      "R12/outline",
+      "R11/outline"
+    ],
+    "crossings": 34,
+    "fixed_outside": 6,
+    "fixed_overlaps": 4,
+    "flipped": 0,
+    "hpwl_mm": 412.09,
+    "new_outside": 31,
+    "new_overlaps": 12,
+    "outside": 31,
+    "overlaps": 12,
+    "side_vias": 8,
+    "weighted_hpwl_mm": 330.076
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 2.5063479528611348,
+    "lb_any_rotation_mm": 131.696,
+    "lb_fixed_rotation_mm": 170.941,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "closure": {
+    "accepted": 0,
+    "arms": {
+      "far": {
+        "pulls": 8,
+        "wins": 0
+      },
+      "flip": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "replace": {
+        "pulls": 4,
+        "wins": 0
+      },
+      "room": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "rotate": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "shift": {
+        "pulls": 8,
+        "wins": 0
+      },
+      "swap": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "window": {
+        "pulls": 4,
+        "wins": 0
+      }
+    },
+    "judge": "route",
+    "prior": null,
+    "routes": 20,
+    "stop": "no candidates",
+    "trials": [
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "C16 shift +x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "far",
+        "before": 5,
+        "escalated": false,
+        "what": "C16 shift +x 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 11,
+        "arm": "window",
+        "before": 5,
+        "escalated": false,
+        "what": "re-place 20 parts around the failures (seed 1)"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "C16 shift +x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "far",
+        "before": 5,
+        "escalated": false,
+        "what": "C16 shift +x 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "window",
+        "before": 5,
+        "escalated": false,
+        "what": "re-place 20 parts around the failures (seed 2)"
+      },
+      {
+        "accepted": false,
+        "after": 10,
+        "arm": "window",
+        "before": 5,
+        "escalated": true,
+        "what": "re-place 20 parts around the failures (seed 3)"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "R10 shift -x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "far",
+        "before": 5,
+        "escalated": false,
+        "what": "C16 shift +x 3.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "R10 shift -x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 12,
+        "arm": "window",
+        "before": 5,
+        "escalated": true,
+        "what": "re-place 20 parts around the failures (seed 4)"
+      },
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "far",
+        "before": 5,
+        "escalated": false,
+        "what": "R10 shift -x 1.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "R12 shift -x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "far",
+        "before": 5,
+        "escalated": false,
+        "what": "C16 shift +x 4.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "R12 shift -x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 7,
+        "arm": "far",
+        "before": 5,
+        "escalated": false,
+        "what": "R10 shift -x 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "C2 shift -x 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "far",
+        "before": 5,
+        "escalated": false,
+        "what": "R10 shift -x 4.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "C2 shift -x 1.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "far",
+        "before": 5,
+        "escalated": false,
+        "what": "R10 shift -x 3.00 mm"
+      }
+    ]
+  },
+  "fixed_parts": [
+    {
+      "reason": "locked",
+      "ref": "J1"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J5"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J2"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J3"
+    },
+    {
+      "reason": "overhangs the board edge in the input",
+      "ref": "SW1"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J4"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/phone_amp_phone_amp/unrouted.kicad_pcb",
+  "kept": "input",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "closure",
+  "movable": 35,
+  "moved": 0,
+  "nets": 34,
+  "notes": [
+    "input not legal: 43 conflict(s) involving movable parts (J1/F1, J5/F1, J2/U2, J3/U1, U2/R7, U2/R13, ...); compared as it is (--repair-input compares its minimal repair instead)"
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/closure-route10m/boards/phone_amp_phone_amp.placed.kicad_pcb",
+  "parts": 41,
+  "pins": 125,
+  "rounds": 0,
+  "route_check": {
+    "connections": 88,
+    "connections_input": 88,
+    "connections_output": 88,
+    "kept_input": true,
+    "routed_input": 83,
+    "routed_output": 83,
+    "work": 10000000
+  },
+  "route_input": {
+    "connections": 88,
+    "routed": 83,
+    "seconds": 57.824361093,
+    "unrouted": 5
+  },
+  "route_output": {
+    "connections": 88,
+    "routed": 83,
+    "seconds": 57.824361093,
+    "unrouted": 5
+  },
+  "routes": 21,
+  "seconds": {},
+  "seconds_total": 1462.759419643,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}

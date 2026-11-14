@@ -1,0 +1,10 @@
+# E1 experiment: the 9 power-wide boards the base leaves not clean
+EUC-VESC_electronics_BJT
+ErgodoneWithHole_ErgoDone
+HW-ESP8266_Roomba_ESP8266_Roomba_panel_x_3
+SPEX_HAB_Mainboard_Hardware_Power
+digital_clock_led_clock_3_and_4_digit
+kitspace_Unifying
+open-source-multimeter_board
+solar-lora_solar-lora
+timecircuits-hardware_BTTF-TimeCircuits

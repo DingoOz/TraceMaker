@@ -1,0 +1,548 @@
+live view: http://127.0.0.1:8852/
+critical nets: 6 found (component roles and differential pairs), audited after the route only; --critical-auto and the options of doc 05 §44 route them with care, --no-critical-audit skips the audit
+portfolio: 8 variants on 4 threads
+searches: 282 ok (6298 expansions), 891 failed (140108 expansions); fields 209 GPU + 628 CPU (39.03 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 186809; rips 0, passes 1, boxed-in 891, nogood skips 229, history cells 0, transactions 0 kept of 0
+reachability checks: 199, 199 proved unreachable, 29187 cells visited
+failed-search expansions: strict confined 0, strict wide 65475, negotiated confined 0, negotiated wide 45446
+searches: 282 ok (3089 expansions), 695 failed (107178 expansions); fields 209 GPU + 628 CPU (40.51 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 158771; rips 0, passes 1, boxed-in 695, nogood skips 425, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 61732, negotiated confined 0, negotiated wide 45446
+searches: 282 ok (6333 expansions), 701 failed (115464 expansions); fields 209 GPU + 628 CPU (41.58 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 172226; rips 0, passes 1, boxed-in 701, nogood skips 419, history cells 0, transactions 0 kept of 0
+reachability checks: 6, 6 proved unreachable, 989 cells visited
+failed-search expansions: strict confined 0, strict wide 69029, negotiated confined 0, negotiated wide 45446
+searches: 282 ok (21566 expansions), 695 failed (648474 expansions); fields 209 GPU + 628 CPU (38.23 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 220440; rips 0, passes 1, boxed-in 695, nogood skips 425, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 388765, negotiated confined 0, negotiated wide 259709
+searches: 282 ok (21566 expansions), 706 failed (650312 expansions); fields 209 GPU + 628 CPU (19.32 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 173625; rips 0, passes 1, boxed-in 706, nogood skips 414, history cells 0, transactions 0 kept of 0
+reachability checks: 11, 11 proved unreachable, 1838 cells visited
+failed-search expansions: strict confined 0, strict wide 388765, negotiated confined 0, negotiated wide 259709
+searches: 282 ok (3089 expansions), 695 failed (106927 expansions); fields 209 GPU + 628 CPU (18.61 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 158399; rips 0, passes 1, boxed-in 695, nogood skips 425, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 61481, negotiated confined 0, negotiated wide 45446
+searches: 282 ok (3089 expansions), 695 failed (107178 expansions); fields 209 GPU + 628 CPU (17.81 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 158771; rips 0, passes 1, boxed-in 695, nogood skips 425, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 61732, negotiated confined 0, negotiated wide 45446
+searches: 282 ok (5354 expansions), 695 failed (425475 expansions); fields 485 GPU + 399 CPU (44.65 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 522709; rips 0, passes 1, boxed-in 695, nogood skips 425, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 244881, negotiated confined 0, negotiated wide 180594
+  variant 0 exact bends, shortest first    routed 6 in 48.5 s
+  variant 1 fast bends, shortest first, crowded source routed 6 in 45.8 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 6 in 43.5 s
+  variant 3 fast bends, jittered order, escape plan routed 6 in 47.3 s
+  variant 4 exact bends, jittered order    routed 6 in 24.2 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 6 in 53.6 s  <- best
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 6 in 21.7 s
+  variant 7 fast bends, dear vias, crowded source routed 6 in 20.7 s
+rescue (warm): 140 of 146 connections are open; routing again with relax (from the plain routes, 1 round of 1000000 work)
+portfolio: 8 variants on 4 threads
+warm start: 6 saved routes taken over, 0 not legal under these rules
+warm start: 6 saved routes taken over, 0 not legal under these rules
+warm start: 6 saved routes taken over, 0 not legal under these rules
+warm start: 6 saved routes taken over, 0 not legal under these rules
+searches: 0 ok (0 expansions), 336 failed (1005826 expansions); fields 0 GPU + 241 CPU (1.67 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1 connections improved
+restarts 0; legality checks 179410; rips 0, passes 1, boxed-in 328, nogood skips 6, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 587851, negotiated confined 0, negotiated wide 417975
+warm start: 6 saved routes taken over, 0 not legal under these rules
+searches: 0 ok (0 expansions), 335 failed (1003405 expansions); fields 0 GPU + 240 CPU (1.68 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 1 connections improved
+restarts 0; legality checks 178931; rips 0, passes 1, boxed-in 327, nogood skips 6, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 585340, negotiated confined 0, negotiated wide 418065
+warm start: 6 saved routes taken over, 0 not legal under these rules
+searches: 276 ok (4830 expansions), 700 failed (214786 expansions); fields 273 GPU + 608 CPU (19.85 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 295991; rips 0, passes 1, boxed-in 692, nogood skips 8, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 125908, negotiated confined 0, negotiated wide 88878
+warm start: 6 saved routes taken over, 0 not legal under these rules
+searches: 276 ok (4830 expansions), 700 failed (214786 expansions); fields 273 GPU + 608 CPU (24.16 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 295991; rips 0, passes 1, boxed-in 692, nogood skips 8, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 125908, negotiated confined 0, negotiated wide 88878
+searches: 276 ok (4830 expansions), 700 failed (213521 expansions); fields 273 GPU + 608 CPU (24.07 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 294241; rips 0, passes 1, boxed-in 692, nogood skips 8, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 124643, negotiated confined 0, negotiated wide 88878
+warm start: 6 saved routes taken over, 0 not legal under these rules
+searches: 276 ok (4830 expansions), 700 failed (214786 expansions); fields 273 GPU + 608 CPU (28.14 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 295991; rips 0, passes 1, boxed-in 692, nogood skips 8, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 125908, negotiated confined 0, negotiated wide 88878
+searches: 276 ok (4830 expansions), 700 failed (212947 expansions); fields 273 GPU + 608 CPU (32.41 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 293293; rips 0, passes 1, boxed-in 692, nogood skips 8, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 124069, negotiated confined 0, negotiated wide 88878
+searches: 276 ok (4830 expansions), 700 failed (214786 expansions); fields 273 GPU + 608 CPU (30.43 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 295991; rips 0, passes 1, boxed-in 692, nogood skips 8, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 125908, negotiated confined 0, negotiated wide 88878
+ramp stage 1/2 (clearance -0.0600 mm): 6 of 146 routed
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 4 in 0.4 s  <- best
+  variant 1 fast bends, shortest first, crowded source routed 4 in 0.4 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 4 in 0.4 s
+  variant 3 fast bends, jittered order, escape plan routed 4 in 0.4 s
+  variant 4 exact bends, jittered order    routed 4 in 0.4 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 4 in 0.4 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 4 in 0.4 s
+  variant 7 fast bends, dear vias, crowded source routed 4 in 0.4 s
+rescue (warm): 6 -> 4 routed (no gain: the result before stands)
+rescue (fresh): 140 of 146 connections are open; routing again with relax (from nothing, 1 round of 1000000 work)
+portfolio: 8 variants on 4 threads
+searches: 6 ok (222 expansions), 448 failed (1006780 expansions); fields 163 GPU + 202 CPU (19.98 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 0; legality checks 185892; rips 0, passes 2, boxed-in 444, nogood skips 53, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 920389, negotiated confined 0, negotiated wide 86391
+searches: 282 ok (4935 expansions), 901 failed (273398 expansions); fields 273 GPU + 616 CPU (29.99 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 339716; rips 0, passes 1, boxed-in 891, nogood skips 229, history cells 0, transactions 0 kept of 0
+reachability checks: 199, 199 proved unreachable, 57863 cells visited
+failed-search expansions: strict confined 0, strict wide 126657, negotiated confined 0, negotiated wide 88878
+searches: 282 ok (3799 expansions), 702 failed (203020 expansions); fields 273 GPU + 613 CPU (31.88 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 277821; rips 0, passes 1, boxed-in 695, nogood skips 425, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 114142, negotiated confined 0, negotiated wide 88878
+searches: 282 ok (4974 expansions), 708 failed (219265 expansions); fields 273 GPU + 613 CPU (34.23 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 298934; rips 0, passes 1, boxed-in 701, nogood skips 419, history cells 0, transactions 0 kept of 0
+reachability checks: 6, 6 proved unreachable, 1861 cells visited
+failed-search expansions: strict confined 0, strict wide 128526, negotiated confined 0, negotiated wide 88878
+searches: 6 ok (222 expansions), 448 failed (1006780 expansions); fields 163 GPU + 202 CPU (11.14 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 0; legality checks 185892; rips 0, passes 2, boxed-in 444, nogood skips 53, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 920389, negotiated confined 0, negotiated wide 86391
+searches: 282 ok (3799 expansions), 702 failed (203020 expansions); fields 273 GPU + 613 CPU (16.20 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 277821; rips 0, passes 1, boxed-in 695, nogood skips 425, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 114142, negotiated confined 0, negotiated wide 88878
+searches: 282 ok (3799 expansions), 702 failed (201672 expansions); fields 273 GPU + 613 CPU (16.52 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 275869; rips 0, passes 1, boxed-in 695, nogood skips 425, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 112794, negotiated confined 0, negotiated wide 88878
+searches: 282 ok (3799 expansions), 702 failed (203020 expansions); fields 273 GPU + 613 CPU (16.09 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 5 connections improved
+restarts 46; legality checks 277821; rips 0, passes 1, boxed-in 695, nogood skips 425, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 114142, negotiated confined 0, negotiated wide 88878
+ramp stage 1/2 (clearance -0.0600 mm): 6 of 146 routed
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+warm start: 4 saved routes taken over, 2 not legal under these rules
+searches: 0 ok (0 expansions), 0 failed (0 expansions); fields 0 GPU + 0 CPU (0.00 s, 0 GPU fallbacks, 0 cache hits)
+clean-up: 0 connections improved
+restarts 0; legality checks 0; rips 0, passes 0, boxed-in 0, nogood skips 0, history cells 0, transactions 0 kept of 0
+failed-search expansions: strict confined 0, strict wide 0, negotiated confined 0, negotiated wide 0
+  variant 0 exact bends, shortest first    routed 4 in 0.4 s
+  variant 1 fast bends, shortest first, crowded source routed 4 in 0.4 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 4 in 0.4 s
+  variant 3 fast bends, jittered order, escape plan routed 4 in 0.4 s  <- best
+  variant 4 exact bends, jittered order    routed 4 in 0.4 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 4 in 0.4 s
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 4 in 0.4 s
+  variant 7 fast bends, dear vias, crowded source routed 4 in 0.4 s
+rescue (fresh): 6 -> 4 routed (no gain: the result before stands)
+critical nets after the route: 6 nets, 0 vias, 0 plane void crossings, 0 layer changes without a return stitch
+  Net-(U1-P1.01{slash}XL2): 1 connection not routed
+  Net-(U1-P1.00{slash}XL1): 1 connection not routed
+  Net-(U5-XC1): 1 connection not routed
+  Net-(U5-XC2): 1 connection not routed
+  /Debugger/D+: 4 connections not routed
+  /Debugger/D-: 4 connections not routed
+routed 6/146 connections, 12 tracks, 0 vias, pitch 0.025 mm, 430829 expansions, 222.24 s (best variant 53.64 s)
+  unrouted: VDD: R5.1 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: U1.B8 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: U1.C8 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: R7.1 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: U2.12 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: R2.1 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: C24.1 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: C1.1 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: U4.8 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: C9.1 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: U6.15 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: R3.1 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: J5.2 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: C12.1 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VDD: JP1.2 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: +BATT: J4.1 -> zone  (boxed in; escapes/neck-down: boxed in; negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: +BATT: U2.19 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: +BATT: C11.1 -> zone  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(U5-DEC1): C19.1 -> U5.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(U5-DECUSB): C23.1 -> U5.11  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(U2-VSET2): U2.16 -> R4.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(JP1-A): L1.1 -> C8.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/nRF52_VDD: U5.18 -> C17.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VSYS: C3.1 -> C2.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(D1-K): R6.1 -> D1.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/nRF52_VDD: U6.8 -> R1.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/I2C.SDA: R3.2 -> J5.3  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/I2C.SCL: R2.2 -> J5.4  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/D+: J3.A6 -> J3.B6  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/D-: J3.A7 -> J3.B7  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(J6-Pin_2): C14.1 -> J6.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(J6-Pin_4): C13.1 -> J6.4  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VSYS: C3.1 -> U2.4  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VSYS: U2.1 -> C3.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(U5-DEC3): C21.1 -> U5.27  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(U5-DEC4): C22.1 -> U5.26  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/nRF52_VDD: C16.1 -> U5.30  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /nRF54L15/D3_FLASH: U1.H9 -> U4.7  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/nRF52_VDD: C25.1 -> U6.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/D-: J3.A7 -> U3.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/D+: J3.B6 -> TP7.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/D-: J3.B7 -> TP8.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/USB.VBUS: U2.21 -> C5.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VSYS: U2.20 -> C4.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(U5-XC2): Y2.3 -> U5.29  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/USB.VBUS: J3.A4 -> TP5.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/SPI.SCK: U1.J9 -> U4.6  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(D1-A): U1.K7 -> D1.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/nRF52_VDD: R8.1 -> C10.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(D3-RK): D3.2 -> U2.25  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/USB.CC2: J3.B5 -> TP6.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VBUS: U2.22 -> C6.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(D3-GK): D3.3 -> U2.26  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(J8-SWDIO): U5.19 -> TP12.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/SWD_TRG.SWDCLK: U1.K3 -> TP3.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(U2-SW2): U2.5 -> L1.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(U5-XC1): Y2.1 -> U5.28  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(D3-BK): D3.4 -> U2.27  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/nRF52_VDD: U6.2 -> U6.8  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/D+: J3.B6 -> U3.4  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/nRF52_VDD: U5.8 -> U5.40  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/nRF52_VDD: U5.8 -> U5.18  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/SWD_TRG.~{RESET}: SW1.2 -> SW1.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/DIG.D11: SW2.1 -> SW2.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/USB.VBUS: U3.5 -> J3.A4  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(U5-DEC4): U5.26 -> U5.38  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VSYS: C4.1 -> J2.3  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/SWD_TRG.~{RESET}: U1.G2 -> TP2.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(U1-P1.01{slash}XL2): U1.C9 -> Y1.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /nPM1300/NPM1300.SDA: U1.H2 -> R7.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VSYS: D3.1 -> U2.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /nPM1300/NPM1300.SCL: R5.2 -> U1.J2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/SPI.MISO: U1.K9 -> U4.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/SPI.MOSI: U1.J8 -> U4.5  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/nRF52_VDD: C15.1 -> C16.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/SWD_TRG.~{RESET}: U6.12 -> SW1.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/USB.VBUS: U3.5 -> J3.A9  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /nRF54L15/~{CS}_FLASH: U1.K8 -> U4.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VSYS: U2.4 -> U2.20  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(J8-SWCLK): U5.20 -> TP11.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(JP1-A): C8.1 -> JP1.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(U1-P1.00{slash}XL1): U1.D8 -> Y1.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/nRF52_VDD: C17.1 -> TP9.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(J8-~{RESET}): U5.16 -> TP10.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/DIG.D11: SW2.1 -> J2.6  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /nRF54L15/D2_FLASH: U1.J7 -> U4.3  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/SWD_TRG.SWDIO: U1.J3 -> TP1.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/SPI.MISO: U1.K9 -> J1.13  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(J8-SWCLK): U5.20 -> J8.4  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(J8-SWDIO): U5.19 -> J8.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(JP1-A): U2.32 -> L1.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/SPI.SCK: U4.6 -> J1.11  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/SPI.MOSI: U1.J8 -> J1.12  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/DIG.D5: U1.B6 -> J2.10  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/nRF52_VDD: U5.30 -> J8.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/TRG_~{RESET}_NRF52: R8.2 -> U5.34  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/I2C.SDA: U1.B3 -> J2.12  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: VBUS: U2.22 -> C7.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/SWD_TRG.~{RESET}: TP2.1 -> U6.12  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/D+: U3.4 -> U5.13  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(J8-~{RESET}): U5.16 -> J8.3  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/SWD_TRG.SWDIO: U1.J3 -> U6.11  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/D-: U3.2 -> U5.12  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/SWD_TRG.SWDCLK: U1.K3 -> U6.10  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/TRG_~{RESET}_NRF52: R8.2 -> U6.5  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/UART.RX: U1.A3 -> U6.14  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/nRF52_VDD: U6.2 -> R8.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/DIG.D11: U1.J4 -> SW2.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/UART.TX: U1.B2 -> U6.13  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/ENABLE: U2.8 -> J2.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/I2C.SCL: U1.G8 -> J2.11  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/UART.TX: U1.B2 -> J1.15  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/ANALOG.A3: U1.G9 -> J1.8  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/UART.RX: U6.14 -> J1.14  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/DIG.D6: U1.K4 -> J2.9  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/DIG.D9: U1.K5 -> J2.8  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/DIG.D10: U1.K6 -> J2.7  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/ANALOG.A2: U1.F9 -> J1.7  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/ANALOG.A5: U1.B5 -> J1.10  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/DIG.D12: U1.J5 -> J2.5  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/UART_RX_NRF52: U6.3 -> U5.36  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/UART_TX_NRF52: U6.4 -> U5.35  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/ANALOG.A4: U1.B4 -> J1.9  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/USB.VBUS: C5.1 -> U3.5  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/TRG_SWDIO_NRF52: U6.6 -> U5.33  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /nPM1300/NPM1300.SDA: U1.H2 -> U2.13  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/TRG_SWDCLK_NRF52: U6.7 -> U5.32  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /nPM1300/NPM1300.SCL: U1.J2 -> U2.14  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/DIG.D13: U1.J6 -> J2.4  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/ANALOG.A1: U1.F8 -> J1.6  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /nPM1300/NPM1300.INT: U1.K2 -> U2.7  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/ANALOG.A0: U1.E9 -> J1.5  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/SWD_TRG.~{RESET}: SW1.2 -> J1.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/USB.CC2: U2.24 -> J3.B5  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Debugger/USB.CC1: U2.23 -> J3.A5  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/SHPHLD: U2.15 -> J1.16  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(J6-Pin_2): U1.D9 -> C14.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: Net-(J6-Pin_4): U1.E8 -> C13.1  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/I2C.SCL: U1.G8 -> R2.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  unrouted: /Connectors/I2C.SDA: U1.B3 -> R3.2  (skipped: identical earlier attempt failed (nogood); escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in; given up: boxed in on the routing lattice, even with routed copper negotiable)
+  open by the router's settings: C25.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R5.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J4.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.A3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.B2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.B3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.B4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.B5 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.B6 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.B8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.C8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.C9 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.D8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.D9 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.E8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.E9 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.F8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.F9 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.G2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.G8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.G9 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.H2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.H9 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.J2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.J3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.J4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.J5 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.J6 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.J7 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.J8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.J9 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.K2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.K3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.K4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.K5 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.K6 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.K7 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.K8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.K9 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U1.K9 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R6.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R7.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D3.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D3.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D3.3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D3.4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.5 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.7 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.12 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.13 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.14 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.15 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.16 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.19 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.20 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.21 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.22 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.23 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.24 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.25 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.26 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.27 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U2.32 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C23.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R2.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C24.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C19.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J3.A5 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J3.A6 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J3.A7 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J3.B5 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J3.B6 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J3.B7 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U4.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U4.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U4.3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U4.5 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U4.6 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U4.7 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U4.8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  needs a narrower track or via: C4.1 (VSYS) is walled in on F.Cu for its class's 0.25 mm track and 0.8 mm via (C4.2, the GND zone fill), but a track of 0.196 mm gets out (a neck-down).
+  open by the router's settings: C16.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  needs a narrower track or via: C22.1 (Net-(U5-DEC4)) is walled in on F.Cu for its class's 0.25 mm track and 0.8 mm via (C22.2, C21.1, the GND zone fill), but a track of 0.0789 mm gets out (a neck-down).
+  open by the router's settings: C9.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C6.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R8.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R8.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: D1.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C13.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: SW1.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: SW1.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.5 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.6 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.7 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.8 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.10 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.11 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.12 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.13 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.14 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U6.15 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: R4.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  needs a narrower track or via: C11.1 (+BATT) is walled in on F.Cu for its class's 0.25 mm track and 0.8 mm via (C11.2, R4.2, the GND zone fill), but a track of 0.152 mm gets out (a neck-down).
+  open by the router's settings: Y1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: Y1.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: SW2.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: SW2.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  needs a narrower track or via: J2.3 (VSYS) is walled in on F.Cu, In1.Cu, In2.Cu, In3.Cu, In4.Cu, In5.Cu, In6.Cu, B.Cu for its class's 0.25 mm track and 0.8 mm via (the board edge, the GND zone fill, the VDD zone fill), but a via of 0.35 mm fits beside it.
+  open by the router's settings: J6.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J6.4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  needs a narrower track or via: C8.1 (Net-(JP1-A)) is walled in on F.Cu for its class's 0.25 mm track and 0.8 mm via (C8.2, the GND zone fill), but a track of 0.204 mm gets out (a neck-down).
+  needs a narrower track or via: C2.1 (VSYS) is walled in on F.Cu for its class's 0.25 mm track and 0.8 mm via (C2.2, the GND zone fill), but a track of 0.204 mm gets out (a neck-down).
+  open by the router's settings: R3.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U3.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U3.4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U3.5 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: L1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  needs a narrower track or via: L1.2 (Net-(U2-SW2)) is walled in on F.Cu for its class's 0.25 mm track and 0.8 mm via (C8.2, C2.2, the GND zone fill), but a track of 0.204 mm gets out (a neck-down).
+  open by the router's settings: C14.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  needs a narrower track or via: C5.1 (/Debugger/USB.VBUS) is walled in on F.Cu for its class's 0.25 mm track and 0.8 mm via (C5.2, the GND zone fill), but a track of 0.196 mm gets out (a neck-down).
+  open by the router's settings: R1.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C21.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J5.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J5.3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J5.4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C3.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C17.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.11 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.12 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.13 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.16 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.18 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.19 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.20 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.26 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.27 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.28 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.29 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.30 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.32 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.33 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.34 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.35 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.36 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: U5.38 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: C12.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: JP1.2 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: TP12.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: TP9.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: TP6.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: TP8.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: TP11.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: TP5.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: TP10.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: TP7.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  needs a narrower track or via: J8.1 (/Debugger/nRF52_VDD) is walled in on B.Cu for its class's 0.25 mm track and 0.8 mm via (J8.2, J8.3, J8.4, the GND zone fill), but a track of 0.185 mm gets out (a neck-down).
+  needs a narrower track or via: J8.2 (Net-(J8-SWDIO)) is walled in on B.Cu for its class's 0.25 mm track and 0.8 mm via (J8.1, J8.4, J8.3, the GND zone fill), but a track of 0.185 mm gets out (a neck-down).
+  open by the router's settings: J8.3 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: J8.4 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+  open by the router's settings: TP2.1 is walled in only by zone fills of other nets: --soft-zones routes through fills and refills the zones afterwards.
+why open: 208 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 10 only for the class's track or via, 159 only by zone fills or copper graphics, 39 open through congestion (129.57 s)
+  next: route again with --soft-zones: 159 pins are walled in only by zone fills
+  next: 10 pins get out only with a track or via smaller than the net class's (the board's minimums allow them; see each pin's text): check that the net is not in --no-neck-nets, or lower the class's track width or via size
+  next: 39 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+work (all variants): 8946089 expansions, 91738 flood cells, 5953525 cell checks, 4996747 fixed-copper checks, 14969582640 field cells in 18559 fields, 5616 commits, 0 rips
+report: DRC before and after (zones refilled): 0 routing errors added (76.1 s)
+report written to /tmp/claude-1000/-home-dingo-Programming-TraceMaker/0eb5330d-7327-41fa-97b4-5a919efd08e3/scratchpad/e4/planes/RoyalBlue54L-Feather.html (its numbers are the fields of /tmp/claude-1000/-home-dingo-Programming-TraceMaker/0eb5330d-7327-41fa-97b4-5a919efd08e3/scratchpad/e4/planes/RoyalBlue54L-Feather.json)

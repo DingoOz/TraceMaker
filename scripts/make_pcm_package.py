@@ -32,7 +32,7 @@ import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PLUGIN_DIR = os.path.join(ROOT, "kicad_plugin")
-PLUGIN_FILES = ["plugin.json", "tracemaker_route.py", "tracemaker_route_nets.py", "requirements.txt", "README.md",
+PLUGIN_FILES = ["plugin.json", "tracemaker_route.py", "tracemaker_route_nets.py", "tracemaker_settings.py", "requirements.txt", "README.md",
                 "icons/tracemaker-24.png", "icons/tracemaker-48.png"]
 IDENTIFIER = "org.tracemaker.autoroute"
 ZIP_TIME = (2026, 1, 1, 0, 0, 0)

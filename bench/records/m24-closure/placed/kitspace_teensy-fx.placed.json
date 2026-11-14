@@ -1,0 +1,339 @@
+{
+  "after": {
+    "conflicts": [
+      "U1/R1",
+      "U1/R2",
+      "U1/R4",
+      "U1/U4",
+      "U1/C10",
+      "U1/U6"
+    ],
+    "crossings": 236,
+    "fixed_outside": 4,
+    "fixed_overlaps": 1,
+    "flipped": 0,
+    "hpwl_mm": 2995.6995,
+    "new_outside": 0,
+    "new_overlaps": 0,
+    "outside": 0,
+    "overlaps": 6,
+    "side_vias": 9,
+    "weighted_hpwl_mm": 2599.81725
+  },
+  "anneal": {
+    "accepted": 0,
+    "best_run": -1,
+    "exchanges_accepted": 0,
+    "exchanges_tried": 0,
+    "lns_improved": 0,
+    "lns_tried": 0,
+    "moves": 0,
+    "rejected_illegal": 0,
+    "rudy_overflow_mm": 0.0,
+    "run_costs": [],
+    "time_limited": false
+  },
+  "before": {
+    "conflicts": [
+      "U1/R1",
+      "U1/R2",
+      "U1/R4",
+      "U1/U4",
+      "U1/C10",
+      "U1/U6"
+    ],
+    "crossings": 239,
+    "fixed_outside": 4,
+    "fixed_overlaps": 1,
+    "flipped": 0,
+    "hpwl_mm": 3007.4495,
+    "new_outside": 0,
+    "new_overlaps": 6,
+    "outside": 0,
+    "overlaps": 6,
+    "side_vias": 9,
+    "weighted_hpwl_mm": 2611.56725
+  },
+  "bounds": {
+    "gap_final_over_lb_any": 7.95683800575381,
+    "lb_any_rotation_mm": 326.74,
+    "lb_fixed_rotation_mm": 451.38100000000003,
+    "quadratic_b2b_mm": null
+  },
+  "claims": {
+    "L1": "not run (refine mode)",
+    "L2": "not achieved: legalisation is greedy minimum-displacement per part (spiral search), not the LP",
+    "L3": "rotation of each part is the exact HPWL optimum with its neighbours fixed after stage C (full mode); window CP-SAT and Hungarian slot assignment are not implemented",
+    "L4": "exact: lb_any_rotation is the LP optimum (min-cost flow, integer) of weighted HPWL without overlap/outline constraints, valid for every rotation (and, for parts that may flip, side) of the movable parts; every legal placement has weighted HPWL >= it"
+  },
+  "closure": {
+    "accepted": 2,
+    "arms": {
+      "far": {
+        "pulls": 1,
+        "wins": 0
+      },
+      "flip": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "replace": {
+        "pulls": 2,
+        "wins": 0
+      },
+      "room": {
+        "pulls": 0,
+        "wins": 0
+      },
+      "rotate": {
+        "pulls": 4,
+        "wins": 1
+      },
+      "shift": {
+        "pulls": 2,
+        "wins": 0
+      },
+      "swap": {
+        "pulls": 4,
+        "wins": 1
+      },
+      "window": {
+        "pulls": 2,
+        "wins": 0
+      }
+    },
+    "judge": "route",
+    "prior": null,
+    "routes": 15,
+    "stop": "time limit",
+    "trials": [
+      {
+        "accepted": false,
+        "after": 8,
+        "arm": "shift",
+        "before": 5,
+        "escalated": false,
+        "what": "U5 shift +y 1.00 mm"
+      },
+      {
+        "accepted": true,
+        "after": 2,
+        "arm": "rotate",
+        "before": 5,
+        "escalated": false,
+        "what": "RV8 rotate 270"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "rotate",
+        "before": 2,
+        "escalated": false,
+        "what": "RV4 rotate 270"
+      },
+      {
+        "accepted": true,
+        "after": 1,
+        "arm": "swap",
+        "before": 2,
+        "escalated": false,
+        "what": "D5 swap D4"
+      },
+      {
+        "accepted": false,
+        "after": 1,
+        "arm": "swap",
+        "before": 1,
+        "escalated": false,
+        "what": "C11 swap C1"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "far",
+        "before": 1,
+        "escalated": false,
+        "what": "U5 shift +y 2.00 mm"
+      },
+      {
+        "accepted": false,
+        "after": 6,
+        "arm": "window",
+        "before": 1,
+        "escalated": false,
+        "what": "re-place 2 parts around the failures (seed 1)"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "rotate",
+        "before": 1,
+        "escalated": false,
+        "what": "C11 rotate 180"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "swap",
+        "before": 1,
+        "escalated": false,
+        "what": "C11 swap C7"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "replace",
+        "before": 1,
+        "escalated": false,
+        "what": "new placement of the whole board (1)"
+      },
+      {
+        "accepted": false,
+        "after": 5,
+        "arm": "window",
+        "before": 1,
+        "escalated": true,
+        "what": "re-place 2 parts around the failures (seed 2)"
+      },
+      {
+        "accepted": false,
+        "after": 9,
+        "arm": "shift",
+        "before": 1,
+        "escalated": false,
+        "what": "U5 shift +y 0.50 mm"
+      },
+      {
+        "accepted": false,
+        "after": 14,
+        "arm": "rotate",
+        "before": 1,
+        "escalated": false,
+        "what": "U5 rotate 180"
+      },
+      {
+        "accepted": false,
+        "after": 2,
+        "arm": "swap",
+        "before": 1,
+        "escalated": false,
+        "what": "C11 swap C2"
+      },
+      {
+        "accepted": false,
+        "after": 14,
+        "arm": "replace",
+        "before": 1,
+        "escalated": true,
+        "what": "new placement of the whole board (2)"
+      }
+    ]
+  },
+  "fixed_parts": [
+    {
+      "reason": "overhangs the board edge in the input",
+      "ref": "U1"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP1"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP2"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP3"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP4"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP5"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP6"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP7"
+    },
+    {
+      "reason": "single pad (via, test point, fiducial)",
+      "ref": "TP8"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J1"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J2"
+    },
+    {
+      "reason": "edge connector",
+      "ref": "J3"
+    }
+  ],
+  "global": {
+    "overflow_quadratic": 0.0,
+    "overflow_spread": 0.0,
+    "rotation_changes": 0,
+    "spread_iterations": 0
+  },
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/kitspace_teensy-fx/unrouted.kicad_pcb",
+  "kept": "closure",
+  "legal": true,
+  "legalise": {
+    "failed": 0,
+    "max_disp_mm": 0.0,
+    "mean_disp_mm": 0.0,
+    "placed": 0,
+    "weighted_hpwl_mm": 0.0
+  },
+  "mode": "closure",
+  "movable": 68,
+  "moved": 3,
+  "nets": 84,
+  "notes": [
+    "input not legal: 6 conflict(s) involving movable parts (U1/R1, U1/R2, U1/R4, U1/U4, U1/C10, U1/U6); compared as it is (--repair-input compares its minimal repair instead)"
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/closure-route10m/boards/kitspace_teensy-fx.placed.kicad_pcb",
+  "parts": 80,
+  "pins": 288,
+  "rounds": 0,
+  "route_check": {
+    "connections": 196,
+    "connections_input": 196,
+    "connections_output": 196,
+    "kept_input": false,
+    "routed_input": 191,
+    "routed_output": 195,
+    "work": 10000000
+  },
+  "route_input": {
+    "connections": 196,
+    "routed": 191,
+    "seconds": 129.145741112,
+    "unrouted": 5
+  },
+  "route_output": {
+    "connections": 196,
+    "routed": 195,
+    "seconds": 122.793122776,
+    "unrouted": 1
+  },
+  "routes": 16,
+  "seconds": {},
+  "seconds_total": 1869.368078405,
+  "tried": [],
+  "utilisation": [
+    0.0,
+    0.0
+  ],
+  "verify": null
+}
