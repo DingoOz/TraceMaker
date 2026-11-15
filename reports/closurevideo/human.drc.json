@@ -1,0 +1,3631 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-14T07:51:51",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "human.routed.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "PTH pad 4 [R4] of P4",
+                    "pos": {
+                        "x": 170.29,
+                        "y": 20.5
+                    },
+                    "uuid": "ddf40fe2-6737-476b-a3cc-6fde2d6fc498"
+                },
+                {
+                    "description": "Track [R4] on B.Cu, length 0.8485 mm",
+                    "pos": {
+                        "x": 178.875,
+                        "y": 73.575
+                    },
+                    "uuid": "7b37537e-40d4-4532-8fdb-093d33fb01a3"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [C2] on B.Cu, length 19.0500 mm",
+                    "pos": {
+                        "x": 60.555,
+                        "y": 69.945
+                    },
+                    "uuid": "84d85980-a37e-4ef5-8285-69806d6098ca"
+                },
+                {
+                    "description": "Pad 9 [C2] of U1 on B.Cu",
+                    "pos": {
+                        "x": 68.821,
+                        "y": 73.017
+                    },
+                    "uuid": "0496dd64-6eef-426b-882e-e98163214499"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [C3] on F.Cu, length 1.9345 mm",
+                    "pos": {
+                        "x": 78.0,
+                        "y": 71.025
+                    },
+                    "uuid": "e2b4dd2f-c485-4c3e-909e-9b593d8cf35c"
+                },
+                {
+                    "description": "Track [C3] on B.Cu, length 19.0500 mm",
+                    "pos": {
+                        "x": 79.605,
+                        "y": 50.895
+                    },
+                    "uuid": "dd79d4a6-e2fc-4be5-9a02-4d48db8c0bd5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [C15] on B.Cu, length 0.8382 mm",
+                    "pos": {
+                        "x": 141.4,
+                        "y": 20.5
+                    },
+                    "uuid": "6fb15fd3-6339-4847-a38a-8e772e36ad69"
+                },
+                {
+                    "description": "Pad 36 [C15] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 81.267
+                    },
+                    "uuid": "3f49d436-c9ad-42e6-8e4a-34cce51afc32"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [GND] on B.Cu, length 1.9130 mm",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 75.667
+                    },
+                    "uuid": "e1ba4ebd-d8b0-486c-b8bf-6f4ab64ce9d2"
+                },
+                {
+                    "description": "Pad 5 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 65.621,
+                        "y": 73.017
+                    },
+                    "uuid": "60a79319-a94d-4918-938f-fa3b61a2af81"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 16 [Net-(C2-Pad1)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 78.067
+                    },
+                    "uuid": "dde951b8-40e4-4a80-8ca9-9f0214cbdb60"
+                },
+                {
+                    "description": "Track [Net-(C2-Pad1)] on B.Cu, length 1.0607 mm",
+                    "pos": {
+                        "x": 75.25,
+                        "y": 77.3
+                    },
+                    "uuid": "ff94e36f-4ba8-4ac9-a417-7992cd30b8ec"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": [
+        {
+            "description": "Clearance violation (pad clearance 0.1524 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "NPTH pad of SW_37",
+                    "pos": {
+                        "x": 304.8,
+                        "y": 47.625
+                    },
+                    "uuid": "8779eec7-4565-4688-b397-c774f9e37991"
+                },
+                {
+                    "description": "PTH pad SW1 [Net-(D36-Pad2)] of SW_36",
+                    "pos": {
+                        "x": 303.443,
+                        "y": 50.895
+                    },
+                    "uuid": "a0cf153d-045e-48b1-b6d4-251188463ae8"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation (pad clearance 0.1524 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "NPTH pad of SW_31",
+                    "pos": {
+                        "x": 242.888,
+                        "y": 47.625
+                    },
+                    "uuid": "0f7f2f9b-5467-48d7-9d53-31496e29a0af"
+                },
+                {
+                    "description": "PTH pad SW1 [Net-(D30-Pad2)] of SW_30",
+                    "pos": {
+                        "x": 241.53,
+                        "y": 50.895
+                    },
+                    "uuid": "b35d4b16-55b4-4ac5-b3a4-996f771d5bf5"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation (pad clearance 0.1524 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "NPTH pad of SW_37",
+                    "pos": {
+                        "x": 304.8,
+                        "y": 47.625
+                    },
+                    "uuid": "8779eec7-4565-4688-b397-c774f9e37991"
+                },
+                {
+                    "description": "PTH pad SW1 [Net-(D36-Pad2)] of SW_36",
+                    "pos": {
+                        "x": 303.443,
+                        "y": 50.895
+                    },
+                    "uuid": "a0cf153d-045e-48b1-b6d4-251188463ae8"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation (pad clearance 0.1524 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "NPTH pad of SW_23",
+                    "pos": {
+                        "x": 104.775,
+                        "y": 47.625
+                    },
+                    "uuid": "04c2c38b-b010-4446-a273-78dcb30c3ada"
+                },
+                {
+                    "description": "PTH pad SW1 [Net-(D22-Pad2)] of SW_22",
+                    "pos": {
+                        "x": 103.417,
+                        "y": 50.895
+                    },
+                    "uuid": "c4ae13fb-a692-4220-9b3c-0b1053f1b13b"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation (pad clearance 0.1524 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "NPTH pad of SW_31",
+                    "pos": {
+                        "x": 242.888,
+                        "y": 47.625
+                    },
+                    "uuid": "0f7f2f9b-5467-48d7-9d53-31496e29a0af"
+                },
+                {
+                    "description": "PTH pad SW1 [Net-(D30-Pad2)] of SW_30",
+                    "pos": {
+                        "x": 241.53,
+                        "y": 50.895
+                    },
+                    "uuid": "b35d4b16-55b4-4ac5-b3a4-996f771d5bf5"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation (pad clearance 0.1524 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "NPTH pad of SW_17",
+                    "pos": {
+                        "x": 42.8625,
+                        "y": 47.625
+                    },
+                    "uuid": "70a31318-cf93-4a64-8bba-a152f364952c"
+                },
+                {
+                    "description": "PTH pad SW1 [C1] of SW_16",
+                    "pos": {
+                        "x": 41.505,
+                        "y": 50.895
+                    },
+                    "uuid": "6af6ab4c-6dd8-4d6b-bb30-8cdcf62f3d90"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation (pad clearance 0.1524 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "NPTH pad of SW_17",
+                    "pos": {
+                        "x": 42.8625,
+                        "y": 47.625
+                    },
+                    "uuid": "70a31318-cf93-4a64-8bba-a152f364952c"
+                },
+                {
+                    "description": "PTH pad SW1 [C1] of SW_16",
+                    "pos": {
+                        "x": 41.505,
+                        "y": 50.895
+                    },
+                    "uuid": "6af6ab4c-6dd8-4d6b-bb30-8cdcf62f3d90"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Clearance violation (pad clearance 0.1524 mm; actual 0.0000 mm)",
+            "items": [
+                {
+                    "description": "NPTH pad of SW_23",
+                    "pos": {
+                        "x": 104.775,
+                        "y": 47.625
+                    },
+                    "uuid": "04c2c38b-b010-4446-a273-78dcb30c3ada"
+                },
+                {
+                    "description": "PTH pad SW1 [Net-(D22-Pad2)] of SW_22",
+                    "pos": {
+                        "x": 103.417,
+                        "y": 50.895
+                    },
+                    "uuid": "c4ae13fb-a692-4220-9b3c-0b1053f1b13b"
+                }
+            ],
+            "severity": "error",
+            "type": "clearance"
+        },
+        {
+            "description": "Footprint has malformed courtyard (not a closed shape)",
+            "items": [
+                {
+                    "description": "Footprint P3",
+                    "pos": {
+                        "x": 105.84,
+                        "y": 20.5
+                    },
+                    "uuid": "00000000-0000-0000-0000-000057c76bb4"
+                }
+            ],
+            "severity": "error",
+            "type": "malformed_courtyard"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint R1",
+                    "pos": {
+                        "x": 65.4304,
+                        "y": 67.31
+                    },
+                    "uuid": "00000000-0000-0000-0000-000057cd136e"
+                },
+                {
+                    "description": "Footprint R2",
+                    "pos": {
+                        "x": 63.6778,
+                        "y": 67.31
+                    },
+                    "uuid": "00000000-0000-0000-0000-000057cd137a"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "PTH inside courtyard",
+            "items": [
+                {
+                    "description": "PTH pad SW2 [Net-(D40-Pad2)] of SW_40",
+                    "pos": {
+                        "x": 73.68,
+                        "y": 71.465
+                    },
+                    "uuid": "968ba225-db13-4691-ad91-058621f525ce"
+                },
+                {
+                    "description": "Footprint U1",
+                    "pos": {
+                        "x": 66.421,
+                        "y": 78.867
+                    },
+                    "uuid": "00000000-0000-0000-0000-000057cd13b7"
+                }
+            ],
+            "severity": "error",
+            "type": "pth_inside_courtyard"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint C2",
+                    "pos": {
+                        "x": 77.25,
+                        "y": 74.75
+                    },
+                    "uuid": "00000000-0000-0000-0000-000057d33991"
+                },
+                {
+                    "description": "Footprint C8",
+                    "pos": {
+                        "x": 77.25,
+                        "y": 73.0
+                    },
+                    "uuid": "00000000-0000-0000-0000-000057d339b5"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2115 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "Pad 6 [GND] of P1 on B.Cu",
+                    "pos": {
+                        "x": 41.39692,
+                        "y": 20.71116
+                    },
+                    "uuid": "099b4a2a-e754-4563-91aa-fd3cfddc1880"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2115 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "Pad 6 [GND] of P1 on B.Cu",
+                    "pos": {
+                        "x": 50.29708,
+                        "y": 20.71116
+                    },
+                    "uuid": "248d3d25-5f3c-4245-ab9b-995fc7e02fca"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 1 [VUSB] of P2",
+                    "pos": {
+                        "x": 32.46,
+                        "y": 20.5
+                    },
+                    "uuid": "c09ca9ef-b1ec-44b7-89a4-992331f59a32"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 2 [PC7] of P2",
+                    "pos": {
+                        "x": 35.0,
+                        "y": 20.5
+                    },
+                    "uuid": "70a58a22-c9d9-4228-b18c-0d7c944a87ea"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 3 [GND] of P2",
+                    "pos": {
+                        "x": 37.54,
+                        "y": 20.5
+                    },
+                    "uuid": "0f6f49a2-5c29-4ce1-a6cf-b1914232b613"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 1 [C1] of P3",
+                    "pos": {
+                        "x": 105.84,
+                        "y": 20.5
+                    },
+                    "uuid": "d14c21c0-a2f0-44b1-8db3-4d0938eb5e0a"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 2 [C2] of P3",
+                    "pos": {
+                        "x": 108.38,
+                        "y": 20.5
+                    },
+                    "uuid": "dca2aca8-a9b6-410d-a646-0ea0324a9fd3"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 3 [C3] of P3",
+                    "pos": {
+                        "x": 110.92,
+                        "y": 20.5
+                    },
+                    "uuid": "2d942d9c-278e-4cd3-a3c5-f7dcc56edc9e"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 4 [C4] of P3",
+                    "pos": {
+                        "x": 113.46,
+                        "y": 20.5
+                    },
+                    "uuid": "55057076-8769-44de-8b15-afee76188414"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 5 [C5] of P3",
+                    "pos": {
+                        "x": 116.0,
+                        "y": 20.5
+                    },
+                    "uuid": "c83df01d-0e19-453f-bccc-8eda66609578"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 6 [C6] of P3",
+                    "pos": {
+                        "x": 118.54,
+                        "y": 20.5
+                    },
+                    "uuid": "c1b988b6-11d4-4002-87a1-7c7aa7e5f7d6"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 7 [C7] of P3",
+                    "pos": {
+                        "x": 121.08,
+                        "y": 20.5
+                    },
+                    "uuid": "bca828c2-128a-48b6-a684-299bdf1c5c86"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 8 [C8] of P3",
+                    "pos": {
+                        "x": 123.62,
+                        "y": 20.5
+                    },
+                    "uuid": "45fddbd0-c7de-47f3-a80c-84cdf36da402"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 9 [C9] of P3",
+                    "pos": {
+                        "x": 126.16,
+                        "y": 20.5
+                    },
+                    "uuid": "a5e67155-1885-4037-9f3f-a99850a81488"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 10 [C10] of P3",
+                    "pos": {
+                        "x": 128.7,
+                        "y": 20.5
+                    },
+                    "uuid": "dac2b3ea-de01-45a2-9d76-0a1c3c55ba8a"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 11 [C11] of P3",
+                    "pos": {
+                        "x": 131.24,
+                        "y": 20.5
+                    },
+                    "uuid": "cc484ad5-5285-4ff4-b197-3a4af0e08213"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 12 [C12] of P3",
+                    "pos": {
+                        "x": 133.78,
+                        "y": 20.5
+                    },
+                    "uuid": "dbfb969b-3651-49cf-8a9d-ac8e5238319e"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 13 [C13] of P3",
+                    "pos": {
+                        "x": 136.32,
+                        "y": 20.5
+                    },
+                    "uuid": "4aebd4c3-7b96-46ba-8407-fe7030e97ad4"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 14 [C14] of P3",
+                    "pos": {
+                        "x": 138.86,
+                        "y": 20.5
+                    },
+                    "uuid": "1b39abfe-3ea9-41e4-873a-801839521d37"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 15 [C15] of P3",
+                    "pos": {
+                        "x": 141.4,
+                        "y": 20.5
+                    },
+                    "uuid": "130a9ada-697e-4949-8cc8-199adeaafdf2"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 1 [R1] of P4",
+                    "pos": {
+                        "x": 162.67,
+                        "y": 20.5
+                    },
+                    "uuid": "4937e38b-3955-4350-b7fc-ebfb444a844c"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 2 [R2] of P4",
+                    "pos": {
+                        "x": 165.21,
+                        "y": 20.5
+                    },
+                    "uuid": "baf0b0d9-d41c-4a06-a2ae-6139c91b819d"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 3 [R3] of P4",
+                    "pos": {
+                        "x": 167.75,
+                        "y": 20.5
+                    },
+                    "uuid": "7882b62b-1d8b-4d07-b605-d8449a6764e4"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Board edge clearance violation (board setup constraints edge clearance 0.5000 mm; actual 0.2340 mm)",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 314.25,
+                        "y": 19.25
+                    },
+                    "uuid": "fbb2d432-afe6-44f1-8910-bf0c90f7cdc7"
+                },
+                {
+                    "description": "PTH pad 4 [R4] of P4",
+                    "pos": {
+                        "x": 170.29,
+                        "y": 20.5
+                    },
+                    "uuid": "ddf40fe2-6737-476b-a3cc-6fde2d6fc498"
+                }
+            ],
+            "severity": "error",
+            "type": "copper_edge_clearance"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_96",
+                    "pos": {
+                        "x": 126.0,
+                        "y": 77.75
+                    },
+                    "uuid": "4ab8bf2c-05e7-46c1-9772-f0eedd4ceed2"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_95",
+                    "pos": {
+                        "x": 143.0,
+                        "y": 77.75
+                    },
+                    "uuid": "d37ae3f4-0765-49fa-8f4c-c4cc0619c689"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_94",
+                    "pos": {
+                        "x": 165.25,
+                        "y": 77.75
+                    },
+                    "uuid": "42660adf-2788-43dd-8931-253a3b5b8a3e"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_93",
+                    "pos": {
+                        "x": 192.75,
+                        "y": 77.75
+                    },
+                    "uuid": "4d5cfcc2-22e1-4735-8754-adc83366014d"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_92",
+                    "pos": {
+                        "x": 181.25,
+                        "y": 77.75
+                    },
+                    "uuid": "1e468b83-efcc-4511-8b78-b75ceaee9d4b"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_91",
+                    "pos": {
+                        "x": 66.04,
+                        "y": 89.2175
+                    },
+                    "uuid": "e91ddddc-a413-4eed-b31e-e4a224720473"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_90",
+                    "pos": {
+                        "x": 41.9735,
+                        "y": 92.202
+                    },
+                    "uuid": "67765691-471f-4445-92f8-16703532582d"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_89",
+                    "pos": {
+                        "x": 47.8155,
+                        "y": 76.3905
+                    },
+                    "uuid": "2c34d1a7-c73f-44f5-a441-e8ba5b220d51"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_88",
+                    "pos": {
+                        "x": 52.1335,
+                        "y": 88.265
+                    },
+                    "uuid": "43d51912-2c71-4c11-ad19-1332525ddbdd"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_87",
+                    "pos": {
+                        "x": 46.5,
+                        "y": 73.25
+                    },
+                    "uuid": "69cbd65a-9327-4876-9d41-49624434d659"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_86",
+                    "pos": {
+                        "x": 52.5,
+                        "y": 73.25
+                    },
+                    "uuid": "991a669d-69a5-4a20-8e31-5bb13c212cb5"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_85",
+                    "pos": {
+                        "x": 44.5,
+                        "y": 65.0
+                    },
+                    "uuid": "3da555d8-81ad-4abf-9fe5-d0f1409e28f1"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_84",
+                    "pos": {
+                        "x": 36.5,
+                        "y": 77.5
+                    },
+                    "uuid": "1ebb4b06-85a8-45f8-a985-6ab66feeb081"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_83",
+                    "pos": {
+                        "x": 30.5,
+                        "y": 32.0
+                    },
+                    "uuid": "d33cd236-1326-4063-b575-d42aaf73d57b"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_82",
+                    "pos": {
+                        "x": 32.75,
+                        "y": 69.5
+                    },
+                    "uuid": "bd38f2ad-dbcd-46ec-8ea8-a73874f0678d"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_81",
+                    "pos": {
+                        "x": 32.75,
+                        "y": 26.25
+                    },
+                    "uuid": "b60264e6-d116-466e-b97d-0ed8b997f202"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_80",
+                    "pos": {
+                        "x": 32.75,
+                        "y": 23.0
+                    },
+                    "uuid": "1c9998d3-e4be-4c96-b098-8fe74bb71daa"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_79",
+                    "pos": {
+                        "x": 37.25,
+                        "y": 25.0
+                    },
+                    "uuid": "26cfb0d3-9a11-43ce-9bb7-ab355c956d1c"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_78",
+                    "pos": {
+                        "x": 45.5,
+                        "y": 34.25
+                    },
+                    "uuid": "e11af47e-9786-467c-974a-e3ec8c777d50"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_77",
+                    "pos": {
+                        "x": 61.5,
+                        "y": 25.5
+                    },
+                    "uuid": "d0678371-f659-4fa6-8a06-e2fdeb8af027"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_76",
+                    "pos": {
+                        "x": 65.25,
+                        "y": 31.0
+                    },
+                    "uuid": "9c9ea2f7-6d06-474d-8009-16c99b341962"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_75",
+                    "pos": {
+                        "x": 91.0,
+                        "y": 28.5
+                    },
+                    "uuid": "6608fa70-d6ee-4e73-91e1-22fd99110ed4"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_74",
+                    "pos": {
+                        "x": 99.5,
+                        "y": 27.25
+                    },
+                    "uuid": "e834914c-9915-4611-ae1f-e33ae1b783a2"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_73",
+                    "pos": {
+                        "x": 102.5,
+                        "y": 21.0
+                    },
+                    "uuid": "00ac841e-10f4-4cb3-8279-cade217c1d7f"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_72",
+                    "pos": {
+                        "x": 311.0,
+                        "y": 91.75
+                    },
+                    "uuid": "e46e6a2e-646f-4eb6-a08c-087432de67b7"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_71",
+                    "pos": {
+                        "x": 286.25,
+                        "y": 93.0
+                    },
+                    "uuid": "768010e6-5925-4989-a355-93868de72ea7"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_70",
+                    "pos": {
+                        "x": 248.5,
+                        "y": 93.0
+                    },
+                    "uuid": "939f32d9-b2a0-4544-b91f-641193219fa9"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_69",
+                    "pos": {
+                        "x": 223.5,
+                        "y": 85.5
+                    },
+                    "uuid": "197da363-cf62-4cca-bcb7-1455b6bff3c8"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_68",
+                    "pos": {
+                        "x": 198.0,
+                        "y": 93.0
+                    },
+                    "uuid": "555b21b9-0316-4a13-b522-93011f2b6c52"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_67",
+                    "pos": {
+                        "x": 186.5,
+                        "y": 85.5
+                    },
+                    "uuid": "a8f2f8a0-2e87-48f7-a244-9f96a29efbbc"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_66",
+                    "pos": {
+                        "x": 167.5,
+                        "y": 93.0
+                    },
+                    "uuid": "f6ab7641-a117-41d1-b1b1-e5d6a27092a5"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_65",
+                    "pos": {
+                        "x": 29.75,
+                        "y": 58.25
+                    },
+                    "uuid": "c0ab512c-05b4-48c3-bea5-36ef5d8b0677"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_64",
+                    "pos": {
+                        "x": 30.5,
+                        "y": 86.0
+                    },
+                    "uuid": "8388720d-9b7c-4170-b2d2-270cdd949dec"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_63",
+                    "pos": {
+                        "x": 267.0,
+                        "y": 21.0
+                    },
+                    "uuid": "94c4ea5b-9687-45db-842e-af1a8a78604f"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_62",
+                    "pos": {
+                        "x": 228.5,
+                        "y": 21.0
+                    },
+                    "uuid": "99625036-dcce-48fe-8799-739ab91ca128"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_61",
+                    "pos": {
+                        "x": 190.5,
+                        "y": 21.0
+                    },
+                    "uuid": "13a329b9-5896-41b6-b5bb-0755113dcd09"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_60",
+                    "pos": {
+                        "x": 152.5,
+                        "y": 21.0
+                    },
+                    "uuid": "f939dbf4-2733-4dd2-9e1b-5755306b0dd2"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_59",
+                    "pos": {
+                        "x": 76.5,
+                        "y": 20.75
+                    },
+                    "uuid": "3474aebf-d569-4279-9aab-5d661ab35ff4"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_58",
+                    "pos": {
+                        "x": 197.0,
+                        "y": 45.0
+                    },
+                    "uuid": "296242e7-8a37-4e33-926f-9cbe72c5f7e8"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_57",
+                    "pos": {
+                        "x": 179.5,
+                        "y": 55.5
+                    },
+                    "uuid": "81e24eeb-a7d6-44f2-aa74-4e4c4c158507"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_56",
+                    "pos": {
+                        "x": 126.0,
+                        "y": 55.5
+                    },
+                    "uuid": "6e97833a-796b-495c-ab51-fb332b22d7ee"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_55",
+                    "pos": {
+                        "x": 114.5,
+                        "y": 47.5
+                    },
+                    "uuid": "085e41f0-8da7-435e-b9ce-4557623c0040"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_54",
+                    "pos": {
+                        "x": 166.0,
+                        "y": 44.0
+                    },
+                    "uuid": "4c722627-249e-4d2f-8611-ea0760af02cb"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_53",
+                    "pos": {
+                        "x": 312.0,
+                        "y": 66.5
+                    },
+                    "uuid": "43f0a895-ff5e-478a-9277-f5373bc33f56"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_52",
+                    "pos": {
+                        "x": 297.5,
+                        "y": 66.5
+                    },
+                    "uuid": "3f940abf-1558-4922-ac8a-20c0b7ab2d39"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_51",
+                    "pos": {
+                        "x": 278.5,
+                        "y": 66.5
+                    },
+                    "uuid": "6265138c-edf4-4d55-99d4-6a5a78ca1405"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_50",
+                    "pos": {
+                        "x": 259.0,
+                        "y": 66.5
+                    },
+                    "uuid": "c5208c96-433d-496d-b6ea-2314d5ead4e3"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_49",
+                    "pos": {
+                        "x": 239.0,
+                        "y": 66.5
+                    },
+                    "uuid": "5476bd8a-3bcb-4d44-bb7a-42ede0da21ec"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_48",
+                    "pos": {
+                        "x": 219.5,
+                        "y": 66.5
+                    },
+                    "uuid": "06c66b45-b958-4636-9b5b-111200798f15"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_47",
+                    "pos": {
+                        "x": 186.5,
+                        "y": 66.5
+                    },
+                    "uuid": "f045e834-b497-4949-852d-dff733775de9"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_46",
+                    "pos": {
+                        "x": 200.5,
+                        "y": 66.5
+                    },
+                    "uuid": "5041063a-313f-49f7-a05f-86d06b68c394"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_45",
+                    "pos": {
+                        "x": 179.5,
+                        "y": 66.5
+                    },
+                    "uuid": "265f3402-56ea-4e79-8414-46e54a7c06a1"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_44",
+                    "pos": {
+                        "x": 163.0,
+                        "y": 66.5
+                    },
+                    "uuid": "f5d84c88-1ff7-49f7-89eb-b4eaadda6a1e"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_43",
+                    "pos": {
+                        "x": 143.0,
+                        "y": 66.5
+                    },
+                    "uuid": "a05d21a9-26cc-4f57-b433-498f3de37906"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_42",
+                    "pos": {
+                        "x": 126.0,
+                        "y": 66.5
+                    },
+                    "uuid": "99580749-87ef-40a9-ae9e-651fbcc3078d"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_41",
+                    "pos": {
+                        "x": 109.0,
+                        "y": 66.5
+                    },
+                    "uuid": "e33de659-1df8-47b2-af7b-1e63c8997d44"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_40",
+                    "pos": {
+                        "x": 108.966,
+                        "y": 76.708
+                    },
+                    "uuid": "22c544ea-9554-462a-beab-54429dd04d96"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_39",
+                    "pos": {
+                        "x": 95.504,
+                        "y": 76.962
+                    },
+                    "uuid": "3456f466-121a-4f59-ae12-daa4a74575b0"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_38",
+                    "pos": {
+                        "x": 95.5,
+                        "y": 70.5
+                    },
+                    "uuid": "f06856b5-c1df-42a4-85c6-45e50bad1628"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_37",
+                    "pos": {
+                        "x": 95.5,
+                        "y": 59.5
+                    },
+                    "uuid": "b2fdd856-a0ff-40c2-bbe1-8c3fb17f6d3b"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_36",
+                    "pos": {
+                        "x": 90.5,
+                        "y": 59.5
+                    },
+                    "uuid": "22018e75-ebf1-4076-9985-0b74411dcc98"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_35",
+                    "pos": {
+                        "x": 53.0,
+                        "y": 43.5
+                    },
+                    "uuid": "bfa88a4a-a5a7-480f-8d6a-26ea938e455b"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_34",
+                    "pos": {
+                        "x": 53.0,
+                        "y": 59.0
+                    },
+                    "uuid": "4899bd13-6222-46dc-b412-d786301f3f47"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_33",
+                    "pos": {
+                        "x": 88.5,
+                        "y": 93.5
+                    },
+                    "uuid": "9e652724-eab4-4ecf-9b48-90ce2104ef81"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_32",
+                    "pos": {
+                        "x": 69.5,
+                        "y": 90.0
+                    },
+                    "uuid": "88965c2e-6881-4a2b-9531-7242e0d94cc1"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_31",
+                    "pos": {
+                        "x": 88.5,
+                        "y": 77.0
+                    },
+                    "uuid": "08a36df4-5080-4e02-ae84-72cbd862f26c"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_30",
+                    "pos": {
+                        "x": 88.5,
+                        "y": 85.0
+                    },
+                    "uuid": "cad4a8c6-e3f3-48b8-82b3-46af6e2d6d88"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_29",
+                    "pos": {
+                        "x": 80.5,
+                        "y": 85.0
+                    },
+                    "uuid": "95442c13-253d-4116-b7c7-6a012daca74e"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_28",
+                    "pos": {
+                        "x": 81.5,
+                        "y": 77.0
+                    },
+                    "uuid": "e0165d88-67f5-4707-bc31-18e7c7fc849e"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_27",
+                    "pos": {
+                        "x": 76.5,
+                        "y": 62.75
+                    },
+                    "uuid": "d4eaba82-685c-4d4d-9a9a-5bf86c684507"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_26",
+                    "pos": {
+                        "x": 76.5,
+                        "y": 59.0
+                    },
+                    "uuid": "99fb7910-a3b0-4cd4-a4e4-22017cf6c56a"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_25",
+                    "pos": {
+                        "x": 68.5,
+                        "y": 59.0
+                    },
+                    "uuid": "3ae82da1-ac3a-47a6-975e-0582508fecdd"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_24",
+                    "pos": {
+                        "x": 68.5,
+                        "y": 64.5
+                    },
+                    "uuid": "3d2ea29d-2857-4a45-994f-7ab5bf8e0839"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_23",
+                    "pos": {
+                        "x": 53.0,
+                        "y": 65.0
+                    },
+                    "uuid": "e4743c66-7add-41b0-9006-a1c29c0583d9"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_22",
+                    "pos": {
+                        "x": 53.0,
+                        "y": 76.5
+                    },
+                    "uuid": "73672a6a-cb25-4819-895a-f8e9e5040064"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_21",
+                    "pos": {
+                        "x": 52.1335,
+                        "y": 84.455
+                    },
+                    "uuid": "339b29d8-7a80-4a67-b3a4-32096bfea404"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_20",
+                    "pos": {
+                        "x": 63.0,
+                        "y": 91.0
+                    },
+                    "uuid": "fe9e4aef-7b3c-4a38-ad08-0b37e3f4476a"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_19",
+                    "pos": {
+                        "x": 56.0,
+                        "y": 80.5
+                    },
+                    "uuid": "b0611880-dd65-4633-8adb-de8491d827b2"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_18",
+                    "pos": {
+                        "x": 52.5,
+                        "y": 80.5
+                    },
+                    "uuid": "a865df3b-dc96-4baf-b536-2edd6466072c"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_17",
+                    "pos": {
+                        "x": 34.0,
+                        "y": 86.0
+                    },
+                    "uuid": "7660d44e-6a49-446d-89da-21252477071a"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_16",
+                    "pos": {
+                        "x": 54.0,
+                        "y": 24.0
+                    },
+                    "uuid": "8c72af8a-69ec-4069-ac16-2bc157e0c73d"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_15",
+                    "pos": {
+                        "x": 32.5,
+                        "y": 40.75
+                    },
+                    "uuid": "9406c115-9ebe-4b12-9569-e308c20290e0"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_14",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 39.0
+                    },
+                    "uuid": "668f77f0-5cae-49f5-bea3-671f81057232"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_13",
+                    "pos": {
+                        "x": 311.0,
+                        "y": 38.0
+                    },
+                    "uuid": "effbca1d-c506-4101-9600-4341d0da71d6"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_12",
+                    "pos": {
+                        "x": 300.0,
+                        "y": 38.0
+                    },
+                    "uuid": "e89a5835-8702-4846-abb2-82b9f71fd9b4"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_11",
+                    "pos": {
+                        "x": 285.0,
+                        "y": 38.0
+                    },
+                    "uuid": "9d8662d4-e441-4b3d-8816-1620613aa663"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_10",
+                    "pos": {
+                        "x": 265.0,
+                        "y": 38.0
+                    },
+                    "uuid": "7a6be048-b0ef-4562-a329-e4283038f923"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_9",
+                    "pos": {
+                        "x": 245.0,
+                        "y": 38.0
+                    },
+                    "uuid": "822a2142-6086-4f90-8e69-fcdd2bee3d58"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_8",
+                    "pos": {
+                        "x": 225.0,
+                        "y": 38.0
+                    },
+                    "uuid": "68e118a3-732d-444c-acfb-42031a9a4471"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_7",
+                    "pos": {
+                        "x": 203.0,
+                        "y": 38.0
+                    },
+                    "uuid": "9cb93122-4856-4c3f-9d9b-dacaf0f61b82"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_6",
+                    "pos": {
+                        "x": 184.0,
+                        "y": 38.0
+                    },
+                    "uuid": "66161044-57fc-45d9-8329-9f905a4f3b2b"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_5",
+                    "pos": {
+                        "x": 145.0,
+                        "y": 38.0
+                    },
+                    "uuid": "c1853c7a-4d62-429d-b5a9-9024667f2214"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_4",
+                    "pos": {
+                        "x": 126.0,
+                        "y": 38.0
+                    },
+                    "uuid": "c0bb7cd6-ccd7-406f-ae7b-4107664a8b8d"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_3",
+                    "pos": {
+                        "x": 106.0,
+                        "y": 38.0
+                    },
+                    "uuid": "da09fb45-9316-46c6-822d-bc69520763ad"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**_2",
+                    "pos": {
+                        "x": 88.0,
+                        "y": 38.0
+                    },
+                    "uuid": "f82018dd-3d6c-4086-b3b6-33b49b7d940f"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Hole size out of range (board setup constraints min hole 0.3048 mm; actual 0.3000 mm)",
+            "items": [
+                {
+                    "description": "PTH pad GND [GND] of REF**",
+                    "pos": {
+                        "x": 74.25,
+                        "y": 38.0
+                    },
+                    "uuid": "4ff04855-ecfa-49b5-9f90-7ca9778a9c1a"
+                }
+            ],
+            "severity": "error",
+            "type": "drill_out_of_range"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 28 [C5] of U1 on B.Cu",
+                    "pos": {
+                        "x": 66.421,
+                        "y": 84.717
+                    },
+                    "uuid": "b296a62a-4dbd-4b47-8eb5-86f5d856588a"
+                },
+                {
+                    "description": "Pad 27 [Net-(U1-Pad27)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 67.221,
+                        "y": 84.717
+                    },
+                    "uuid": "aa80e242-19c0-441d-ae48-50b911a791d5"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 28 [C5] of U1 on B.Cu",
+                    "pos": {
+                        "x": 66.421,
+                        "y": 84.717
+                    },
+                    "uuid": "b296a62a-4dbd-4b47-8eb5-86f5d856588a"
+                },
+                {
+                    "description": "Pad 29 [C6] of U1 on B.Cu",
+                    "pos": {
+                        "x": 65.621,
+                        "y": 84.717
+                    },
+                    "uuid": "d33f36db-2139-45da-b1fe-6877c11c3020"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 29 [C6] of U1 on B.Cu",
+                    "pos": {
+                        "x": 65.621,
+                        "y": 84.717
+                    },
+                    "uuid": "d33f36db-2139-45da-b1fe-6877c11c3020"
+                },
+                {
+                    "description": "Pad 30 [C7] of U1 on B.Cu",
+                    "pos": {
+                        "x": 64.821,
+                        "y": 84.717
+                    },
+                    "uuid": "396da56a-46e5-46ea-9951-a623e85c4111"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 30 [C7] of U1 on B.Cu",
+                    "pos": {
+                        "x": 64.821,
+                        "y": 84.717
+                    },
+                    "uuid": "396da56a-46e5-46ea-9951-a623e85c4111"
+                },
+                {
+                    "description": "Pad 31 [Net-(U1-Pad31)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 64.021,
+                        "y": 84.717
+                    },
+                    "uuid": "34f3dae7-0b5b-4683-a800-4a4e7ab5d9a9"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 31 [Net-(U1-Pad31)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 64.021,
+                        "y": 84.717
+                    },
+                    "uuid": "34f3dae7-0b5b-4683-a800-4a4e7ab5d9a9"
+                },
+                {
+                    "description": "Pad 32 [PC7] of U1 on B.Cu",
+                    "pos": {
+                        "x": 63.221,
+                        "y": 84.717
+                    },
+                    "uuid": "d9f9add5-6ff7-4fb0-ad5b-725dff438b4a"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 32 [PC7] of U1 on B.Cu",
+                    "pos": {
+                        "x": 63.221,
+                        "y": 84.717
+                    },
+                    "uuid": "d9f9add5-6ff7-4fb0-ad5b-725dff438b4a"
+                },
+                {
+                    "description": "Pad 33 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 62.421,
+                        "y": 84.717
+                    },
+                    "uuid": "c6f37360-f0b1-494d-bbdd-1ca91c041185"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "PTH pad SW1 [Net-(D22-Pad2)] of SW_22",
+                    "pos": {
+                        "x": 103.417,
+                        "y": 50.895
+                    },
+                    "uuid": "c4ae13fb-a692-4220-9b3c-0b1053f1b13b"
+                },
+                {
+                    "description": "NPTH pad of SW_23",
+                    "pos": {
+                        "x": 104.775,
+                        "y": 47.625
+                    },
+                    "uuid": "04c2c38b-b010-4446-a273-78dcb30c3ada"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "PTH pad SW1 [Net-(D22-Pad2)] of SW_22",
+                    "pos": {
+                        "x": 103.417,
+                        "y": 50.895
+                    },
+                    "uuid": "c4ae13fb-a692-4220-9b3c-0b1053f1b13b"
+                },
+                {
+                    "description": "NPTH pad of SW_23",
+                    "pos": {
+                        "x": 104.775,
+                        "y": 47.625
+                    },
+                    "uuid": "04c2c38b-b010-4446-a273-78dcb30c3ada"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 1 [C9] of U1 on B.Cu",
+                    "pos": {
+                        "x": 62.421,
+                        "y": 73.017
+                    },
+                    "uuid": "3282badd-5a27-4f25-b34d-130c0e67f1a5"
+                },
+                {
+                    "description": "Pad 2 [+5V] of U1 on B.Cu",
+                    "pos": {
+                        "x": 63.221,
+                        "y": 73.017
+                    },
+                    "uuid": "06d5edc0-8d89-4df6-9cec-26b1941d1fbf"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 2 [+5V] of U1 on B.Cu",
+                    "pos": {
+                        "x": 63.221,
+                        "y": 73.017
+                    },
+                    "uuid": "06d5edc0-8d89-4df6-9cec-26b1941d1fbf"
+                },
+                {
+                    "description": "Pad 3 [D-] of U1 on B.Cu",
+                    "pos": {
+                        "x": 64.021,
+                        "y": 73.017
+                    },
+                    "uuid": "ad3e781c-9877-4ce4-8c83-420ceb35c434"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 3 [D-] of U1 on B.Cu",
+                    "pos": {
+                        "x": 64.021,
+                        "y": 73.017
+                    },
+                    "uuid": "ad3e781c-9877-4ce4-8c83-420ceb35c434"
+                },
+                {
+                    "description": "Pad 4 [D+] of U1 on B.Cu",
+                    "pos": {
+                        "x": 64.821,
+                        "y": 73.017
+                    },
+                    "uuid": "c1617b9f-ae43-4554-a36b-66c73e5cf693"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 34 [+5V] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 82.867
+                    },
+                    "uuid": "7b3c1a63-2431-4f20-a2c8-1ee9de629bdb"
+                },
+                {
+                    "description": "Pad 35 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 82.067
+                    },
+                    "uuid": "c80f99a9-fe77-4f43-8b7e-ec6c8d92a2e5"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 4 [D+] of U1 on B.Cu",
+                    "pos": {
+                        "x": 64.821,
+                        "y": 73.017
+                    },
+                    "uuid": "c1617b9f-ae43-4554-a36b-66c73e5cf693"
+                },
+                {
+                    "description": "Pad 5 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 65.621,
+                        "y": 73.017
+                    },
+                    "uuid": "60a79319-a94d-4918-938f-fa3b61a2af81"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 1 [VUSB] of P1 on B.Cu",
+                    "pos": {
+                        "x": 44.2468,
+                        "y": 26.30932
+                    },
+                    "uuid": "98656fd5-e9f6-4abc-b40a-f24066317572"
+                },
+                {
+                    "description": "Pad 2 [USB-] of P1 on B.Cu",
+                    "pos": {
+                        "x": 45.0469,
+                        "y": 26.30932
+                    },
+                    "uuid": "f7b44bbd-989b-4559-9a91-c5751aaebf26"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 35 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 82.067
+                    },
+                    "uuid": "c80f99a9-fe77-4f43-8b7e-ec6c8d92a2e5"
+                },
+                {
+                    "description": "Pad 36 [C15] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 81.267
+                    },
+                    "uuid": "3f49d436-c9ad-42e6-8e4a-34cce51afc32"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 36 [C15] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 81.267
+                    },
+                    "uuid": "3f49d436-c9ad-42e6-8e4a-34cce51afc32"
+                },
+                {
+                    "description": "Pad 37 [C14] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 80.467
+                    },
+                    "uuid": "2004e037-7902-43f1-a57d-2a24e0ce3475"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 2 [USB-] of P1 on B.Cu",
+                    "pos": {
+                        "x": 45.0469,
+                        "y": 26.30932
+                    },
+                    "uuid": "f7b44bbd-989b-4559-9a91-c5751aaebf26"
+                },
+                {
+                    "description": "Pad 3 [USB+] of P1 on B.Cu",
+                    "pos": {
+                        "x": 45.847,
+                        "y": 26.30932
+                    },
+                    "uuid": "80926acc-a714-4f41-be28-3e437db5a9c9"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 5 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 65.621,
+                        "y": 73.017
+                    },
+                    "uuid": "60a79319-a94d-4918-938f-fa3b61a2af81"
+                },
+                {
+                    "description": "Pad 6 [Net-(C5-Pad1)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 66.421,
+                        "y": 73.017
+                    },
+                    "uuid": "cc616f77-4b02-46ea-bf53-68a3a7136540"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 37 [C14] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 80.467
+                    },
+                    "uuid": "2004e037-7902-43f1-a57d-2a24e0ce3475"
+                },
+                {
+                    "description": "Pad 38 [C13] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 79.667
+                    },
+                    "uuid": "45066d2a-cb0d-485a-8e4e-93e887824cd2"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 3 [USB+] of P1 on B.Cu",
+                    "pos": {
+                        "x": 45.847,
+                        "y": 26.30932
+                    },
+                    "uuid": "80926acc-a714-4f41-be28-3e437db5a9c9"
+                },
+                {
+                    "description": "Pad 4 [Net-(P1-Pad4)] of P1 on B.Cu",
+                    "pos": {
+                        "x": 46.6471,
+                        "y": 26.30932
+                    },
+                    "uuid": "bfd01cd4-7c61-40c2-84b6-037cd925e75f"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 6 [Net-(C5-Pad1)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 66.421,
+                        "y": 73.017
+                    },
+                    "uuid": "cc616f77-4b02-46ea-bf53-68a3a7136540"
+                },
+                {
+                    "description": "Pad 7 [+5V] of U1 on B.Cu",
+                    "pos": {
+                        "x": 67.221,
+                        "y": 73.017
+                    },
+                    "uuid": "1f186db1-b27a-4fb8-b748-9cfdb16c24bc"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 4 [Net-(P1-Pad4)] of P1 on B.Cu",
+                    "pos": {
+                        "x": 46.6471,
+                        "y": 26.30932
+                    },
+                    "uuid": "bfd01cd4-7c61-40c2-84b6-037cd925e75f"
+                },
+                {
+                    "description": "Pad 5 [GND] of P1 on B.Cu",
+                    "pos": {
+                        "x": 47.4472,
+                        "y": 26.30932
+                    },
+                    "uuid": "1711b8ee-1304-473c-a17d-ebcaf11fcde7"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 38 [C13] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 79.667
+                    },
+                    "uuid": "45066d2a-cb0d-485a-8e4e-93e887824cd2"
+                },
+                {
+                    "description": "Pad 39 [C12] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 78.867
+                    },
+                    "uuid": "90ba3010-14a3-4d0e-8dd4-85a77cc259cd"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 39 [C12] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 78.867
+                    },
+                    "uuid": "90ba3010-14a3-4d0e-8dd4-85a77cc259cd"
+                },
+                {
+                    "description": "Pad 40 [C11] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 78.067
+                    },
+                    "uuid": "3b930818-4664-4814-a65e-d3df8a0239cf"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 7 [+5V] of U1 on B.Cu",
+                    "pos": {
+                        "x": 67.221,
+                        "y": 73.017
+                    },
+                    "uuid": "1f186db1-b27a-4fb8-b748-9cfdb16c24bc"
+                },
+                {
+                    "description": "Pad 8 [C1] of U1 on B.Cu",
+                    "pos": {
+                        "x": 68.021,
+                        "y": 73.017
+                    },
+                    "uuid": "02cd08a2-d549-4d15-b961-63eae317ac49"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 8 [C1] of U1 on B.Cu",
+                    "pos": {
+                        "x": 68.021,
+                        "y": 73.017
+                    },
+                    "uuid": "02cd08a2-d549-4d15-b961-63eae317ac49"
+                },
+                {
+                    "description": "Pad 9 [C2] of U1 on B.Cu",
+                    "pos": {
+                        "x": 68.821,
+                        "y": 73.017
+                    },
+                    "uuid": "0496dd64-6eef-426b-882e-e98163214499"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 40 [C11] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 78.067
+                    },
+                    "uuid": "3b930818-4664-4814-a65e-d3df8a0239cf"
+                },
+                {
+                    "description": "Pad 41 [C10] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 77.267
+                    },
+                    "uuid": "360b0710-48de-41fe-a931-39c9b753cab8"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 9 [C2] of U1 on B.Cu",
+                    "pos": {
+                        "x": 68.821,
+                        "y": 73.017
+                    },
+                    "uuid": "0496dd64-6eef-426b-882e-e98163214499"
+                },
+                {
+                    "description": "Pad 10 [C3] of U1 on B.Cu",
+                    "pos": {
+                        "x": 69.621,
+                        "y": 73.017
+                    },
+                    "uuid": "17ebd948-aad7-4400-b3a1-525daef8b8b9"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 10 [C3] of U1 on B.Cu",
+                    "pos": {
+                        "x": 69.621,
+                        "y": 73.017
+                    },
+                    "uuid": "17ebd948-aad7-4400-b3a1-525daef8b8b9"
+                },
+                {
+                    "description": "Pad 11 [C4] of U1 on B.Cu",
+                    "pos": {
+                        "x": 70.421,
+                        "y": 73.017
+                    },
+                    "uuid": "08c0b4b4-b636-464b-8296-d8e57f32ca5e"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 41 [C10] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 77.267
+                    },
+                    "uuid": "360b0710-48de-41fe-a931-39c9b753cab8"
+                },
+                {
+                    "description": "Pad 42 [Net-(C4-Pad1)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 76.467
+                    },
+                    "uuid": "3bb2ac8f-b426-43c1-a575-e9bfdcc34924"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "PTH pad SW1 [C1] of SW_16",
+                    "pos": {
+                        "x": 41.505,
+                        "y": 50.895
+                    },
+                    "uuid": "6af6ab4c-6dd8-4d6b-bb30-8cdcf62f3d90"
+                },
+                {
+                    "description": "NPTH pad of SW_17",
+                    "pos": {
+                        "x": 42.8625,
+                        "y": 47.625
+                    },
+                    "uuid": "70a31318-cf93-4a64-8bba-a152f364952c"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 12 [C8] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 74.867
+                    },
+                    "uuid": "5485db5c-e529-4c47-8c64-a5fd75d7bee3"
+                },
+                {
+                    "description": "Pad 13 [Net-(R3-Pad1)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 75.667
+                    },
+                    "uuid": "4cea9e4d-3d55-4a71-b167-f28f444254e6"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "PTH pad SW1 [C1] of SW_16",
+                    "pos": {
+                        "x": 41.505,
+                        "y": 50.895
+                    },
+                    "uuid": "6af6ab4c-6dd8-4d6b-bb30-8cdcf62f3d90"
+                },
+                {
+                    "description": "NPTH pad of SW_17",
+                    "pos": {
+                        "x": 42.8625,
+                        "y": 47.625
+                    },
+                    "uuid": "70a31318-cf93-4a64-8bba-a152f364952c"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 13 [Net-(R3-Pad1)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 75.667
+                    },
+                    "uuid": "4cea9e4d-3d55-4a71-b167-f28f444254e6"
+                },
+                {
+                    "description": "Pad 14 [+5V] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 76.467
+                    },
+                    "uuid": "95ebccd6-8fc2-4c63-b991-bcfc1814ecdb"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 42 [Net-(C4-Pad1)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 76.467
+                    },
+                    "uuid": "3bb2ac8f-b426-43c1-a575-e9bfdcc34924"
+                },
+                {
+                    "description": "Pad 43 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 75.667
+                    },
+                    "uuid": "70ad007e-209b-4664-9a3f-b295e9ff88e4"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 14 [+5V] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 76.467
+                    },
+                    "uuid": "95ebccd6-8fc2-4c63-b991-bcfc1814ecdb"
+                },
+                {
+                    "description": "Pad 15 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 77.267
+                    },
+                    "uuid": "7e00bb27-c41f-4ae7-9813-7c4c922e6b99"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 15 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 77.267
+                    },
+                    "uuid": "7e00bb27-c41f-4ae7-9813-7c4c922e6b99"
+                },
+                {
+                    "description": "Pad 16 [Net-(C2-Pad1)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 78.067
+                    },
+                    "uuid": "dde951b8-40e4-4a80-8ca9-9f0214cbdb60"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 43 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 75.667
+                    },
+                    "uuid": "70ad007e-209b-4664-9a3f-b295e9ff88e4"
+                },
+                {
+                    "description": "Pad 44 [+5V] of U1 on B.Cu",
+                    "pos": {
+                        "x": 60.571,
+                        "y": 74.867
+                    },
+                    "uuid": "d7992b89-c0df-4bf9-8861-fbf6abf08ad9"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 16 [Net-(C2-Pad1)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 78.067
+                    },
+                    "uuid": "dde951b8-40e4-4a80-8ca9-9f0214cbdb60"
+                },
+                {
+                    "description": "Pad 17 [Net-(C1-Pad2)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 78.867
+                    },
+                    "uuid": "13d025fc-f370-4033-8d97-c5f60c130168"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of SW_37",
+                    "pos": {
+                        "x": 304.8,
+                        "y": 47.625
+                    },
+                    "uuid": "8779eec7-4565-4688-b397-c774f9e37991"
+                },
+                {
+                    "description": "PTH pad SW1 [Net-(D36-Pad2)] of SW_36",
+                    "pos": {
+                        "x": 303.443,
+                        "y": 50.895
+                    },
+                    "uuid": "a0cf153d-045e-48b1-b6d4-251188463ae8"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 17 [Net-(C1-Pad2)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 78.867
+                    },
+                    "uuid": "13d025fc-f370-4033-8d97-c5f60c130168"
+                },
+                {
+                    "description": "Pad 18 [Net-(U1-Pad18)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 79.667
+                    },
+                    "uuid": "b87aab16-1bce-45d0-9bfc-4e1c9c6d4b9f"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of SW_37",
+                    "pos": {
+                        "x": 304.8,
+                        "y": 47.625
+                    },
+                    "uuid": "8779eec7-4565-4688-b397-c774f9e37991"
+                },
+                {
+                    "description": "PTH pad SW1 [Net-(D36-Pad2)] of SW_36",
+                    "pos": {
+                        "x": 303.443,
+                        "y": 50.895
+                    },
+                    "uuid": "a0cf153d-045e-48b1-b6d4-251188463ae8"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 18 [Net-(U1-Pad18)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 79.667
+                    },
+                    "uuid": "b87aab16-1bce-45d0-9bfc-4e1c9c6d4b9f"
+                },
+                {
+                    "description": "Pad 19 [Net-(U1-Pad19)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 80.467
+                    },
+                    "uuid": "88b8e469-1d54-465a-a454-4cc18eb09a01"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 19 [Net-(U1-Pad19)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 80.467
+                    },
+                    "uuid": "88b8e469-1d54-465a-a454-4cc18eb09a01"
+                },
+                {
+                    "description": "Pad 20 [R1] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 81.267
+                    },
+                    "uuid": "a984892a-143d-497e-9a8f-2c47373ff62e"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Front solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "PTH pad SW1 [Net-(D30-Pad2)] of SW_30",
+                    "pos": {
+                        "x": 241.53,
+                        "y": 50.895
+                    },
+                    "uuid": "b35d4b16-55b4-4ac5-b3a4-996f771d5bf5"
+                },
+                {
+                    "description": "NPTH pad of SW_31",
+                    "pos": {
+                        "x": 242.888,
+                        "y": 47.625
+                    },
+                    "uuid": "0f7f2f9b-5467-48d7-9d53-31496e29a0af"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "NPTH pad of SW_31",
+                    "pos": {
+                        "x": 242.888,
+                        "y": 47.625
+                    },
+                    "uuid": "0f7f2f9b-5467-48d7-9d53-31496e29a0af"
+                },
+                {
+                    "description": "PTH pad SW1 [Net-(D30-Pad2)] of SW_30",
+                    "pos": {
+                        "x": 241.53,
+                        "y": 50.895
+                    },
+                    "uuid": "b35d4b16-55b4-4ac5-b3a4-996f771d5bf5"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 20 [R1] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 81.267
+                    },
+                    "uuid": "a984892a-143d-497e-9a8f-2c47373ff62e"
+                },
+                {
+                    "description": "Pad 21 [R2] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 82.067
+                    },
+                    "uuid": "93b875b7-cddd-4487-81b8-bf975b8b84d1"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 21 [R2] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 82.067
+                    },
+                    "uuid": "93b875b7-cddd-4487-81b8-bf975b8b84d1"
+                },
+                {
+                    "description": "Pad 22 [R4] of U1 on B.Cu",
+                    "pos": {
+                        "x": 72.271,
+                        "y": 82.867
+                    },
+                    "uuid": "56445f52-9154-4cbd-9d9d-625caca2ca65"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 23 [GND] of U1 on B.Cu",
+                    "pos": {
+                        "x": 70.421,
+                        "y": 84.717
+                    },
+                    "uuid": "03cb5467-9be1-4001-a318-5c3edf9933fb"
+                },
+                {
+                    "description": "Pad 24 [+5V] of U1 on B.Cu",
+                    "pos": {
+                        "x": 69.621,
+                        "y": 84.717
+                    },
+                    "uuid": "e8a5f014-6198-434c-8a7b-725024e7690d"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 24 [+5V] of U1 on B.Cu",
+                    "pos": {
+                        "x": 69.621,
+                        "y": 84.717
+                    },
+                    "uuid": "e8a5f014-6198-434c-8a7b-725024e7690d"
+                },
+                {
+                    "description": "Pad 25 [Net-(U1-Pad25)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 68.821,
+                        "y": 84.717
+                    },
+                    "uuid": "0a83d936-8914-4bf6-94d9-cfd4622325ed"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 25 [Net-(U1-Pad25)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 68.821,
+                        "y": 84.717
+                    },
+                    "uuid": "0a83d936-8914-4bf6-94d9-cfd4622325ed"
+                },
+                {
+                    "description": "Pad 26 [R3] of U1 on B.Cu",
+                    "pos": {
+                        "x": 68.021,
+                        "y": 84.717
+                    },
+                    "uuid": "0bbd73a2-8c05-4e05-aafc-359507797894"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        },
+        {
+            "description": "Rear solder mask aperture bridges items with different nets",
+            "items": [
+                {
+                    "description": "Pad 26 [R3] of U1 on B.Cu",
+                    "pos": {
+                        "x": 68.021,
+                        "y": 84.717
+                    },
+                    "uuid": "0bbd73a2-8c05-4e05-aafc-359507797894"
+                },
+                {
+                    "description": "Pad 27 [Net-(U1-Pad27)] of U1 on B.Cu",
+                    "pos": {
+                        "x": 67.221,
+                        "y": 84.717
+                    },
+                    "uuid": "aa80e242-19c0-441d-ae48-50b911a791d5"
+                }
+            ],
+            "severity": "error",
+            "type": "solder_mask_bridge"
+        }
+    ]
+}

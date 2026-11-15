@@ -1,0 +1,274 @@
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[font=\footnotesize, node distance=1cm, dec/.style={draw=accent, fill=accent!8, diamond, aspect=2.6, text width=3.9cm, align=center, inner sep=0pt}, act/.style={draw=black!45, fill=black!3, rounded corners=2pt, text width=5.3cm, align=left, inner sep=4pt, minimum height=8mm}, ref/.style={font=\scriptsize\ttfamily, text=black!50}, arr/.style={-{Stealth}, draw=black!45, thick}, def/.style={-{Stealth}, draw=okgreen, line width=1.8pt}, lab/.style={font=\scriptsize\bfseries, fill=white, inner sep=1pt}]
+\node[dec] (n0) at (0,0.00) {\textbf{N1} -{}-try-layers given?};
+\node[act, right=1.4cm of n0] (s0) {Layer advisor: route each layer count and compare them};
+\draw[arr] (n0) -- node[lab, above] {yes} (s0);
+\node[ref, below right=-1mm and 1.4cm of n0.south, anchor=north west] {main.cpp:1704};
+\node[dec] (n1) at (0,-2.45) {\textbf{N2} -{}-time-total given?};
+\node[act, right=1.4cm of n1] (s1) {One deadline: plain run gets 0.75 T, the later stages share the rest};
+\draw[arr] (n1) -- node[lab, above] {yes} (s1);
+\node[act, left=0.9cm of n1, text width=3.3cm] (d1) {Every stage gets its own -{}-time (120 s)};
+\draw[densely dotted, black!40] (n1) -- (d1);
+\node[lab, text=black!60] at ($(n1)!0.5!(d1)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n1.south, anchor=north west] {route\_job.cpp:249};
+\draw[def] (n0) -- node[lab, right] {no} (n1);
+\node[dec] (n2) at (0,-4.90) {\textbf{N3} -{}-reroute given?};
+\node[act, right=1.4cm of n2] (s2) {Unlocked tracks and vias are removed first};
+\draw[arr] (n2) -- node[lab, above] {yes} (s2);
+\node[act, left=0.9cm of n2, text width=3.3cm] (d2) {All existing copper stays, as fixed obstacles};
+\draw[densely dotted, black!40] (n2) -- (d2);
+\node[lab, text=black!60] at ($(n2)!0.5!(d2)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n2.south, anchor=north west] {route\_job.cpp:260};
+\draw[def] (n1) -- node[lab, right] {no} (n2);
+\node[dec] (n3) at (0,-7.35) {\textbf{N4} .kicad\_pro beside the board?};
+\node[act, right=1.4cm of n3] (s3) {KiCad defaults and the rules stored in the board; the warning shows only in -{}-report};
+\draw[arr] (n3) -- node[lab, above] {no} (s3);
+\node[act, left=0.9cm of n3, text width=3.3cm] (d3) {Net classes, minimums and tuning profiles are read};
+\draw[densely dotted, black!40] (n3) -- (d3);
+\node[lab, text=black!60] at ($(n3)!0.5!(d3)+(0,0.22)$) {yes};
+\node[ref, below right=-1mm and 1.4cm of n3.south, anchor=north west] {project\_reader.cpp:386};
+\draw[def] (n2) -- node[lab, right] {no} (n3);
+\node[dec] (n4) at (0,-9.80) {\textbf{N5} A custom rule cannot be parsed?};
+\node[act, right=1.4cm of n4] (s4) {That rule is ignored with a warning (conditional hole rules are widened board-wide)};
+\draw[arr] (n4) -- node[lab, above] {yes} (s4);
+\node[ref, below right=-1mm and 1.4cm of n4.south, anchor=north west] {rule\_engine.cpp:536};
+\draw[def] (n3) -- node[lab, right] {yes} (n4);
+\node[dec] (n5) at (0,-12.25) {\textbf{N6} A clearance rule reads net names?};
+\node[act, right=1.4cm of n5] (s5) {Exact routing: no per-class caches, no cost-to-go fields};
+\draw[arr] (n5) -- node[lab, above] {yes} (s5);
+\node[ref, below right=-1mm and 1.4cm of n5.south, anchor=north west] {rule\_engine.cpp:586};
+\draw[def] (n4) -- node[lab, right] {no} (n5);
+\node[dec] (n6) at (0,-14.70) {\textbf{N7} A net zone has no fill?};
+\node[act, right=1.4cm of n6] (s6) {Filled in memory; the whole run uses soft zones (refill and repair afterwards)};
+\draw[arr] (n6) -- node[lab, above] {yes} (s6);
+\node[act, left=0.9cm of n6, text width=3.3cm] (d6) {Zone fills are walls};
+\draw[densely dotted, black!40] (n6) -- (d6);
+\node[lab, text=black!60] at ($(n6)!0.5!(d6)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n6.south, anchor=north west] {route\_job.cpp:336};
+\draw[def] (n5) -- node[lab, right] {no} (n6);
+\node[dec] (n7) at (0,-17.15) {\textbf{N8} -{}-component-rules on?};
+\node[act, right=1.4cm of n7] (s7) {Categories detected: keep-outs, net classes, sidecar rules};
+\draw[arr] (n7) -- node[lab, above] {yes} (s7);
+\node[ref, below right=-1mm and 1.4cm of n7.south, anchor=north west] {route\_job.cpp:485};
+\draw[def] (n6) -- node[lab, right] {no} (n7);
+\node[dec] (n8) at (0,-19.60) {\textbf{N9} Plane, >1 layer, audit not off?};
+\node[act, right=1.4cm of n8] (s8) {Critical nets found, for the audit after the route only};
+\draw[arr] (n8) -- node[lab, above] {yes} (s8);
+\node[ref, below right=-1mm and 1.4cm of n8.south, anchor=north west] {route\_job.cpp:736};
+\draw[def] (n7) -- node[lab, right] {no} (n8);
+\node[dec] (n9) at (0,-22.05) {\textbf{N10} Project defines tuning profiles?};
+\node[act, right=1.4cm of n9] (s9) {Route at the profile width, narrow afterwards};
+\draw[arr] (n9) -- node[lab, above] {yes} (s9);
+\node[ref, below right=-1mm and 1.4cm of n9.south, anchor=north west] {route\_job.cpp:666};
+\draw[def] (n8) -- node[lab, right] {no} (n9);
+\node[dec] (n10) at (0,-24.50) {\textbf{N11} Knowledge base knows failures here?};
+\node[act, right=1.4cm of n10] (s10) {Those connections go first in every variant};
+\draw[arr] (n10) -- node[lab, above] {yes} (s10);
+\node[ref, below right=-1mm and 1.4cm of n10.south, anchor=north west] {route\_job.cpp:426};
+\draw[def] (n9) -- node[lab, right] {no} (n10);
+\end{tikzpicture}
+\caption{Before routing: reading the board and the rules (steps S1--S12). Green arrows: the branch a default run takes on an ordinary two-layer board with a project file, filled zones and a GPU. The grey reference is the line of the decision in the code.}
+\label{fig:tree-prep}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[font=\footnotesize, node distance=1cm, dec/.style={draw=accent, fill=accent!8, diamond, aspect=2.6, text width=3.9cm, align=center, inner sep=0pt}, act/.style={draw=black!45, fill=black!3, rounded corners=2pt, text width=5.3cm, align=left, inner sep=4pt, minimum height=8mm}, ref/.style={font=\scriptsize\ttfamily, text=black!50}, arr/.style={-{Stealth}, draw=black!45, thick}, def/.style={-{Stealth}, draw=okgreen, line width=1.8pt}, lab/.style={font=\scriptsize\bfseries, fill=white, inner sep=1pt}]
+\node[dec] (n0) at (0,0.00) {\textbf{N12} More than one variant?};
+\node[act, right=1.4cm of n0] (s0) {One router (-{}-variants 1 or -{}-threads 1)};
+\draw[arr] (n0) -- node[lab, above] {no} (s0);
+\node[act, left=0.9cm of n0, text width=3.3cm] (d0) {Portfolio of 8 (= -{}-threads, at most 8)};
+\draw[densely dotted, black!40] (n0) -- (d0);
+\node[lab, text=black!60] at ($(n0)!0.5!(d0)+(0,0.22)$) {yes};
+\node[ref, below right=-1mm and 1.4cm of n0.south, anchor=north west] {route\_job.cpp:893};
+\node[dec] (n1) at (0,-2.45) {\textbf{N13} Looks like a BGA breakout?};
+\node[act, right=1.4cm of n1] (s1) {Breakout list of variants, 4 rounds (2 layers, BGA grid, $\geq$ 70 \% of nets on it)};
+\draw[arr] (n1) -- node[lab, above] {yes} (s1);
+\node[act, left=0.9cm of n1, text width=3.3cm] (d1) {The designed eight, one round};
+\draw[densely dotted, black!40] (n1) -- (d1);
+\node[lab, text=black!60] at ($(n1)!0.5!(d1)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n1.south, anchor=north west] {router.cpp:7545};
+\draw[def] (n0) -- node[lab, right] {yes} (n1);
+\node[dec] (n2) at (0,-4.90) {\textbf{N14} -{}-halving and variants > threads?};
+\node[act, right=1.4cm of n2] (s2) {Successive halving};
+\draw[arr] (n2) -- node[lab, above] {yes} (s2);
+\node[act, left=0.9cm of n2, text width=3.3cm] (d2) {All 8 variants run at once};
+\draw[densely dotted, black!40] (n2) -- (d2);
+\node[lab, text=black!60] at ($(n2)!0.5!(d2)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n2.south, anchor=north west] {router.cpp:7679};
+\draw[def] (n1) -- node[lab, right] {no} (n2);
+\node[dec] (n3) at (0,-7.35) {\textbf{N15} A GPU is listed?};
+\node[act, right=1.4cm of n3] (s3) {Variants spread over the GPUs (results identical)};
+\draw[def] (n3) -- node[lab, above] {yes} (s3);
+\node[act, left=0.9cm of n3, text width=3.3cm] (d3) {Cost fields on the CPU};
+\draw[densely dotted, black!40] (n3) -- (d3);
+\node[lab, text=black!60] at ($(n3)!0.5!(d3)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n3.south, anchor=north west] {router.cpp:7663};
+\draw[def] (n2) -- node[lab, right] {no} (n3);
+\node[dec] (n4) at (0,-9.80) {\textbf{N16} Breakout board (this variant)?};
+\node[act, right=1.4cm of n4] (s4) {Transactions on, direction penalty 0.3, package penalty 3};
+\draw[arr] (n4) -- node[lab, above] {yes} (s4);
+\node[act, left=0.9cm of n4, text width=3.3cm] (d4) {No transactions};
+\draw[densely dotted, black!40] (n4) -- (d4);
+\node[lab, text=black!60] at ($(n4)!0.5!(d4)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n4.south, anchor=north west] {router.cpp:4565};
+\draw[arr] (n3) -- node[lab, right] {no} (n4);
+\node[dec] (n5) at (0,-12.25) {\textbf{N17} Variant 3 or 6?};
+\node[act, right=1.4cm of n5] (s5) {Escape plan: corridors reserved for dense-package pins};
+\draw[arr] (n5) -- node[lab, above] {yes} (s5);
+\node[act, left=0.9cm of n5, text width=3.3cm] (d5) {No escape plan};
+\draw[densely dotted, black!40] (n5) -- (d5);
+\node[lab, text=black!60] at ($(n5)!0.5!(d5)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n5.south, anchor=north west] {router.cpp:7579};
+\draw[def] (n4) -- node[lab, right] {no} (n5);
+\node[dec] (n6) at (0,-14.70) {\textbf{N18} Window $\geq$ 60,000 cells, fields allowed?};
+\node[act, right=1.4cm of n6] (s6) {Cost-to-go field as the A* heuristic};
+\draw[def] (n6) -- node[lab, above] {yes} (s6);
+\node[act, left=0.9cm of n6, text width=3.3cm] (d6) {Octile heuristic};
+\draw[densely dotted, black!40] (n6) -- (d6);
+\node[lab, text=black!60] at ($(n6)!0.5!(d6)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n6.south, anchor=north west] {router.cpp:1823};
+\draw[def] (n5) -- node[lab, right] {no} (n6);
+\node[dec] (n7) at (0,-17.15) {\textbf{N19} Field $\geq$ 500,000 cells and a GPU?};
+\node[act, right=1.4cm of n7] (s7) {Field on the GPU (CPU if the GPU call fails)};
+\draw[arr] (n7) -- node[lab, above] {yes} (s7);
+\node[act, left=0.9cm of n7, text width=3.3cm] (d7) {Field on the CPU};
+\draw[densely dotted, black!40] (n7) -- (d7);
+\node[lab, text=black!60] at ($(n7)!0.5!(d7)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n7.south, anchor=north west] {router.cpp:1443};
+\draw[arr] (n6) -- node[lab, right] {no} (n7);
+\node[dec] (n8) at (0,-19.60) {\textbf{N20} After 10 s, fields > 30 \% of time?};
+\node[act, right=1.4cm of n8] (s8) {Fields off for this variant};
+\draw[arr] (n8) -- node[lab, above] {yes} (s8);
+\node[ref, below right=-1mm and 1.4cm of n8.south, anchor=north west] {router.cpp:1831};
+\draw[def] (n7) -- node[lab, right] {no} (n8);
+\end{tikzpicture}
+\caption{The portfolio and one variant's set-up (steps S13--S17). Green arrows: the branch a default run takes on an ordinary two-layer board with a project file, filled zones and a GPU. The grey reference is the line of the decision in the code.}
+\label{fig:tree-portfolio}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[font=\footnotesize, node distance=1cm, dec/.style={draw=accent, fill=accent!8, diamond, aspect=2.6, text width=3.9cm, align=center, inner sep=0pt}, act/.style={draw=black!45, fill=black!3, rounded corners=2pt, text width=5.3cm, align=left, inner sep=4pt, minimum height=8mm}, ref/.style={font=\scriptsize\ttfamily, text=black!50}, arr/.style={-{Stealth}, draw=black!45, thick}, def/.style={-{Stealth}, draw=okgreen, line width=1.8pt}, lab/.style={font=\scriptsize\bfseries, fill=white, inner sep=1pt}]
+\node[dec] (n0) at (0,0.00) {\textbf{L0} Already joined by copper?};
+\node[act, right=1.4cm of n0] (s0) {Counted as routed (e.g. through a plane via)};
+\draw[arr] (n0) -- node[lab, above] {yes} (s0);
+\node[ref, below right=-1mm and 1.4cm of n0.south, anchor=north west] {router.cpp:6999};
+\node[dec] (n1) at (0,-2.45) {\textbf{L4} Strict search finds a legal path?};
+\node[act, right=1.4cm of n1] (s1) {Commit after the exact geometric check: routed};
+\draw[def] (n1) -- node[lab, above] {yes} (s1);
+\node[act, left=0.9cm of n1, text width=3.3cm] (d1) {Windows 2 and 6 mm (pass 0), then 20 mm and the whole board};
+\draw[densely dotted, black!40] (n1) -- (d1);
+\node[lab, text=black!60] at ($(n1)!0.5!(d1)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n1.south, anchor=north west] {router.cpp:2700};
+\draw[def] (n0) -- node[lab, right] {no} (n1);
+\node[dec] (n2) at (0,-4.90) {\textbf{L5} Boxed in, or exact check said no?};
+\node[act, right=1.4cm of n2] (s2) {Forced pad escapes, then neck-down width and via, strict};
+\draw[arr] (n2) -- node[lab, above] {yes} (s2);
+\node[ref, below right=-1mm and 1.4cm of n2.south, anchor=north west] {router.cpp:7038};
+\draw[arr] (n1) -- node[lab, right] {no} (n2);
+\node[dec] (n3) at (0,-7.35) {\textbf{N22} Pass > 0 and rip-up on?};
+\node[act, right=1.4cm of n3] (s3) {Fails for now: retried in the next pass};
+\draw[arr] (n3) -- node[lab, above] {no} (s3);
+\node[act, left=0.9cm of n3, text width=3.3cm] (d3) {Negotiated search may cross and rip other nets' copper};
+\draw[densely dotted, black!40] (n3) -- (d3);
+\node[lab, text=black!60] at ($(n3)!0.5!(d3)+(0,0.22)$) {yes};
+\node[ref, below right=-1mm and 1.4cm of n3.south, anchor=north west] {router.cpp:7064};
+\draw[def] (n2) -- node[lab, right] {no} (n3);
+\node[dec] (n4) at (0,-9.80) {\textbf{N23} Negotiation finds it boxed in?};
+\node[act, right=1.4cm of n4] (s4) {After escapes and neck-down: marked dead, given up};
+\draw[arr] (n4) -- node[lab, above] {yes} (s4);
+\node[act, left=0.9cm of n4, text width=3.3cm] (d4) {Fails: next pass, most-failed first};
+\draw[densely dotted, black!40] (n4) -- (d4);
+\node[lab, text=black!60] at ($(n4)!0.5!(d4)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n4.south, anchor=north west] {router.cpp:7084};
+\draw[def] (n3) -- node[lab, right] {yes} (n4);
+\node[dec] (n5) at (0,-12.25) {\textbf{N24} Passes end? (none left, budget, 40)};
+\node[act, right=1.4cm of n5] (s5) {Next pass over the failed connections};
+\draw[arr] (n5) -- node[lab, above] {no} (s5);
+\node[ref, below right=-1mm and 1.4cm of n5.south, anchor=north west] {router.cpp:6975};
+\draw[def] (n4) -- node[lab, right] {no} (n5);
+\node[dec] (n6) at (0,-14.70) {\textbf{N25} Budget left and not complete?};
+\node[act, right=1.4cm of n6] (s6) {Restart: rip all, hardest first (6, then 40 diversified)};
+\draw[arr] (n6) -- node[lab, above] {yes} (s6);
+\node[ref, below right=-1mm and 1.4cm of n6.south, anchor=north west] {router.cpp:6910};
+\draw[def] (n5) -- node[lab, right] {yes} (n6);
+\node[dec] (n7) at (0,-17.15) {\textbf{N26} Another variant done at T; now > 2T+5 s?};
+\node[act, right=1.4cm of n7] (s7) {This variant stops};
+\draw[arr] (n7) -- node[lab, above] {yes} (s7);
+\node[ref, below right=-1mm and 1.4cm of n7.south, anchor=north west] {router.cpp:234};
+\draw[def] (n6) -- node[lab, right] {no} (n7);
+\node[dec] (n8) at (0,-19.60) {\textbf{N27} Board equals the best state?};
+\node[act, right=1.4cm of n8] (s8) {Clean-up: fewer vias, LNS, smoothing, length tuning};
+\draw[def] (n8) -- node[lab, above] {yes} (s8);
+\node[act, left=0.9cm of n8, text width=3.3cm] (d8) {Best state returned without clean-up (unless length rules)};
+\draw[densely dotted, black!40] (n8) -- (d8);
+\node[lab, text=black!60] at ($(n8)!0.5!(d8)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n8.south, anchor=north west] {router.cpp:7310};
+\draw[def] (n7) -- node[lab, right] {no} (n8);
+\end{tikzpicture}
+\caption{One connection inside a variant, and the passes and restarts (steps S18--S20). Green arrows: the branch a default run takes on an ordinary two-layer board with a project file, filled zones and a GPU. The grey reference is the line of the decision in the code.}
+\label{fig:tree-connection}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[font=\footnotesize, node distance=1cm, dec/.style={draw=accent, fill=accent!8, diamond, aspect=2.6, text width=3.9cm, align=center, inner sep=0pt}, act/.style={draw=black!45, fill=black!3, rounded corners=2pt, text width=5.3cm, align=left, inner sep=4pt, minimum height=8mm}, ref/.style={font=\scriptsize\ttfamily, text=black!50}, arr/.style={-{Stealth}, draw=black!45, thick}, def/.style={-{Stealth}, draw=okgreen, line width=1.8pt}, lab/.style={font=\scriptsize\bfseries, fill=white, inner sep=1pt}]
+\node[dec] (n0) at (0,0.00) {\textbf{N28} Connections still open?};
+\node[act, right=1.4cm of n0] (s0) {Skip rescue, advisor and repair};
+\draw[def] (n0) -- node[lab, above] {no} (s0);
+\node[ref, below right=-1mm and 1.4cm of n0.south, anchor=north west] {route\_job.cpp:960};
+\node[dec] (n1) at (0,-2.45) {\textbf{N29} Warm relax rescue routes more?};
+\node[act, right=1.4cm of n1] (s1) {Adopt it (portfolio of 8 at 60 \% and 80 \% clearance, then legalise)};
+\draw[def] (n1) -- node[lab, above] {yes} (s1);
+\node[act, left=0.9cm of n1, text width=3.3cm] (d1) {Keep the plain result};
+\draw[densely dotted, black!40] (n1) -- (d1);
+\node[lab, text=black!60] at ($(n1)!0.5!(d1)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n1.south, anchor=north west] {route\_job.cpp:1004};
+\draw[arr] (n0) -- node[lab, right] {yes} (n1);
+\node[dec] (n2) at (0,-4.90) {\textbf{N29b} Still open? Fresh rescue routes more?};
+\node[act, right=1.4cm of n2] (s2) {Adopt it};
+\draw[arr] (n2) -- node[lab, above] {yes} (s2);
+\node[act, left=0.9cm of n2, text width=3.3cm] (d2) {Keep the result before};
+\draw[densely dotted, black!40] (n2) -- (d2);
+\node[lab, text=black!60] at ($(n2)!0.5!(d2)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n2.south, anchor=north west] {route\_job.cpp:971};
+\draw[arr] (n1) -- node[lab, right] {no} (n2);
+\node[dec] (n3) at (0,-7.35) {\textbf{N30} Input had unlocked copper and open > 0?};
+\node[act, right=1.4cm of n3] (s3) {Repair windows of 1, 2, 4 mm lift that copper};
+\draw[arr] (n3) -- node[lab, above] {yes} (s3);
+\node[ref, below right=-1mm and 1.4cm of n3.south, anchor=north west] {route\_job.cpp:1161};
+\draw[def] (n2) -- node[lab, right] {no} (n3);
+\node[dec] (n4) at (0,-9.80) {\textbf{N31} Soft zones on?};
+\node[act, right=1.4cm of n4] (s4) {Refill; unconnected? route again; starved thermals repaired};
+\draw[arr] (n4) -- node[lab, above] {yes} (s4);
+\node[ref, below right=-1mm and 1.4cm of n4.south, anchor=north west] {route\_job.cpp:1218};
+\draw[def] (n3) -- node[lab, right] {no} (n4);
+\node[dec] (n5) at (0,-12.25) {\textbf{N32} After-route passes asked for?};
+\node[act, right=1.4cm of n5] (s5) {Octilinear, widen power, stitching (each a transaction)};
+\draw[arr] (n5) -- node[lab, above] {yes} (s5);
+\node[act, left=0.9cm of n5, text width=3.3cm] (d5) {Only tuning-profile narrowing, if profiles exist};
+\draw[densely dotted, black!40] (n5) -- (d5);
+\node[lab, text=black!60] at ($(n5)!0.5!(d5)+(0,0.22)$) {no};
+\node[ref, below right=-1mm and 1.4cm of n5.south, anchor=north west] {route\_job.cpp:1427};
+\draw[def] (n4) -- node[lab, right] {no} (n5);
+\node[act, fill=okgreen!12, draw=okgreen, text width=3.6cm, align=center] (n6) at (0,-14.70) {\textbf{Write the board}};
+\node[act, right=1.4cm of n6] (s6) {Only new tracks and vias added; every other byte kept};
+\draw[arr] (n6) -- (s6);
+\node[ref, below right=-1mm and 1.4cm of n6.south, anchor=north west] {route\_job.cpp:1670};
+\draw[def] (n5) -- node[lab, right] {no} (n6);
+\node[dec] (n7) at (0,-17.15) {\textbf{N33} Open pins and why-open on?};
+\node[act, right=1.4cm of n7] (s7) {Escape proof per pin: walled in, neck, fills only, congestion};
+\draw[def] (n7) -- node[lab, above] {yes} (s7);
+\node[ref, below right=-1mm and 1.4cm of n7.south, anchor=north west] {route\_job.cpp:1801};
+\draw[def] (n6) -- node[lab, right] {} (n7);
+\node[dec] (n8) at (0,-19.60) {\textbf{N34} The time limit ended a search?};
+\node[act, right=1.4cm of n8] (s8) {Warning: the result depends on machine speed};
+\draw[def] (n8) -- node[lab, above] {yes} (s8);
+\node[ref, below right=-1mm and 1.4cm of n8.south, anchor=north west] {route\_job.cpp:1982};
+\draw[arr] (n7) -- node[lab, right] {no} (n8);
+\end{tikzpicture}
+\caption{After the portfolio: rescue, repair, refill, write and explain (steps S21--S28). Green arrows: the branch a default run takes on an ordinary two-layer board with a project file, filled zones and a GPU. The grey reference is the line of the decision in the code.}
+\label{fig:tree-after}
+\end{figure}
