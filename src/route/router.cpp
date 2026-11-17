@@ -7848,6 +7848,25 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   bool last_relaxed = !ramp_rules.empty() && !base.ramp_late;  // the last round ran under lowered clearances
   RouteResult best_final;                   // best result under the board's rules seen so far (ramp)
   int best_final_routed = -1, final_stall = 0;
+  // A ramp starts relaxed, so the state a warm start brings is never scored under the board's rules, and the ramp can lose routes of it
+  // for good: the run would hand back a board worse than it was given (rule 4). Score it once with no search (work 1, no time, as the
+  // legalising round below) and return it if nothing better comes out (D191, M26 F8). It is only a floor: the stages and the breathing
+  // still go from what the ramp finds.
+  RouteResult warm_floor;
+  int warm_floor_routed = -1;
+  if (base.warm_floor && !ramp_rules.empty() && !base.ramp_late && !vs.empty() &&
+      (resumed || !vs[0].o.warm_tracks.empty() || !vs[0].o.warm_vias.empty())) {
+    RouterOptions o = vs[0].o;
+    if (resumed) o.warm = &warm_routes;
+    o.sink = nullptr;
+    o.deadline = nullptr;
+    o.work_budget = 1;
+    o.time_limit_s = 0;
+    warm_floor = Router(board, rules, o).run();
+    warm_floor.time_limited = false;
+    warm_floor_routed = warm_floor.routed;
+    live::eprintf("warm start under the board's rules: %d of %d routed (kept unless the run does better)\n", warm_floor_routed, warm_floor.connections);
+  }
   const auto t_start = std::chrono::steady_clock::now();
   bool rounds_timed_out = false;  // the time limit ended the rounds (reported as RouteResult::time_limited)
   for (int round = 0; round < rounds; ++round) {
@@ -8025,6 +8044,7 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
   for (const auto& r : rs) timed = timed || r.time_limited;
   pr.best = std::move(rs[best]);
   if (best_final_routed > pr.best.routed) pr.best = std::move(best_final);  // breathing ended relaxed or worse: the best legal one
+  if (warm_floor_routed > pr.best.routed) pr.best = std::move(warm_floor);  // the ramp lost routes of the warm start: return the warm start
   pr.best.time_limited = timed;
   pr.best.work = work_sum[best];  // the kept result's variant over every round (one round: its own work, as before)
   pr.best.expansions = expansions_sum[best];

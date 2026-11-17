@@ -145,6 +145,7 @@ struct RouterOptions {
   std::string state_out;        // portfolio: after every round the best routes so far are written here (atomically), so an interrupted or out-of-time run can be resumed
   std::string state_in;         // portfolio: start from the routes saved in this file (written by state_out); a missing file is ignored
   const std::vector<ConnRoute>* start_routes = nullptr;  // portfolio: start from these routes as from state_in (the local relax rescue, doc 20 §2.2); state_in wins
+  bool warm_floor = true;  // portfolio with a ramp: a warm start is scored under the board's rules first and returned if the run ends worse (D191); off where the caller already keeps the better of the two (the relax rescue)
   bool relax_late = false;      // with relax: plain rounds under the board's rules first; when they stall, start the stages afresh (not from the stalled state), and keep the best legal result of all
   bool relax = false;           // portfolio: relax, route, legalise: ramp stages at 60 % and 80 % of the board's clearance with legalisation and breathing between (D104); needs round_work (20 M by default)
   double ramp_from_mm = 0;      // portfolio: > 0 starts at this clearance (every class and the board minimum lowered by the difference) and raises it by ramp_step_mm per stage up to the board's own; each stage warm-starts from the last one's routes that are still legal (clearance continuation, doc 16 §12.3)

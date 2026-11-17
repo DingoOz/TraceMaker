@@ -520,11 +520,15 @@ against 5. It is the fanout's via sites that need protecting, not the layer dire
 | F5 | **Fewer vias per connection.** Measure vias per connection, then make a via on a breakout board dearer, or cap layer changes per connection at two, so most connections use one via (the dog-bone) or two | 300-360 vias for 80-108 connections (3-4 each) [R] | S | Vias per connection on the eleven boards from 3-4 to under 2, with no more open than with F2 alone |
 | F6 | **Lanes under the package.** Plan straight row and column lanes on the far layer between the reserved via sites (version 2's step 3 grid) and give the long cross-board connections a cost bonus for using them, not a reservation | Six of 176's nine open, 10 of 008's 14, 11 of 088's 17 and 12 of 200's 14 cross to the opposite side [R] | M | Combined with F2 and F3: open cross-board connections down by half |
 | F7 | **Long, crossing connections first.** Order connections by length and crossing count once their sites are reserved. Routing the always-open nets first on its own gets those nets routed but leaves others open instead (040 12-15 against the control's 8, 152 8-17 against 7) | first-nets experiment [R]; a designer routes the long ones first | S | Better than F2 + F3 without it on the eleven boards |
-| F8 | **The best board includes the warm start.** `router.cpp` keeps `best_final` only from states reached at the real rules after the ramp, so an arm can return a worse board than it was given. Start `best_final` from the warm board when that board is legal | rule 4; seen in every warm-start campaign [R] | S | A test: a warm start that the ramp cannot improve returns the warm board byte-identical |
+| F8 | **The best board includes the warm start.** `router.cpp` keeps `best_final` only from states reached at the real rules after the ramp, so an arm can return a worse board than it was given. Start `best_final` from the warm board when that board is legal | rule 4; seen in every warm-start campaign [R] | S | A test: a ramp from a warm start never returns fewer routes than the warm start |
 | F9 | **Tell the user when two layers will not do.** Add the crossing count per connection and the via-site occupancy to the run report and to the layer-count advisor (D138), so a board like 032 (1,431 crossings for 108 connections, 18 open) is flagged for a third layer | crossings rank the open boards 1-9, 11 and 16 of 200 [R] | S | The advisor flags the boards with the most crossings, and none of the boards that were always clean |
 
 **Order and gate.** F8 first (a correctness fix), then F1. F2 and F3 together are the core; F4-F7 are measured on top of them. The milestone's
 gate: on the eleven boards, at the srj20-never recipe (6 arms, 1 h), at least 3 clean and at most 50 open connections in all (from 105).
 On the full srj20 set at the standard budget, no board that was clean is lost. With the options off, `quick` and `mid` are byte-identical.
 Tune on the boards numbered 1-100 (008, 032, 040, 064, 070, 088) and report on all eleven (doc 16 §1's held-out rule).
+
+**F8 built (2026-11-17, doc 05 §84).** A warm start is scored under the board's rules before the ramp and returned if the run ends worse.
+On srj20 sample040 the same lossy ramp went from 16 open (the old binary) to 2 (the warm start's count). The default route is unchanged
+(`bench/records/m26`).
 

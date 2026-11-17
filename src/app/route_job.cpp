@@ -983,6 +983,7 @@ RouteJobResult run_route_job(RouteJob job) {
       o2.sink = nullptr;
       o2.rounds = 0, o2.round_work = 0;  // relax's own: rounds of 20 M until complete or --time
       if (warm) o2.start_routes = &plain_routes;
+      o2.warm_floor = false;  // the pass's result is kept only if it beats the plain one anyway
       if (opt.work_budget > 0) {
         constexpr long kRescueRound = 20'000'000;
         const long rounds = std::max(1L, (opt.work_budget + kRescueRound - 1) / kRescueRound);

@@ -237,3 +237,4 @@
 {"ts": "2026-11-13T15:02:09+00:00", "kind": "decision", "text": "D190 placement closure: tracemaker-place --mode closure (bandit over kinds of placement change, product route as judge); 14 incomplete boards 58 -> 32 open at 10 M, 4 complete; vs 4x route budget 40 -> 30 open, 3 -> 4 clean (bench/records/m24-closure)"}
 {"ts": "2026-11-14T07:49:16+00:00", "kind": "note", "text": "Roadmap: M24 (move parts pinned by hand-placement overlaps, from closure's no-candidates boards) and M25 (explain the default route's decisions) planned"}
 {"ts": "2026-11-17T06:40:05+00:00", "kind": "decision", "text": "M26 planned (D191, doc 18 \u00a721): reserved BGA fanout and eight more items for the 11 srj20 boards never routed clean"}
+{"ts": "2026-11-17T07:50:43+00:00", "kind": "build", "text": "M26 F8: a ramp from a warm start never returns fewer routes than the warm start (sample040 16 -> 2 open on a lossy ramp)"}

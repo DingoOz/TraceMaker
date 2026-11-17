@@ -196,6 +196,27 @@ TEST_CASE("clearance ramp ending relaxed: the legalising round does not mark the
   CHECK(errors(l.board, l.rules, r.best) == 0);
 }
 
+// The ramp starts relaxed, so a warm start was never scored under the board's rules: a ramp that lost some of its routes returned a
+// worse board than it was given (rule 4; srj20 sample040, 2 open in, 16 out). The warm start is the floor (D191, M26 F8).
+TEST_CASE("clearance ramp from a warm start: never returns fewer routes than the warm start has", "[route][txn]") {
+  const auto l = load_problem();
+  route::RouterOptions plain = options();
+  plain.round_work = 3000000;
+  plain.rounds = 1;
+  const auto start = route::route_portfolio(l.board, l.rules, plain, 1, {}, 1);
+  REQUIRE(start.best.routed == start.best.connections);  // complete: without the floor the ramp below returns 17 of 24
+  route::RouterOptions o = options();
+  o.round_work = 20000;  // too little to route again what the loose stage takes apart
+  o.rounds = 1;          // ends relaxed: only the legalising round runs under the board's rules
+  o.ramp_from_mm = 0.01;
+  o.ramp_step_mm = 0.02;
+  o.ramp_rounds = 1;
+  o.start_routes = &start.best.conn_routes;
+  const auto r = route::route_portfolio(l.board, l.rules, o, 2, {}, 1);
+  CHECK(r.best.routed >= start.best.routed);
+  CHECK(errors(l.board, l.rules, r.best) == 0);
+}
+
 TEST_CASE("clearance ramp with breathing: still legal under the board's rules and the same at any thread count", "[route][txn]") {
   const auto l = load_problem();
   const double board_mm = nm_to_mm(std::max(l.rules.classes.front().clearance, l.rules.minimums.clearance));

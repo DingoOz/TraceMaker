@@ -3769,3 +3769,20 @@ Fields under 500 k cells still go to the CPU (D158): with every field on the CPU
 (`--time-total 120`, the 33 boards) the difference is not measurable: +13 connections with the GPU, −18 with `--no-gpu`, both within the
 noise of time-limited runs. The work curve above predicts about +15 to +20 for a speed-up of this size. The doc 18 gate is not met; the
 speed-up is kept because it is exact and makes every run faster.
+
+## 84. The warm start is the ramp's floor (2026-11-17, D191, M26 F8)
+
+**Problem.** A clearance ramp (§41.2, and `--relax`, which turns one on) starts under lowered clearances, so the board a warm start brings
+(`--warm-pcb`, `--state-in`) was never scored under the board's own rules. `best_final` only held states reached under the board's rules
+after the ramp, and the run could return a board with fewer routes than it was given, against rule 4. On srj20 sample040, warm from a board
+with 2 open, a ramp that ran out of rounds while relaxed (`--ramp-from 0.01 --rounds 2`) returned 16 open.
+
+**Change.** Before the first round, the first variant scores the warm start under the board's rules with no search (work 1, no time: the
+same round that legalises a run ending relaxed). The run returns that result if nothing it finds routes more. It is only a floor: the
+stages and the breathing still start from what the ramp finds. The relax rescue (§68) already keeps the better of its start and its
+result, so it turns the floor off (`RouterOptions::warm_floor`), and a run without a warm start is unchanged.
+
+**Measured** (`bench/records/m26`). On the same sample040 run, the old binary returned 16 open and the new one 2: the warm start's count,
+judged by KiCad with no added error. The scoring round moves some of the copper (370 of 1,243 segments and 111 of 356 vias differ from the warm
+board) but routes the same connections. A test (`tests/test_txn.cpp`) warm-starts a ramp from a complete 24-connection board, which
+without the floor returned 17 routed. The default route is unchanged: the floor applies only to explicit warm starts with a ramp.

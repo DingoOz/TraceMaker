@@ -1,6 +1,6 @@
 {
   "project": "TraceMaker",
-  "current_milestone": "M17",
+  "current_milestone": "M26",
   "milestones": [
     {
       "id": "M0",
@@ -1029,13 +1029,13 @@
     {
       "id": "M26",
       "title": "Finish the BGA boards that never complete",
-      "status": "todo",
+      "status": "in_progress",
       "gate": "Eleven never-clean srj20 boards at the srj20-never recipe: >= 3 clean and <= 50 open (from 105), KiCad-judged; no clean srj20 board lost; quick/mid byte-identical with options off",
       "deliverables": "Reserved dog-bone fanout, via-free band, via relocation repair, fewer vias, under-package lanes, ordering, warm-start best fix, crossing report (doc 18 \u00a721, D191)",
       "tasks": [
         {
           "text": "F8 the best board includes a legal warm start (rule 4), with a test",
-          "done": false
+          "done": true
         },
         {
           "text": "F1 log where each open ball's dog-bone sites are lost, per stage",
