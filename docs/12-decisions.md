@@ -205,6 +205,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D188](decisions/D188.md) | Return-path audit of critical nets in every run report | accepted |
 | [D189](decisions/D189.md) | CPU fields skip the rows that cannot change | accepted |
 | [D190](decisions/D190.md) | Placement closure: a bandit over kinds of placement change until the board routes | accepted |
+| [D191](decisions/D191.md) | M26: finish srj20's last BGA boards with a reserved fanout | accepted |
 <!-- END decision index -->
 
 ## Risks

@@ -1,0 +1,12 @@
+{"board": "sample096", "connections": 89, "routed": 89, "seconds": 1680, "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/loose/sample096/out.kicad_pcb"}
+{"board": "sample152", "connections": 87, "routed": 86, "seconds": 1830, "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/loose/sample152/out.kicad_pcb"}
+{"board": "sample040", "connections": 91, "routed": 88, "seconds": 1860, "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/loose/sample040/out.kicad_pcb"}
+{"board": "sample070", "connections": 75, "routed": 71, "seconds": 1845, "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/loose/sample070/out.kicad_pcb"}
+{"board": "sample064", "connections": 99, "routed": 90, "seconds": 1845, "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/loose/sample064/out.kicad_pcb"}
+{"board": "sample176", "connections": 94, "routed": 87, "seconds": 1815, "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/loose/sample176/out.kicad_pcb"}
+{"board": "sample120", "connections": 96, "routed": 91, "seconds": 1815, "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/loose/sample120/out.kicad_pcb"}
+{"board": "sample144", "connections": 104, "routed": 90, "seconds": 1815, "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/loose/sample144/out.kicad_pcb"}
+{"board": "sample008", "connections": 101, "routed": 87, "seconds": 1845, "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/loose/sample008/out.kicad_pcb"}
+{"board": "sample200", "connections": 102, "routed": 93, "seconds": 1860, "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/loose/sample200/out.kicad_pcb"}
+{"board": "sample088", "connections": 106, "routed": 89, "seconds": 1815, "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/loose/sample088/out.kicad_pcb"}
+{"board": "sample032", "connections": 108, "routed": 86, "seconds": 1845, "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/loose/sample032/out.kicad_pcb"}
