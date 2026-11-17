@@ -2426,6 +2426,12 @@ every later milestone can be watched while it is built.</p>
 <td>A documentation page (explanation, doc site) that follows one real board through a default <code>tracemaker route</code> run in order: rules read, nets ordered, global plan, escapes, the portfolio's variants, search and costs, rip-up and failure memory, repair, the last-connection rescue, cleanup passes, the final exact check and the write. Each step names the option that changes it, the design doc section and decision behind it, and the run report or event that shows it happening</td>
 <td>Every step on the page traces to code, a doc section and a decision record; the example board's numbers come from a recorded run; <code>mkdocs build --strict</code> and <code>scripts/docs_check.py</code> pass</td>
 </tr>
+<tr>
+<td>M26</td>
+<td><strong>Finish the BGA boards that never complete</strong> (planned 2026-11-17 after the srj20 ramp campaigns, doc 18 §21, D191)</td>
+<td>F1 find where the dog-bone via sites are lost; F2 a site reserved for its ball until the ball connects, in every search, the relax legaliser and the ramp; F3 a via-free band round the package; F4 move a blocking via, then route the ball; F5 fewer vias per connection; F6 lanes under the package with a cost bonus for cross-board connections; F7 long, crossing connections first; F8 the best board includes the warm start (rule 4); F9 the run report and layer advisor flag boards with too many crossings for two layers</td>
+<td>On the eleven srj20 boards never routed clean, at the srj20-never recipe: ≥ 3 clean and ≤ 50 open connections (from 105), KiCad-judged; no clean srj20 board lost at the standard budget; <code>quick</code> and <code>mid</code> byte-identical with the options off</td>
+</tr>
 </tbody>
 </table>
 <h2 id="working-rules-for-implementation-sessions">Working rules for implementation sessions<a class="headerlink" href="#working-rules-for-implementation-sessions" title="Permanent link">&para;</a></h2>
