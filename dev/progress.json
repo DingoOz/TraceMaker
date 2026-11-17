@@ -1038,24 +1038,24 @@
           "done": true
         },
         {
-          "text": "F1 log where each open ball's dog-bone sites are lost, per stage",
-          "done": false
+          "text": "F1 log where each open ball's dog-bone sites are lost, per stage (tracks take most sites; bench/records/m26)",
+          "done": true
         },
         {
-          "text": "F2 reserve a dog-bone site per ball until it connects, in every search, the legaliser and the ramp",
-          "done": false
+          "text": "F2 reserve a dog-bone site per ball until it connects, in every search, the legaliser and the ramp (measured 2026-11-17: lost to the control, not adopted)",
+          "done": true
         },
         {
-          "text": "F3 a via-free band round the package for inner balls' vias",
-          "done": false
+          "text": "F3 a via-free band round the package for inner balls' vias (measured 2026-11-17: lost to the control, not adopted)",
+          "done": true
         },
         {
           "text": "F4 move a blocking via up to 1 mm, then route the ball; commit only if better",
           "done": false
         },
         {
-          "text": "F5 fewer vias per connection on breakout boards",
-          "done": false
+          "text": "F5 fewer vias per connection on breakout boards (measured 2026-11-17: lost to the control, not adopted)",
+          "done": true
         },
         {
           "text": "F6 lanes under the package with a cost bonus for cross-board connections",

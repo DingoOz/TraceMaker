@@ -532,3 +532,11 @@ Tune on the boards numbered 1-100 (008, 032, 040, 064, 070, 088) and report on a
 On srj20 sample040 the same lossy ramp went from 16 open (the old binary) to 2 (the warm start's count). The default route is unchanged
 (`bench/records/m26`).
 
+**F1, F2, F3 and F5 measured (2026-11-17).** No srj20 run had reserved a site: the breakout portfolio never sets the escape plan. Of the
+420 dog-bone sites of the open balls, 12 are free; tracks take most of them (F.Cu 87 %, B.Cu 85 %), vias inside the package 26 % and vias
+outside it 6 %, and no blocking via is another ball's own dog-bone via. From nothing on 152, 070 and 040 (3300 s, 16 variants), the control
+left 7, 7 and 6 open. Hard reservations lost on every board (`--escape-plan` 8, 9, 9; `--escape-flow` 9, 12, 14), and so did guidance
+(`--pin-via-pen 2` 8, 9, 9; the same over 1.5 mm 7, 8, 12; `--via-cost-mm 6` 7, 9, 14). Warm from the 2-open boards, every arm (escape plan,
+flow, pin rescue, end game, via cost) ended at 2 open. F2 and F3 are dropped as specified; F5 as a dearer via is dropped. The records are in
+`bench/records/m26`.
+
