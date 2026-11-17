@@ -540,3 +540,17 @@ left 7, 7 and 6 open. Hard reservations lost on every board (`--escape-plan` 8, 
 flow, pin rescue, end game, via cost) ended at 2 open. F2 and F3 are dropped as specified; F5 as a dearer via is dropped. The records are in
 `bench/records/m26`.
 
+**F4, F6, F7 and F9 (2026-11-17).** F4: none of the 420 sites is blocked by vias alone. `--via-shove`, which moves a via with the tracks
+that end at it, tried 427 moves on the three 2-open boards and kept none. F7 (`--order 4`, crossings first, and `--order-all`, doc 05
+§85) and F6 (`--package-lanes`, doc 05 §86) were built as options. From nothing they left 7-13 and 7-16 open against the control's 6-7, so
+both stay off. F9 (doc 05 §87) is adopted: every summary has `line_crossings`. At ≥ 11.5 crossings per connection on two layers, the
+advice suggests more layers, which flags the eight hardest srj20 boards and none that has ever been routed clean. With the options off,
+`quick` and `mid` are byte-identical.
+
+**Outcome.** The gate is not met. Every way tried of imposing a designer's structure, hard or as a cost (reserved sites, a via-free band,
+dearer vias, lanes, one order, layer directions in the srj20 record), left more open than the router's unconstrained portfolio at the same
+budget. The open connections are lost to board-wide congestion of tracks, not to any one via or ordering choice. What helped on these boards
+was budget and diversity: more variants in parallel, seeds, warm starts and the ramp. F8 keeps those gains, and F9 tells the user when two
+layers are unlikely to do. The structure a designer imposes may still pay off as a complete fan-out, routed first and then kept, instead of
+as a bias inside the negotiated search. That is a different milestone (a fan-out stage with its own rip-up rules), not built here.
+

@@ -57,6 +57,10 @@
 namespace tmk::app {
 namespace {
 
+// Crossings per connection above which a two-layer board is flagged for more layers (M26 F9). On srj20 the eight boards above it were never
+// routed clean; the highest board that was is 11.0 (bench/records/m26/f9).
+constexpr double kTwoLayerCrossings = 11.5;
+
 // A supply net by its name (D184): the last hierarchy component is GND, VCC, VDD, VSS, VEE, VBUS, VIN, VBAT, VSYS, VMOT, VPP or PWR
 // (optionally with an A/D/P prefix and an A/D/IO/Q suffix, then '_', '-', '.', '+', a digit or nothing), starts with '+', or is a voltage
 // such as 3V3, 5V, -12V or 1.8V. Stricter than crules::power_like_name (D25, a soft placer objective), which also takes sense lines
@@ -1867,6 +1871,13 @@ RouteJobResult run_route_job(RouteJob job) {
     if (congested > 0)
       next.push_back(fmt("%d pin%s open through congestion: more search (%s--work, --variants) or more copper layers (--try-layers 2,4 routes each count "
                          "and compares them)", congested, congested == 1 ? " is" : "s are", job.rescue || opt.relax ? "" : "the relax rescue without --no-rescue, "));
+    // M26 F9: on two layers, connections whose straight lines cross this often (per connection) were never routed clean on srj20;
+    // calibration in bench/records/m26/f9.
+    if (congested > 0 && lb.board.copper_count() == 2 && res.connections > 0 &&
+        static_cast<double>(res.line_crossings) / res.connections >= kTwoLayerCrossings)
+      next.push_back(fmt("the connections' straight lines cross %.1f times each (%ld crossings for %d connections): two-layer boards this crossed were "
+                         "not routed clean in testing; consider a third or fourth layer (--try-layers 2,4)",
+                         static_cast<double>(res.line_crossings) / res.connections, res.line_crossings, res.connections));
     for (const auto& n : next) log("  next: " + n.get<std::string>());
     why_open = {{"pins", pads.size()}, {"walled_in", proved.size()}, {"soft_only", soft_only}, {"congested", congested}, {"neck_down", neck},
                 {"via_in_pad", vip}, {"proved", proved}, {"neck_pins", neck_pins}, {"next", next}, {"seconds", why_s}};
@@ -1894,7 +1905,7 @@ RouteJobResult run_route_job(RouteJob job) {
                  {"vias", res.vias.size()},  {"seconds", job_seconds},         {"variant_seconds", res.seconds},
                  {"expansions", res.expansions}, {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures},
                  {"variant", best_index}, {"variant_name", best_name}, {"escape_corridors", res.escape_corridors},
-                 {"escape_corridor_mm", res.escape_corridor_mm}, {"package_pin_edges", res.package_pin_edges}, {"escape_reclaimed", res.escape_reclaimed},
+                 {"escape_corridor_mm", res.escape_corridor_mm}, {"package_pin_edges", res.package_pin_edges}, {"line_crossings", res.line_crossings}, {"escape_reclaimed", res.escape_reclaimed},
                  {"bundle_groups", res.bundle_groups}, {"bundle_spines", res.bundle_spines}, {"bundle_conns", res.bundle_conns}, {"bundle_lanes", res.bundle_lanes}, {"tunnels", res.tunnels}};
   if (!variant_rows.empty()) out.summary["variants"] = std::move(variant_rows);
   // M22 repair steps (D156), only when they ran: a run without them writes the summary it always did.

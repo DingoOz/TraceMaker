@@ -1006,7 +1006,8 @@ static int run_main(int argc, char** argv) {
   route->add_option("--guide-pen", ropt.guide_pen, "Guide: pitches per lattice step off the guide")->group("");
   route->add_option("--guide-radius", ropt.guide_radius, "Guide: pitches around the guide that count as on it")->group("");
   route->add_option("--via-cost-mm", ropt.via_cost_mm, "Cost of a via as equivalent track length");
-  route->add_option("--order", ropt.order, "Connection order: 0 shortest first, 1 longest first, 2 jittered, 3 deep package pins first")->group("");
+  route->add_option("--order", ropt.order, "Connection order: 0 shortest first, 1 longest first, 2 jittered, 3 deep package pins first, 4 most crossings first")->group("");
+  route->add_option("--order-all", ropt.order_all, "Portfolio: use this connection order (as --order) in every variant, not each variant's own")->group("");
   route->add_option("--seed", ropt.seed);
   route->add_flag("!--no-strict-first", ropt.strict_first, "Negotiate from the first pass (no strict-only pass)")->group("");
   route->add_option("--polish", ropt.polish_fraction, "Reserve this share of the budget (0-0.9) to rebuild the open connections of the best state")->group("");
@@ -1027,6 +1028,8 @@ static int run_main(int argc, char** argv) {
   route->add_option("--layer-dir-pen", ropt.layer_dir_pen,
                     "Cost (pitches per step) of orthogonal steps against the layer's preferred direction (by default even layers horizontal, odd vertical; automatic 0.3 on breakout boards and with --layer-dir)");
   route->add_flag("--layer-dir-swap", ropt.layer_dir_swap, "Preferred directions the other way round (even layers vertical)")->group("");
+  route->add_option("--package-lanes", ropt.package_lanes, "Lanes under a ball-grid package: extra cost (pitches per step) of a long connection's track off the ball rows and columns on the far layer (0 = off)")->group("");
+  route->add_option("--package-lanes-mm", ropt.package_lanes_mm, "Lanes under a ball-grid package: only for connections at least this long (mm)")->group("");
   route->add_option("--package-pen", ropt.package_pen, "Extra cost (pitches per step) of tracks on the pad layer inside a ball-grid package: escapes take a via early")->group("");
   route->add_flag("--crowded-source", ropt.crowded_source,
                   "Every strict search starts from the end with more copper and pads of other nets near it, a boxed-in pin is proved at once (doc 05 §55; the portfolio does so in four of its eight variants by default)");

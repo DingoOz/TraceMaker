@@ -85,3 +85,79 @@ to 1.5 mm, which covers a band round the package (F3 as guidance). vc is `--via-
 No arm beats the control on any board. A dearer via costs routes on 040 (14 against 6) and does not lower the via count much (292-312 against
 294-326). The cost guidance tried here does not reproduce what a designer does: the router's congestion comes from tracks threading the
 interstices (F1), and pushing vias away moves the congestion without removing it.
+
+## F4: move a blocking via
+
+On the eleven boards' best results, none of the 420 sites of the open balls is blocked by vias alone: every one also has another net's
+track on it (`f1/blockers.py`, the "via only" count). Moving vias alone frees no site. `--via-shove` already moves a via together with the
+tracks that end at it (D156), but it runs only in the strict main loop. In the relax and ramp runs no connection reaches it (`shove.jsonl`:
+2 / 2 / 2, no shove tried).
+
+So the shove was run without the relax stage: a plain route warm from the same best boards with `--via-shove --via-shove-mm 1.5`,
+2 variants, 40 M work (`probes/shove2/`). It tried 133, 114 and 180 via moves on 152, 040 and 070 and kept none. All three stayed at 2
+open. Moving the vias near a boxed-in ball, with their tracks, does not open a path: the tracks that block the site also run on past
+it. F4 is not built further.
+
+## F7: long, crossing connections first
+
+F7 adds `--order 4` (most straight-line crossings with other connections first, then longest first) and `--order-all N` (one connection
+order in every variant of the portfolio). Before this, the breakout portfolio drew each variant's order from shortest first, deep pins first
+or jittered, and `--order` reached variant 0 only. The test is the F2 setup, from nothing (`probes/order.jsonl`):
+
+| Board | Control | `--order-all 4` (crossings first) | `--order-all 1` (longest first) |
+|---|---|---|---|
+| 152 | **7** | 10 | 12 |
+| 070 | **7** | 8 | **7** |
+| 040 | **6** | 13 | 12 |
+
+Ordering on its own loses, as first-nets did in the srj20 campaign: the long connections get through and short ones that had room fail
+instead. The portfolio's mixed orders are worth more than any single order. The options stay, off.
+
+## F9: crossings in the summary and a layer hint
+
+Every route now writes `line_crossings` to the summary: pairs of connections whose straight pad-to-pad lines cross (lines that share a pad
+and connections to a zone do not count). On a two-layer board with open connections, when there are at least 11.5 crossings per connection,
+the "next" advice says two-layer boards this crossed were not routed clean in testing and suggests `--try-layers 2,4`.
+
+Calibration on all 200 srj20 boards with the router's own count (`f9/calib.py`, `f9/calib.json`): the eight boards at 11.5 or above (032 14.6,
+008 13.6, 088 13.2, 200 12.9, 120 12.4, 176 12.4, 144 12.2, 064 11.8) were all never routed clean. The next is 128 (11.0, made clean this
+week). The other three never-clean boards (070 10.9, 152 10.8, 040 10.6) are under the line, among boards that do route (127 10.7,
+103 10.3). On sample032 the run prints: "the connections' straight lines cross 14.6 times each (1577 crossings for 108 connections)".
+
+## F6: lanes under the package
+
+`--package-lanes PEN` (doc 05 §86): for connections at least 8 mm long, a far-layer track cell inside the package that is off every ball
+row and column line costs PEN pitches. The setup is the F2 one, from nothing (`probes/lanes.jsonl`):
+
+| Board | Control | `--package-lanes 1` | `--package-lanes 2` | `--package-lanes 1 --package-lanes-mm 4` |
+|---|---|---|---|---|
+| 152 | **7** | 8 | 10 | **7** |
+| 070 | **7** | 12 | 8 | 9 |
+| 040 | **6** | 10 | 16 | 13 |
+
+Lanes lose on every board but tie once (152 at 4 mm). Keeping the long connections to straight lanes costs the router the jogs it uses
+to get past congestion, as the stronger layer-direction penalty did in the srj20 campaign (experiment 5). The option stays, off.
+
+## Summary
+
+| # | Built | Result | Adopted |
+|---|---|---|---|
+| F8 | warm start is the ramp's floor | sample040 lossy ramp 16 → 2 open | yes (on for warm ramps) |
+| F1 | blocker analysis | tracks take 85-87 % of the open balls' sites; 12 of 420 free | (analysis) |
+| F2 | existing `--escape-plan`, `--escape-flow`; `--pin-via-pen` | from nothing: 8-14 and 8-9 against 6-7 | no |
+| F3 | `--pin-via-pen 2 --pin-via-mm 1.5` | 7-12 against 6-7 | no |
+| F4 | existing `--via-shove` | 0 of 427 shoves kept; 2-open boards stay at 2 | no |
+| F5 | `--via-cost-mm 6` | 7-14 against 6-7 | no |
+| F6 | `--package-lanes` (new) | 7-16 against 6-7 | no (option, off) |
+| F7 | `--order 4`, `--order-all` (new) | 7-13 against 6-7 | no (options, off) |
+| F9 | `line_crossings` + two-layer hint (new) | flags 8 boards, all never-clean, no board ever routed clean | yes (report only) |
+
+The milestone's gate (≥ 3 of the eleven clean, ≤ 50 open in all) is not met: no candidate beat the control on the three closest boards,
+so the gate run on all eleven was not made. Each probe is one seed per arm. The control's own spread from seed to seed is about ±1-2
+(experiment 5 of the srj20 record had 4-6 at 16 threads), and most arms lost by more than that.
+
+## No change to the default route
+
+The base is the main 7333069 build (the source this branch started from), and the new build has F6-F9 with the options off. `bench/run.py
+--set quick --work 1000000 --route-args "--variants 1"`: 30 of 30 boards byte-identical. `--set mid --work 20000000`: 11 of 11
+byte-identical. Both have the same summary lines (quick 29 open of 669 connections; mid 223 of 3,674). ctest: 477 of 477 pass.

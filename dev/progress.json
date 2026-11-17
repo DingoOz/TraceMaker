@@ -1050,24 +1050,24 @@
           "done": true
         },
         {
-          "text": "F4 move a blocking via up to 1 mm, then route the ball; commit only if better",
-          "done": false
+          "text": "F4 move a blocking via up to 1 mm, then route the ball; commit only if better (--via-shove: 0 of 427 moves kept; not adopted)",
+          "done": true
         },
         {
           "text": "F5 fewer vias per connection on breakout boards (measured 2026-11-17: lost to the control, not adopted)",
           "done": true
         },
         {
-          "text": "F6 lanes under the package with a cost bonus for cross-board connections",
-          "done": false
+          "text": "F6 lanes under the package with a cost bonus for cross-board connections (--package-lanes built; lost to the control, off)",
+          "done": true
         },
         {
-          "text": "F7 order long, crossing connections first once sites are reserved",
-          "done": false
+          "text": "F7 order long, crossing connections first once sites are reserved (--order 4, --order-all built; lost to the control, off)",
+          "done": true
         },
         {
-          "text": "F9 crossings and site occupancy in the run report and the layer advisor",
-          "done": false
+          "text": "F9 crossings and site occupancy in the run report and the layer advisor (line_crossings in the summary, two-layer hint at 11.5/connection; site occupancy not added)",
+          "done": true
         },
         {
           "text": "Gate run on the eleven boards, full srj20 no-loss check, quick/mid byte-identical with options off",

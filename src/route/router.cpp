@@ -48,6 +48,30 @@ using model::NetId;
 
 namespace {
 
+// Per connection, how many other connections' straight pad-to-pad lines cross its own (M26 F7, F9). Lines that share a pad do not count,
+// nor does a connection to a zone fill (it has no line). A board whose connections cross each other this often needs that many layer
+// changes or detours: on srj20, the boards that were never routed clean on two layers have 10.6-14.6 crossings per connection.
+std::vector<int> line_crossings(const model::Board& b, const std::vector<Connection>& cs) {
+  std::vector<int> n(cs.size(), 0);
+  std::vector<geom::Box> box(cs.size());
+  for (std::size_t i = 0; i < cs.size(); ++i)
+    if (cs[i].pad_a >= 0 && cs[i].pad_b >= 0) {
+      box[i].add(b.pads[static_cast<std::size_t>(cs[i].pad_a)].pos);
+      box[i].add(b.pads[static_cast<std::size_t>(cs[i].pad_b)].pos);
+    }
+  for (std::size_t i = 0; i < cs.size(); ++i) {
+    if (cs[i].pad_a < 0 || cs[i].pad_b < 0) continue;
+    const Point p = b.pads[static_cast<std::size_t>(cs[i].pad_a)].pos, q = b.pads[static_cast<std::size_t>(cs[i].pad_b)].pos;
+    for (std::size_t j = i + 1; j < cs.size(); ++j) {
+      if (cs[j].pad_a < 0 || cs[j].pad_b < 0 || !box[i].intersects(box[j])) continue;
+      const Point r = b.pads[static_cast<std::size_t>(cs[j].pad_a)].pos, t = b.pads[static_cast<std::size_t>(cs[j].pad_b)].pos;
+      if (p == r || p == t || q == r || q == t) continue;
+      if (geom::segments_intersect(p, q, r, t)) ++n[i], ++n[j];
+    }
+  }
+  return n;
+}
+
 // Octilinear directions: E, NE, N, NW, W, SW, S, SE (y down on screen; "N" is -y).
 constexpr int kDx[8] = {1, 1, 0, -1, -1, -1, 0, 1};
 constexpr int kDy[8] = {0, -1, -1, -1, 0, 1, 1, 1};
@@ -742,6 +766,19 @@ struct Router::Impl {
         if (da != dc) return da > dc;
         return a.length < c.length;
       });
+    } else if (opt.order == 4) {
+      // Most crossings first (M26 F7): a connection whose straight line crosses many others' needs the room they would take, so it goes
+      // first, as a designer routes the long cross-board ones first; ties go longest first. A zone target has no line and counts 0.
+      const std::vector<int> crossings = line_crossings(b, out);
+      std::vector<std::size_t> idx(out.size());
+      for (std::size_t i = 0; i < idx.size(); ++i) idx[i] = i;
+      std::stable_sort(idx.begin(), idx.end(), [&](std::size_t x, std::size_t y) {
+        if (crossings[x] != crossings[y]) return crossings[x] > crossings[y];
+        return out[x].length > out[y].length;
+      });
+      std::vector<Connection> sorted;
+      for (std::size_t i : idx) sorted.push_back(out[i]);
+      out = std::move(sorted);
     } else if (opt.order == 1) {
       std::stable_sort(out.begin(), out.end(), [](const Connection& a, const Connection& c) { return a.length > c.length; });
     } else if (opt.order == 2) {
@@ -992,6 +1029,14 @@ struct Router::Impl {
       for (const auto& bx : pkg_boxes)
         if (layer == bx.layer && p.x >= bx.box.x0 && p.x <= bx.box.x1 && p.y >= bx.box.y0 && p.y <= bx.box.y1) {
           hc += pkg_pen;
+          break;
+        }
+    }
+    if (lane_active) {  // --package-lanes (M26 F6): a long connection under a package keeps to the ball rows and columns on the far layer
+      const Point p = at(gx, gy);
+      for (const auto& bx : pkg_boxes)
+        if (layer != bx.layer && p.x >= bx.box.x0 && p.x <= bx.box.x1 && p.y >= bx.box.y0 && p.y <= bx.box.y1) {
+          if (!near_line(bx.rows, p.y, bx.lane_tol) && !near_line(bx.cols, p.x, bx.lane_tol)) hc += lane_pen;
           break;
         }
     }
@@ -1630,6 +1675,11 @@ struct Router::Impl {
   }
 
   bool search(const Connection& c, const Window& w, std::vector<PathNode>& path) {
+    struct LaneScope {  // --package-lanes applies to this search only
+      bool& on;
+      ~LaneScope() { on = false; }
+    } lane_scope{lane_active};
+    lane_active = lane_pen > 0 && !pkg_boxes.empty() && c.length >= mm_to_nm(opt.package_lanes_mm);
     last_miss = Miss::None;
     reach_said_no = false;
     bool touched_edge = false;
@@ -4509,7 +4559,20 @@ struct Router::Impl {
   // they cannot. Each connection gets the layer that leaves the fewest crossings on its layer (a greedy start and
   // single flips until none improves, deterministic); tracks off that layer cost lp_pen per lattice step.
   std::int64_t soft_unit = 0;  // cost of crossing another net's copper: opt.soft_cost_mm, growing with the pass (PathFinder's present-sharing factor)
-  struct PkgBox { geom::Box box; int layer; int footprint; };
+  struct PkgBox {
+    geom::Box box;
+    int layer;
+    int footprint;
+    std::vector<Coord> rows, cols;  // ball row y and column x lines (sorted), for --package-lanes
+    Coord lane_tol = 0;             // a quarter of the ball pitch
+  };
+  // --package-lanes (M26 F6): true while a search for a long enough connection runs.
+  bool lane_active = false;
+  std::int64_t lane_pen = 0;
+  static bool near_line(const std::vector<Coord>& v, Coord x, Coord tol) {
+    const auto it = std::lower_bound(v.begin(), v.end(), x);
+    return (it != v.end() && *it - x <= tol) || (it != v.begin() && x - *std::prev(it) <= tol);
+  }
   std::vector<PkgBox> pkg_boxes;
   double auto_dir_pen = 0;  // opt.layer_dir_pen resolved for this board
   // Smoothing keeps the direction costs (D174) when the user asked for directions: --layer-dir, or a positive --layer-dir-pen.
@@ -4555,7 +4618,21 @@ struct Router::Impl {
         gy.insert(b.pads[static_cast<std::size_t>(i)].pos.y / 10'000);
       }
       if (gx.size() < 5 || gy.size() < 5 || 10 * ids.size() < 4 * gx.size() * gy.size()) continue;
-      pkg_boxes.push_back({bx.inflated(half), std::countr_zero(m), fp});
+      PkgBox pb{bx.inflated(half), std::countr_zero(m), fp, {}, {}, 0};
+      {
+        std::map<Coord, Coord> rx, ry;  // ball lines keyed by 10 um bins, as above
+        for (int i : ids) {
+          rx.emplace(b.pads[static_cast<std::size_t>(i)].pos.x / 10'000, b.pads[static_cast<std::size_t>(i)].pos.x);
+          ry.emplace(b.pads[static_cast<std::size_t>(i)].pos.y / 10'000, b.pads[static_cast<std::size_t>(i)].pos.y);
+        }
+        for (const auto& [k, x] : rx) pb.cols.push_back(x);
+        for (const auto& [k, y] : ry) pb.rows.push_back(y);
+        Coord bp = 0;
+        for (const auto* v : {&pb.cols, &pb.rows})
+          for (std::size_t i = 1; i < v->size(); ++i) bp = bp == 0 ? (*v)[i] - (*v)[i - 1] : std::min(bp, (*v)[i] - (*v)[i - 1]);
+        pb.lane_tol = bp / 4;
+      }
+      pkg_boxes.push_back(std::move(pb));
     }
     // Automatic settings (doc 16 §10, D98): on a two-layer board with a ball-grid package the layers get preferred
     // directions and the package interior is dear on its pad layer; srj19/srj20 gap boards, 30 M work: +7 and +4 clean.
@@ -4594,6 +4671,7 @@ struct Router::Impl {
       if (opt.txn_temp < 0) opt.txn_temp = 0;
     }
     pkg_pen = static_cast<std::int64_t>(pen * static_cast<double>(pitch));
+    lane_pen = static_cast<std::int64_t>(std::max(0.0, opt.package_lanes) * static_cast<double>(pitch));
     pkg_on = !pkg_boxes.empty() && pen > 0;
   }
   std::vector<int> conn_lpref;
@@ -6491,6 +6569,11 @@ struct Router::Impl {
     drc::UnionFind uf(obs->copper().items.size());
     for (std::size_t i = 0; i < con.root.size(); ++i) uf.unite(static_cast<int>(i), con.root[i]);
     const auto conns = plan(uf);
+    {
+      long x = 0;
+      for (const int n : line_crossings(b, conns)) x += n;
+      res.line_crossings = x / 2;
+    }
     if (opt.global_route || opt.global_congestion || opt.cut_report) {
       std::vector<GlobalNet> gn;
       for (const auto& c : conns) {
@@ -7611,6 +7694,8 @@ PortfolioResult route_portfolio(const model::Board& board, const model::DesignRu
           vs[i].name += ", crowded source";
         }
   }  // designed variants
+  if (base.order_all >= 0)  // --order-all (M26 F7): one connection order in every variant
+    for (auto& v : vs) v.o.order = base.order_all;
   std::vector<int> chosen;
   if (!pick.empty()) {
     for (int i : pick)

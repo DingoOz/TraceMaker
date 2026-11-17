@@ -5,19 +5,25 @@ Per board, three arms with the same seed and recipe, warm from the best board so
 and perimeter corridors, version 1), ef (--escape-flow: sites and channels by min-cost flow, version 2). The binary has F8, so no arm can
 end worse than its start. One line per board in escape.jsonl.
 """
-import json, pathlib, subprocess, sys, threading, time
+import json, os, pathlib, subprocess, sys, threading, time
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "srj20-again")); sys.argv, ARGS = sys.argv[:1], sys.argv[1:]
 import again  # noqa: E402
 drive = again.drive
-TM = HERE / "tracemaker"
+TM = pathlib.Path(os.environ.get("TM_BIN", HERE / "tracemaker"))
 import os
 LIMIT, THREADS, SEED = os.environ.get("LIMIT", "1800"), os.environ.get("THREADS", "5"), os.environ.get("SEED", "501")
 FRESH = os.environ.get("FRESH") == "1"
 VARIANTS = os.environ.get("VARIANTS")
 ARMS = [("c", []), ("ep", ["--escape-plan"]), ("ef", ["--escape-flow"])]
 OUT = os.environ.get("OUT", "escape")
-if OUT == "guide":
+if OUT == "lanes":
+    ARMS = [("l1", ["--package-lanes", "1"]), ("l2", ["--package-lanes", "2"]), ("l1s", ["--package-lanes", "1", "--package-lanes-mm", "4"])]
+elif OUT == "shove":
+    ARMS = [("vs", ["--via-shove"])]
+elif OUT == "order":
+    ARMS = [("o4", ["--order-all", "4"]), ("o1", ["--order-all", "1"])]
+elif OUT == "guide":
     ARMS = [("pv", ["--pin-via-pen", "2"]), ("band", ["--pin-via-pen", "2", "--pin-via-mm", "1.5"]), ("vc", ["--via-cost-mm", "6"])]
 if OUT == "endgame":
     ARMS = [("e", ["--endgame", "0.3"]), ("er1", ["--endgame", "0.3", "--rescue", "0.5,1,2"]),
@@ -71,7 +77,7 @@ def run_board(b, port0, lock):
 
 if __name__ == "__main__":
     lock = threading.Lock()
-    ts = [threading.Thread(target=run_board, args=(b, 9001 + 10 * i + {'escape': 0, 'rescue': 100, 'endgame': 200, 'fresh': 300}.get(OUT, 400), lock)) for i, b in enumerate(ARGS)]
+    ts = [threading.Thread(target=run_board, args=(b, 9001 + 10 * i + {'escape': 0, 'rescue': 100, 'endgame': 200, 'fresh': 300, 'order': 500, 'lanes': 600, 'shove': 700}.get(OUT, 400), lock)) for i, b in enumerate(ARGS)]
     for t in ts:
         t.start()
     for t in ts:
