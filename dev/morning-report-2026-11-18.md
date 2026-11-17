@@ -23,7 +23,7 @@ All nine items are built or measured.
   - F7 crossing order: 10-13 open.
 - **Checks:** with the options off, `quick` and `mid` are byte-identical.
 - **Gate not met** (≥ 3 of 11 clean). Records are in `bench/records/m26`.
-- **Untried idea:** route a fan-out stage first and then keep it.
+- **Fan-out first, then kept** (tried 2026-11-17 evening, `bench/records/m26/fanout`): 12-20 open against the control's 6-7. Not adopted.
 
 ## M25 — explanation page
 

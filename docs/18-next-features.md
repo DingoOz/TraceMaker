@@ -552,5 +552,6 @@ dearer vias, lanes, one order, layer directions in the srj20 record), left more 
 budget. The open connections are lost to board-wide congestion of tracks, not to any one via or ordering choice. What helped on these boards
 was budget and diversity: more variants in parallel, seeds, warm starts and the ramp. F8 keeps those gains, and F9 tells the user when two
 layers are unlikely to do. The structure a designer imposes may still pay off as a complete fan-out, routed first and then kept, instead of
-as a bias inside the negotiated search. That is a different milestone (a fan-out stage with its own rip-up rules), not built here.
+as a bias inside the negotiated search. That is a different milestone (a fan-out stage with its own rip-up rules), not built here. Measured afterwards as a fixed dog-bone fan-out written into the board before routing (`bench/records/m26/fanout`): 12-20 open
+against the control's 6-7 on the same three boards, so a kept fan-out does not help either.
 
