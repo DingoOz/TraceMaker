@@ -116,6 +116,7 @@ nav:
       - C++ API: reference/api.md
   - Explanation:
       - explanation/index.md
+      - How the default route decides: explanation/default-route.md
       - Requirements: 01-requirements.md
       - Architecture: 02-architecture.md
       - Data structures and DRC: 03-data-structures.md

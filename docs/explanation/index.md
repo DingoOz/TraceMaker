@@ -24,6 +24,12 @@ Read them in this order the first time:
 | [Live viewer](../09-visualization.md) | Streaming, replay and the visual design of the browser viewer |
 | [Benchmarking](../10-benchmarking.md) | Datasets, metrics, baselines, the harness and the gates |
 
+One run, followed from the command line to the written board:
+
+| Document | What it explains |
+|---|---|
+| [How the default route decides](default-route.md) | Each stage of a default `tracemaker route` run on one recorded board: what it does, the option that changes it, its design section and decision, and where the log, summary or report shows it |
+
 Studies and features with a document of their own:
 
 | Document | Status |

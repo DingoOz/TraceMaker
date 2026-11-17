@@ -1008,21 +1008,21 @@
     {
       "id": "M25",
       "title": "How the default route decides, explained",
-      "status": "todo",
+      "status": "done",
       "gate": "Every step traces to code, a doc section and a decision record; example numbers from a recorded run; mkdocs --strict and docs_check pass",
       "deliverables": "Explanation page following one board through a default tracemaker route run, step by step, with the option, doc section, decision and report/event for each step",
       "tasks": [
         {
           "text": "Map the default route pipeline in order from the code (rules, ordering, global plan, escapes, portfolio, search, rip-up, repair, rescue, cleanup, exact check, write)",
-          "done": false
+          "done": true
         },
         {
           "text": "Record one real board's run and take each step's numbers from it",
-          "done": false
+          "done": true
         },
         {
           "text": "Write the page under docs/explanation and add it to mkdocs nav",
-          "done": false
+          "done": true
         }
       ]
     },
