@@ -58,6 +58,9 @@ Legality::Legality(const Problem& p) : p_(p) {
   stamp_.assign(std::max(p.parts.size(), std::size_t{1}), 0);
   for (const auto& e : p.edges)
     for (std::size_t k = 0; k + 1 < e.pts.size(); ++k) segs_.push_back(Shape::segment(e.pts[k], e.pts[k + 1], 0));
+  edge_segs_ = segs_.size();
+  for (const auto& e : p.margins)
+    for (std::size_t k = 0; k + 1 < e.pts.size(); ++k) segs_.push_back(Shape::segment(e.pts[k], e.pts[k + 1], e.r));
   reach_ = std::max({p.clearance, kThroughMargin, kThroughThrough, p.max_need});
   fixed_cells_.assign(z(nx_ * ny_), {});
   for (std::size_t i = 0; i < p.fixed_copper.size(); ++i) {
@@ -89,13 +92,14 @@ bool Legality::inside_ok(int part, Point pos, int rot, bool lenient) const {
   const Box eb = shift(lenient ? g.edge_box.inflated(-p_.edge_clearance) : g.edge_box, pos);
   const Box& rg = p_.region;
   if (eb.x0 < rg.x0 || eb.y0 < rg.y0 || eb.x1 > rg.x1 || eb.y1 > rg.y1) return false;
-  auto near_edge = [&](const Shape& s, Coord c) {
+  // Margin pieces (after edge_segs_) count for pad copper only, as in KiCad's copper-to-edge check (D192).
+  auto near_edge = [&](const Shape& s, Coord c, bool margins) {
     int x0, y0, x1, y1;
     cells_of(shift(s.box, pos).inflated(c), x0, y0, x1, y1);
     for (int y = y0; y <= y1; ++y)
       for (int x = x0; x <= x1; ++x)
         for (int si : seg_cells_[z(y * nx_ + x)])
-          if (closer(segs_[z(si)], Point{}, s, pos, c)) return true;
+          if ((margins || z(si) < edge_segs_) && closer(segs_[z(si)], Point{}, s, pos, c)) return true;
     return false;
   };
   auto in_board = [&](Point q) {
@@ -107,7 +111,7 @@ bool Legality::inside_ok(int part, Point pos, int rot, bool lenient) const {
   };
   for (int s = 0; s < 2; ++s) {
     for (const Shape& cy : g.cy_in[z(s)]) {
-      if (near_edge(cy, 1)) return false;
+      if (near_edge(cy, 1, false)) return false;
       if (!in_board(cy.pts[0] + pos)) return false;
     }
     for (const Shape& cy : g.cy[z(s)])
@@ -116,7 +120,7 @@ bool Legality::inside_ok(int part, Point pos, int rot, bool lenient) const {
   }
   const Coord ec = lenient ? 1 : std::max<Coord>(p_.edge_clearance, 1);
   for (const auto& pd : g.pads) {
-    if (near_edge(pd, ec)) return false;
+    if (near_edge(pd, ec, !lenient)) return false;
     if (!in_board(pd.pts[0] + pos)) return false;
   }
   // Fixed board copper (tracks, vias, copper graphics and text).
@@ -139,18 +143,31 @@ bool copper_conflict(const CopperShape& a, Point pa, const CopperShape& b, Point
 }
 
 bool Legality::pair_conflict(int a, Point pa, int ra, int b, Point pb, int rb) const {
+  return pair_test(a, pa, ra, b, pb, rb, Test::All);
+}
+
+bool Legality::hard_conflict(int a, Point pa, int ra, int b, Point pb, int rb) const {
+  return pair_test(a, pa, ra, b, pb, rb, Test::Hard);
+}
+
+bool Legality::courtyards_overlap(int a, Point pa, int ra, int b, Point pb, int rb) const {
+  return pair_test(a, pa, ra, b, pb, rb, Test::Courtyards);
+}
+
+bool Legality::pair_test(int a, Point pa, int ra, int b, Point pb, int rb, Test test) const {
   const PartGeom& ga = p_.parts[z(a)].geom[z(ra)];
   const PartGeom& gb = p_.parts[z(b)].geom[z(rb)];
   const Coord reach = reach_;
   if (!shift(ga.body, pa).inflated(reach).intersects(shift(gb.body, pb))) return false;
-  const Coord c = std::max<Coord>(p_.clearance, 1);
+  const Coord c = test == Test::Courtyards ? 1 : std::max<Coord>(p_.clearance, 1);
   // A copper-only part (ExtractOptions::copper_only) is tested by its holes and copper alone.
   const bool outlines = !p_.parts[z(a)].copper_only && !p_.parts[z(b)].copper_only;
-  if (outlines)
+  if (outlines && test != Test::Hard)
     for (int s = 0; s < 2; ++s)
       for (const Shape& u : ga.cy[z(s)])
         for (const Shape& v : gb.cy[z(s)])
           if (closer(u, pa, v, pb, c)) return true;
+  if (test == Test::Courtyards) return false;
   for (const auto& t : ga.through) {
     if (outlines)
       for (int s = 0; s < 2; ++s)
@@ -304,7 +321,7 @@ Raster::Raster(const Problem& p, Coord cell) : p_(p), h_(cell) {
     }
   }
   // Cells an edge passes through (samples every h/2, 3x3 neighbourhood: conservative).
-  auto mark_path = [&](const std::vector<Point>& pts, bool closed, std::vector<std::uint8_t>& m, std::uint8_t v) {
+  auto mark_path = [&](const std::vector<Point>& pts, bool closed, std::vector<std::uint8_t>& m, std::uint8_t v, int rc = 1) {
     const std::size_t k = pts.size();
     for (std::size_t i = 0; i + (closed ? 0 : 1) < k; ++i) {
       const Point a = pts[i], b = pts[(i + 1) % k];
@@ -316,8 +333,8 @@ Raster::Raster(const Problem& p, Coord cell) : p_(p), h_(cell) {
         const double py = static_cast<double>(a.y) + f * static_cast<double>(b.y - a.y);
         const int cx = static_cast<int>(std::floor((px - static_cast<double>(ox_)) / static_cast<double>(h_)));
         const int cy = static_cast<int>(std::floor((py - static_cast<double>(oy_)) / static_cast<double>(h_)));
-        for (int dy = -1; dy <= 1; ++dy)
-          for (int dx = -1; dx <= 1; ++dx) {
+        for (int dy = -rc; dy <= rc; ++dy)
+          for (int dx = -rc; dx <= rc; ++dx) {
             const int x = cx + dx, y = cy + dy;
             if (x >= 0 && y >= 0 && x < nx_ && y < ny_) m[z(y * nx_ + x)] = v;
           }
@@ -325,6 +342,8 @@ Raster::Raster(const Problem& p, Coord cell) : p_(p), h_(cell) {
     }
   };
   for (const auto& e : p.edges) mark_path(e.pts, false, inside, 0);
+  // Margin pieces with their stroke (the exact test holds pads off them; here any part near one is "maybe illegal").
+  for (const auto& e : p.margins) mark_path(e.pts, false, inside, 0, 1 + static_cast<int>(e.r / h_));
   for (int s = 0; s < 2; ++s) {
     for (std::size_t i = 0; i < n; ++i) blocked_[s][i] = inside[i] ? 0 : 1;
     keep_[s].assign(n, 0);
@@ -499,6 +518,18 @@ Violations check_all(const Problem& p, const Placement& pl) {
     }
   }
   return v;
+}
+
+std::vector<std::pair<int, int>> keepable_pairs(const Problem& p, const Placement& pl) {
+  Legality L(p);
+  std::vector<std::pair<int, int>> out;
+  for (auto [a, b] : check_all(p, pl).pairs) {
+    const Point pa = pl.pos[z(a)], pb = pl.pos[z(b)];
+    const int ra = pl.rot[z(a)], rb = pl.rot[z(b)];
+    if (L.courtyards_overlap(a, pa, ra, b, pb, rb) && !L.hard_conflict(a, pa, ra, b, pb, rb)) out.push_back({std::min(a, b), std::max(a, b)});
+  }
+  std::sort(out.begin(), out.end());
+  return out;
 }
 
 }  // namespace tmk::place

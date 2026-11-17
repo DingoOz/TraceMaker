@@ -240,3 +240,4 @@
 {"ts": "2026-11-17T07:50:43+00:00", "kind": "build", "text": "M26 F8: a ramp from a warm start never returns fewer routes than the warm start (sample040 16 -> 2 open on a lossy ramp)"}
 {"ts": "2026-11-17T13:56:20+00:00", "kind": "milestone", "text": "M26: all nine features built or measured; F8 and F9 adopted, F2-F7 lose to the unconstrained portfolio on srj20 152/070/040; gate not met; quick and mid byte-identical (9b77616)"}
 {"ts": "2026-11-17T14:07:42+00:00", "kind": "milestone", "text": "M25: docs/explanation/default-route.md follows plane_smd through a default route, 16 stages, each tied to code, doc section, decision and the log/summary/report; record in bench/records/m25"}
+{"ts": "2026-11-17T17:23:39+00:00", "kind": "milestone", "text": "M24 (D192): exact courtyards + Margin lines on; --closure-keep-overlaps off (gate not met: 32 open = D190, serial_gw clean, 58r-mxalps lost to trial order)"}

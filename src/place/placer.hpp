@@ -54,6 +54,7 @@ struct Metrics {
   // Relative to a reference (the input) placement: violations where at least one involved movable part was
   // moved. Pairs whose parts both stayed put existed in the input and are not ours.
   int new_overlaps = 0, new_outside = 0;
+  int new_pairs = 0;  // overlapping pairs that do not overlap in the reference placement (M24: a moved part may keep its input pairs)
   std::vector<std::string> conflicts;  // "A/B" pairs and "A/outline" (movable-involved)
 };
 

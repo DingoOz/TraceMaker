@@ -66,6 +66,12 @@ struct ClosureOptions {
   // replace arm: the k-th whole-board placement (k = 0, 1, ...), legal on the loop's problem; nullopt = no more,
   // an empty placement = this one failed (counted as a trial without a route).
   std::function<std::optional<Placement>(int k)> radical;
+  // M24 (D192): a part that overlaps others in the input may move if, where it goes, it overlaps only parts whose courtyards it
+  // overlapped there (input_pairs = keepable_pairs, each (a, b) with a < b) and its holes and copper stay clear of them, so no new
+  // pair of overlapping parts appears. Such moves rank after the strictly legal ones. Off: a moved part must be
+  // free of every conflict (D190), which leaves no move for parts a hand placement has pinned in an overlap.
+  bool keep_overlaps = false;
+  std::vector<std::pair<int, int>> input_pairs;  // sorted
   std::function<bool()> out_of_time;  // job wall-time stop, checked between trials
   std::function<void(const std::string&)> log;
   std::function<void(const std::string& label, const Placement& pl)> on_accept;  // recording only

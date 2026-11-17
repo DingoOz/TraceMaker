@@ -117,6 +117,7 @@ struct Problem {
   std::vector<Point> outline;                // largest Edge.Cuts loop (empty if none could be assembled)
   std::vector<std::vector<Point>> cutouts;   // other closed Edge.Cuts loops
   std::vector<Shape> edges;                  // every Edge.Cuts piece as segments (r = 0)
+  std::vector<Shape> margins;                // Margin layer pieces with their stroke: KiCad holds pads off them too (D192)
   std::vector<Keepout> keepouts;
   std::vector<CopperShape> fixed_copper;     // board copper that never moves: tracks, vias, copper graphics and text
   Coord max_need = 0;                        // largest copper clearance any item asks for
@@ -154,6 +155,10 @@ struct ExtractOptions {
   bool fix_edge_connectors = true;  // connectors (J*, P*, CN*, USB*) touching the outline stay put
   Coord courtyard_clearance = -1;   // override (-1: from the rules, else default_clearance)
   Coord default_clearance = 250'000;  // used when the board has no courtyard rule (KiCad's own default is 0)
+  // Courtyards as KiCad builds them (M24, D192): each side's courtyard graphics chained into closed outlines, one polygon per outline, so
+  // a cross-shaped QFP courtyard keeps its notched corners free. false: the convex hull of all of them (the model before M24, a superset).
+  // A side whose graphics do not close into outlines (KiCad: "malformed courtyard") keeps the hull either way.
+  bool exact_courtyards = true;
   bool decap_affinity = true;       // tie each decoupling capacitor to the nearest supply pin of its IC
   int decap_weight = kSignalWeight; // weight of those ties (D25: signal weight)
   // D171 (off by default: not a clear routing win): capacitors without a real input position (scratch, or beside
@@ -205,6 +210,9 @@ Shape mirrored(const Shape& s);
 model::LayerMask flip_layers(model::LayerMask m, int n);
 Point rot90(Point p, int r);       // KiCad rotation by r * 90 degrees
 std::vector<Point> convex_hull(std::vector<Point> pts);
+// Closed outlines from courtyard graphics (lines and arcs chained end to end within `tol`; rectangles, polygons and circles are outlines
+// already), as KiCad joins a courtyard layer into polygons. Empty when a piece does not close into an outline or a curve is present.
+std::vector<std::vector<Point>> courtyard_outlines(const std::vector<const model::Graphic*>& gs, Coord tol = 20'000);
 // Inner parallel polygon of a convex polygon at distance t; a point at the centroid if it is thinner than 2t.
 Shape inset_convex(const Shape& s, Coord t);
 bool power_like_name(const std::string& name);

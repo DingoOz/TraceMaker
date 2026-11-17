@@ -136,6 +136,10 @@ def place_board(name: str, src: pathlib.Path, outdir: pathlib.Path, res: dict) -
         res["place_added"] = result["added_errors"]
         res["place_error_gate"] = result["error_gate"]
         res["place_capped_evaluated_types"] = result["capped_evaluated_types"]
+        # M24: the same with courtyard overlaps matched by the pair of footprints (a part may keep an overlap it had).
+        pairs = drc_judge.added_errors(human, moved, placement=True, courtyard_pairs=True)
+        res["place_added_pairs"] = pairs["added_errors"]
+        res["place_error_gate_pairs"] = pairs["error_gate"]
     else:
         res["place_error_gate"] = "unknown"
     return placed

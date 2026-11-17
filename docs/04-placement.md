@@ -708,3 +708,24 @@ improvement is committed (rules 1 and 4).
   This would give serial_gw, phone_amp and memsarray candidates.
 - *Using the router's `PlacementRequest`* (cut geometry) to propose moves instead of geometry around the failed
   pads.
+
+## 12. Exact courtyards and moves that keep an input overlap (D192, M24, 2026-11-17)
+
+**Exact courtyards (on).** A part's courtyard per side is the set of closed outlines its courtyard graphics form (lines and arcs chained
+end to end within 20 µm; rectangles, polygons and circles as they are), not their convex hull. A side that does not close or holds a
+curve keeps the hull; the inside-the-board test uses each outline's hull. `--hull-courtyards` restores the hull. On serial_gw, phone_amp
+and memsarray this removes 1 conflict (phone_amp J5/F1): the rest are real overlaps KiCad also reports, such as serial_gw's C1-C7 under
+the back courtyard of the RFM69 module.
+
+**Margin lines (on).** Pads keep the copper-to-edge clearance from Margin layer lines (with their stroke) as from Edge.Cuts, as KiCad does.
+
+**`--closure-keep-overlaps` (off).** A closure move may leave a part overlapping parts whose courtyards really overlapped it in the input,
+as long as their holes and copper stay clear and no new pair appears. These moves rank after the strictly legal moves of their arm. The
+bench judge adds a second gate that matches courtyard overlaps by footprint pair, and malformed courtyards and edge clearances by
+footprint (`place_error_gate_pairs`), next to the position-matched gate.
+
+**Results** (`bench/records/m24`, D190's recipe on the 14 closure boards): 32 open, 4 complete, 3 clean, the same totals as §11's route
+judge. serial_gw becomes clean (IC1 1 mm); phone_amp goes from 5 to 4 open; memsarray exhausts its 34 moves as before; 58r-mxalps is
+lost to trial order (a newly legal move came first and the 1,800 s loop limit came before §11's completing move). No board gains a KiCad
+error when footprint errors are matched by footprint; phone_amp fails the position gate only because its moved C3 carries a malformed
+library courtyard. Gate not met, so the keep rule stays an option.

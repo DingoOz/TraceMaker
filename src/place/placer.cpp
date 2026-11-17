@@ -35,9 +35,19 @@ Metrics measure(const Problem& p, const Placement& pl, const Placement* referenc
   auto moved = [&](int i) {
     return !reference || pl.pos[z(i)] != reference->pos[z(i)] || pl.rot[z(i)] != reference->rot[z(i)];
   };
+  // new_pairs (M24, D192): a moved pair is kept only if its courtyards overlapped in the reference (keepable_pairs) and its
+  // holes and copper are still clear; anything else is new to KiCad.
+  std::vector<std::pair<int, int>> ref_pairs;
+  if (reference) ref_pairs = keepable_pairs(p, *reference);
+  const Legality L(p);
   for (const auto& [a, b] : v.pairs) {
     m.conflicts.push_back(p.parts[z(a)].ref + "/" + p.parts[z(b)].ref);
-    if (moved(a) || moved(b)) ++m.new_overlaps;
+    if (moved(a) || moved(b)) {
+      ++m.new_overlaps;
+      if (!std::binary_search(ref_pairs.begin(), ref_pairs.end(), std::pair<int, int>{std::min(a, b), std::max(a, b)}) ||
+          L.hard_conflict(a, pl.pos[z(a)], pl.rot[z(a)], b, pl.pos[z(b)], pl.rot[z(b)]))
+        ++m.new_pairs;
+    }
   }
   for (int a : v.outside_parts) {
     m.conflicts.push_back(p.parts[z(a)].ref + "/outline");
@@ -195,7 +205,7 @@ nlohmann::json report_json(const Problem& p, const PlaceReport& r) {
   auto metrics = [](const Metrics& m) {
     return json{{"weighted_hpwl_mm", mm(m.whpwl) / kSignalWeight}, {"hpwl_mm", mm(m.hpwl)},     {"crossings", m.crossings},
                 {"overlaps", m.overlaps},                          {"outside", m.outside},      {"fixed_overlaps", m.fixed_overlaps},
-                {"fixed_outside", m.fixed_outside}, {"new_overlaps", m.new_overlaps}, {"new_outside", m.new_outside},
+                {"fixed_outside", m.fixed_outside}, {"new_overlaps", m.new_overlaps}, {"new_pairs", m.new_pairs}, {"new_outside", m.new_outside},
                 {"flipped", m.flipped}, {"side_vias", m.side_vias}, {"conflicts", m.conflicts}};
   };
   json j;

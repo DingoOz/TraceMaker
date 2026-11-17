@@ -987,20 +987,20 @@
     {
       "id": "M24",
       "title": "Move parts a hand placement has pinned down",
-      "status": "todo",
+      "status": "in_progress",
       "gate": "The three closure boards blocked by model overlaps (serial_gw, phone_amp, memsarray) get legal moves; no KiCad DRC error added by placement; no board worse than D190 at equal routes",
       "deliverables": "Exact courtyard polygons in the placer's legality model; a part in an existing overlap may move when the overlap does not grow (KiCad-judged); placement closure rerun on bench/records/m24-closure's 14 boards",
       "tasks": [
         {
-          "text": "Exact courtyard polygons in the legality model",
-          "done": false
+          "text": "Exact courtyard polygons in the legality model (D192, doc 04 \u00a712: on; 1 conflict fewer on the three boards, the rest are real)",
+          "done": true
         },
         {
-          "text": "Move rule for parts already in an overlap (overlap must not grow, KiCad-judged; D190 shows the relaxed rule made real errors)",
-          "done": false
+          "text": "Move rule for parts already in an overlap (overlap must not grow, KiCad-judged; D190 shows the relaxed rule made real errors) \u2014 built as --closure-keep-overlaps (D192): pairs whose courtyards overlapped may stay, copper and holes clear; off by default",
+          "done": true
         },
         {
-          "text": "Rerun closure on the 14 boards; serial_gw, phone_amp, memsarray no longer stop with no candidates",
+          "text": "Rerun closure on the 14 boards; serial_gw, phone_amp, memsarray no longer stop with no candidates \u2014 2026-11-17 (bench/records/m24): 32 open, 4 complete, 3 clean (= D190); serial_gw clean, phone_amp 5->4, memsarray exhausts its moves as under D190; 58r-mxalps lost to trial order. Gate not met",
           "done": false
         }
       ]

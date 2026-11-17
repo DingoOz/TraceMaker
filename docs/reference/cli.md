@@ -1051,6 +1051,8 @@ OPTIONS:
                               Cost of one airwire crossing in mm of signal HPWL
           --courtyard-clearance-mm FLOAT
                               Override the courtyard clearance (default: rules, else 0.25 mm)
+          --hull-courtyards   Model each courtyard as the convex hull of its graphics (before
+                              M24) instead of its outlines as KiCad builds them
           --move-connectors   Also move connectors that touch the board edge
           --scratch           The input has no placement (parts piled or beside the board, as
                               after importing a schematic): input positions of movable parts
@@ -1132,6 +1134,9 @@ OPTIONS:
                               if it routes more
           --closure-routes INT
                               closure: trial placements routed at most (doc 04 §11)
+          --closure-keep-overlaps
+                              closure: a part that overlaps others in the input may move if it
+                              then overlaps only those parts (no new pair; M24)
           --closure-stall INT closure: trials without improvement before a radical one
                               (re-place around the failures or the whole board)
           --closure-judge TEXT:{route,portfolio}

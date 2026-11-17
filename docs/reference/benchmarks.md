@@ -370,6 +370,16 @@ comparable (judge version, time limit, machine load).
 |---|---|--:|---|--:|--:|--:|--:|---|
 | [m23-quick-split](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m23-throughput/quick-split/summary.json) | quick | 30 | 34c30cb | 86.7% | 99.3% | 100.0% | 114 |  |
 
+## m24
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m24)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [m24-keep10m](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m24/m24-keep10m/summary.json) | PCBench tier A + placement (closure) | 14 | 9b77616 | 21.4% | 96.9% | 14.3% | 1080 |  |
+| [m24-keep10m-b](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m24/m24-keep10m-b/summary.json) | PCBench tier A + placement (closure) | 14 | 2637970 | 28.6% | 96.7% | 14.3% | 1008 |  |
+| [m24-keep10m-c](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m24/m24-keep10m-c/summary.json) | PCBench tier A + placement (closure) | 14 | 2637970 | 21.4% | 96.7% | 14.3% | 994 |  |
+
 ## m24-closure
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/m24-closure)

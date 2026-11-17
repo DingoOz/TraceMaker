@@ -132,6 +132,30 @@ TEST_CASE("convex hull", "[place]") {
   CHECK(h.size() == 4);
 }
 
+// M24: a cross-shaped courtyard (a QFP's notched outline) drawn as twelve lines in shuffled order and directions is one outline that keeps
+// its corners free; an outline with a gap is not one (KiCad: malformed courtyard).
+TEST_CASE("courtyard outlines: chained lines keep a cross shape's corners", "[place]") {
+  const std::vector<Point> cross{{2, 0}, {8, 0}, {8, 2}, {10, 2}, {10, 8}, {8, 8}, {8, 10}, {2, 10}, {2, 8}, {0, 8}, {0, 2}, {2, 2}};
+  std::vector<model::Graphic> g(cross.size());
+  for (std::size_t i = 0; i < cross.size(); ++i) {
+    g[i].kind = model::Graphic::Kind::Line;
+    g[i].layer = "F.CrtYd";
+    const Point c = cross[i], d = cross[(i + 1) % cross.size()];
+    const Point a{c.x * 1'000'000, c.y * 1'000'000}, b{d.x * 1'000'000, d.y * 1'000'000};
+    g[i].a = i % 2 ? b : a;  // every other line drawn backwards
+    g[i].b = i % 2 ? a : b;
+  }
+  std::vector<const model::Graphic*> gs;
+  for (std::size_t i : {3u, 0u, 7u, 11u, 1u, 5u, 9u, 2u, 6u, 10u, 4u, 8u}) gs.push_back(&g[i]);
+  const auto loops = courtyard_outlines(gs);
+  REQUIRE(loops.size() == 1);
+  CHECK(loops[0].size() == 12);
+  CHECK_FALSE(geom::point_in_polygon(Point{1'000'000, 1'000'000}, loops[0]));  // a corner notch is free
+  CHECK(geom::point_in_polygon(Point{5'000'000, 5'000'000}, loops[0]));
+  g[4].b = g[4].b + Point{100'000, 0};  // a 0.1 mm gap
+  CHECK(courtyard_outlines(gs).empty());
+}
+
 TEST_CASE("power-like net names", "[place]") {
   for (const char* s : {"GND", "/power/GNDA", "+3V3", "+5V", "VCC", "VBUS", "3V3", "12V", "-12V", "AGND"}) CHECK(power_like_name(s));
   for (const char* s : {"SDA", "/MCU/PA3", "Net-(R1-Pad2)", "VSYNC_IN", "RESET"}) CHECK_FALSE(power_like_name(s));
