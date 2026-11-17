@@ -12,5 +12,5 @@ M26 recipe, 3300 s, 6 threads, seed 403). KiCad adds no error on any board (the 
 | sample070 | 19 | 15 | 16 | 7 | 2 |
 | sample040 | 20 | 18 | 15 | 6 | 2 |
 
-Every arm leaves about twice as many open as the control. A fixed via under every inner ball blocks one B.Cu channel in two between
+Every arm leaves about twice as many open as the control. The likely cause (not measured): a fixed via under every inner ball blocks one B.Cu channel in two between
 via columns; the router's own solutions put fewer vias under the package and use the F.Cu space between balls. Not adopted.
