@@ -12,6 +12,7 @@ code: []
 > **Update (2026-10-27): C3, pours and the layer-count advisor, was built (§10, D138).**
 > **Update (2026-11-08): A3, the Kookabus boards, is a private fixture set (§19, D176); §7's open question is answered.**
 > **Update (2026-11-13): group E, features for a finished and usable KiCad board, researched after M16-M22 (§20, D183).**
+> **Update (2026-11-17): group F, a reserved BGA fanout for the srj20 boards that never finish, from looking at where they stay open (§21, D191, M26).**
 > **Status (2026-10-15): adopted as the roadmap's M17–M21 on the owner's answers in §7 (decision D118). Nothing here is built.** The
 > candidates keep the numbers they have in §4; §5 is the order that the answers gave. This note changes no code. Evidence tags: **[R]** checked in this repository (file or doc named), **[W]** from a web source (vendor
 > claims are marked as self-reported), **[A]** my estimate or assumption.
@@ -478,4 +479,52 @@ failing boards. The CPU field now skips rows that cannot change: field cells cos
 3-27 % faster with byte-identical results. At equal wall time the gain is below the noise (+13 and −18 of 16,935), so the gate is not met.
 What is left: the search loop, the routed-copper checks and the fixed-copper codes, each under a sixth of the time, and none with a single
 large cost.
+
+## 21. Group F: the srj20 boards that never finish (2026-11-17, D191, M26)
+
+After the ramp campaigns of 2026-11-15 to 11-17 (`bench/records/srj20-ramp-2026-11`), 189 of the 200 srj20 boards have been routed clean at
+least once. Eleven never have: 152, 040 and 070 at 2 open, 120 at 5, 064 at 8, 176 at 9, 008, 144 and 200 at 14, 088 at 17, 032 at 18 (105
+open connections in all). The campaigns on the 15 boards that had never finished tried warm restarts from the best boards, looser starting
+clearances, new seeds, large neighbourhood search on the open pins, island slack, a fresh ramp, routing the always-open connections first,
+and per-layer direction penalties. Four boards became clean (128, 103, 072, 096) and 070 went from 3 open to 2. The rest are fixed points. Re-routing a
+board that is already legal at the real rules almost never changes its open count.
+
+### 21.1 What the pictures show
+
+Each open connection of each board's best result was drawn and measured (`images/` in the record; the page of close-ups was published):
+
+- **No room for the via.** 95 of the 105 open balls have none of their four dog-bone via sites free: another net's track or via is closer
+  to the site than via radius plus clearance.
+- **Vias everywhere but on the sites.** The best boards have 300-360 vias, 3-4 per connection, and 60-80 inside the BGA, of which only 1-9 sit
+  on a dog-bone site. The rest cut both the row and column lanes under the package, so no straight run under the BGA is left.
+- **Outer balls boxed in from outside.** 38 of the 105 are on the outer ring, closed off by vias of inner balls placed just outside the
+  package.
+- **Long, crossing connections.** The open connections run 9-21 mm, mostly to the opposite side of the board. The number of straight-line
+  crossings between connections ranks the eleven boards 1-9, 11 and 16 of 200 (median 1,242, against 171 for the boards that were always
+  clean).
+
+The escape plan (§12 of doc 05) already reserves a dog-bone site per inner ball (version 1, in two of the eight portfolio variants) or plans them
+by min-cost flow (version 2, `--escape-flow`, opt-in). But in negotiated searches a corridor only costs other nets 2× to cross. It is released
+when its pin connects, and the relax and ramp stages re-route through it, so in the final boards the sites belong to other nets. A
+stronger direction penalty per layer made things worse on every board tried: 040 9 against the control's 6, 152 6 and 5 against 4, 070 6 and 7
+against 5. It is the fanout's via sites that need protecting, not the layer directions.
+
+### 21.2 Candidates, in the order to build them
+
+| # | Feature | Evidence | Size | Gate |
+|---|---|---|---|---|
+| F1 | **Find where the sites are lost.** Per board and stage (escape plan, first route, negotiated rounds, relax legaliser, each ramp step), log which net's copper takes each dog-bone site of a ball that ends open, and whether that ball had a reservation | §21.1: the plan exists but the sites end up taken [R] | S | A table for the eleven boards naming the stage and the kind of search that took each lost site |
+| F2 | **A site stays reserved until its ball connects.** Each used ball gets its dog-bone site from the version-2 site flow (step 2 only, without the long channel corridors that lost on logicbone). Other nets' vias may not take it in any search, including negotiated rounds, the relax legaliser and the ramp; their tracks may cross the site only on the far layer. The site is released only when the ball connects, and reserved again if that connection is ripped up | 95 of 105 open balls have no free site [R] | M | On the eleven boards: open connections down by half at the srj20-never budget, with ≥ 3 of them clean. No srj20 board that is clean at the standard budget lost |
+| F3 | **A via-free band round the package.** Outside the array, a band of `--fanout-band` mm (about 1 mm; to be measured) in which only the outer two rings' nets may place vias | 38 of 105 open balls are outer-ring balls boxed in by inner balls' vias [R] | S | Outer-ring open balls on the eleven boards down by two-thirds, no clean board lost |
+| F4 | **Move a blocking via.** Repair for a ball whose four sites are all taken: shift each blocking via of another net by up to 1 mm along its own tracks (re-joining both sides), check it exactly, then route the ball. Commit only if the routed count goes up (rule 4) | sample152 bga_conn_061: three other nets' vias sit against the BGA's west edge; 0.5 mm further out frees its site [R] | M | Closes at least one of the 2-open boards (152, 040, 070). Never commits a worse board |
+| F5 | **Fewer vias per connection.** Measure vias per connection, then make a via on a breakout board dearer, or cap layer changes per connection at two, so most connections use one via (the dog-bone) or two | 300-360 vias for 80-108 connections (3-4 each) [R] | S | Vias per connection on the eleven boards from 3-4 to under 2, with no more open than with F2 alone |
+| F6 | **Lanes under the package.** Plan straight row and column lanes on the far layer between the reserved via sites (version 2's step 3 grid) and give the long cross-board connections a cost bonus for using them, not a reservation | Six of 176's nine open, 10 of 008's 14, 11 of 088's 17 and 12 of 200's 14 cross to the opposite side [R] | M | Combined with F2 and F3: open cross-board connections down by half |
+| F7 | **Long, crossing connections first.** Order connections by length and crossing count once their sites are reserved. Routing the always-open nets first on its own gets those nets routed but leaves others open instead (040 12-15 against the control's 8, 152 8-17 against 7) | first-nets experiment [R]; a designer routes the long ones first | S | Better than F2 + F3 without it on the eleven boards |
+| F8 | **The best board includes the warm start.** `router.cpp` keeps `best_final` only from states reached at the real rules after the ramp, so an arm can return a worse board than it was given. Start `best_final` from the warm board when that board is legal | rule 4; seen in every warm-start campaign [R] | S | A test: a warm start that the ramp cannot improve returns the warm board byte-identical |
+| F9 | **Tell the user when two layers will not do.** Add the crossing count per connection and the via-site occupancy to the run report and to the layer-count advisor (D138), so a board like 032 (1,431 crossings for 108 connections, 18 open) is flagged for a third layer | crossings rank the open boards 1-9, 11 and 16 of 200 [R] | S | The advisor flags the boards with the most crossings, and none of the boards that were always clean |
+
+**Order and gate.** F8 first (a correctness fix), then F1. F2 and F3 together are the core; F4-F7 are measured on top of them. The milestone's
+gate: on the eleven boards, at the srj20-never recipe (6 arms, 1 h), at least 3 clean and at most 50 open connections in all (from 105).
+On the full srj20 set at the standard budget, no board that was clean is lost. With the options off, `quick` and `mid` are byte-identical.
+Tune on the boards numbered 1-100 (008, 032, 040, 064, 070, 088) and report on all eleven (doc 16 §1's held-out rule).
 

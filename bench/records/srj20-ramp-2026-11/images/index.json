@@ -1,0 +1,2096 @@
+{
+ "sample152": {
+  "open": 2,
+  "best": "srj20-again/sample152/r1/a1",
+  "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-again/sample152/r1/a1/out.kicad_pcb",
+  "failures": [
+   "bga_conn_055: bga_component.34 -> TP055.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_061: bga_component.92 -> TP061.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)"
+  ],
+  "zooms": [
+   {
+    "png": "sample152_open0a.png",
+    "conn": "bga_conn_055: bga_component.34 -> TP055.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     0.8,
+     -3.2
+    ]
+   },
+   {
+    "png": "sample152_open0b.png",
+    "conn": "bga_conn_055: bga_component.34 -> TP055.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     2.03,
+     10.74
+    ]
+   },
+   {
+    "png": "sample152_open1a.png",
+    "conn": "bga_conn_061: bga_component.92 -> TP061.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     0.8
+    ]
+   },
+   {
+    "png": "sample152_open1b.png",
+    "conn": "bga_conn_061: bga_component.92 -> TP061.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     3.65,
+     -10.74
+    ]
+   }
+  ]
+ },
+ "sample040": {
+  "open": 2,
+  "best": "srj20-again/sample040/r1/a1",
+  "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-again/sample040/r1/a1/out.kicad_pcb",
+  "failures": [
+   "bga_conn_080: bga_component.149 -> TP080.1  ()",
+   "bga_conn_070: bga_component.118 -> TP070.1  ()"
+  ],
+  "zooms": [
+   {
+    "png": "sample040_open0a.png",
+    "conn": "bga_conn_080: bga_component.149 -> TP080.1  ()",
+    "end": "a",
+    "at_mm": [
+     4.0,
+     4.0
+    ]
+   },
+   {
+    "png": "sample040_open0b.png",
+    "conn": "bga_conn_080: bga_component.149 -> TP080.1  ()",
+    "end": "b",
+    "at_mm": [
+     -10.88,
+     -6.28
+    ]
+   },
+   {
+    "png": "sample040_open1a.png",
+    "conn": "bga_conn_070: bga_component.118 -> TP070.1  ()",
+    "end": "a",
+    "at_mm": [
+     0.0,
+     2.4
+    ]
+   },
+   {
+    "png": "sample040_open1b.png",
+    "conn": "bga_conn_070: bga_component.118 -> TP070.1  ()",
+    "end": "b",
+    "at_mm": [
+     10.88,
+     -4.71
+    ]
+   }
+  ]
+ },
+ "sample070": {
+  "open": 2,
+  "best": "srj20-again/sample070/r1/a5",
+  "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-again/sample070/r1/a5/out.kicad_pcb",
+  "failures": [
+   "bga_conn_047: bga_component.11 -> TP047.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_036: bga_component.49 -> TP036.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)"
+  ],
+  "zooms": [
+   {
+    "png": "sample070_open0a.png",
+    "conn": "bga_conn_047: bga_component.11 -> TP047.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     -3.2
+    ]
+   },
+   {
+    "png": "sample070_open0b.png",
+    "conn": "bga_conn_047: bga_component.11 -> TP047.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     1.68,
+     9.53
+    ]
+   },
+   {
+    "png": "sample070_open1a.png",
+    "conn": "bga_conn_036: bga_component.49 -> TP036.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     4.0,
+     -0.8
+    ]
+   },
+   {
+    "png": "sample070_open1b.png",
+    "conn": "bga_conn_036: bga_component.49 -> TP036.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     -9.53,
+     0.84
+    ]
+   }
+  ]
+ },
+ "sample064": {
+  "open": 8,
+  "best": "srj20-never/sample064/a1",
+  "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-never/sample064/a1/out.kicad_pcb",
+  "failures": [
+   "bga_conn_067: bga_component.56 -> TP067.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_025: bga_component.114 -> TP025.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_087: bga_component.69 -> TP087.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_073: bga_component.149 -> TP073.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_026: bga_component.4 -> TP026.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_006: bga_component.68 -> TP006.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_018: bga_component.16 -> TP018.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_089: bga_component.142 -> TP089.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)"
+  ],
+  "zooms": [
+   {
+    "png": "sample064_open0a.png",
+    "conn": "bga_conn_067: bga_component.56 -> TP067.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -2.4,
+     -1.6
+    ]
+   },
+   {
+    "png": "sample064_open0b.png",
+    "conn": "bga_conn_067: bga_component.56 -> TP067.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     2.95,
+     11.16
+    ]
+   },
+   {
+    "png": "sample064_open1a.png",
+    "conn": "bga_conn_025: bga_component.114 -> TP025.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     2.4,
+     1.6
+    ]
+   },
+   {
+    "png": "sample064_open1b.png",
+    "conn": "bga_conn_025: bga_component.114 -> TP025.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -4.42,
+     -11.16
+    ]
+   },
+   {
+    "png": "sample064_open2a.png",
+    "conn": "bga_conn_087: bga_component.69 -> TP087.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -2.4,
+     -0.8
+    ]
+   },
+   {
+    "png": "sample064_open2b.png",
+    "conn": "bga_conn_087: bga_component.69 -> TP087.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     6.63,
+     11.16
+    ]
+   },
+   {
+    "png": "sample064_open3a.png",
+    "conn": "bga_conn_073: bga_component.149 -> TP073.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     4.0,
+     4.0
+    ]
+   },
+   {
+    "png": "sample064_open3b.png",
+    "conn": "bga_conn_073: bga_component.149 -> TP073.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     4.42,
+     -11.16
+    ]
+   },
+   {
+    "png": "sample064_open4a.png",
+    "conn": "bga_conn_026: bga_component.4 -> TP026.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -2.4,
+     -4.8
+    ]
+   },
+   {
+    "png": "sample064_open4b.png",
+    "conn": "bga_conn_026: bga_component.4 -> TP026.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.16,
+     4.42
+    ]
+   },
+   {
+    "png": "sample064_open5a.png",
+    "conn": "bga_conn_006: bga_component.68 -> TP006.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     -0.8
+    ]
+   },
+   {
+    "png": "sample064_open5b.png",
+    "conn": "bga_conn_006: bga_component.68 -> TP006.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.16,
+     8.11
+    ]
+   },
+   {
+    "png": "sample064_open6a.png",
+    "conn": "bga_conn_018: bga_component.16 -> TP018.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     -4.0
+    ]
+   },
+   {
+    "png": "sample064_open6b.png",
+    "conn": "bga_conn_018: bga_component.16 -> TP018.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.16,
+     5.9
+    ]
+   },
+   {
+    "png": "sample064_open7a.png",
+    "conn": "bga_conn_089: bga_component.142 -> TP089.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -1.6,
+     4.0
+    ]
+   },
+   {
+    "png": "sample064_open7b.png",
+    "conn": "bga_conn_089: bga_component.142 -> TP089.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     7.37,
+     -11.16
+    ]
+   }
+  ]
+ },
+ "sample176": {
+  "open": 9,
+  "best": "October best (srj20-open17)",
+  "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-open17/boards/sample176.kicad_pcb",
+  "failures": [
+   "bga_conn_051: bga_component.76 -> TP051.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_035: bga_component.63 -> TP035.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_041: bga_component.129 -> TP041.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_076: bga_component.102 -> TP076.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_025: bga_component.134 -> TP025.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_048: bga_component.78 -> TP048.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_026: bga_component.92 -> TP026.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_085: bga_component.107 -> TP085.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_081: bga_component.143 -> TP081.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)"
+  ],
+  "zooms": [
+   {
+    "png": "sample176_open0a.png",
+    "conn": "bga_conn_051: bga_component.76 -> TP051.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     -0.8
+    ]
+   },
+   {
+    "png": "sample176_open0b.png",
+    "conn": "bga_conn_051: bga_component.76 -> TP051.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     0.38,
+     10.99
+    ]
+   },
+   {
+    "png": "sample176_open1a.png",
+    "conn": "bga_conn_035: bga_component.63 -> TP035.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     -1.6
+    ]
+   },
+   {
+    "png": "sample176_open1b.png",
+    "conn": "bga_conn_035: bga_component.63 -> TP035.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -2.65,
+     10.99
+    ]
+   },
+   {
+    "png": "sample176_open2a.png",
+    "conn": "bga_conn_041: bga_component.129 -> TP041.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -1.6,
+     3.2
+    ]
+   },
+   {
+    "png": "sample176_open2b.png",
+    "conn": "bga_conn_041: bga_component.129 -> TP041.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -1.14,
+     -10.99
+    ]
+   },
+   {
+    "png": "sample176_open3a.png",
+    "conn": "bga_conn_076: bga_component.102 -> TP076.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     0.8
+    ]
+   },
+   {
+    "png": "sample176_open3b.png",
+    "conn": "bga_conn_076: bga_component.102 -> TP076.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -10.99,
+     -4.92
+    ]
+   },
+   {
+    "png": "sample176_open4a.png",
+    "conn": "bga_conn_025: bga_component.134 -> TP025.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     2.4,
+     3.2
+    ]
+   },
+   {
+    "png": "sample176_open4b.png",
+    "conn": "bga_conn_025: bga_component.134 -> TP025.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -4.17,
+     -10.99
+    ]
+   },
+   {
+    "png": "sample176_open5a.png",
+    "conn": "bga_conn_048: bga_component.78 -> TP048.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     4.8,
+     -0.8
+    ]
+   },
+   {
+    "png": "sample176_open5b.png",
+    "conn": "bga_conn_048: bga_component.78 -> TP048.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -10.99,
+     0.38
+    ]
+   },
+   {
+    "png": "sample176_open6a.png",
+    "conn": "bga_conn_026: bga_component.92 -> TP026.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     0.8
+    ]
+   },
+   {
+    "png": "sample176_open6b.png",
+    "conn": "bga_conn_026: bga_component.92 -> TP026.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     10.99,
+     4.17
+    ]
+   },
+   {
+    "png": "sample176_open7a.png",
+    "conn": "bga_conn_085: bga_component.107 -> TP085.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     1.6
+    ]
+   },
+   {
+    "png": "sample176_open7b.png",
+    "conn": "bga_conn_085: bga_component.107 -> TP085.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     7.2,
+     -10.99
+    ]
+   },
+   {
+    "png": "sample176_open8a.png",
+    "conn": "bga_conn_081: bga_component.143 -> TP081.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -0.8,
+     4.0
+    ]
+   },
+   {
+    "png": "sample176_open8b.png",
+    "conn": "bga_conn_081: bga_component.143 -> TP081.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     6.44,
+     -10.99
+    ]
+   }
+  ]
+ },
+ "sample120": {
+  "open": 5,
+  "best": "srj20-again/sample120/r1/a1",
+  "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-again/sample120/r1/a1/out.kicad_pcb",
+  "failures": [
+   "bga_conn_052: bga_component.121 -> TP052.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_047: bga_component.9 -> TP047.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_010: bga_component.62 -> TP010.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_023: bga_component.37 -> TP023.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_094: bga_component.155 -> TP094.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)"
+  ],
+  "zooms": [
+   {
+    "png": "sample120_open0a.png",
+    "conn": "bga_conn_052: bga_component.121 -> TP052.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     2.4,
+     2.4
+    ]
+   },
+   {
+    "png": "sample120_open0b.png",
+    "conn": "bga_conn_052: bga_component.121 -> TP052.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -11.06,
+     -0.38
+    ]
+   },
+   {
+    "png": "sample120_open1a.png",
+    "conn": "bga_conn_047: bga_component.9 -> TP047.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     1.6,
+     -4.8
+    ]
+   },
+   {
+    "png": "sample120_open1b.png",
+    "conn": "bga_conn_047: bga_component.9 -> TP047.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -0.38,
+     11.06
+    ]
+   },
+   {
+    "png": "sample120_open2a.png",
+    "conn": "bga_conn_010: bga_component.62 -> TP010.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     -0.8
+    ]
+   },
+   {
+    "png": "sample120_open2b.png",
+    "conn": "bga_conn_010: bga_component.62 -> TP010.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.06,
+     7.24
+    ]
+   },
+   {
+    "png": "sample120_open3a.png",
+    "conn": "bga_conn_023: bga_component.37 -> TP023.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     -3.2
+    ]
+   },
+   {
+    "png": "sample120_open3b.png",
+    "conn": "bga_conn_023: bga_component.37 -> TP023.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -4.95,
+     11.06
+    ]
+   },
+   {
+    "png": "sample120_open4a.png",
+    "conn": "bga_conn_094: bga_component.155 -> TP094.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -1.6,
+     4.8
+    ]
+   },
+   {
+    "png": "sample120_open4b.png",
+    "conn": "bga_conn_094: bga_component.155 -> TP094.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.06,
+     -8.77
+    ]
+   }
+  ]
+ },
+ "sample008": {
+  "open": 14,
+  "best": "srj20-loose/sample008/a5",
+  "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/sample008/a5/out.kicad_pcb",
+  "failures": [
+   "bga_conn_033: bga_component.118 -> TP033.1  ()",
+   "bga_conn_101: bga_component.117 -> TP101.1  ()",
+   "bga_conn_017: bga_component.83 -> TP017.1  ()",
+   "bga_conn_046: bga_component.75 -> TP046.1  ()",
+   "bga_conn_016: bga_component.63 -> TP016.1  ()",
+   "bga_conn_096: bga_component.123 -> TP096.1  ()",
+   "bga_conn_002: bga_component.17 -> TP002.1  ()",
+   "bga_conn_050: bga_component.73 -> TP050.1  ()",
+   "bga_conn_067: bga_component.6 -> TP067.1  ()",
+   "bga_conn_063: bga_component.2 -> TP063.1  ()",
+   "bga_conn_034: bga_component.14 -> TP034.1  ()",
+   "bga_conn_022: bga_component.1 -> TP022.1  ()",
+   "bga_conn_098: bga_component.153 -> TP098.1  ()",
+   "bga_conn_006: bga_component.27 -> TP006.1  ()"
+  ],
+  "zooms": [
+   {
+    "png": "sample008_open0a.png",
+    "conn": "bga_conn_033: bga_component.118 -> TP033.1  ()",
+    "end": "a",
+    "at_mm": [
+     0.0,
+     2.4
+    ]
+   },
+   {
+    "png": "sample008_open0b.png",
+    "conn": "bga_conn_033: bga_component.118 -> TP033.1  ()",
+    "end": "b",
+    "at_mm": [
+     -3.2,
+     -11.23
+    ]
+   },
+   {
+    "png": "sample008_open1a.png",
+    "conn": "bga_conn_101: bga_component.117 -> TP101.1  ()",
+    "end": "a",
+    "at_mm": [
+     -0.8,
+     2.4
+    ]
+   },
+   {
+    "png": "sample008_open1b.png",
+    "conn": "bga_conn_101: bga_component.117 -> TP101.1  ()",
+    "end": "b",
+    "at_mm": [
+     8.9,
+     -11.23
+    ]
+   },
+   {
+    "png": "sample008_open2a.png",
+    "conn": "bga_conn_017: bga_component.83 -> TP017.1  ()",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     0.0
+    ]
+   },
+   {
+    "png": "sample008_open2b.png",
+    "conn": "bga_conn_017: bga_component.83 -> TP017.1  ()",
+    "end": "b",
+    "at_mm": [
+     -6.05,
+     -11.23
+    ]
+   },
+   {
+    "png": "sample008_open3a.png",
+    "conn": "bga_conn_046: bga_component.75 -> TP046.1  ()",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     0.0
+    ]
+   },
+   {
+    "png": "sample008_open3b.png",
+    "conn": "bga_conn_046: bga_component.75 -> TP046.1  ()",
+    "end": "b",
+    "at_mm": [
+     11.23,
+     1.07
+    ]
+   },
+   {
+    "png": "sample008_open4a.png",
+    "conn": "bga_conn_016: bga_component.63 -> TP016.1  ()",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     -1.6
+    ]
+   },
+   {
+    "png": "sample008_open4b.png",
+    "conn": "bga_conn_016: bga_component.63 -> TP016.1  ()",
+    "end": "b",
+    "at_mm": [
+     -11.23,
+     6.76
+    ]
+   },
+   {
+    "png": "sample008_open5a.png",
+    "conn": "bga_conn_096: bga_component.123 -> TP096.1  ()",
+    "end": "a",
+    "at_mm": [
+     4.0,
+     2.4
+    ]
+   },
+   {
+    "png": "sample008_open5b.png",
+    "conn": "bga_conn_096: bga_component.123 -> TP096.1  ()",
+    "end": "b",
+    "at_mm": [
+     -11.23,
+     -7.48
+    ]
+   },
+   {
+    "png": "sample008_open6a.png",
+    "conn": "bga_conn_002: bga_component.17 -> TP002.1  ()",
+    "end": "a",
+    "at_mm": [
+     -2.4,
+     -4.0
+    ]
+   },
+   {
+    "png": "sample008_open6b.png",
+    "conn": "bga_conn_002: bga_component.17 -> TP002.1  ()",
+    "end": "b",
+    "at_mm": [
+     11.23,
+     8.9
+    ]
+   },
+   {
+    "png": "sample008_open7a.png",
+    "conn": "bga_conn_050: bga_component.73 -> TP050.1  ()",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     0.0
+    ]
+   },
+   {
+    "png": "sample008_open7b.png",
+    "conn": "bga_conn_050: bga_component.73 -> TP050.1  ()",
+    "end": "b",
+    "at_mm": [
+     11.23,
+     0.36
+    ]
+   },
+   {
+    "png": "sample008_open8a.png",
+    "conn": "bga_conn_067: bga_component.6 -> TP067.1  ()",
+    "end": "a",
+    "at_mm": [
+     -0.8,
+     -4.8
+    ]
+   },
+   {
+    "png": "sample008_open8b.png",
+    "conn": "bga_conn_067: bga_component.6 -> TP067.1  ()",
+    "end": "b",
+    "at_mm": [
+     2.49,
+     11.23
+    ]
+   },
+   {
+    "png": "sample008_open9a.png",
+    "conn": "bga_conn_063: bga_component.2 -> TP063.1  ()",
+    "end": "a",
+    "at_mm": [
+     -4.0,
+     -4.8
+    ]
+   },
+   {
+    "png": "sample008_open9b.png",
+    "conn": "bga_conn_063: bga_component.2 -> TP063.1  ()",
+    "end": "b",
+    "at_mm": [
+     1.78,
+     11.23
+    ]
+   },
+   {
+    "png": "sample008_open10a.png",
+    "conn": "bga_conn_034: bga_component.14 -> TP034.1  ()",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     -4.0
+    ]
+   },
+   {
+    "png": "sample008_open10b.png",
+    "conn": "bga_conn_034: bga_component.14 -> TP034.1  ()",
+    "end": "b",
+    "at_mm": [
+     11.23,
+     3.2
+    ]
+   },
+   {
+    "png": "sample008_open11a.png",
+    "conn": "bga_conn_022: bga_component.1 -> TP022.1  ()",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     -4.8
+    ]
+   },
+   {
+    "png": "sample008_open11b.png",
+    "conn": "bga_conn_022: bga_component.1 -> TP022.1  ()",
+    "end": "b",
+    "at_mm": [
+     11.23,
+     5.34
+    ]
+   },
+   {
+    "png": "sample008_open12a.png",
+    "conn": "bga_conn_098: bga_component.153 -> TP098.1  ()",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     4.8
+    ]
+   },
+   {
+    "png": "sample008_open12b.png",
+    "conn": "bga_conn_098: bga_component.153 -> TP098.1  ()",
+    "end": "b",
+    "at_mm": [
+     11.23,
+     -8.19
+    ]
+   },
+   {
+    "png": "sample008_open13a.png",
+    "conn": "bga_conn_006: bga_component.27 -> TP006.1  ()",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     -3.2
+    ]
+   },
+   {
+    "png": "sample008_open13b.png",
+    "conn": "bga_conn_006: bga_component.27 -> TP006.1  ()",
+    "end": "b",
+    "at_mm": [
+     11.23,
+     8.19
+    ]
+   }
+  ]
+ },
+ "sample088": {
+  "open": 17,
+  "best": "October best (stack-srj20-s3-early)",
+  "pcb": "/home/dingo/Programming/TraceMaker/bench/results/stack-srj20-s3-early/boards/sample088.kicad_pcb",
+  "failures": [
+   "bga_conn_048: bga_component.88 -> TP048.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_055: bga_component.44 -> TP055.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_061: bga_component.116 -> TP061.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_067: bga_component.29 -> TP067.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_018: bga_component.68 -> TP018.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_105: bga_component.127 -> TP105.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_047: bga_component.24 -> TP047.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_085: bga_component.79 -> TP085.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_021: bga_component.98 -> TP021.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_066: bga_component.40 -> TP066.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_037: bga_component.151 -> TP037.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_073: bga_component.154 -> TP073.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_072: bga_component.137 -> TP072.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_082: bga_component.152 -> TP082.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_007: bga_component.8 -> TP007.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_010: bga_component.53 -> TP010.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_001: bga_component.150 -> TP001.1  (boxed in (target); escapes/neck-down: boxed in (target); negotiated: transaction rolled back)"
+  ],
+  "zooms": [
+   {
+    "png": "sample088_open0a.png",
+    "conn": "bga_conn_048: bga_component.88 -> TP048.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     2.4,
+     0.0
+    ]
+   },
+   {
+    "png": "sample088_open0b.png",
+    "conn": "bga_conn_048: bga_component.88 -> TP048.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -11.41,
+     1.39
+    ]
+   },
+   {
+    "png": "sample088_open1a.png",
+    "conn": "bga_conn_055: bga_component.44 -> TP055.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -1.6,
+     -2.4
+    ]
+   },
+   {
+    "png": "sample088_open1b.png",
+    "conn": "bga_conn_055: bga_component.44 -> TP055.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     0.0,
+     11.41
+    ]
+   },
+   {
+    "png": "sample088_open2a.png",
+    "conn": "bga_conn_061: bga_component.116 -> TP061.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -1.6,
+     2.4
+    ]
+   },
+   {
+    "png": "sample088_open2b.png",
+    "conn": "bga_conn_061: bga_component.116 -> TP061.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     1.39,
+     -11.41
+    ]
+   },
+   {
+    "png": "sample088_open3a.png",
+    "conn": "bga_conn_067: bga_component.29 -> TP067.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     -3.2
+    ]
+   },
+   {
+    "png": "sample088_open3b.png",
+    "conn": "bga_conn_067: bga_component.29 -> TP067.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     2.08,
+     11.41
+    ]
+   },
+   {
+    "png": "sample088_open4a.png",
+    "conn": "bga_conn_018: bga_component.68 -> TP018.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     -0.8
+    ]
+   },
+   {
+    "png": "sample088_open4b.png",
+    "conn": "bga_conn_018: bga_component.68 -> TP018.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.41,
+     6.26
+    ]
+   },
+   {
+    "png": "sample088_open5a.png",
+    "conn": "bga_conn_105: bga_component.127 -> TP105.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     3.2
+    ]
+   },
+   {
+    "png": "sample088_open5b.png",
+    "conn": "bga_conn_105: bga_component.127 -> TP105.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     9.04,
+     -11.41
+    ]
+   },
+   {
+    "png": "sample088_open6a.png",
+    "conn": "bga_conn_047: bga_component.24 -> TP047.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     -4.0
+    ]
+   },
+   {
+    "png": "sample088_open6b.png",
+    "conn": "bga_conn_047: bga_component.24 -> TP047.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -1.39,
+     11.41
+    ]
+   },
+   {
+    "png": "sample088_open7a.png",
+    "conn": "bga_conn_085: bga_component.79 -> TP085.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     0.0
+    ]
+   },
+   {
+    "png": "sample088_open7b.png",
+    "conn": "bga_conn_085: bga_component.79 -> TP085.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     5.56,
+     -11.41
+    ]
+   },
+   {
+    "png": "sample088_open8a.png",
+    "conn": "bga_conn_021: bga_component.98 -> TP021.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     4.8,
+     0.8
+    ]
+   },
+   {
+    "png": "sample088_open8b.png",
+    "conn": "bga_conn_021: bga_component.98 -> TP021.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -5.56,
+     -11.41
+    ]
+   },
+   {
+    "png": "sample088_open9a.png",
+    "conn": "bga_conn_066: bga_component.40 -> TP066.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     -2.4
+    ]
+   },
+   {
+    "png": "sample088_open9b.png",
+    "conn": "bga_conn_066: bga_component.40 -> TP066.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.41,
+     -2.08
+    ]
+   },
+   {
+    "png": "sample088_open10a.png",
+    "conn": "bga_conn_037: bga_component.151 -> TP037.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     4.8
+    ]
+   },
+   {
+    "png": "sample088_open10b.png",
+    "conn": "bga_conn_037: bga_component.151 -> TP037.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -2.78,
+     -11.41
+    ]
+   },
+   {
+    "png": "sample088_open11a.png",
+    "conn": "bga_conn_073: bga_component.154 -> TP073.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -2.4,
+     4.8
+    ]
+   },
+   {
+    "png": "sample088_open11b.png",
+    "conn": "bga_conn_073: bga_component.154 -> TP073.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     3.48,
+     -11.41
+    ]
+   },
+   {
+    "png": "sample088_open12a.png",
+    "conn": "bga_conn_072: bga_component.137 -> TP072.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     4.8,
+     3.2
+    ]
+   },
+   {
+    "png": "sample088_open12b.png",
+    "conn": "bga_conn_072: bga_component.137 -> TP072.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -11.41,
+     -2.78
+    ]
+   },
+   {
+    "png": "sample088_open13a.png",
+    "conn": "bga_conn_082: bga_component.152 -> TP082.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -4.0,
+     4.8
+    ]
+   },
+   {
+    "png": "sample088_open13b.png",
+    "conn": "bga_conn_082: bga_component.152 -> TP082.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.41,
+     -4.87
+    ]
+   },
+   {
+    "png": "sample088_open14a.png",
+    "conn": "bga_conn_007: bga_component.8 -> TP007.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     0.8,
+     -4.8
+    ]
+   },
+   {
+    "png": "sample088_open14b.png",
+    "conn": "bga_conn_007: bga_component.8 -> TP007.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -8.34,
+     11.41
+    ]
+   },
+   {
+    "png": "sample088_open15a.png",
+    "conn": "bga_conn_010: bga_component.53 -> TP010.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     -1.6
+    ]
+   },
+   {
+    "png": "sample088_open15b.png",
+    "conn": "bga_conn_010: bga_component.53 -> TP010.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.41,
+     7.65
+    ]
+   },
+   {
+    "png": "sample088_open16a.png",
+    "conn": "bga_conn_001: bga_component.150 -> TP001.1  (boxed in (target); escapes/neck-down: boxed in (target); negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     4.8,
+     4.0
+    ]
+   },
+   {
+    "png": "sample088_open16b.png",
+    "conn": "bga_conn_001: bga_component.150 -> TP001.1  (boxed in (target); escapes/neck-down: boxed in (target); negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -9.04,
+     -11.41
+    ]
+   }
+  ]
+ },
+ "sample144": {
+  "open": 14,
+  "best": "srj20-loose/sample144/a6",
+  "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/sample144/a6/out.kicad_pcb",
+  "failures": [
+   "bga_conn_092: bga_component.79 -> TP092.1  ()",
+   "bga_conn_030: bga_component.65 -> TP030.1  ()",
+   "bga_conn_045: bga_component.117 -> TP045.1  ()",
+   "bga_conn_035: bga_component.41 -> TP035.1  ()",
+   "bga_conn_064: bga_component.29 -> TP064.1  ()",
+   "bga_conn_104: bga_component.144 -> TP104.1  ()",
+   "bga_conn_007: bga_component.58 -> TP007.1  ()",
+   "bga_conn_008: bga_component.71 -> TP008.1  ()",
+   "bga_conn_087: bga_component.15 -> TP087.1  ()",
+   "bga_conn_073: bga_component.73 -> TP073.1  ()",
+   "bga_conn_051: bga_component.7 -> TP051.1  ()",
+   "bga_conn_044: bga_component.59 -> TP044.1  ()",
+   "bga_conn_076: bga_component.161 -> TP076.1  ()",
+   "bga_conn_005: bga_component.85 -> TP005.1  ()"
+  ],
+  "zooms": [
+   {
+    "png": "sample144_open0a.png",
+    "conn": "bga_conn_092: bga_component.79 -> TP092.1  ()",
+    "end": "a",
+    "at_mm": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "png": "sample144_open0b.png",
+    "conn": "bga_conn_092: bga_component.79 -> TP092.1  ()",
+    "end": "b",
+    "at_mm": [
+     -11.34,
+     -6.83
+    ]
+   },
+   {
+    "png": "sample144_open1a.png",
+    "conn": "bga_conn_030: bga_component.65 -> TP030.1  ()",
+    "end": "a",
+    "at_mm": [
+     -0.8,
+     -0.8
+    ]
+   },
+   {
+    "png": "sample144_open1b.png",
+    "conn": "bga_conn_030: bga_component.65 -> TP030.1  ()",
+    "end": "b",
+    "at_mm": [
+     11.34,
+     3.95
+    ]
+   },
+   {
+    "png": "sample144_open2a.png",
+    "conn": "bga_conn_045: bga_component.117 -> TP045.1  ()",
+    "end": "a",
+    "at_mm": [
+     -0.8,
+     2.4
+    ]
+   },
+   {
+    "png": "sample144_open2b.png",
+    "conn": "bga_conn_045: bga_component.117 -> TP045.1  ()",
+    "end": "b",
+    "at_mm": [
+     -1.08,
+     -11.34
+    ]
+   },
+   {
+    "png": "sample144_open3a.png",
+    "conn": "bga_conn_035: bga_component.41 -> TP035.1  ()",
+    "end": "a",
+    "at_mm": [
+     0.8,
+     -2.4
+    ]
+   },
+   {
+    "png": "sample144_open3b.png",
+    "conn": "bga_conn_035: bga_component.41 -> TP035.1  ()",
+    "end": "b",
+    "at_mm": [
+     -3.23,
+     11.34
+    ]
+   },
+   {
+    "png": "sample144_open4a.png",
+    "conn": "bga_conn_064: bga_component.29 -> TP064.1  ()",
+    "end": "a",
+    "at_mm": [
+     1.6,
+     -3.2
+    ]
+   },
+   {
+    "png": "sample144_open4b.png",
+    "conn": "bga_conn_064: bga_component.29 -> TP064.1  ()",
+    "end": "b",
+    "at_mm": [
+     -11.34,
+     -1.8
+    ]
+   },
+   {
+    "png": "sample144_open5a.png",
+    "conn": "bga_conn_104: bga_component.144 -> TP104.1  ()",
+    "end": "a",
+    "at_mm": [
+     0.0,
+     4.0
+    ]
+   },
+   {
+    "png": "sample144_open5b.png",
+    "conn": "bga_conn_104: bga_component.144 -> TP104.1  ()",
+    "end": "b",
+    "at_mm": [
+     -11.34,
+     -8.98
+    ]
+   },
+   {
+    "png": "sample144_open6a.png",
+    "conn": "bga_conn_007: bga_component.58 -> TP007.1  ()",
+    "end": "a",
+    "at_mm": [
+     4.0,
+     -1.6
+    ]
+   },
+   {
+    "png": "sample144_open6b.png",
+    "conn": "bga_conn_007: bga_component.58 -> TP007.1  ()",
+    "end": "b",
+    "at_mm": [
+     -8.26,
+     11.34
+    ]
+   },
+   {
+    "png": "sample144_open7a.png",
+    "conn": "bga_conn_008: bga_component.71 -> TP008.1  ()",
+    "end": "a",
+    "at_mm": [
+     4.0,
+     -0.8
+    ]
+   },
+   {
+    "png": "sample144_open7b.png",
+    "conn": "bga_conn_008: bga_component.71 -> TP008.1  ()",
+    "end": "b",
+    "at_mm": [
+     -11.34,
+     8.26
+    ]
+   },
+   {
+    "png": "sample144_open8a.png",
+    "conn": "bga_conn_087: bga_component.15 -> TP087.1  ()",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     -4.0
+    ]
+   },
+   {
+    "png": "sample144_open8b.png",
+    "conn": "bga_conn_087: bga_component.15 -> TP087.1  ()",
+    "end": "b",
+    "at_mm": [
+     6.11,
+     11.34
+    ]
+   },
+   {
+    "png": "sample144_open9a.png",
+    "conn": "bga_conn_073: bga_component.73 -> TP073.1  ()",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     0.0
+    ]
+   },
+   {
+    "png": "sample144_open9b.png",
+    "conn": "bga_conn_073: bga_component.73 -> TP073.1  ()",
+    "end": "b",
+    "at_mm": [
+     3.95,
+     -11.34
+    ]
+   },
+   {
+    "png": "sample144_open10a.png",
+    "conn": "bga_conn_051: bga_component.7 -> TP051.1  ()",
+    "end": "a",
+    "at_mm": [
+     0.0,
+     -4.8
+    ]
+   },
+   {
+    "png": "sample144_open10b.png",
+    "conn": "bga_conn_051: bga_component.7 -> TP051.1  ()",
+    "end": "b",
+    "at_mm": [
+     -0.36,
+     11.34
+    ]
+   },
+   {
+    "png": "sample144_open11a.png",
+    "conn": "bga_conn_044: bga_component.59 -> TP044.1  ()",
+    "end": "a",
+    "at_mm": [
+     4.8,
+     -1.6
+    ]
+   },
+   {
+    "png": "sample144_open11b.png",
+    "conn": "bga_conn_044: bga_component.59 -> TP044.1  ()",
+    "end": "b",
+    "at_mm": [
+     -11.34,
+     1.8
+    ]
+   },
+   {
+    "png": "sample144_open12a.png",
+    "conn": "bga_conn_076: bga_component.161 -> TP076.1  ()",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     4.8
+    ]
+   },
+   {
+    "png": "sample144_open12b.png",
+    "conn": "bga_conn_076: bga_component.161 -> TP076.1  ()",
+    "end": "b",
+    "at_mm": [
+     -11.34,
+     -3.95
+    ]
+   },
+   {
+    "png": "sample144_open13a.png",
+    "conn": "bga_conn_005: bga_component.85 -> TP005.1  ()",
+    "end": "a",
+    "at_mm": [
+     4.8,
+     0.0
+    ]
+   },
+   {
+    "png": "sample144_open13b.png",
+    "conn": "bga_conn_005: bga_component.85 -> TP005.1  ()",
+    "end": "b",
+    "at_mm": [
+     -8.26,
+     -11.34
+    ]
+   }
+  ]
+ },
+ "sample200": {
+  "open": 14,
+  "best": "srj20-loose/sample200/a1",
+  "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-loose/sample200/a1/out.kicad_pcb",
+  "failures": [
+   "bga_conn_041: bga_component.24 -> TP041.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_036: bga_component.84 -> TP036.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_029: bga_component.130 -> TP029.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_040: bga_component.38 -> TP040.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_039: bga_component.30 -> TP039.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_098: bga_component.88 -> TP098.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_086: bga_component.100 -> TP086.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_054: bga_component.102 -> TP054.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_090: bga_component.112 -> TP090.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_043: bga_component.16 -> TP043.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_060: bga_component.124 -> TP060.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_008: bga_component.78 -> TP008.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_023: bga_component.34 -> TP023.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+   "bga_conn_005: bga_component.150 -> TP005.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)"
+  ],
+  "zooms": [
+   {
+    "png": "sample200_open0a.png",
+    "conn": "bga_conn_041: bga_component.24 -> TP041.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     -4.0
+    ]
+   },
+   {
+    "png": "sample200_open0b.png",
+    "conn": "bga_conn_041: bga_component.24 -> TP041.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     -1.79,
+     -11.27
+    ]
+   },
+   {
+    "png": "sample200_open1a.png",
+    "conn": "bga_conn_036: bga_component.84 -> TP036.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     0.0
+    ]
+   },
+   {
+    "png": "sample200_open1b.png",
+    "conn": "bga_conn_036: bga_component.84 -> TP036.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     -11.27,
+     3.21
+    ]
+   },
+   {
+    "png": "sample200_open2a.png",
+    "conn": "bga_conn_029: bga_component.130 -> TP029.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     -0.8,
+     3.2
+    ]
+   },
+   {
+    "png": "sample200_open2b.png",
+    "conn": "bga_conn_029: bga_component.130 -> TP029.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     -3.93,
+     -11.27
+    ]
+   },
+   {
+    "png": "sample200_open3a.png",
+    "conn": "bga_conn_040: bga_component.38 -> TP040.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     4.0,
+     -3.2
+    ]
+   },
+   {
+    "png": "sample200_open3b.png",
+    "conn": "bga_conn_040: bga_component.38 -> TP040.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     -11.27,
+     2.5
+    ]
+   },
+   {
+    "png": "sample200_open4a.png",
+    "conn": "bga_conn_039: bga_component.30 -> TP039.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     -2.4,
+     -3.2
+    ]
+   },
+   {
+    "png": "sample200_open4b.png",
+    "conn": "bga_conn_039: bga_component.30 -> TP039.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     -2.5,
+     11.27
+    ]
+   },
+   {
+    "png": "sample200_open5a.png",
+    "conn": "bga_conn_098: bga_component.88 -> TP098.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     0.8
+    ]
+   },
+   {
+    "png": "sample200_open5b.png",
+    "conn": "bga_conn_098: bga_component.88 -> TP098.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     11.27,
+     -8.21
+    ]
+   },
+   {
+    "png": "sample200_open6a.png",
+    "conn": "bga_conn_086: bga_component.100 -> TP086.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     -4.0,
+     1.6
+    ]
+   },
+   {
+    "png": "sample200_open6b.png",
+    "conn": "bga_conn_086: bga_component.100 -> TP086.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     11.27,
+     -6.07
+    ]
+   },
+   {
+    "png": "sample200_open7a.png",
+    "conn": "bga_conn_054: bga_component.102 -> TP054.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     -2.4,
+     1.6
+    ]
+   },
+   {
+    "png": "sample200_open7b.png",
+    "conn": "bga_conn_054: bga_component.102 -> TP054.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     11.27,
+     -0.36
+    ]
+   },
+   {
+    "png": "sample200_open8a.png",
+    "conn": "bga_conn_090: bga_component.112 -> TP090.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     2.4
+    ]
+   },
+   {
+    "png": "sample200_open8b.png",
+    "conn": "bga_conn_090: bga_component.112 -> TP090.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     11.27,
+     -6.79
+    ]
+   },
+   {
+    "png": "sample200_open9a.png",
+    "conn": "bga_conn_043: bga_component.16 -> TP043.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     -4.0
+    ]
+   },
+   {
+    "png": "sample200_open9b.png",
+    "conn": "bga_conn_043: bga_component.16 -> TP043.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     -1.79,
+     11.27
+    ]
+   },
+   {
+    "png": "sample200_open10a.png",
+    "conn": "bga_conn_060: bga_component.124 -> TP060.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     4.8,
+     2.4
+    ]
+   },
+   {
+    "png": "sample200_open10b.png",
+    "conn": "bga_conn_060: bga_component.124 -> TP060.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     -11.27,
+     -1.07
+    ]
+   },
+   {
+    "png": "sample200_open11a.png",
+    "conn": "bga_conn_008: bga_component.78 -> TP008.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     4.8,
+     -0.8
+    ]
+   },
+   {
+    "png": "sample200_open11b.png",
+    "conn": "bga_conn_008: bga_component.78 -> TP008.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     -11.27,
+     8.21
+    ]
+   },
+   {
+    "png": "sample200_open12a.png",
+    "conn": "bga_conn_023: bga_component.34 -> TP023.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     0.8,
+     -3.2
+    ]
+   },
+   {
+    "png": "sample200_open12b.png",
+    "conn": "bga_conn_023: bga_component.34 -> TP023.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     -5.36,
+     11.27
+    ]
+   },
+   {
+    "png": "sample200_open13a.png",
+    "conn": "bga_conn_005: bga_component.150 -> TP005.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "a",
+    "at_mm": [
+     4.8,
+     4.0
+    ]
+   },
+   {
+    "png": "sample200_open13b.png",
+    "conn": "bga_conn_005: bga_component.150 -> TP005.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+    "end": "b",
+    "at_mm": [
+     -8.21,
+     -11.27
+    ]
+   }
+  ]
+ },
+ "sample032": {
+  "open": 18,
+  "best": "srj20-never/sample032/a3",
+  "pcb": "/home/dingo/Programming/TraceMaker-rm3/bench/results/srj20-never/sample032/a3/out.kicad_pcb",
+  "failures": [
+   "bga_conn_107: bga_component.130 -> TP107.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_089: bga_component.105 -> TP089.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_095: bga_component.16 -> TP095.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_078: bga_component.143 -> TP078.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_096: bga_component.146 -> TP096.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_065: bga_component.154 -> TP065.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_054: bga_component.79 -> TP054.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_016: bga_component.84 -> TP016.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_001: bga_component.119 -> TP001.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_104: bga_component.161 -> TP104.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_011: bga_component.29 -> TP011.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_101: bga_component.99 -> TP101.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_006: bga_component.36 -> TP006.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_092: bga_component.109 -> TP092.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_074: bga_component.14 -> TP074.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_076: bga_component.97 -> TP076.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_021: bga_component.148 -> TP021.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+   "bga_conn_079: bga_component.1 -> TP079.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)"
+  ],
+  "zooms": [
+   {
+    "png": "sample032_open0a.png",
+    "conn": "bga_conn_107: bga_component.130 -> TP107.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -0.8,
+     3.2
+    ]
+   },
+   {
+    "png": "sample032_open0b.png",
+    "conn": "bga_conn_107: bga_component.130 -> TP107.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     9.09,
+     11.48
+    ]
+   },
+   {
+    "png": "sample032_open1a.png",
+    "conn": "bga_conn_089: bga_component.105 -> TP089.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     0.0,
+     1.6
+    ]
+   },
+   {
+    "png": "sample032_open1b.png",
+    "conn": "bga_conn_089: bga_component.105 -> TP089.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     6.29,
+     -11.48
+    ]
+   },
+   {
+    "png": "sample032_open2a.png",
+    "conn": "bga_conn_095: bga_component.16 -> TP095.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     -4.0
+    ]
+   },
+   {
+    "png": "sample032_open2b.png",
+    "conn": "bga_conn_095: bga_component.16 -> TP095.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     6.99,
+     11.48
+    ]
+   },
+   {
+    "png": "sample032_open3a.png",
+    "conn": "bga_conn_078: bga_component.143 -> TP078.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -0.8,
+     4.0
+    ]
+   },
+   {
+    "png": "sample032_open3b.png",
+    "conn": "bga_conn_078: bga_component.143 -> TP078.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.48,
+     -4.2
+    ]
+   },
+   {
+    "png": "sample032_open4a.png",
+    "conn": "bga_conn_096: bga_component.146 -> TP096.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     1.6,
+     4.0
+    ]
+   },
+   {
+    "png": "sample032_open4b.png",
+    "conn": "bga_conn_096: bga_component.146 -> TP096.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -11.48,
+     -6.99
+    ]
+   },
+   {
+    "png": "sample032_open5a.png",
+    "conn": "bga_conn_065: bga_component.154 -> TP065.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -2.4,
+     4.8
+    ]
+   },
+   {
+    "png": "sample032_open5b.png",
+    "conn": "bga_conn_065: bga_component.154 -> TP065.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     2.1,
+     -11.48
+    ]
+   },
+   {
+    "png": "sample032_open6a.png",
+    "conn": "bga_conn_054: bga_component.79 -> TP054.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "png": "sample032_open6b.png",
+    "conn": "bga_conn_054: bga_component.79 -> TP054.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.48,
+     0.0
+    ]
+   },
+   {
+    "png": "sample032_open7a.png",
+    "conn": "bga_conn_016: bga_component.84 -> TP016.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     4.0,
+     0.0
+    ]
+   },
+   {
+    "png": "sample032_open7b.png",
+    "conn": "bga_conn_016: bga_component.84 -> TP016.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -11.48,
+     6.99
+    ]
+   },
+   {
+    "png": "sample032_open8a.png",
+    "conn": "bga_conn_001: bga_component.119 -> TP001.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     0.8,
+     2.4
+    ]
+   },
+   {
+    "png": "sample032_open8b.png",
+    "conn": "bga_conn_001: bga_component.119 -> TP001.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -9.09,
+     -11.48
+    ]
+   },
+   {
+    "png": "sample032_open9a.png",
+    "conn": "bga_conn_104: bga_component.161 -> TP104.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     4.8
+    ]
+   },
+   {
+    "png": "sample032_open9b.png",
+    "conn": "bga_conn_104: bga_component.161 -> TP104.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -11.48,
+     -8.39
+    ]
+   },
+   {
+    "png": "sample032_open10a.png",
+    "conn": "bga_conn_011: bga_component.29 -> TP011.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -1.6,
+     -3.2
+    ]
+   },
+   {
+    "png": "sample032_open10b.png",
+    "conn": "bga_conn_011: bga_component.29 -> TP011.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -7.69,
+     11.48
+    ]
+   },
+   {
+    "png": "sample032_open11a.png",
+    "conn": "bga_conn_101: bga_component.99 -> TP101.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     1.6
+    ]
+   },
+   {
+    "png": "sample032_open11b.png",
+    "conn": "bga_conn_101: bga_component.99 -> TP101.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     8.39,
+     -11.48
+    ]
+   },
+   {
+    "png": "sample032_open12a.png",
+    "conn": "bga_conn_006: bga_component.36 -> TP006.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -3.2,
+     -2.4
+    ]
+   },
+   {
+    "png": "sample032_open12b.png",
+    "conn": "bga_conn_006: bga_component.36 -> TP006.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.48,
+     8.39
+    ]
+   },
+   {
+    "png": "sample032_open13a.png",
+    "conn": "bga_conn_092: bga_component.109 -> TP092.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     1.6
+    ]
+   },
+   {
+    "png": "sample032_open13b.png",
+    "conn": "bga_conn_092: bga_component.109 -> TP092.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -11.48,
+     -6.29
+    ]
+   },
+   {
+    "png": "sample032_open14a.png",
+    "conn": "bga_conn_074: bga_component.14 -> TP074.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     -4.0
+    ]
+   },
+   {
+    "png": "sample032_open14b.png",
+    "conn": "bga_conn_074: bga_component.14 -> TP074.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     11.48,
+     -3.5
+    ]
+   },
+   {
+    "png": "sample032_open15a.png",
+    "conn": "bga_conn_076: bga_component.97 -> TP076.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     4.0,
+     0.8
+    ]
+   },
+   {
+    "png": "sample032_open15b.png",
+    "conn": "bga_conn_076: bga_component.97 -> TP076.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -11.48,
+     -3.5
+    ]
+   },
+   {
+    "png": "sample032_open16a.png",
+    "conn": "bga_conn_021: bga_component.148 -> TP021.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     3.2,
+     4.0
+    ]
+   },
+   {
+    "png": "sample032_open16b.png",
+    "conn": "bga_conn_021: bga_component.148 -> TP021.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     -5.59,
+     -11.48
+    ]
+   },
+   {
+    "png": "sample032_open17a.png",
+    "conn": "bga_conn_079: bga_component.1 -> TP079.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "a",
+    "at_mm": [
+     -4.8,
+     -4.8
+    ]
+   },
+   {
+    "png": "sample032_open17b.png",
+    "conn": "bga_conn_079: bga_component.1 -> TP079.1  (boxed in; escapes/neck-down: boxed in; negotiated: transaction rolled back)",
+    "end": "b",
+    "at_mm": [
+     4.2,
+     11.48
+    ]
+   }
+  ]
+ }
+}

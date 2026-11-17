@@ -1,0 +1,753 @@
+{
+ "sample152": {
+  "pitch": 0.8,
+  "grid": [
+   13,
+   13
+  ],
+  "balls_with_net": 87,
+  "balls": 163,
+  "open": [
+   {
+    "net": "bga_conn_055",
+    "ball": "34",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_061",
+    "ball": "92",
+    "ring": 0,
+    "free_sites": 0
+   }
+  ]
+ },
+ "sample040": {
+  "pitch": 0.8,
+  "grid": [
+   13,
+   13
+  ],
+  "balls_with_net": 91,
+  "balls": 163,
+  "open": [
+   {
+    "net": "bga_conn_080",
+    "ball": "149",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_070",
+    "ball": "118",
+    "ring": 3,
+    "free_sites": 0
+   }
+  ]
+ },
+ "sample070": {
+  "pitch": 0.8,
+  "grid": [
+   11,
+   11
+  ],
+  "balls_with_net": 75,
+  "balls": 111,
+  "open": [
+   {
+    "net": "bga_conn_047",
+    "ball": "11",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_036",
+    "ball": "49",
+    "ring": 0,
+    "free_sites": 0
+   }
+  ]
+ },
+ "sample064": {
+  "pitch": 0.8,
+  "grid": [
+   13,
+   13
+  ],
+  "balls_with_net": 99,
+  "balls": 163,
+  "open": [
+   {
+    "net": "bga_conn_067",
+    "ball": "56",
+    "ring": 3,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_025",
+    "ball": "114",
+    "ring": 3,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_087",
+    "ball": "69",
+    "ring": 3,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_073",
+    "ball": "149",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_026",
+    "ball": "4",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_006",
+    "ball": "68",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_018",
+    "ball": "16",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_089",
+    "ball": "142",
+    "ring": 1,
+    "free_sites": 0
+   }
+  ]
+ },
+ "sample176": {
+  "pitch": 0.8,
+  "grid": [
+   13,
+   13
+  ],
+  "balls_with_net": 94,
+  "balls": 163,
+  "open": [
+   {
+    "net": "bga_conn_051",
+    "ball": "76",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_035",
+    "ball": "63",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_041",
+    "ball": "129",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_076",
+    "ball": "102",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_025",
+    "ball": "134",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_048",
+    "ball": "78",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_026",
+    "ball": "92",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_085",
+    "ball": "107",
+    "ring": 2,
+    "free_sites": 1
+   },
+   {
+    "net": "bga_conn_081",
+    "ball": "143",
+    "ring": 1,
+    "free_sites": 0
+   }
+  ]
+ },
+ "sample120": {
+  "pitch": 0.8,
+  "grid": [
+   13,
+   13
+  ],
+  "balls_with_net": 96,
+  "balls": 163,
+  "open": [
+   {
+    "net": "bga_conn_052",
+    "ball": "121",
+    "ring": 3,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_047",
+    "ball": "9",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_010",
+    "ball": "62",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_023",
+    "ball": "37",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_094",
+    "ball": "155",
+    "ring": 0,
+    "free_sites": 0
+   }
+  ]
+ },
+ "sample008": {
+  "pitch": 0.8,
+  "grid": [
+   13,
+   13
+  ],
+  "balls_with_net": 101,
+  "balls": 163,
+  "open": [
+   {
+    "net": "bga_conn_033",
+    "ball": "118",
+    "ring": 3,
+    "free_sites": 1
+   },
+   {
+    "net": "bga_conn_101",
+    "ball": "117",
+    "ring": 3,
+    "free_sites": 1
+   },
+   {
+    "net": "bga_conn_017",
+    "ball": "83",
+    "ring": 2,
+    "free_sites": 2
+   },
+   {
+    "net": "bga_conn_046",
+    "ball": "75",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_016",
+    "ball": "63",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_096",
+    "ball": "123",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_002",
+    "ball": "17",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_050",
+    "ball": "73",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_067",
+    "ball": "6",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_063",
+    "ball": "2",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_034",
+    "ball": "14",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_022",
+    "ball": "1",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_098",
+    "ball": "153",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_006",
+    "ball": "27",
+    "ring": 0,
+    "free_sites": 0
+   }
+  ]
+ },
+ "sample088": {
+  "pitch": 0.8,
+  "grid": [
+   13,
+   13
+  ],
+  "balls_with_net": 106,
+  "balls": 163,
+  "open": [
+   {
+    "net": "bga_conn_048",
+    "ball": "88",
+    "ring": 3,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_055",
+    "ball": "44",
+    "ring": 3,
+    "free_sites": 2
+   },
+   {
+    "net": "bga_conn_061",
+    "ball": "116",
+    "ring": 3,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_067",
+    "ball": "29",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_018",
+    "ball": "68",
+    "ring": 2,
+    "free_sites": 1
+   },
+   {
+    "net": "bga_conn_105",
+    "ball": "127",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_047",
+    "ball": "24",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_085",
+    "ball": "79",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_021",
+    "ball": "98",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_066",
+    "ball": "40",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_037",
+    "ball": "151",
+    "ring": 0,
+    "free_sites": 1
+   },
+   {
+    "net": "bga_conn_073",
+    "ball": "154",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_072",
+    "ball": "137",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_082",
+    "ball": "152",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_007",
+    "ball": "8",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_010",
+    "ball": "53",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_001",
+    "ball": "150",
+    "ring": 0,
+    "free_sites": 0
+   }
+  ]
+ },
+ "sample144": {
+  "pitch": 0.8,
+  "grid": [
+   13,
+   13
+  ],
+  "balls_with_net": 104,
+  "balls": 163,
+  "open": [
+   {
+    "net": "bga_conn_092",
+    "ball": "79",
+    "ring": 6,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_030",
+    "ball": "65",
+    "ring": 5,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_045",
+    "ball": "117",
+    "ring": 3,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_035",
+    "ball": "41",
+    "ring": 3,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_064",
+    "ball": "29",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_104",
+    "ball": "144",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_007",
+    "ball": "58",
+    "ring": 1,
+    "free_sites": 1
+   },
+   {
+    "net": "bga_conn_008",
+    "ball": "71",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_087",
+    "ball": "15",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_073",
+    "ball": "73",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_051",
+    "ball": "7",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_044",
+    "ball": "59",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_076",
+    "ball": "161",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_005",
+    "ball": "85",
+    "ring": 0,
+    "free_sites": 0
+   }
+  ]
+ },
+ "sample200": {
+  "pitch": 0.8,
+  "grid": [
+   13,
+   13
+  ],
+  "balls_with_net": 102,
+  "balls": 163,
+  "open": [
+   {
+    "net": "bga_conn_041",
+    "ball": "24",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_036",
+    "ball": "84",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_029",
+    "ball": "130",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_040",
+    "ball": "38",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_039",
+    "ball": "30",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_098",
+    "ball": "88",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_086",
+    "ball": "100",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_054",
+    "ball": "102",
+    "ring": 3,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_090",
+    "ball": "112",
+    "ring": 0,
+    "free_sites": 1
+   },
+   {
+    "net": "bga_conn_043",
+    "ball": "16",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_060",
+    "ball": "124",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_008",
+    "ball": "78",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_023",
+    "ball": "34",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_005",
+    "ball": "150",
+    "ring": 0,
+    "free_sites": 0
+   }
+  ]
+ },
+ "sample032": {
+  "pitch": 0.8,
+  "grid": [
+   13,
+   13
+  ],
+  "balls_with_net": 108,
+  "balls": 163,
+  "open": [
+   {
+    "net": "bga_conn_107",
+    "ball": "130",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_089",
+    "ball": "105",
+    "ring": 4,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_095",
+    "ball": "16",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_078",
+    "ball": "143",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_096",
+    "ball": "146",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_065",
+    "ball": "154",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_054",
+    "ball": "79",
+    "ring": 6,
+    "free_sites": 1
+   },
+   {
+    "net": "bga_conn_016",
+    "ball": "84",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_001",
+    "ball": "119",
+    "ring": 3,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_104",
+    "ball": "161",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_011",
+    "ball": "29",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_101",
+    "ball": "99",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_006",
+    "ball": "36",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_092",
+    "ball": "109",
+    "ring": 2,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_074",
+    "ball": "14",
+    "ring": 0,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_076",
+    "ball": "97",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_021",
+    "ball": "148",
+    "ring": 1,
+    "free_sites": 0
+   },
+   {
+    "net": "bga_conn_079",
+    "ball": "1",
+    "ring": 0,
+    "free_sites": 0
+   }
+  ]
+ }
+}

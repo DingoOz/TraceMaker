@@ -430,6 +430,14 @@ comparable (judge version, time limit, machine load).
 | [rel0120-tierC](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/release-0.12.0/runs/rel0120-tierC/summary.json) | PCBench tier C | 30 | 4e69750 | 50.0% | 97.5% | 46.7% | 3043 |  |
 | [rel0120-tierD](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/release-0.12.0/runs/rel0120-tierD/summary.json) | PCBench tier D | 22 | 4e69750 | 40.9% | 95.9% | 36.4% | 2290 |  |
 
+## srj20-ramp-2026-11
+
+[Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/srj20-ramp-2026-11)
+
+| Run | Set | Boards | Commit | Clean | Completion | FR 2.5 | Seconds | Route options |
+|---|---|--:|---|--:|--:|--:|--:|---|
+| [images](https://github.com/DingoOz/TraceMaker/blob/main/bench/records/srj20-ramp-2026-11/images/summary.json) |  |  |  |  |  |  |  |  |
+
 ## test-campaign-2026-10
 
 [Record and README](https://github.com/DingoOz/TraceMaker/tree/main/bench/records/test-campaign-2026-10)
