@@ -40,3 +40,18 @@ a third net is lost. The repair windows did not run (the time limit was used up)
 
 **Outcome.** Freeing the via site is possible, but 055 and 043 both need the one B.Cu corridor south. With the rest of the board fixed,
 the router found no second way for either. A fix needs a wider rip-up that gives 043 (or 055) another corridor south, not a local bend.
+
+## Thinner tracks (`thin.py`)
+
+Would narrower tracks for 055 and 043 let both through the corridor? The board's rules say no: `min_track_width` is 0.12 mm in its
+`.kicad_pro`, so KiCad flags anything thinner. Measured anyway, with the clearance kept at 0.1 mm:
+
+| Track width (mm) | One track out of the pocket | Two side by side |
+|---|---|---|
+| 0.12 | yes (to y = 6.06) | stops at y = -1.22 |
+| 0.10 / 0.09 | yes | stops at -1.18 / -1.14 |
+| 0.08 / 0.075 / 0.06 | yes | stops at -0.57 / -0.54 / -0.40 |
+
+The widest way south has a gap of 0.348 mm edge to edge. It lies about 1.6 mm south of the ball, between net 017's diagonal B.Cu
+track and net 002's via at (0.96, -0.78). Two tracks need 2w + 3 × 0.1 mm, so they fit only below w = 0.024 mm. The clearance, not
+the track width, is what fills that gap. No routing run was made.
