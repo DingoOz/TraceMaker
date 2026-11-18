@@ -62,3 +62,21 @@ The widest way south has a gap of 0.348 mm edge to edge. It lies about 1.6 mm so
 track and net 002's via at (0.96, -0.78). Two tracks need 2w + 3 × 0.1 mm, so they fit only below w = 0.024 mm. The clearance, not
 the track width, is what fills that gap. This shows only that the gap takes one track at any width a fab can make; as above,
 it is not shown that 055 and 043 must both use it. No routing run was made.
+
+## Larger rip-up (`big/`)
+
+The same strip, with more nets: every net with B.Cu copper in a window from ball 055 down past the BGA's south edge (`W1.nets`: x -0.5
+to 2.5, y -4 to 5.2, 27 nets; `W2.nets`: x -1 to 3, y -4 to 6, 36 nets). Then those nets are routed again with the rest fixed, 1800 s
+and 8 threads. Arm R keeps the best board as it is and turns on the router's repair windows (`--repair on --repair-window-mm 2,4,6,8
+--repair-work 20000000 --repair-branches 200`).
+
+| Arm | Nets rerouted | Seed | Open (KiCad, whole board) | Added errors |
+|---|---|---|---|---|
+| W1a | 27 | 403 | 5 (055 and 3 others, plus 061) | none |
+| W1b | 27 | 404 | 6 | none |
+| W2 | 36 | 403 | 9 | none |
+| R | repair | 403 | 2 (unchanged) | none |
+| best board | | | 2 | |
+
+Every rip-up lost routes: the more nets rerouted, the more stayed open, and 055 was open in every run. In arm R the main loop used the
+whole 1800 s, so the repair windows never ran ("repair: skipped, --time-total (1800 s) is used up").
