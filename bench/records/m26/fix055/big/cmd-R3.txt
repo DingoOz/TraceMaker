@@ -1,0 +1,1 @@
+./tracemaker route R3/board.kicad_pcb -o R3/out.kicad_pcb --json R3/out.json --no-kb --threads 8 --repair on --repair-window-mm 2,4,6,8 --repair-work 20000000 --repair-branches 200 --time-total 1800 --seed 403 --view --view-port 9970

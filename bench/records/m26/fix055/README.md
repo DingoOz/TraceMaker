@@ -80,3 +80,15 @@ and 8 threads. Arm R keeps the best board as it is and turns on the router's rep
 
 Every rip-up lost routes: the more nets rerouted, the more stayed open, and 055 was open in every run. In arm R the main loop used the
 whole 1800 s, so the repair windows never ran ("repair: skipped, --time-total (1800 s) is used up").
+
+Arm R2 capped the main loop with `--time 120`, but the relax and ramp loop still used the whole 1800 s, so repair was skipped again. Arm
+R3 ran the repair alone: the best board, `--repair on` with the same windows, and no relax or ramp (`big/cmd-R3.txt`). Every window
+made things worse, and none was kept:
+
+| Open connection | 2 mm window | 4 mm | 6 mm | 8 mm |
+|---|---|---|---|---|
+| 055 | 50 branches lifted, 2 → 13 open | 128, → 25 | 191, → 29 | 237 branches, over the 200 limit |
+| 061 | 44, → 17 | 91, → 23 | 156, → 28 | 223, over the limit |
+
+A window around a ball under this BGA lifts dozens of nets, and the repair search (20 M expansions an attempt) puts back far fewer than it
+lifted. No rip-up tried here, from 4 nets to 191 branches, routed 055.
