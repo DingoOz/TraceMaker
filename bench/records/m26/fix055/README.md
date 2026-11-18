@@ -18,7 +18,13 @@ A flood fill on B.Cu at 10 µm with KiCad's clearances tests where a track from 
 | + 043 track | y = 6.06 (out of the BGA) |
 | + 043, with room for 043 alongside 055 (south of y = -1.5 / 0 / 2) | -1.22 / 0.0 / 3.53 |
 
-So bending 053 and 041 frees the site. The only way south is the corridor 043 uses, and it holds one track, not two.
+So bending 053 and 041 frees the site, and 043 walls in the pocket. 043's ball is the one just north of 055. Its B.Cu track runs down
+beside 055's ball (x = 0.95, y -3.93 to -2.61), then south-east past (2.76, -0.78). With 043's track removed, the widest way south
+narrows to a 0.35 mm gap at about (1.05, -1.15), which is west of 043's own route. One track fits through it.
+
+Correction (2026-11-18): an earlier version of this note said the way south "is the corridor 043 uses". 043 does not pass through that
+gap. The two-tracks test asks for both tracks in one corridor, which is stricter than needed: whether two separate ways south exist was
+not tested geometrically. The routing experiment below is what shows that the router did not fit them.
 
 ## Experiment (`strip.py`, `fix.py`)
 
@@ -38,8 +44,8 @@ with the M26 recipe, 8 threads; everything else is fixed.
 055 was routed in no run. 043, which was routed in the best board, was open in all four. In arm A, the fixed via makes it worse:
 a third net is lost. The repair windows did not run (the time limit was used up).
 
-**Outcome.** Freeing the via site is possible, but 055 and 043 both need the one B.Cu corridor south. With the rest of the board fixed,
-the router found no second way for either. A fix needs a wider rip-up that gives 043 (or 055) another corridor south, not a local bend.
+**Outcome.** Freeing the via site is possible, but with the rest of the board fixed the router could not route 055 and 043 together
+(both go from neighbouring balls to the bottom edge). A fix needs a wider rip-up than these four nets, not a local bend.
 
 ## Thinner tracks (`thin.py`)
 
@@ -54,4 +60,5 @@ Would narrower tracks for 055 and 043 let both through the corridor? The board's
 
 The widest way south has a gap of 0.348 mm edge to edge. It lies about 1.6 mm south of the ball, between net 017's diagonal B.Cu
 track and net 002's via at (0.96, -0.78). Two tracks need 2w + 3 × 0.1 mm, so they fit only below w = 0.024 mm. The clearance, not
-the track width, is what fills that gap. No routing run was made.
+the track width, is what fills that gap. This shows only that the gap takes one track at any width a fab can make; as above,
+it is not shown that 055 and 043 must both use it. No routing run was made.
