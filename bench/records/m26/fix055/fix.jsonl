@@ -1,0 +1,4 @@
+{"arm": "B", "seed": "403", "seconds": 918, "open_json": 2, "vias": 6, "unconnected_after": 3, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"arm": "A", "seed": "403", "seconds": 939, "open_json": 3, "vias": 4, "unconnected_after": 4, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"arm": "B", "seed": "404", "seconds": 903, "open_json": 2, "vias": 6, "unconnected_after": 3, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"arm": "A", "seed": "404", "seconds": 921, "open_json": 3, "vias": 2, "unconnected_after": 4, "added_errors": {}, "error_gate": "pass", "clean": false}
