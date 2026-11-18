@@ -104,6 +104,39 @@ Limits: `route` only (the placer and the other subcommands have no screen); POSI
 choices are not offered as a list, the parser's message names them when the value is wrong; writing a file drops
 comments added by hand (the screen rewrites the file from its values).
 
+### 2.2 Jobs screen and rerun advice (2026-11-18, D193)
+
+`tracemaker tui --jobs` (or `w` on the options screen) lists this user's `route` runs from the live status files every
+run writes (core/live.hpp, D165): running ones first, then those of the last day (`a`: the last week). The selected
+job shows:
+
+- **Progress:** board, stage and round, the open connections, time used and left against its `--time-total` or `--time`,
+  variants finished, and the routed count over time as a one-line history.
+- **Options:** its arguments as given.
+- **Advice:** what to change on a rerun, each with the data it rests on (`app::tui::advise`, a pure function of the
+  job). It reads the summary the run wrote with `--json`, else its log. The rules and their sources:
+
+| When | Advice | Data |
+|---|---|---|
+| finished, 2 layers, ≥ 11.5 crossings per connection, no layer option | `--try-layers 2,4` | M26 F9: no two-layer srj20 board above 11.5 routed clean; sample152 87/87 at 4 layers (`bench/records/m26/layers4`) |
+| open, no `--relax` | `--relax --time-total 3600` | srj20: one-hour relax runs closed 50 of 69 boards |
+| relax, stopped at the time limit, no warm start | `--warm-pcb` this result, `-o` a new file | keeps the routed copper |
+| relax, ≤ 20 open, no ramp | warm start and `--ramp-from 0.06 --ramp-step 0.02 --ramp-rounds 3` | srj20: 4 of 15 boards closed; never fewer routes (D191 F8) |
+| relax, stopped at the time limit | `--seed` + 1, twice the time | srj20: 4 more boards |
+| always | the router's own `why_open.next` lines (information) | doc 20 §2.5 |
+| running, no gain for ≥ 10 min and ≥ a quarter of the run | information: time left | live history |
+| gone (file says running, process absent), failed, complete | information | |
+
+`e` opens the job's options on the options screen, in "this run", with the job's folder as the working folder (the
+command starts with `cd`); `1`-`9` does the same with that advice applied, and the rerun's output goes to a new
+`-next` file when it starts from the job's board. On the options screen, `b` starts the command in a process of its
+own (output in `OUTPUT.log`) and shows the jobs screen. A board named on the command line is matched against earlier
+jobs, and the advice of its last finished run is shown above the command.
+
+Limits: jobs that end in their first second leave no live file (D165), so they are not listed; a run started with `r`
+records the `tui` command line in its live file and is not listed as a route job (start it with `b`); a job that read
+`--config` shows that file in the file scope, where its values win over the job's command line.
+
 ## 3. The board model and transactions
 
 All stages share one **board model** and change it only through **transactions** (copy-on-write

@@ -1019,6 +1019,8 @@ OPTIONS:
   -h,     --help              Print this help message and exit
   -o,     --output TEXT       Output .kicad_pcb
           --config TEXT       Options file to start from (if it exists) and to save to
+          --jobs              Open on the jobs screen: this user's route runs, what each has
+                              left, its options and what to change on a rerun
 ```
 
 ## `tracemaker-place`

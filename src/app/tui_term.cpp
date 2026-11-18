@@ -8,11 +8,13 @@
 #include <unistd.h>
 
 #include <cerrno>
+#include <chrono>
 #include <csignal>
 #include <cstdlib>
 #include <stdexcept>
 
 #include "app/tui.hpp"
+#include "app/tui_jobs.hpp"
 
 namespace tmk::app::tui {
 
@@ -121,10 +123,10 @@ class Terminal {
     write_all(fd_, s);
   }
 
-  // The next key, or -1 when the read was interrupted (window resized).
-  int read_key() const {
+  // The next key, or -1 when the read was interrupted (window resized) or `timeout_ms` passed without one.
+  int read_key(int timeout_ms = -1) const {
     unsigned char c = 0;
-    if (!next(c, -1)) return -1;
+    if (!next(c, timeout_ms)) return -1;
     if (c != key::esc) return c == '\n' ? key::enter : c;
     // An escape sequence arrives in one burst; a lone Esc is followed by nothing.
     unsigned char a = 0, b = 0;
@@ -183,6 +185,23 @@ Action run_terminal(Model& m) {
       save_options(m);
     else if (a != Action::none)
       return a;
+  }
+}
+
+Action run_terminal(JobsModel& m) {
+  Terminal term;
+  for (;;) {
+    int rows = 0, cols = 0;
+    term.size(rows, cols);
+    m.now = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()) / 1000;
+    term.paint(m.render(rows, cols));
+    const int k = term.read_key(2000);
+    if (k == -1) {
+      m.reload();  // the jobs move on by themselves
+      continue;
+    }
+    if (k == 0) continue;
+    if (const Action a = m.press(k); a != Action::none) return a;
   }
 }
 

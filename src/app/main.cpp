@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // tracemaker: command-line front end. Subcommands grow with the roadmap (route, place, bench, serve, replay).
 #include <CLI/CLI.hpp>
+#include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -21,6 +22,7 @@
 #include "analysis/return_path.hpp"
 #include "app/route_job.hpp"
 #include "app/tui.hpp"
+#include "app/tui_jobs.hpp"
 #include "core/live.hpp"
 #include "core/rng.hpp"
 #include "crules/engine.hpp"
@@ -796,8 +798,45 @@ std::vector<std::string> config_args(CLI::App& cmd, const std::string& path) {
 
 // `tracemaker tui`: the options screen for `route`. Returns the exit code; `next` holds the arguments of the run the
 // user asked for, if any.
+// Starts `tracemaker route ARGS` in a process of its own (two forks: it is no child of the screen, which may end first),
+// in `dir` when given, with its output going to `log`. Returns the pid of the route process, or -1.
+pid_t start_route_in_background(const std::vector<std::string>& args, const std::string& dir, const std::string& log) {
+  int fd[2];
+  if (::pipe(fd) != 0) return -1;
+  const pid_t first = ::fork();
+  if (first < 0) return -1;
+  if (first == 0) {
+    ::close(fd[0]);
+    ::setsid();
+    const pid_t second = ::fork();
+    if (second != 0) {
+      if (::write(fd[1], &second, sizeof second) < 0) ::_exit(1);
+      ::_exit(0);
+    }
+    ::close(fd[1]);
+    if (!dir.empty() && ::chdir(dir.c_str()) != 0) ::_exit(126);
+    const int in = ::open("/dev/null", O_RDONLY), lo = ::open(log.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (in >= 0) ::dup2(in, 0);
+    if (lo >= 0) ::dup2(lo, 1), ::dup2(lo, 2);
+    std::vector<std::string> all{"tracemaker", "route"};
+    all.insert(all.end(), args.begin(), args.end());
+    std::vector<char*> av;
+    for (auto& a : all) av.push_back(a.data());
+    av.push_back(nullptr);
+    ::execv("/proc/self/exe", av.data());
+    ::_exit(127);
+  }
+  ::close(fd[1]);
+  pid_t pid = -1;
+  if (::read(fd[0], &pid, sizeof pid) != sizeof pid) pid = -1;
+  ::close(fd[0]);
+  int st = 0;
+  ::waitpid(first, &st, 0);
+  return pid;
+}
+
 int cmd_tui(CLI::App& app, CLI::App& route, const std::string& board, const std::string& out, const std::string& config,
-            const std::string& keys, bool scripted, std::vector<std::string>& next) {
+            const std::string& keys, bool scripted, bool start_on_jobs, std::vector<std::string>& next) {
   namespace tui = tmk::app::tui;
   tui::Model m("tracemaker route", tui_fields(route), [&](const std::vector<std::string>& args) {
     std::vector<std::string> all{"route"};
@@ -840,7 +879,92 @@ int cmd_tui(CLI::App& app, CLI::App& route, const std::string& board, const std:
   if (!first_problem.empty()) m.set_status("cannot use a line of " + first_problem);
   if (!board.empty()) m.set("board", board);
   if (!out.empty()) m.set("--output", out);
-  const tui::Action a = scripted ? tui::run_keys(m, keys) : tui::run_terminal(m);
+
+  // Jobs (doc 02 §2.2): the live files of this user's route runs. A board given here is also matched against them, so
+  // the options screen opens with the advice of its last run.
+  const std::string live = tui::live_folder();
+  auto load_jobs = [&](bool all) { return tui::read_jobs(live, all ? 7 * 86400.0 : 86400.0, 200); };
+  if (!board.empty()) {
+    std::error_code ec;
+    const std::string want = fs::weakly_canonical(board, ec).string();
+    for (const auto& j : load_jobs(true)) {
+      if (j.state == "running" || fs::weakly_canonical(j.path(j.board()), ec).string() != want) continue;
+      std::vector<std::string> lines;
+      for (const auto& adv : tui::advise(j)) lines.push_back(adv.text);
+      if (!lines.empty()) lines.insert(lines.begin(), "last run on this board: " + std::to_string(j.routed()) + " of " + std::to_string(j.total()) + " routed");
+      m.set_advice(lines);
+      break;
+    }
+  }
+
+  // Keys of a scripted session go to whichever screen is showing, in order; when they run out the command is printed.
+  const std::vector<int> script = tui::parse_keys(keys);
+  std::size_t at = 0;
+  auto drive = [&](auto& screen, auto on_save) {
+    while (at < script.size()) {
+      const tui::Action r = screen.press(script[at++]);
+      if (r == tui::Action::save)
+        on_save();
+      else if (r != tui::Action::none)
+        return r;
+    }
+    return tui::Action::print;
+  };
+  tui::Action a = start_on_jobs ? tui::Action::jobs : tui::Action::options;
+  std::string jobs_status;
+  for (;;) {
+    if (a == tui::Action::jobs) {
+      tui::JobsModel jm(load_jobs);
+      if (!jobs_status.empty()) jm.set_status(jobs_status);
+      a = scripted ? drive(jm, [] {}) : tui::run_terminal(jm);
+      if (scripted && a == tui::Action::print) {  // the jobs screen has no command of its own: show what it shows
+        for (const auto& l : jm.render(40, 120)) std::printf("%s\n", l.text.c_str());
+        return 0;
+      }
+      if (a == tui::Action::edit) {
+        const tui::Job* j = jm.selected();
+        std::string cfg;
+        for (const std::string& p : m.load_args(j->argv, &cfg)) std::fprintf(stderr, "warning: job %d: %s\n", j->pid, p.c_str());
+        m.set_workdir(j->cwd);
+        std::string status = "options of job " + std::to_string(j->pid) + ", run in its folder";
+        if (!cfg.empty()) {  // its --config file: shown in the file scope, as the screen shows a --config file
+          const std::string cp = j->path(cfg);
+          m.enable_scope(tui::Scope::file, cp, load(tui::Scope::file, cp));
+          status += "; also " + cp;
+        }
+        std::vector<std::string> lines;
+        for (const auto& adv : tui::advise(*j)) lines.push_back(adv.text);
+        if (const tui::Advice* c = jm.chosen()) {
+          for (const auto& [sp, v] : c->set) m.set_run(sp, v);
+          for (const auto& sp : c->unset) m.set_run(sp, "-");
+          status = "applied: " + c->text + " (in this run; s saves to a scope)";
+        }
+        m.set_advice(lines);
+        m.set_status(status);
+      }
+      if (a == tui::Action::edit || a == tui::Action::options) {
+        a = tui::Action::options;
+        continue;
+      }
+      break;  // quit
+    }
+    a = scripted ? drive(m, [&] { tui::save_options(m); }) : tui::run_terminal(m);
+    if (a == tui::Action::jobs) continue;
+    if (a == tui::Action::background) {
+      const std::string dir = m.workdir();
+      std::string output;
+      for (const auto& f : m.fields())
+        if (f.arg == "--output") output = f.value;
+      const std::string log = (output.empty() ? std::string("tracemaker-route") : output) + ".log";
+      const pid_t pid = start_route_in_background(m.args(), dir, log);
+      jobs_status = pid > 0 ? "started route as pid " + std::to_string(pid) + ", its output in " + (dir.empty() ? log : (fs::path(dir) / log).string())
+                            : std::string("cannot start the route process");
+      std::fprintf(stderr, "%s\n%s\n", m.command_line().c_str(), jobs_status.c_str());
+      a = tui::Action::jobs;
+      continue;
+    }
+    break;
+  }
   if (scripted && !m.status().empty()) std::fprintf(stderr, "%s\n", m.status().c_str());
   if (a == tui::Action::print) {
     std::printf("%s\n", m.command_line().c_str());
@@ -848,6 +972,7 @@ int cmd_tui(CLI::App& app, CLI::App& route, const std::string& board, const std:
     std::fprintf(stderr, "%s\n", m.command_line().c_str());
     next = m.args();
     next.insert(next.begin(), "route");
+    if (!m.workdir().empty() && ::chdir(m.workdir().c_str()) != 0) throw std::runtime_error("cannot enter " + m.workdir());
   }
   return 0;
 }
@@ -1554,6 +1679,8 @@ static int run_main(int argc, char** argv) {
   tui->add_option("-o,--output", t_out, "Output .kicad_pcb");
   tui->add_option("--config", t_config, "Options file to start from (if it exists) and to save to");
   auto* t_keys_opt = tui->add_option("--keys", t_keys, "Test: take these keys instead of opening the terminal, then print the command")->group("");
+  bool t_jobs = false;
+  tui->add_flag("--jobs", t_jobs, "Open on the jobs screen: this user's route runs, what each has left, its options and what to change on a rerun");
 
   CLI11_PARSE(app, argc, argv);
   if (*tui) {
@@ -1561,7 +1688,7 @@ static int run_main(int argc, char** argv) {
     // as if the user had typed the command.
     std::vector<std::string> next;
     try {
-      const int rc = cmd_tui(app, *route, t_board, t_out, t_config, t_keys, t_keys_opt->count() > 0, next);
+      const int rc = cmd_tui(app, *route, t_board, t_out, t_config, t_keys, t_keys_opt->count() > 0, t_jobs, next);
       if (next.empty()) return rc;
       std::reverse(next.begin(), next.end());
       app.clear();

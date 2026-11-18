@@ -8,6 +8,7 @@
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <span>
 
 namespace tmk::app::tui {
 
@@ -79,6 +80,8 @@ std::vector<std::string> wrap(const std::string& s, std::size_t w, std::size_t l
   return out;
 }
 
+}  // namespace
+
 std::string shell_quote(const std::string& s) {
   static const std::string safe = "_@%+=:,./-";
   const bool plain = !s.empty() && std::all_of(s.begin(), s.end(), [](char c) {
@@ -89,6 +92,8 @@ std::string shell_quote(const std::string& s) {
   for (char c : s) q += c == '\'' ? std::string("'\\''") : std::string(1, c);
   return q + "'";
 }
+
+namespace {
 
 bool is_number(const std::string& s) {
   if (s.empty() || std::isspace(static_cast<unsigned char>(s.front()))) return false;
@@ -213,7 +218,7 @@ std::vector<std::string> Model::args() const {
 }
 
 std::string Model::command_line() const {
-  std::string s = command_;
+  std::string s = workdir_.empty() ? command_ : "cd " + shell_quote(workdir_) + " && " + command_;
   for (const std::string& a : args()) s += " " + shell_quote(a);
   return s;
 }
@@ -354,6 +359,91 @@ bool Model::set(const std::string& name, const std::string& value) {
   return false;
 }
 
+namespace {
+
+// A field by any spelling a command line can use for it: a flag's spellings, a value option's long or short form, or
+// the label of a positional argument.
+Field* find_field(std::vector<Field>& fields, const std::string& spelling) {
+  for (Field& f : fields) {
+    if (f.is_flag()) {
+      if (std::find(f.spellings.begin(), f.spellings.end(), spelling) != f.spellings.end()) return &f;
+      continue;
+    }
+    if (!f.arg.empty() && f.arg == spelling) return &f;
+    if (f.label.rfind(spelling + ", ", 0) == 0 && spelling.size() == 2) return &f;  // "-o, --output"
+  }
+  return nullptr;
+}
+
+}  // namespace
+
+std::vector<std::string> Model::load_args(const std::vector<std::string>& args, std::string* config) {
+  std::vector<std::string> problems;
+  for (Field& f : fields_)
+    for (std::string& l : f.layer) l.clear();
+  std::vector<Field*> positionals;
+  for (Field& f : fields_)
+    if (!f.is_flag() && f.arg.empty()) positionals.push_back(&f);
+  std::size_t next_pos = 0;
+  for (std::size_t i = 0; i < args.size(); ++i) {
+    std::string a = args[i], v;
+    bool inline_value = false;
+    if (a.size() > 2 && a.rfind("--", 0) == 0 && a.find('=') != std::string::npos) {
+      v = a.substr(a.find('=') + 1);
+      a = a.substr(0, a.find('='));
+      inline_value = true;
+    }
+    if (a == "--config") {
+      if (!inline_value && i + 1 < args.size()) v = args[++i];
+      if (config) *config = v;
+      continue;
+    }
+    if (a.empty() || a.front() != '-') {
+      if (next_pos < positionals.size())
+        positionals[next_pos++]->layer[static_cast<int>(Scope::run)] = a;
+      else
+        problems.push_back("no place for the argument " + a);
+      continue;
+    }
+    Field* f = find_field(fields_, a);
+    if (!f) {
+      problems.push_back("no option " + a + " (left out)");
+      if (!inline_value && i + 1 < args.size() && args[i + 1].rfind("-", 0) != 0) ++i;  // its value, if it had one
+      continue;
+    }
+    if (f->is_flag()) {
+      f->layer[static_cast<int>(Scope::run)] = a;
+      continue;
+    }
+    if (!inline_value) {
+      if (i + 1 >= args.size()) {
+        problems.push_back(a + " has no value");
+        continue;
+      }
+      v = args[++i];
+    }
+    std::string& l = f->layer[static_cast<int>(Scope::run)];
+    l = l.empty() ? v : l + "," + v;  // a repeated option (--pour a --pour b) as one list
+  }
+  for (Field& f : fields_) refresh(f);
+  for (bool& d : dirty_) d = false;
+  recheck();
+  return problems;
+}
+
+bool Model::set_run(const std::string& spelling, const std::string& value) {
+  Field* f = find_field(fields_, spelling);
+  if (!f) return false;
+  std::string& l = f->layer[static_cast<int>(Scope::run)];
+  if (f->is_flag())
+    l = value == "-" ? std::string() : spelling;
+  else
+    l = value == "-" ? std::string() : value;
+  refresh(*f);
+  recheck();
+  return true;
+}
+
 // Line editing shared by the three prompts. True if the key changed the buffer.
 bool Model::edit_key(int k) {
   if (k == key::backspace || k == 8) {
@@ -472,6 +562,12 @@ Action Model::press(int k) {
       if (error_.empty()) return Action::run;
       status_ = "cannot run yet: " + error_;
       break;
+    case 'b':
+      if (error_.empty()) return Action::background;
+      status_ = "cannot run yet: " + error_;
+      break;
+    case 'w':
+      return Action::jobs;
     case key::esc:  // clears the filter; it does not quit, so a stray Esc cannot lose the choices
       filter_.clear();
       sel_ = 0;
@@ -609,7 +705,8 @@ std::vector<Line> Model::render(int rows, int cols) const {
 
   // Top border, scope bar, list rule, [list], help rule, [help], command rule, [command], status, keys, bottom border.
   const std::size_t help_n = h >= 34 ? 5 : (h >= 22 ? 3 : 2), cmd_n = h >= 34 ? 3 : (h >= 22 ? 2 : 1);
-  const std::size_t fixed = 8 + help_n + cmd_n;
+  const std::size_t advice_n = advice_.empty() ? 0 : std::min<std::size_t>(advice_.size(), h >= 30 ? 4 : 2);
+  const std::size_t fixed = 8 + help_n + cmd_n + (advice_n ? advice_n + 1 : 0);
   const std::size_t body = h > fixed ? h - fixed : 1;
   if (sel < top_) top_ = sel;
   if (sel >= top_ + body) top_ = sel + 1 - body;
@@ -708,6 +805,10 @@ std::vector<Line> Model::render(int rows, int cols) const {
   }
   for (Spans& sp : help) out.push_back(boxed(std::move(sp), w));
 
+  if (advice_n) {
+    out.push_back(border("\xe2\x94\x9c", "\xe2\x94\xa4", {{"Advice", Style::heading}}, {{"from the jobs screen (w)", Style::dim}}, w));
+    for (std::size_t i = 0; i < advice_n; ++i) out.push_back(boxed({{" " + fit(advice_[i], inner - 2), Style::warn}}, w));
+  }
   out.push_back(border("\xe2\x94\x9c", "\xe2\x94\xa4", {{"Command", Style::heading}}, {}, w));
   for (const std::string& l : wrap("$ " + command_line(), inner - 2, cmd_n)) out.push_back(boxed({{" " + l, Style::code}}, w));
 
@@ -726,10 +827,13 @@ std::vector<Line> Model::render(int rows, int cols) const {
   out.push_back(boxed(std::move(status), w));
 
   static const std::pair<const char*, const char*> keys[] = {{"Space", "edit"}, {"d", "reset"}, {"Tab", "scope"}, {"/", "find"},
-                                                            {"h", "more"},      {"s", "save"},    {"p", "print"},   {"r", "run"}, {"q", "quit"}};
-  auto hints = [&](const char* gap) {
+                                                            {"h", "more"},      {"s", "save"},    {"p", "print"},   {"r", "run"}, {"b", "background"}, {"w", "jobs"}, {"q", "quit"}};
+  // On a narrow screen the keys that the help text also names (d, h) go, and "background" is shortened.
+  static const std::pair<const char*, const char*> few[] = {{"Space", "edit"}, {"Tab", "scope"}, {"/", "find"}, {"s", "save"}, {"p", "print"},
+                                                           {"r", "run"},       {"b", "bg"},      {"w", "jobs"}, {"q", "quit"}};
+  auto hints = [&](const char* gap, bool narrow = false) {
     Spans sp{{" ", Style::plain}};
-    for (const auto& [k, d] : keys) {
+    for (const auto& [k, d] : narrow ? std::span<const std::pair<const char*, const char*>>(few) : std::span<const std::pair<const char*, const char*>>(keys)) {
       if (sp.size() > 1) sp.push_back({gap, Style::plain});
       sp.push_back({k, Style::key});
       sp.push_back({std::string(" ") + d, Style::dim});
@@ -738,6 +842,7 @@ std::vector<Line> Model::render(int rows, int cols) const {
   };
   Spans hint = hints("  ");
   if (spans_width(hint) > inner) hint = hints(" ");
+  if (spans_width(hint) > inner) hint = hints(" ", true);
   out.push_back(boxed(std::move(hint), w));
   out.push_back(border("\xe2\x94\x94", "\xe2\x94\x98", {}, {}, w));
   out.resize(h);
@@ -758,12 +863,13 @@ void save_options(Model& m) {
                  : "cannot write " + m.save_path() + ": " + std::strerror(errno));
 }
 
-Action run_keys(Model& m, const std::string& keys) {
+std::vector<int> parse_keys(const std::string& keys) {
   static const std::pair<const char*, int> names[] = {
       {"up", key::up},       {"down", key::down}, {"pgup", key::page_up}, {"pgdn", key::page_down},
       {"home", key::home},   {"end", key::end},   {"enter", key::enter},  {"space", ' '},
       {"esc", key::esc},     {"bs", key::backspace}, {"del", key::del},   {"lt", '<'},
       {"tab", key::tab},     {"stab", key::shift_tab}};
+  std::vector<int> out;
   for (std::size_t i = 0; i < keys.size(); ++i) {
     int k = static_cast<unsigned char>(keys[i]);
     if (keys[i] == '<') {
@@ -772,6 +878,13 @@ Action run_keys(Model& m, const std::string& keys) {
       for (const auto& [n, code] : names)
         if (name == n) k = code, i = close;
     }
+    out.push_back(k);
+  }
+  return out;
+}
+
+Action run_keys(Model& m, const std::string& keys) {
+  for (const int k : parse_keys(keys)) {
     const Action a = m.press(k);
     if (a == Action::save)
       save_options(m);
@@ -780,5 +893,15 @@ Action run_keys(Model& m, const std::string& keys) {
   }
   return Action::print;
 }
+
+namespace draw {
+std::string fit(const std::string& s, std::size_t w, bool pad) { return tui::fit(s, w, pad); }
+std::vector<std::string> wrap(const std::string& s, std::size_t w, std::size_t lines) { return tui::wrap(s, w, lines); }
+Line boxed(std::vector<Span> content, std::size_t w, bool highlight, const Span* right) { return tui::boxed(std::move(content), w, highlight, right); }
+Line border(const char* l, const char* r, std::vector<Span> left, std::vector<Span> right, std::size_t w) {
+  return tui::border(l, r, std::move(left), std::move(right), w);
+}
+std::string short_path(const std::string& p) { return tui::short_path(p); }
+}  // namespace draw
 
 }  // namespace tmk::app::tui

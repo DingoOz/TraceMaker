@@ -7,9 +7,10 @@ target_link_libraries(tm_app_route PUBLIC tm::route tm::analysis nlohmann_json::
 tm_set_warnings(tm_app_route)
 
 # The options screen (`tracemaker tui`): the model is free of terminal and CLI code, so the unit tests link it.
-add_library(tm_app_tui STATIC tui.cpp tui_term.cpp)
+add_library(tm_app_tui STATIC tui.cpp tui_term.cpp tui_jobs.cpp)
 add_library(tm::app_tui ALIAS tm_app_tui)
 target_include_directories(tm_app_tui PUBLIC ${PROJECT_SOURCE_DIR}/src)
+target_link_libraries(tm_app_tui PUBLIC nlohmann_json::nlohmann_json)
 tm_set_warnings(tm_app_tui)
 
 add_executable(tracemaker main.cpp inspect.cpp defects.cpp)
