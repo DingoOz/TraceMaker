@@ -1,0 +1,77 @@
+{
+ "ErgodoneWithHole_ErgoDone": {
+  "arm": "topfit",
+  "unconnected": 0,
+  "added": {}
+ },
+ "Hardware_Playground_sd_wav_pcm5100": {
+  "arm": "topfit",
+  "unconnected": 0,
+  "added": {
+   "clearance": 4
+  }
+ },
+ "fifogfx_c64cart": {
+  "arm": "topfit",
+  "unconnected": 0,
+  "added": {
+   "solder_mask_bridge": 41
+  }
+ },
+ "kitspace_test-jig": {
+  "arm": "topfit",
+  "unconnected": 0,
+  "added": {
+   "clearance": 85,
+   "solder_mask_bridge": 44
+  }
+ },
+ "LeeChee_1800": {
+  "arm": "toprv8",
+  "unconnected": 0,
+  "added": {
+   "copper_edge_clearance": 31,
+   "hole_clearance": 23
+  }
+ },
+ "memsarray_mems_modules": {
+  "arm": "topmask",
+  "unconnected": 0,
+  "added": {}
+ },
+ "P8000_WDC_Emulator_P8000_WDC_Emulator": {
+  "arm": "toplay2",
+  "unconnected": 0,
+  "added": {}
+ },
+ "MicroMaple_MicroMaple": {
+  "arm": "toplay4",
+  "unconnected": 1,
+  "added": {}
+ },
+ "Aleste-520EX_aleste": {
+  "arm": "toplay4",
+  "unconnected": 0,
+  "added": {}
+ },
+ "kitspace_ardfpga": {
+  "arm": "c60fit",
+  "unconnected": 0,
+  "added": {}
+ },
+ "Hardware_Playground_serial_gw_ATMEGA328P": {
+  "arm": "ctl60",
+  "unconnected": 0,
+  "added": {}
+ },
+ "kitspace_teensy-fx": {
+  "arm": "ctl60",
+  "unconnected": 0,
+  "added": {}
+ },
+ "MicroMaple_MicroMaple (c60lay2)": {
+  "arm": "c60lay2",
+  "unconnected": 0,
+  "added": {}
+ }
+}

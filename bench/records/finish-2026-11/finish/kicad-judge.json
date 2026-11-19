@@ -1,0 +1,43 @@
+{
+ "memsarray_mems_modules": {
+  "unconnected": 0,
+  "added": {}
+ },
+ "Hardware_Playground_sd_wav_pcm5100": {
+  "unconnected": 0,
+  "added": {
+   "clearance": 1
+  }
+ },
+ "fifogfx_c64cart": {
+  "unconnected": 0,
+  "added": {
+   "solder_mask_bridge": 41
+  }
+ },
+ "MicroMaple_MicroMaple": {
+  "unconnected": 0,
+  "added": {}
+ },
+ "ErgodoneWithHole_ErgoDone": {
+  "unconnected": 0,
+  "added": {}
+ },
+ "kitspace_test-jig": {
+  "unconnected": 0,
+  "added": {
+   "clearance": 85,
+   "solder_mask_bridge": 39
+  }
+ },
+ "P8000_WDC_Emulator_P8000_WDC_Emulator": {
+  "unconnected": 0,
+  "added": {}
+ },
+ "Aleste-520EX_aleste": {
+  "unconnected": 0,
+  "added": {
+   "copper_edge_clearance": 8
+  }
+ }
+}

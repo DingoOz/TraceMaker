@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <cstdio>
 #include <map>
 #include <memory>
@@ -259,13 +260,18 @@ int open_connections(const model::Board& b, const model::DesignRules& rules) {
 
 nlohmann::json RepairResult::summary() const {
   nlohmann::json st = nlohmann::json::array();
-  for (const auto& s : steps)
+  bool route_mode = no_bare_route > 0;
+  for (const auto& s : steps) {
     st.push_back({{"connection", s.conn}, {"radius_mm", s.radius_mm}, {"branches", s.pieces}, {"tracks", s.tracks}, {"vias", s.vias},
                   {"open_before", s.open_before}, {"open_after", s.open_after}, {"split", s.split}, {"kept", s.kept}, {"work", s.work}});
+    if (s.along_route) st.back()["along_route"] = true, route_mode = true;
+  }
   int kept = 0;
   for (const auto& s : steps) kept += s.kept;
-  return {{"open_before", open_before}, {"open_after", open_after}, {"attempts", steps.size()}, {"kept", kept},
-          {"lifted_tracks", ripped_tracks.size()}, {"lifted_vias", ripped_vias.size()}, {"work", work}, {"seconds", seconds}, {"steps", st}};
+  nlohmann::json j = {{"open_before", open_before}, {"open_after", open_after}, {"attempts", steps.size()}, {"kept", kept},
+                      {"lifted_tracks", ripped_tracks.size()}, {"lifted_vias", ripped_vias.size()}, {"work", work}, {"seconds", seconds}, {"steps", st}};
+  if (route_mode) j["no_bare_route"] = no_bare_route;  // a run with the end windows only writes the summary it always did
+  return j;
 }
 
 RepairResult repair_open(const model::Board& base, const model::DesignRules& rules, const route::RouteResult& res, const route::RouterOptions& opt,
@@ -326,19 +332,94 @@ RepairResult repair_open(const model::Board& base, const model::DesignRules& rul
           ends.push_back({pad.pos, std::max(pad.size_x, pad.size_y) / 2});
         }
       const std::string label = u.net + " " + u.a + "-" + u.b;
+      auto step_options = [&] {
+        route::RouterOptions o = opt;
+        o.work_budget = ro.step_work;
+        o.sink = nullptr;
+        o.buffer_events = false;
+        o.deadline = nullptr;
+        o.warm = nullptr;
+        o.start_routes = nullptr;
+        o.warm_tracks.clear();
+        o.warm_vias.clear();
+        o.state_in.clear();
+        o.state_out.clear();
+        o.keep_final = false;
+        o.live_name = "repair";
+        if (u.pad_b >= 0) o.priority.insert(o.priority.begin(), {u.a, u.b});
+        return o;
+      };
+      // "route": where the connection goes when nothing of the other nets that may move is in its way. The copper near that route is
+      // what blocks it; copper near its ends that the route does not pass is left alone (doc 20 §2.9: of the connections a rip-up could
+      // close, the router's own list of blockers was never enough and the neighbours of this route were).
+      struct Spot {
+        Point p;
+        Coord half;
+        int top, bottom;  // copper layer indices the spot is on
+      };
+      std::vector<Spot> spots;
+      if (ro.select != "ends") {
+        model::Board bare = cur;
+        std::erase_if(bare.tracks, [&](const model::Track& t) { return t.net > 0 && t.net != own && !keep.count(t.net) && !t.locked && !t.tuning_pattern; });
+        std::erase_if(bare.vias, [&](const model::Via& v) { return v.net > 0 && v.net != own && !keep.count(v.net) && !v.locked && !v.free; });
+        route::RouterOptions o = step_options();
+        for (const auto& n : base.nets)
+          if (n.id > 0 && n.id != own && !n.name.empty() && std::find(o.skip_nets.begin(), o.skip_nets.end(), n.name) == o.skip_nets.end()) o.skip_nets.push_back(n.name);
+        const route::RouteResult r = route::Router(bare, rules, o).run();
+        out.work += r.expansions;
+        auto open_of_net = [&](const std::vector<route::RouteResult::Unrouted>& us) {
+          return std::count_if(us.begin(), us.end(), [&](const auto& x) { return x.net == u.net; });
+        };
+        if (open_of_net(r.unrouted) < open_of_net(out.unrouted)) {
+          const Coord step = 100'000;
+          for (const auto& t : r.tracks) {
+            const int li = t.layer;
+            const double len = std::hypot(static_cast<double>(t.b.x - t.a.x), static_cast<double>(t.b.y - t.a.y));
+            const int n = std::max(1, static_cast<int>(std::ceil(len / static_cast<double>(step))));
+            for (int k = 0; k <= n; ++k)
+              spots.push_back({{t.a.x + (t.b.x - t.a.x) * k / n, t.a.y + (t.b.y - t.a.y) * k / n}, t.width / 2, li, li});
+          }
+          for (const auto& v : r.vias) spots.push_back({v.pos, v.size / 2, v.layer_top, v.layer_bottom});
+        } else {
+          ++out.no_bare_route;
+          if (log) log("repair: " + label + ": no route with the other nets' copper off the board: lifting copper cannot close it");
+        }
+      }
+      auto on_layers = [&](const CopperGraph::Ref& x, int top, int bottom) {
+        if (x.kind == 0) {
+          const int l = cur.tracks[static_cast<std::size_t>(x.index)].layer;
+          return l >= top && l <= bottom;
+        }
+        const auto& v = cur.vias[static_cast<std::size_t>(x.index)];
+        return v.layer_top <= bottom && v.layer_bottom >= top;
+      };
+      struct Plan {
+        bool along_route;
+        double r_mm;
+      };
+      std::vector<Plan> plans;
+      if (!spots.empty())
+        for (const double r : ro.route_radii_mm) plans.push_back({true, r});
+      if (ro.select != "route")
+        for (const double r : ro.radii_mm) plans.push_back({false, r});
       int last_count = -1;
-      for (const double r_mm : ro.radii_mm) {
-        // The window: every branch of another net with copper within r of an end of the connection, and what lifting them leaves dead.
+      bool last_kind = false;
+      for (const auto& [along, r_mm] : plans) {
+        if (along != last_kind) last_count = -1, last_kind = along;
+        // The window: every branch of another net with copper within r of an end of the connection (or of its bare-board route), and
+        // what lifting them leaves dead.
         graph->clear_lifted();
         RepairStep st;
         st.conn = label;
+        st.along_route = along;
         st.radius_mm = r_mm;
         st.open_before = cur_open;
         std::vector<CopperGraph::Ref> lifted;
-        for (const auto& [e, half] : ends)
-          for (const auto& seed : graph->near(e, half + static_cast<Coord>(r_mm * 1e6))) {
+        auto lift_near = [&](Point e, Coord reach, int top, int bottom) {
+          for (const auto& seed : graph->near(e, reach)) {
             const NetId n = graph->net(seed);
             if (n <= 0 || n == own || keep.count(n) || graph->fixed(seed) || graph->lifted(seed)) continue;
+            if (top >= 0 && !on_layers(seed, top, bottom)) continue;
             const auto br = graph->branch(seed);
             if (br.empty()) continue;
             bool fresh = false;
@@ -346,6 +427,12 @@ RepairResult repair_open(const model::Board& base, const model::DesignRules& rul
               if (!graph->lifted(x)) graph->set_lifted(x, true), lifted.push_back(x), fresh = true;
             st.pieces += fresh ? 1 : 0;
           }
+        };
+        const Coord r_nm = static_cast<Coord>(r_mm * 1e6);
+        if (along)
+          for (const auto& sp : spots) lift_near(sp.p, sp.half + r_nm, sp.top, sp.bottom);
+        else
+          for (const auto& [e, half] : ends) lift_near(e, half + r_nm, -1, -1);
         const auto extra = graph->prune(lifted);
         lifted.insert(lifted.end(), extra.begin(), extra.end());
         if (lifted.empty() || static_cast<int>(lifted.size()) == last_count) continue;  // the same window as before: nothing new to try
@@ -367,23 +454,27 @@ RepairResult repair_open(const model::Board& base, const model::DesignRules& rul
           if (!t_lift[i]) step.tracks.push_back(cur.tracks[i]);
         for (std::size_t i = 0; i < cur.vias.size(); ++i)
           if (!v_lift[i]) step.vias.push_back(cur.vias[i]);
-        route::RouterOptions o = opt;
-        o.work_budget = ro.step_work;
-        o.sink = nullptr;
-        o.buffer_events = false;
-        o.deadline = nullptr;
-        o.warm = nullptr;
-        o.start_routes = nullptr;
-        o.warm_tracks.clear();
-        o.warm_vias.clear();
-        o.state_in.clear();
-        o.state_out.clear();
-        o.keep_final = false;
-        o.live_name = "repair";
-        if (u.pad_b >= 0) o.priority.insert(o.priority.begin(), {u.a, u.b});
-        const route::RouteResult r = route::Router(step, rules, o).run();
-        st.work = r.expansions;
-        out.work += r.expansions;
+        route::RouterOptions o = step_options();
+        std::set<std::string> left_out;  // focus: the nets this attempt does not route
+        if (ro.focus) {
+          std::set<NetId> in{own};
+          for (const auto& x : lifted) in.insert(graph->net(x));
+          for (const auto& n : base.nets)
+            if (n.id > 0 && !n.name.empty() && !in.count(n.id)) {
+              left_out.insert(n.name);
+              if (std::find(o.skip_nets.begin(), o.skip_nets.end(), n.name) == o.skip_nets.end()) o.skip_nets.push_back(n.name);
+            }
+        }
+        route::RouteResult r;
+        if (ro.variants > 1) {
+          auto pr = route::route_portfolio(step, rules, o, ro.variants, {}, ro.threads);
+          for (const auto& w : pr.work) st.work += w.total().expansions;
+          r = std::move(pr.best);
+        } else {
+          r = route::Router(step, rules, o).run();
+          st.work = r.expansions;
+        }
+        out.work += st.work;
         model::Board after = step;
         after.tracks.insert(after.tracks.end(), r.tracks.begin(), r.tracks.end());
         after.vias.insert(after.vias.end(), r.vias.begin(), r.vias.end());
@@ -392,7 +483,7 @@ RepairResult repair_open(const model::Board& base, const model::DesignRules& rul
         st.split = splits(cur_root, after_root);
         st.kept = !st.split && st.open_after < cur_open;
         if (log)
-          log("repair: " + label + ": " + fmt_mm(r_mm) + " mm window, " + std::to_string(st.pieces) + " branches lifted (" + std::to_string(st.tracks) +
+          log("repair: " + label + ": " + fmt_mm(r_mm) + (along ? " mm along its bare-board route, " : " mm window, ") + std::to_string(st.pieces) + " branches lifted (" + std::to_string(st.tracks) +
               " tracks, " + std::to_string(st.vias) + " vias); open " + std::to_string(cur_open) + " -> " + std::to_string(st.open_after) +
               (st.split ? ", joined pads came apart" : "") + (st.kept ? " (kept)" : " (not kept)"));
         out.steps.push_back(st);
@@ -414,8 +505,21 @@ RepairResult repair_open(const model::Board& base, const model::DesignRules& rul
         nv.insert(nv.end(), r.vias.begin(), r.vias.end());
         out.tracks = std::move(nt);
         out.vias = std::move(nv);
-        out.unrouted = r.unrouted;
-        out.failures = r.failures;
+        if (ro.focus) {  // the nets left out keep their open connections and explanations
+          std::vector<route::RouteResult::Unrouted> un;
+          std::vector<std::string> fl;
+          for (const auto& x : out.unrouted)
+            if (left_out.count(x.net)) un.push_back(x);
+          for (const auto& f : out.failures)
+            if (left_out.count(f.substr(0, f.find(": ")))) fl.push_back(f);
+          un.insert(un.end(), r.unrouted.begin(), r.unrouted.end());
+          fl.insert(fl.end(), r.failures.begin(), r.failures.end());
+          out.unrouted = std::move(un);
+          out.failures = std::move(fl);
+        } else {
+          out.unrouted = r.unrouted;
+          out.failures = r.failures;
+        }
         out.changed = true;
         cur = current();
         cur_root = pad_roots(cur);

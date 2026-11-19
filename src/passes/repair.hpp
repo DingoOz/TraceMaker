@@ -26,11 +26,24 @@ struct RepairOptions {
   int max_conns = 64;                     // open connections tried at most (the first ones of the router's list)
   double time_limit_s = 0;                // > 0: no attempt starts after this many seconds (safety only; work decides)
   std::vector<model::NetId> keep_nets;    // nets whose copper is never lifted (coupled pairs, bus members)
+  // Where the copper to lift is looked for (doc 20 §2.11, D195). "ends": round the two ends of the open connection (the radii above).
+  // "route": along the route the connection takes with every other net's unlocked copper off the board (one more routing run per
+  // connection; a connection with no such route is left alone), on the layers that route uses. "both": along the route, then the ends.
+  std::string select = "ends";
+  std::vector<double> route_radii_mm{0.2, 1};  // "route": distance from that route's copper, tried in turn
+  // An attempt routes only the open connection's net and the nets it lifted copper of; every other net is left as it is (its open
+  // connections too). Without it each attempt routes everything that is open, and on a board with many open connections the attempt's
+  // budget goes to those: PCBench d20 with two layers added, 129 open, 126 attempts, every one ended with more open than before.
+  bool focus = false;
+  // > 1: every attempt runs this many portfolio variants (different orders and costs) on `threads` threads and takes the best; each has
+  // `step_work`. 1 = one router with the job's options, as before.
+  int variants = 1, threads = 0;
 };
 
 // One routing attempt: an open connection, a window radius, what it lifted, and whether it was kept.
 struct RepairStep {
   std::string conn;  // "NET A-B"
+  bool along_route = false;  // the window follows the connection's route on the bare board, not its ends
   double radius_mm = 0;
   int pieces = 0, tracks = 0, vias = 0;  // copper lifted (pieces: branches)
   int open_before = 0, open_after = 0;   // open connections of the board (pads not joined), before and after the attempt
@@ -47,6 +60,7 @@ struct RepairResult {
   std::vector<model::Track> tracks;
   std::vector<model::Via> vias;
   int open_before = 0, open_after = 0;
+  int no_bare_route = 0;  // "route": connections with no route even with the other nets' unlocked copper off the board
   // Of the last kept attempt (pad indices of `base`): the router's open connections and its explanations.
   std::vector<route::RouteResult::Unrouted> unrouted;
   std::vector<std::string> failures;

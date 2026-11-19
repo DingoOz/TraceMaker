@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+"""The ladder on top of the 60 M default-rules result (ctl60), with focused repair attempts: c60fit (fitted rules), c60mask (+ pad masks open),
+c60lay2, c60lay4 (+2, +4 copper layers). Each rung starts from the output of the rung before and is skipped when nothing is open."""
+import json,os,sys,subprocess,pathlib,time,concurrent.futures as cf
+SP=pathlib.Path(__file__).resolve().parent
+ROOT='ROOT/'
+FIX=ROOT+'bench/data/freerouting/scripts/benchmark/fixtures/PCBench/'
+OUT=pathlib.Path(ROOT+'bench/results/ontop-2026-11-19')
+TM=str(SP/'tm-fo')
+boards=[l.strip() for l in open(ROOT+'bench/sets/pcbench-bd-fail.txt') if l.strip() and not l.startswith('#')]
+REP=['--repair','on','--repair-select','both','--repair-focus','--repair-conns','300']
+def run(job):
+    i,b=job; out=[]
+    prev='ctl60'; L0=None
+    for arm in ('c60fit','c60mask','c60lay2','c60lay4'):
+        pj=json.load(open(OUT/b/prev/'out.json'))
+        if L0 is None: L0=pj['copper_layers']
+        if pj['open']==0: break
+        d=OUT/b/arm; d.mkdir(parents=True,exist_ok=True)
+        if not (d/'out.json').exists():
+            extra=['--fit-rules-from',FIX+b+'/unrouted.kicad_pcb']+REP
+            if arm!='c60fit': extra+=['--soft-pad-masks']
+            if arm=='c60lay2': extra+=['--copper-layers',str(L0+2)]
+            if arm=='c60lay4': extra+=['--copper-layers',str(L0+4)]
+            cmd=[TM,'route',str(OUT/b/prev/'out.kicad_pcb'),'-o',str(d/'out.kicad_pcb'),'--json',str(d/'out.json'),'--no-kb','--no-gpu','--work','20000000','--time','3600',
+                 '--variants','8','--threads','8','--seed','1','--view','--view-port',str(10400+i)]+extra
+            (d/'cmd.txt').write_text(' '.join(cmd))
+            t0=time.time(); r=subprocess.run(cmd,stdout=open(d/'log.txt','w'),stderr=subprocess.STDOUT)
+            res=dict(board=b,arm=arm,exit=r.returncode,seconds=round(time.time()-t0))
+            try:
+                j=json.load(open(d/'out.json')); res.update(connections=j['connections'],routed=j['routed'],open=j['open'],layers=j['copper_layers'])
+            except Exception as e: res['err']=str(e)
+            with open(OUT/'results.jsonl','a') as f: f.write(json.dumps(res)+'\n')
+            out.append(res)
+            if 'err' in res: break
+        prev=arm
+    return out
+with cf.ThreadPoolExecutor(5) as ex:
+    for r in ex.map(run,list(enumerate(boards))): print(r,flush=True)

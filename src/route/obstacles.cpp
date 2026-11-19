@@ -238,6 +238,7 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
       // covers both measurements.
       a.margin = mm < 0 ? std::min<Coord>(std::max<Coord>(b_.pad_to_mask_clearance, 0) + (-mm) / 5, std::max<Coord>(b_.pad_to_mask_clearance, 600'000)) : mm;
       a.net = pad.net;
+      a.pad = true;
       for (const auto& sh : a.shapes) a.box.add(sh.box);
       a.box = a.box.inflated(a.margin);
       // Does the opening already expose another net's pad copper on this side's outer layer?
@@ -872,6 +873,31 @@ int Obstacles::bridged_mask_openings() const {
   return n;
 }
 
+int Obstacles::mask_openings_over_tracks() const {
+  int n = 0;
+  for (int side = 0; side < 2; ++side) {
+    const int outer = side == 0 ? 0 : b_.copper_count() - 1;
+    std::vector<std::uint8_t> hit(apertures_[side].size(), 0);
+    auto probe = [&](const Shape& s, model::NetId net) {
+      agrid_[side]->query(s.box.inflated(1), [&](int id) {
+        const auto& a = apertures_[side][static_cast<std::size_t>(id)];
+        if (!a.pad || a.net == net || hit[static_cast<std::size_t>(id)]) return;
+        for (const auto& u : a.shapes)
+          if (geom::closer_than(s, u, a.margin)) {
+            hit[static_cast<std::size_t>(id)] = 1;
+            return;
+          }
+      });
+    };
+    for (const auto& t : b_.tracks)
+      if (t.net > 0 && t.layer == outer) probe(Shape::segment(t.a, t.b, t.width / 2), t.net);
+    for (const auto& v : b_.vias)
+      if (v.net > 0 && v.layer_top <= outer && v.layer_bottom >= outer) probe(Shape::point(v.pos, v.size / 2), v.net);
+    for (const auto h : hit) n += h;
+  }
+  return n;
+}
+
 int Obstacles::mask_graphics_over_pads() const {
   int n = 0;
   for (int side = 0; side < 2; ++side) {
@@ -902,6 +928,7 @@ void Obstacles::aperture_codes(const Shape& s, int layer, bool via_probe, const 
     agrid_[side]->query(s.box.inflated(extra + 1), [&](int id) {
       const auto& a = apertures_[side][static_cast<std::size_t>(id)];
       if (a.bridged && soft_bridged_masks_) return;
+      if (a.pad && soft_pad_masks_) return;
       for (const auto& u : a.shapes)
         if (geom::closer_than(s, u, a.margin + extra)) {
           hit(a.net);

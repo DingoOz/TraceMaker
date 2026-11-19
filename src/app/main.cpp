@@ -256,6 +256,18 @@ int cmd_fit_rules(const std::string& path, const std::string& from, const std::s
     std::printf("  %-34s %.4g mm -> %.4g mm  (%d %s)\n", c.rule.c_str(), tmk::nm_to_mm(c.from), tmk::nm_to_mm(c.to), c.evidence, c.note.empty() ? "violations" : c.note.c_str());
     out["changes"].push_back({{"rule", c.rule}, {"from_mm", tmk::nm_to_mm(c.from)}, {"to_mm", tmk::nm_to_mm(c.to)}, {"evidence", c.evidence}, {"note", c.note}});
   }
+  {  // The mask openings, as `route --fit-rules` judges them (route/obstacles.hpp).
+    auto own = tmk::io::read_board_file(path).board;
+    auto ref_board = ref.board;
+    const tmk::route::Obstacles obs(own, rules), ref_obs(ref_board, rules);
+    const int bridged = obs.bridged_mask_openings(), drawn = obs.mask_graphics_over_pads(), crossed = ref_obs.mask_openings_over_tracks();
+    if (bridged > 0) std::printf("  %d pad mask openings already expose another net's pad: they would no longer keep tracks out\n", bridged);
+    if (drawn > 0) std::printf("  %d mask openings drawn as graphics lie over pads: mask graphics would no longer keep tracks out\n", drawn);
+    if (crossed > 0) std::printf("  %d pad mask openings have another net's track or via in them on the reference%s\n", crossed, crossed >= tmk::drc::FitOptions{}.min_evidence ? ": pad openings would no longer keep tracks out" : " (too few: nothing relaxed)");
+    out["bridged_mask_openings"] = bridged;
+    out["mask_graphics_over_pads"] = drawn;
+    out["mask_openings_over_tracks"] = crossed;
+  }
   if (!json_out.empty()) std::ofstream(json_out) << out.dump(1) << "\n";
   return 0;
 }
@@ -1272,6 +1284,7 @@ static int run_main(int argc, char** argv) {
   route->add_option("--fanout-heads-min-pins", ropt.fanout_heads_min_pins, "With --fanout-heads: perimeter pins a package needs (default 32)")->group("");
   route->add_flag("--fanout-hold", ropt.fanout_hold, "Escape plan: through the strict first pass, each open pin's straight corridor is held by a placeholder track of its net, so other nets route round it; released once the pin is routed and before negotiation")->group("");
   route->add_flag("--escape-stubs", ropt.escape_stubs, "Escape plan: a pin offers the end of its straight corridor (see --escape-length) as a start point, one exact off-lattice segment at a discount: parallel escapes at the pad pitch")->group("");
+  route->add_flag("--soft-pad-masks", ropt.soft_pad_masks, "Pad solder-mask openings do not keep other nets' tracks and vias out; KiCad reports solder_mask_bridge where one lies in an opening (judgement; --fit-rules-from turns it on when the reference does it; doc 20 §2.13)");
   route->add_flag("--soft-mask-graphics", ropt.soft_mask_graphics, "Solder-mask openings drawn as footprint graphics (solder jumpers, a MEMS microphone's pad group) do not keep tracks and vias out; KiCad flags what then lies in them (judgement)")->group("");
   route->add_flag("--soft-copper-graphics", ropt.soft_copper_graphics, "Board copper graphics (polygons on a copper layer, e.g. an EasyEDA import's pours) take the net of the one net whose pads, tracks or vias they touch: that net may touch them, no other (default: net-less copper nothing may touch)");
   route->add_flag("--via-drops", ropt.via_drops, "Pins of dense packages may drop to a via a little way out, off the lattice, then go on on the other layer (short pin-to-via drops)")->group("");
@@ -1338,6 +1351,14 @@ static int run_main(int argc, char** argv) {
   route->add_option("--repair-work", r_job.repair_opt.step_work, "Repair: work budget of each attempt in search expansions (default 3000000)");
   route->add_option("--repair-branches", r_job.repair_opt.max_branches, "Repair: a window that would lift more branches (the tracks and vias of one net between two pads or junctions) stops growing (default 64)");
   route->add_option("--repair-conns", r_job.repair_opt.max_conns, "Repair: open connections tried at most (default 64)");
+  route->add_flag("--repair-focus", r_job.repair_opt.focus, "Repair: an attempt routes only the open connection's net and the nets it lifted copper of (default: everything that is open)");
+  route->add_option("--repair-variants", r_job.repair_opt.variants, "Repair: portfolio variants run for each attempt, the best taken (default 1: one router with the run's options)")->check(CLI::Range(1, 64));
+  route->add_option("--repair-select", r_job.repair_opt.select,
+                    "Repair: where the copper to lift is looked for. ends (default): round the two ends of the open connection; route: along the route "
+                    "the connection takes with the other nets' unlocked copper off the board (one more routing run per connection); both: route, then ends")
+      ->check(CLI::IsMember({"ends", "route", "both"}));
+  route->add_option("--repair-route-mm", r_job.repair_opt.route_radii_mm, "Repair, --repair-select route or both: distances from that route, tried in turn (default 0.2,1)")
+      ->delimiter(',');
   route->add_option("--rescue-mode", r_job.rescue_mode,
                     "How the rescue routes again with relax: warm (from the plain run's routes), fresh (from nothing) or both (warm, then fresh "
                     "while connections are open; each pass on its own budget, kept only if better; default both; doc 05 §71)")
@@ -1394,6 +1415,16 @@ static int run_main(int argc, char** argv) {
   route->add_option("--copper-layers", r_job.copper_layers, "Route with this many copper layers (even): inner layers are added, or empty ones removed, in the output too")
       ->check(CLI::Range(2, 32));
   std::vector<int> r_try_layers;
+  bool r_finish = false, r_finish_masks = false, r_finish_fresh = false;
+  std::vector<int> r_finish_layers;
+  route->add_flag("--finish", r_finish,
+                  "Rungs towards a complete board, each on top of the one before (what is routed stays): the run as given; then the open connections "
+                  "with the rules fitted to the board's own copper (--fit-rules, or --fit-rules-from when given) and repair windows; then one rung per "
+                  "--finish-layers entry. Stops at the first rung with nothing open; the summary's \"finish\" lists what each rung relaxed (doc 20 §2.12)");
+  route->add_flag("--finish-fresh", r_finish_fresh, "With --finish: a rung after the fitted rules that routes the board as given with the fitted rules from the start, kept when it leaves fewer open");
+  route->add_flag("--finish-masks", r_finish_masks, "With --finish: a rung after the fitted rules where pad solder-mask openings no longer keep tracks out (--soft-pad-masks)");
+  route->add_option("--finish-layers", r_finish_layers, "With --finish: later rungs that add this many copper layers to the board's count (e.g. 2,4); none by default")
+      ->delimiter(',');
   route->add_option("--try-layers", r_try_layers,
                     "Layer-count advisor: route with each count (e.g. 2,4,6), fewest first, stop at the first that completes and write that board; "
                     "the summary's \"layers\" lists every count tried")
@@ -1881,6 +1912,14 @@ static int run_main(int argc, char** argv) {
         if (o->get_name() == "--view-token") v = "(not recorded)";  // it opens the viewer to whoever reads a shared summary or report
         if (o->get_name() == "--view-embed") v = "(not recorded)";  // the pages allowed to embed the viewer: the machine's addresses
         job.options_given.push_back({{"name", o->get_name()}, {"value", v.empty() ? std::string("on") : v}});
+      }
+      if (r_finish) {
+        if (!r_try_layers.empty()) throw std::invalid_argument("--finish and --try-layers: give one (--finish-layers adds layers as later rungs)");
+        job.log = [](const std::string& line) {
+          std::printf("%s\n", line.c_str());
+          std::fflush(stdout);
+        };
+        return tmk::app::run_finish(std::move(job), r_finish_layers, r_finish_masks, r_finish_fresh).exit_code();
       }
       if (!r_try_layers.empty()) {
         if (job.copper_layers > 0) throw std::invalid_argument("--try-layers and --copper-layers: give one");

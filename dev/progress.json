@@ -1079,8 +1079,8 @@
       "id": "M27",
       "title": "Boards that never complete: tell modelling from search, and fit the rules",
       "status": "in_progress",
-      "gate": "G2: of the 33 failing PCBench boards from nothing at 20 M, >= 6 complete with the fit against 3 without, KiCad 0 unconnected and no short (met: 6 own pads, 8 designer's layout). G4: beats equal extra budget on the search boards. quick byte-identical with options off",
-      "deliverables": "Designer oracle, route --fit-rules (D194), tracemaker chains, records bench/records/oracle-2026-11, doc 20 \u00a71.1 and \u00a72.8-\u00a72.10",
+      "gate": "G2: of the 33 failing PCBench boards from nothing at 20 M, >= 6 complete with the fit against 3 without, KiCad 0 unconnected and no short (met: 6 own pads, 8 designer's layout). G4: beats equal extra budget on the search boards (not met: 30-47 of 887 closed against 159 for 3x budget). G7: 19 of 33 have a complete output (3 before); best arm per board 245 of 890 open. quick byte-identical with options off",
+      "deliverables": "Designer oracle, route --fit-rules (D194), tracemaker chains, records bench/records/oracle-2026-11, doc 20 \u00a71.1 and \u00a72.8-\u00a72.10, repair along the route (D195), route --finish (D196), pad mask openings from a reference (D197), records bench/records/finish-2026-11, doc 20 \u00a72.11-\u00a72.13",
       "tasks": [
         {
           "text": "G1 designer oracle on the never-complete boards: search boards and modelling boards",
@@ -1095,8 +1095,8 @@
           "done": true
         },
         {
-          "text": "G4 joint re-route of an open connection with its minimal blockers as a router step, against equal extra budget",
-          "done": false
+          "text": "G4 joint re-route as a repair selection (--repair-select route|both, --repair-focus, --repair-variants; D195): 30-47 of 887 closed, no board complete; gate not met, not a default step",
+          "done": true
         },
         {
           "text": "G5 escapes with no slack laid off the lattice (sizif QFN supply pins)",
@@ -1107,7 +1107,11 @@
           "done": false
         },
         {
-          "text": "G7 the fit as a rung of the default ladder, keeping the better result",
+          "text": "G7 route --finish (D196): rungs on top of one another, with --finish-fresh, --finish-masks, --finish-layers; one command on 29 boards 881 -> 219 open, 8 complete (Aleste 250 -> 0); pad masks from a reference (D197): memsarray complete",
+          "done": true
+        },
+        {
+          "text": "G8 what the ladder leaves: pins walled in by earlier rungs (d20), boards one or two short, the from-nothing order as a rung; finish the stopped runs (ladder on 60 M, focused repair on 33 boards)",
           "done": false
         }
       ]

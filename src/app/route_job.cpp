@@ -338,7 +338,9 @@ RouteJobResult run_route_job(RouteJob job) {
     drc::FitOptions fo;
     fo.clearance_floor = static_cast<Coord>(std::llround(job.fit_clearance_floor_mm * 1e6));
     fo.edge_floor = static_cast<Coord>(std::llround(job.fit_edge_floor_mm * 1e6));
-    const auto fit = job.fit_rules_from.empty() ? drc::fit_rules(lb.board, rules, fo) : drc::fit_rules(io::read_board_file(job.fit_rules_from).board, rules, fo);
+    std::optional<model::Board> fit_ref;
+    if (!job.fit_rules_from.empty()) fit_ref = io::read_board_file(job.fit_rules_from).board;
+    const auto fit = fit_ref ? drc::fit_rules(*fit_ref, rules, fo) : drc::fit_rules(lb.board, rules, fo);
     fit_summary = {{"reference", job.fit_rules_from.empty() ? job.in : job.fit_rules_from}, {"violations", fit.violations}, {"changes", nlohmann::json::array()}};
     for (const auto& c : fit.changes) {
       fit_summary["changes"].push_back({{"rule", c.rule}, {"from_mm", nm_to_mm(c.from)}, {"to_mm", nm_to_mm(c.to)}, {"evidence", c.evidence}, {"note", c.note}});
@@ -351,13 +353,19 @@ RouteJobResult run_route_job(RouteJob job) {
       fit_summary["bridged_mask_openings"] = bridged;
       log(fmt("rule fit: %d pad solder-mask openings already expose another net's pad: they no longer keep tracks out (KiCad reports solder_mask_bridge there, as on the board itself)", bridged));
     }
+    // Pad openings the reference's own tracks run through (route/obstacles.hpp, set_soft_pad_masks); a few are slips, not a practice.
+    if (const int crossed = [&] { model::Board rb = fit_ref ? *fit_ref : lb.board; return route::Obstacles(rb, rules).mask_openings_over_tracks(); }(); crossed >= fo.min_evidence) {
+      opt.soft_pad_masks = true;
+      fit_summary["mask_openings_over_tracks"] = crossed;
+      log(fmt("rule fit: %d pad solder-mask openings have another net's track or via in them on the reference: pad openings no longer keep tracks out (KiCad reports solder_mask_bridge there, as on the reference)", crossed));
+    }
     // Openings drawn as graphics over pads (solder jumpers; doc 05 §48, D127): the existing --soft-mask-graphics, turned on by the evidence.
     if (const int drawn = fit_obs.mask_graphics_over_pads(); drawn > 0 && !opt.soft_mask_graphics) {
       opt.soft_mask_graphics = true;
       fit_summary["mask_graphics_over_pads"] = drawn;
       log(fmt("rule fit: %d solder-mask openings drawn as graphics lie over pads: mask graphics no longer keep tracks out (--soft-mask-graphics)", drawn));
     }
-    if (fit.changes.empty() && !opt.soft_bridged_masks && !opt.soft_mask_graphics) log("rule fit: the reference's copper breaks none of the fitted rules; nothing relaxed");
+    if (fit.changes.empty() && !opt.soft_bridged_masks && !opt.soft_mask_graphics && !opt.soft_pad_masks) log("rule fit: the reference's copper breaks none of the fitted rules; nothing relaxed");
     else if (!fit.changes.empty()) log(fmt("rule fit: %zu values relaxed; the output breaks the board's stated rules where they were (KiCad's DRC will report it)", fit.changes.size()));
   }
   // Zones without a fill (a generated board, or one saved before filling; doc 05 §54): left unfilled, the router does not see the planes,
@@ -1210,6 +1218,7 @@ RouteJobResult run_route_job(RouteJob job) {
               for (const double x : ro.radii_mm) r += (r.empty() ? "" : ", ") + fmt("%g", x);
               return r;
             }().c_str(), ro.step_work));
+    ro.threads = job.threads;
     const auto rep = passes::repair_open(*route_board, rules, res, opt, ro, log);
     all_work.phase[static_cast<std::size_t>(route::WorkPhase::Cleanup)].expansions += rep.work;
     repair_summary = rep.summary();
@@ -2162,6 +2171,101 @@ RouteJobResult run_layer_advisor(RouteJob job, std::vector<int> counts) {
                : fmt("layers: no count tried completes; %d copper layers left the fewest open (%d)%s", best_count, best_open,
                      final_out.empty() ? "" : ("; written to " + final_out).c_str()));
   best->summary["layers"] = {{"tried", tried}, {"chosen", best_count}, {"complete", complete}};
+  best->summary["run"]["output"] = final_out;
+  best->summary["run"]["input"] = job.in;
+  if (!final_items.empty()) std::ofstream(final_items) << best->items.dump();
+  if (!final_json.empty()) std::ofstream(final_json) << best->summary.dump(1);
+  return std::move(*best);
+}
+
+RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool masks_rung, bool fresh_rung) {
+  namespace fs = std::filesystem;
+  auto log = [&](const std::string& line) {
+    if (job.log) job.log(line);
+  };
+  if (job.out.empty()) throw std::invalid_argument("--finish: needs --output (each rung starts from the board the rung before wrote)");
+  if (job.copper_layers > 0 && !extra_layers.empty()) throw std::invalid_argument("--finish-layers and --copper-layers: give one");
+  std::sort(extra_layers.begin(), extra_layers.end());
+  extra_layers.erase(std::unique(extra_layers.begin(), extra_layers.end()), extra_layers.end());
+  const std::string final_out = job.out, final_json = job.json_out, final_items = job.items_out;
+  const fs::path stem = fs::path(final_out).replace_extension();
+  auto tmp_of = [&](int k) { return stem.string() + fmt(".finish-%d.kicad_pcb", k); };
+  auto remove_tmp = [&](const std::string& pcb) {
+    if (pcb.empty()) return;
+    for (const char* ext : {".kicad_pcb", ".kicad_pro", ".kicad_prl", ".kicad_dru"}) fs::remove(fs::path(pcb).replace_extension(ext));
+  };
+  const int layers0 = io::read_board_file(job.in).board.copper_count();
+
+  struct Rung {
+    std::string name;
+    bool fit = false;
+    int layers = 0;  // 0 = as the board
+    bool masks = false;
+    bool fresh = false;  // from the board as given, not on top of the rung before
+  };
+  std::vector<Rung> rungs{{"as given", false, 0, false}, {"fitted rules", true, 0, false}};
+  // On top is not always the better order: with other rules the whole board may route where the earlier copper is in the way (PCBench
+  // PCIE: 0 open fitted from nothing, 1-2 on top). Kept, like every rung, only when fewer connections are open.
+  if (fresh_rung) rungs.push_back({"fitted rules, from the board as given", true, 0, false, true});
+  if (masks_rung) rungs.push_back({"fitted rules, pad mask openings open to tracks", true, 0, true});
+  for (const int add : extra_layers)
+    if (add > 0) rungs.push_back({fmt("fitted rules%s, %d copper layers", masks_rung ? ", pad mask openings open to tracks" : "", layers0 + add), true, layers0 + add, masks_rung});
+
+  nlohmann::json rows = nlohmann::json::array();
+  std::optional<RouteJobResult> best;
+  std::string best_tmp;
+  int best_open = 0;
+  for (std::size_t k = 0; k < rungs.size(); ++k) {
+    const Rung& rg = rungs[k];
+    RouteJob j = job;
+    j.out = tmp_of(static_cast<int>(k));
+    j.json_out.clear();
+    j.items_out.clear();
+    j.hold = false;
+    if (best && !rg.fresh) {
+      j.in = best_tmp;
+      j.reroute = false;  // what the rungs before routed stays
+      j.warm_pcb.clear();
+    }
+    if (rg.fit) {
+      // Fitted to the board as given, never to the copper an earlier rung laid: the router's own tracks are not evidence of what the designer accepted.
+      if (j.fit_rules_from.empty()) j.fit_rules_from = job.in;
+      j.repair = "on";
+      j.repair_opt.select = "both";
+      j.repair_opt.focus = true;
+    }
+    if (rg.layers > 0) j.copper_layers = rg.layers;
+    if (rg.masks) j.opt.soft_pad_masks = true;
+    j.log = [&, k](const std::string& line) { log(fmt("[rung %zu] ", k + 1) + line); };
+    log(fmt("finish: rung %zu of %zu: %s%s", k + 1, rungs.size(), rg.name.c_str(), best ? fmt(" (%d open)", best_open).c_str() : ""));
+    RouteJobResult r = run_route_job(std::move(j));
+    const int open = r.unconnected_after_refill >= 0 ? r.unconnected_after_refill : r.result.connections - r.result.routed;
+    const bool kept = !best || open < best_open;
+    nlohmann::json row = {{"rung", rg.name}, {"open_before", best ? nlohmann::json(best_open) : nlohmann::json()}, {"open_after", open}, {"kept", kept},
+                          {"copper_layers", rg.layers > 0 ? rg.layers : (best ? best->summary.value("copper_layers", layers0) : layers0)},
+                          {"seconds", r.summary.value("seconds", 0.0)}};
+    if (r.summary.contains("fitted_rules")) row["fitted_rules"] = r.summary["fitted_rules"];
+    if (r.summary.contains("repair")) row["repair"] = {{"open_before", r.summary["repair"].value("open_before", 0)}, {"open_after", r.summary["repair"].value("open_after", 0)}};
+    rows.push_back(row);
+    log(fmt("finish: rung %zu (%s): %d open%s", k + 1, rg.name.c_str(), open, kept ? "" : " (no better: discarded)"));
+    const std::string tmp = tmp_of(static_cast<int>(k));
+    if (kept) {
+      remove_tmp(best_tmp);
+      best = std::move(r);
+      best_tmp = tmp;
+      best_open = open;
+      // The output is written after every rung that is kept: a ladder stopped part-way (time, memory) leaves its best board, not nothing.
+      fs::copy_file(best_tmp, final_out, fs::copy_options::overwrite_existing);
+      copy_project_files(job.in, final_out);
+    } else {
+      remove_tmp(tmp);
+    }
+    if (best_open == 0) break;
+  }
+  remove_tmp(best_tmp);
+  log(best_open == 0 ? fmt("finish: complete after %zu rung%s; written to %s", rows.size(), rows.size() == 1 ? "" : "s", final_out.c_str())
+                     : fmt("finish: %d open after every rung; written to %s", best_open, final_out.c_str()));
+  best->summary["finish"] = {{"rungs", rows}, {"complete", best_open == 0}, {"open", best_open}};
   best->summary["run"]["output"] = final_out;
   best->summary["run"]["input"] = job.in;
   if (!final_items.empty()) std::ofstream(final_items) << best->items.dump();

@@ -107,6 +107,13 @@ class Obstacles {
   // front finger's opening, so no track can leave any of them (PCBench fifogfx_c64cart: 40 of 104 connections, open on the bare
   // board); the designer's layout has one solder_mask_bridge per finger there. Off by default.
   void set_soft_bridged_masks(bool on) { soft_bridged_masks_ = on; }
+  // Rule fit from a reference layout (doc 20 §2.13, D197): no pad's solder-mask opening keeps tracks or vias out. Turned on when the
+  // reference itself runs other nets' tracks through pad openings (mask_openings_over_tracks): a board whose pads open 0.2 mm wider than
+  // their copper leaves no way between the pads of a MEMS microphone or a fine-pitch part that the designer's own tracks take
+  // (PCBench memsarray_mems_modules). KiCad reports solder_mask_bridge there, as on the reference. Off by default.
+  void set_soft_pad_masks(bool on) { soft_pad_masks_ = on; }
+  // Pad openings (both sides) that a track or via of another net of this board lies in, on that side's outer layer.
+  int mask_openings_over_tracks() const;
   // Pad openings that already expose another net's pad (both sides).
   int bridged_mask_openings() const;
   // Solder-mask openings drawn as graphics that already lie over a pad with a net (a solder jumper's bridge over its two pads): the
@@ -204,9 +211,11 @@ class Obstacles {
     Coord margin = 0;
     model::NetId net = 0;
     geom::Box box;
+    bool pad = false;      // a pad's opening (not one drawn as a graphic)
     bool bridged = false;  // another net's pad copper already lies in the opening on this side (a card-edge finger behind another)
   };
   bool soft_bridged_masks_ = false;
+  bool soft_pad_masks_ = false;
   std::vector<Aperture> apertures_[2];               // pad solder-mask openings per side
   std::unique_ptr<index::UniformGrid> agrid_[2];
   std::vector<std::pair<int, geom::Shape>> texts_;   // copper text boxes (copper index, rectangle)
