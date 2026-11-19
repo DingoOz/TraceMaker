@@ -16,7 +16,7 @@ Follows `bench/records/oracle-2026-11` (rule fit, chain measurement); the arms `
 - Nine designer layouts run tracks through other nets' pad solder-mask openings (KiCad reports 3 to 118 `solder_mask_bridge` on them). Fitted
   from the designer's layout (D197), memsarray completes for the first time, sizif goes 38 → 26, LFK78 31 → 27.
 - `route --finish --finish-masks --finish-layers 2,4`, one command per board, 29 of the 30 boards open at base: **881 → 219 open, 8 complete**
-  (127 of the 219 are d20). Its totals are better than the best of the hand-run arms without the 60 M runs.
+  (127 of the 219 are d20).
 - Best arm per board, no designer layout needed: **890 → 245 open, 16 of 33 complete** (3 before). With the designer's layout as reference:
   233 open, 17 complete. 129 of the 245 are d20.
 - KiCad 10.0.6 on the newly complete outputs: 0 unconnected on 12 of 13 checked (MicroMaple's `toplay4` output has 1 unconnected item; its
