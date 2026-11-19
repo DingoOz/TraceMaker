@@ -1,0 +1,65 @@
+{
+ "baseline": {
+  "connections": 2,
+  "open": 2,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "srj20-again/sample070/r2/a1/out.kicad_pcb",
+ "connections": [
+  {
+   "a": "bga_component.11",
+   "b": "TP047.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 6,
+   "first_nets": [
+    "bga_conn_062",
+    "bga_conn_019",
+    "bga_conn_040",
+    "bga_conn_001",
+    "bga_conn_010",
+    "bga_conn_056"
+   ],
+   "joint": false,
+   "net": "bga_conn_047",
+   "nets_lifted": 14,
+   "reason": "boxed_in",
+   "runs": 61
+  },
+  {
+   "a": "bga_component.49",
+   "b": "TP036.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 6,
+   "first_nets": [
+    "bga_conn_028",
+    "bga_conn_001",
+    "bga_conn_061",
+    "bga_conn_052",
+    "bga_conn_068",
+    "bga_conn_056"
+   ],
+   "joint": false,
+   "net": "bga_conn_036",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 66
+  }
+ ],
+ "copper_layers": 2,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 5000000
+ },
+ "tally": {
+  "too_deep": 2
+ }
+}

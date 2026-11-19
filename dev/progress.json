@@ -1,6 +1,6 @@
 {
   "project": "TraceMaker",
-  "current_milestone": "M17",
+  "current_milestone": "M26",
   "milestones": [
     {
       "id": "M0",
@@ -987,20 +987,20 @@
     {
       "id": "M24",
       "title": "Move parts a hand placement has pinned down",
-      "status": "todo",
+      "status": "in_progress",
       "gate": "The three closure boards blocked by model overlaps (serial_gw, phone_amp, memsarray) get legal moves; no KiCad DRC error added by placement; no board worse than D190 at equal routes",
       "deliverables": "Exact courtyard polygons in the placer's legality model; a part in an existing overlap may move when the overlap does not grow (KiCad-judged); placement closure rerun on bench/records/m24-closure's 14 boards",
       "tasks": [
         {
-          "text": "Exact courtyard polygons in the legality model",
-          "done": false
+          "text": "Exact courtyard polygons in the legality model (D192, doc 04 \u00a712: on; 1 conflict fewer on the three boards, the rest are real)",
+          "done": true
         },
         {
-          "text": "Move rule for parts already in an overlap (overlap must not grow, KiCad-judged; D190 shows the relaxed rule made real errors)",
-          "done": false
+          "text": "Move rule for parts already in an overlap (overlap must not grow, KiCad-judged; D190 shows the relaxed rule made real errors) \u2014 built as --closure-keep-overlaps (D192): pairs whose courtyards overlapped may stay, copper and holes clear; off by default",
+          "done": true
         },
         {
-          "text": "Rerun closure on the 14 boards; serial_gw, phone_amp, memsarray no longer stop with no candidates",
+          "text": "Rerun closure on the 14 boards; serial_gw, phone_amp, memsarray no longer stop with no candidates \u2014 2026-11-17 (bench/records/m24): 32 open, 4 complete, 3 clean (= D190); serial_gw clean, phone_amp 5->4, memsarray exhausts its moves as under D190; 58r-mxalps lost to trial order. Gate not met",
           "done": false
         }
       ]
@@ -1008,69 +1008,106 @@
     {
       "id": "M25",
       "title": "How the default route decides, explained",
-      "status": "todo",
+      "status": "done",
       "gate": "Every step traces to code, a doc section and a decision record; example numbers from a recorded run; mkdocs --strict and docs_check pass",
       "deliverables": "Explanation page following one board through a default tracemaker route run, step by step, with the option, doc section, decision and report/event for each step",
       "tasks": [
         {
           "text": "Map the default route pipeline in order from the code (rules, ordering, global plan, escapes, portfolio, search, rip-up, repair, rescue, cleanup, exact check, write)",
-          "done": false
+          "done": true
         },
         {
           "text": "Record one real board's run and take each step's numbers from it",
-          "done": false
+          "done": true
         },
         {
           "text": "Write the page under docs/explanation and add it to mkdocs nav",
-          "done": false
+          "done": true
         }
       ]
     },
     {
       "id": "M26",
       "title": "Finish the BGA boards that never complete",
-      "status": "todo",
+      "status": "in_progress",
       "gate": "Eleven never-clean srj20 boards at the srj20-never recipe: >= 3 clean and <= 50 open (from 105), KiCad-judged; no clean srj20 board lost; quick/mid byte-identical with options off",
       "deliverables": "Reserved dog-bone fanout, via-free band, via relocation repair, fewer vias, under-package lanes, ordering, warm-start best fix, crossing report (doc 18 \u00a721, D191)",
       "tasks": [
         {
           "text": "F8 the best board includes a legal warm start (rule 4), with a test",
-          "done": false
+          "done": true
         },
         {
-          "text": "F1 log where each open ball's dog-bone sites are lost, per stage",
-          "done": false
+          "text": "F1 log where each open ball's dog-bone sites are lost, per stage (tracks take most sites; bench/records/m26)",
+          "done": true
         },
         {
-          "text": "F2 reserve a dog-bone site per ball until it connects, in every search, the legaliser and the ramp",
-          "done": false
+          "text": "F2 reserve a dog-bone site per ball until it connects, in every search, the legaliser and the ramp (measured 2026-11-17: lost to the control, not adopted)",
+          "done": true
         },
         {
-          "text": "F3 a via-free band round the package for inner balls' vias",
-          "done": false
+          "text": "F3 a via-free band round the package for inner balls' vias (measured 2026-11-17: lost to the control, not adopted)",
+          "done": true
         },
         {
-          "text": "F4 move a blocking via up to 1 mm, then route the ball; commit only if better",
-          "done": false
+          "text": "F4 move a blocking via up to 1 mm, then route the ball; commit only if better (--via-shove: 0 of 427 moves kept; not adopted)",
+          "done": true
         },
         {
-          "text": "F5 fewer vias per connection on breakout boards",
-          "done": false
+          "text": "F5 fewer vias per connection on breakout boards (measured 2026-11-17: lost to the control, not adopted)",
+          "done": true
         },
         {
-          "text": "F6 lanes under the package with a cost bonus for cross-board connections",
-          "done": false
+          "text": "F6 lanes under the package with a cost bonus for cross-board connections (--package-lanes built; lost to the control, off)",
+          "done": true
         },
         {
-          "text": "F7 order long, crossing connections first once sites are reserved",
-          "done": false
+          "text": "F7 order long, crossing connections first once sites are reserved (--order 4, --order-all built; lost to the control, off)",
+          "done": true
         },
         {
-          "text": "F9 crossings and site occupancy in the run report and the layer advisor",
-          "done": false
+          "text": "F9 crossings and site occupancy in the run report and the layer advisor (line_crossings in the summary, two-layer hint at 11.5/connection; site occupancy not added)",
+          "done": true
         },
         {
           "text": "Gate run on the eleven boards, full srj20 no-loss check, quick/mid byte-identical with options off",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "M27",
+      "title": "Boards that never complete: tell modelling from search, and fit the rules",
+      "status": "in_progress",
+      "gate": "G2: of the 33 failing PCBench boards from nothing at 20 M, >= 6 complete with the fit against 3 without, KiCad 0 unconnected and no short (met: 6 own pads, 8 designer's layout). G4: beats equal extra budget on the search boards. quick byte-identical with options off",
+      "deliverables": "Designer oracle, route --fit-rules (D194), tracemaker chains, records bench/records/oracle-2026-11, doc 20 \u00a71.1 and \u00a72.8-\u00a72.10",
+      "tasks": [
+        {
+          "text": "G1 designer oracle on the never-complete boards: search boards and modelling boards",
+          "done": true
+        },
+        {
+          "text": "G2 route --fit-rules / --fit-rules-from: minimums, class values, mask openings already bridged (D194); 890 -> 771 / 734 open, 6 / 8 complete",
+          "done": true
+        },
+        {
+          "text": "G3 tracemaker chains: 141 of 261 open route on no board; 62 of 120 blocked by one net; 41 close (17 joint)",
+          "done": true
+        },
+        {
+          "text": "G4 joint re-route of an open connection with its minimal blockers as a router step, against equal extra budget",
+          "done": false
+        },
+        {
+          "text": "G5 escapes with no slack laid off the lattice (sizif QFN supply pins)",
+          "done": false
+        },
+        {
+          "text": "G6 exact interstice model for ball grids (doc 20 \u00a72.10)",
+          "done": false
+        },
+        {
+          "text": "G7 the fit as a rung of the default ladder, keeping the better result",
           "done": false
         }
       ]

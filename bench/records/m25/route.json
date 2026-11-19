@@ -1,0 +1,1142 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 87.23,
+ "connections": 47,
+ "copper_layers": 4,
+ "critical_nets": {
+  "detour_listed_over_mm": 2.0,
+  "mode": "audit",
+  "nets": [
+   {
+    "detour_mm": 0.0,
+    "length_mm": 7.728,
+    "missing_stitches": 0,
+    "name": "XOUT",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [],
+    "why": "Quartz crystal with load capacitors (crystal xout)"
+   },
+   {
+    "detour_mm": 0.0,
+    "length_mm": 11.252,
+    "missing_stitches": 0,
+    "name": "XIN",
+    "splits": 0,
+    "tier": 1,
+    "uncovered_mm": 0.0,
+    "unrouted": 0,
+    "vias": 0,
+    "void_crossings": 0,
+    "warnings": [],
+    "why": "Quartz crystal with load capacitors (crystal xin)"
+   }
+  ],
+  "options": {
+   "first": false,
+   "split_cost": 0.0,
+   "split_hard": false,
+   "via_max": 0,
+   "via_mult": 1.0
+  },
+  "totals": {
+   "missing_stitches": 0,
+   "nets": 2,
+   "over_via_limit": 0,
+   "vias": 0,
+   "void_crossings": 0
+  }
+ },
+ "drc": {
+  "added_routing_errors": 0,
+  "after": {
+   "errors": 0,
+   "notes": [],
+   "unconnected": 6,
+   "unconnected_cut_by_refill": 0,
+   "unconnected_items": [
+    {
+     "from": "Pad 2 of C6 [GND]",
+     "open_by_router": true,
+     "to": "Pad 2 of C2 [GND]",
+     "what": "Missing connection in net GND",
+     "x_mm": 112.8,
+     "y_mm": 109.02
+    },
+    {
+     "from": "Pad 2 of C2 [GND]",
+     "open_by_router": true,
+     "to": "Pad 2 of C7 [GND]",
+     "what": "Missing connection in net GND",
+     "x_mm": 104.4,
+     "y_mm": 105.12
+    },
+    {
+     "from": "Pad 2 of C7 [GND]",
+     "open_by_router": true,
+     "to": "Pad 2 of U3 [GND]",
+     "what": "Missing connection in net GND",
+     "x_mm": 117.98,
+     "y_mm": 109.6
+    },
+    {
+     "from": "Pad 18 of U1 [MOSI]",
+     "open_by_router": true,
+     "to": "Pad A4 of U2 [MOSI]",
+     "what": "Missing connection in net MOSI",
+     "x_mm": 111.438,
+     "y_mm": 108.25
+    },
+    {
+     "from": "Pad 19 of U1 [MISO]",
+     "open_by_router": true,
+     "to": "Pad A3 of U2 [MISO]",
+     "what": "Missing connection in net MISO",
+     "x_mm": 111.438,
+     "y_mm": 107.75
+    },
+    {
+     "from": "Pad 21 of U1 [INT]",
+     "open_by_router": true,
+     "to": "Pad B2 of U2 [INT]",
+     "what": "Missing connection in net INT",
+     "x_mm": 111.438,
+     "y_mm": 106.75
+    }
+   ],
+   "unconnected_open_by_router": 6,
+   "warnings": 0
+  },
+  "before": {
+   "error_items": [],
+   "errors": 0,
+   "notes": [],
+   "unconnected": 47,
+   "warnings": 0
+  },
+  "checker": "tracemaker drc",
+  "removed": 0,
+  "types": [],
+  "unconnected_change": -41,
+  "zones_refilled": true
+ },
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 3110969,
+ "failures": [
+  "GND: U2.B1 -> U2.C3  (ripped up by SCK and not routed again)",
+  "GND: C6.2 -> U1.33  (ripped up by SCK and not routed again)",
+  "GND: U2.B1 -> U3.2  (ripped up by SCK and not routed again)",
+  "INT: U1.21 -> U2.B2  (boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); given up: boxed in on the routing lattice, even with routed copper negotiable)",
+  "MISO: U1.19 -> U2.A3  (ripped up by MOSI and not routed again)",
+  "MOSI: U1.18 -> U2.A4  (ripped up by CS and not routed again)"
+ ],
+ "line_crossings": 38,
+ "open": 6,
+ "package_pin_edges": 10,
+ "pitch_mm": 0.025,
+ "rescue": {
+  "adopted": false,
+  "connections": 47,
+  "mode": "both",
+  "passes": [
+   {
+    "adopted": false,
+    "mode": "warm",
+    "relaxed_stages": [
+     {
+      "clearance_lowered_mm": 0.04,
+      "routed": 43
+     }
+    ],
+    "routed": 39,
+    "seconds": 4.796930573
+   },
+   {
+    "adopted": false,
+    "mode": "fresh",
+    "relaxed_stages": [
+     {
+      "clearance_lowered_mm": 0.04,
+      "routed": 42
+     }
+    ],
+    "routed": 39,
+    "seconds": 4.37349782
+   }
+  ],
+  "routed_after": 39,
+  "routed_before": 41,
+  "seconds": 9.170428393
+ },
+ "routed": 41,
+ "rules": {
+  "custom_rule_count": 0,
+  "custom_rules": [],
+  "files": {
+   "custom_rules": "plane_smd.kicad_dru",
+   "custom_rules_found": false,
+   "project": "plane_smd.kicad_pro",
+   "project_found": true
+  },
+  "minimums": {
+   "blind_buried_vias": false,
+   "clearance_mm": 0.1,
+   "copper_edge_clearance_mm": 0.3,
+   "drill_mm": 0.15,
+   "hole_clearance_mm": 0.2,
+   "hole_to_hole_mm": 0.25,
+   "microvias": false,
+   "track_width_mm": 0.1,
+   "via_annular_width_mm": 0.05,
+   "via_diameter_mm": 0.25
+  },
+  "net_classes": [
+   {
+    "clearance_mm": 0.1,
+    "diff_pair_gap_mm": 0.25,
+    "diff_pair_width_mm": 0.2,
+    "name": "Default",
+    "nets": 11,
+    "track_width_mm": 0.1,
+    "via_diameter_mm": 0.45,
+    "via_drill_mm": 0.2
+   }
+  ],
+  "not_read": [],
+  "not_read_count": 0
+ },
+ "run": {
+  "board": "plane_smd.kicad_pcb",
+  "date": "2026-11-17T13:57:29Z",
+  "input": "plane_smd.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "plane_smd.routed.kicad_pcb"
+   },
+   {
+    "name": "--work",
+    "value": "3000000"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--view-port",
+    "value": "9951"
+   },
+   {
+    "name": "--json",
+    "value": "plane_smd.json"
+   },
+   {
+    "name": "--report",
+    "value": "plane_smd.report.md"
+   }
+  ],
+  "output": "plane_smd.routed.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 120.0,
+  "time_total_s": 0.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 3000000
+ },
+ "seconds": 13.18026752,
+ "stuck": {
+  "board": {
+   "copper_layers": [
+    "F.Cu",
+    "In1.Cu",
+    "In2.Cu",
+    "B.Cu"
+   ],
+   "name": "plane_smd.kicad_pcb",
+   "nets": 11,
+   "outline_mm": [
+    100.0,
+    100.0,
+    124.0,
+    114.0
+   ],
+   "pads": 91,
+   "parts": 16
+  },
+  "escape_analysis": [
+   {
+    "already_connected": 0,
+    "cannot_escape": 0,
+    "dead": [],
+    "escapable": 17,
+    "not_proved": [],
+    "part": "U1",
+    "pins": 17,
+    "pitch_mm": 0.5
+   },
+   {
+    "already_connected": 0,
+    "cannot_escape": 0,
+    "dead": [],
+    "escapable": 12,
+    "not_proved": [
+     "B2"
+    ],
+    "part": "U2",
+    "pins": 13,
+    "pitch_mm": 0.4
+   }
+  ],
+  "parts": [
+   {
+    "kind": "passive",
+    "library_id": "C_0402_1005Metric",
+    "pads": 2,
+    "part": "C6",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "C_0402_1005Metric",
+    "x_mm": 112.8,
+    "y_mm": 109.5
+   },
+   {
+    "kind": "multi_pin",
+    "library_id": "QFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm",
+    "pads": 42,
+    "part": "U1",
+    "side": "front",
+    "unrouted_ends": 4,
+    "value": "QFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm",
+    "x_mm": 109.0,
+    "y_mm": 107.0
+   },
+   {
+    "kind": "small_ic",
+    "library_id": "SOT-23-5",
+    "pads": 5,
+    "part": "U3",
+    "side": "front",
+    "unrouted_ends": 1,
+    "value": "SOT-23-5",
+    "x_mm": 118.0,
+    "y_mm": 102.6
+   },
+   {
+    "kind": "grid_array",
+    "library_id": "",
+    "pads": 20,
+    "part": "U2",
+    "side": "front",
+    "unrouted_ends": 6,
+    "value": "WLP-20",
+    "x_mm": 117.5,
+    "y_mm": 107.0
+   }
+  ],
+  "result": {
+   "connections": 47,
+   "routed": 41,
+   "seconds": 3.98,
+   "tracks": 223,
+   "unrouted": 6,
+   "vias": 0
+  },
+  "rules": {
+   "clearance_mm": 0.1,
+   "copper_edge_clearance_mm": 0.3,
+   "min_track_width_mm": 0.1,
+   "track_width_mm": 0.1,
+   "via_diameter_mm": 0.45,
+   "via_drill_mm": 0.2
+  },
+  "unrouted": [
+   {
+    "blockers": [
+     "+3V3"
+    ],
+    "crowding": {
+     "other_pads": 8,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "+3V3",
+       "track_mm": 7.624
+      },
+      {
+       "net": "SCK",
+       "track_mm": 2.487
+      },
+      {
+       "net": "CS",
+       "track_mm": 1.539
+      }
+     ]
+    },
+    "fails": 1,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "B1",
+     "part": "U2",
+     "x_mm": 116.7,
+     "y_mm": 106.8
+    },
+    "length_mm": 0.894,
+    "net": "GND",
+    "reason": "ripped_not_rerouted",
+    "region_mm": [
+     115.2,
+     105.3,
+     119.0,
+     108.7
+    ],
+    "rips": 2,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "C3",
+     "part": "U2",
+     "x_mm": 117.5,
+     "y_mm": 107.2
+    },
+    "why": "ripped up by SCK and not routed again"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 8,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "+3V3",
+       "track_mm": 20.667
+      },
+      {
+       "net": "SCK",
+       "track_mm": 4.49
+      },
+      {
+       "net": "CS",
+       "track_mm": 2.572
+      },
+      {
+       "net": "SDA",
+       "track_mm": 0.985
+      }
+     ]
+    },
+    "fails": 0,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "2",
+     "part": "C6",
+     "x_mm": 112.8,
+     "y_mm": 109.02
+    },
+    "length_mm": 4.304,
+    "net": "GND",
+    "reason": "ripped_not_rerouted",
+    "region_mm": [
+     107.5,
+     105.5,
+     114.3,
+     110.52
+    ],
+    "rips": 2,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "33",
+     "part": "U1",
+     "x_mm": 109.0,
+     "y_mm": 107.0
+    },
+    "why": "ripped up by SCK and not routed again"
+   },
+   {
+    "blockers": [
+     "+3V3"
+    ],
+    "crowding": {
+     "other_pads": 10,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "+3V3",
+       "track_mm": 21.441
+      },
+      {
+       "net": "CS",
+       "track_mm": 3.844
+      },
+      {
+       "net": "SCK",
+       "track_mm": 2.487
+      },
+      {
+       "net": "SDA",
+       "track_mm": 2.444
+      },
+      {
+       "net": "SCL",
+       "track_mm": 1.69
+      }
+     ]
+    },
+    "fails": 1,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "B1",
+     "part": "U2",
+     "x_mm": 116.7,
+     "y_mm": 106.8
+    },
+    "length_mm": 4.203,
+    "net": "GND",
+    "reason": "ripped_not_rerouted",
+    "region_mm": [
+     115.2,
+     101.1,
+     118.363,
+     108.3
+    ],
+    "rips": 2,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "2",
+     "part": "U3",
+     "x_mm": 116.863,
+     "y_mm": 102.6
+    },
+    "why": "ripped up by SCK and not routed again"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 18,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "+3V3",
+       "track_mm": 12.672
+      },
+      {
+       "net": "GND",
+       "track_mm": 7.612
+      },
+      {
+       "net": "SCK",
+       "track_mm": 7.268
+      },
+      {
+       "net": "CS",
+       "track_mm": 4.535
+      },
+      {
+       "net": "SDA",
+       "track_mm": 1.339
+      }
+     ]
+    },
+    "fails": 2,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "21",
+     "part": "U1",
+     "x_mm": 111.438,
+     "y_mm": 106.75
+    },
+    "length_mm": 5.663,
+    "net": "INT",
+    "reason": "boxed_in",
+    "region_mm": [
+     109.938,
+     105.25,
+     118.6,
+     108.3
+    ],
+    "rips": 0,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "B2",
+     "part": "U2",
+     "x_mm": 117.1,
+     "y_mm": 106.8
+    },
+    "why": "boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target); given up: boxed in on the routing lattice, even with routed copper negotiable"
+   },
+   {
+    "blockers": [],
+    "crowding": {
+     "other_pads": 20,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "+3V3",
+       "track_mm": 18.209
+      },
+      {
+       "net": "GND",
+       "track_mm": 10.646
+      },
+      {
+       "net": "SCK",
+       "track_mm": 8.161
+      },
+      {
+       "net": "CS",
+       "track_mm": 5.525
+      },
+      {
+       "net": "SDA",
+       "track_mm": 1.834
+      },
+      {
+       "net": "SCL",
+       "track_mm": 0.702
+      }
+     ]
+    },
+    "fails": 1,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "19",
+     "part": "U1",
+     "x_mm": 111.438,
+     "y_mm": 107.75
+    },
+    "length_mm": 6.211,
+    "net": "MISO",
+    "reason": "ripped_not_rerouted",
+    "region_mm": [
+     109.938,
+     104.9,
+     119.0,
+     109.25
+    ],
+    "rips": 2,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "A3",
+     "part": "U2",
+     "x_mm": 117.5,
+     "y_mm": 106.4
+    },
+    "why": "ripped up by MOSI and not routed again"
+   },
+   {
+    "blockers": [
+     "MISO"
+    ],
+    "crowding": {
+     "other_pads": 22,
+     "other_vias": 0,
+     "routed_copper_by_net": [
+      {
+       "net": "+3V3",
+       "track_mm": 29.51
+      },
+      {
+       "net": "GND",
+       "track_mm": 11.466
+      },
+      {
+       "net": "SCK",
+       "track_mm": 8.161
+      },
+      {
+       "net": "CS",
+       "track_mm": 5.525
+      },
+      {
+       "net": "SDA",
+       "track_mm": 1.834
+      },
+      {
+       "net": "SCL",
+       "track_mm": 0.702
+      }
+     ]
+    },
+    "fails": 1,
+    "from": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "18",
+     "part": "U1",
+     "x_mm": 111.438,
+     "y_mm": 108.25
+    },
+    "length_mm": 6.722,
+    "net": "MOSI",
+    "reason": "ripped_not_rerouted",
+    "region_mm": [
+     109.938,
+     104.9,
+     119.4,
+     109.75
+    ],
+    "rips": 1,
+    "to": {
+     "layers": [
+      "F.Cu"
+     ],
+     "pad": "A4",
+     "part": "U2",
+     "x_mm": 117.9,
+     "y_mm": 106.4
+    },
+    "why": "ripped up by CS and not routed again"
+   }
+  ],
+  "unrouted_by_net": [
+   {
+    "count": 3,
+    "name": "GND"
+   },
+   {
+    "count": 1,
+    "name": "INT"
+   },
+   {
+    "count": 1,
+    "name": "MISO"
+   },
+   {
+    "count": 1,
+    "name": "MOSI"
+   }
+  ],
+  "unrouted_by_part": [
+   {
+    "count": 6,
+    "name": "U2"
+   },
+   {
+    "count": 4,
+    "name": "U1"
+   },
+   {
+    "count": 1,
+    "name": "C6"
+   },
+   {
+    "count": 1,
+    "name": "U3"
+   }
+  ],
+  "unrouted_by_reason": [
+   {
+    "count": 5,
+    "name": "ripped_not_rerouted"
+   },
+   {
+    "count": 1,
+    "name": "boxed_in"
+   }
+  ]
+ },
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 102,
+  "bends_per_connection": 0.843,
+  "connections": 121,
+  "detour_length_mm": 198.855016,
+  "detour_octile_mm": 172.49126,
+  "detour_ratio": 1.1528,
+  "length_mm": 198.855016,
+  "long_detours": 4,
+  "off_angle_segments": 70,
+  "segments": 223,
+  "short_segments": 11,
+  "stair_steps": 1,
+  "vias": 0
+ },
+ "time_limited": false,
+ "tracks": 223,
+ "tunnels": 0,
+ "variant": 5,
+ "variant_name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+ "variant_seconds": 3.984404168,
+ "variants": [
+  {
+   "best": false,
+   "name": "exact bends, shortest first",
+   "routed": 39,
+   "seconds": 2.416559175,
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 41,
+   "seconds": 3.697207586,
+   "variant": 1
+  },
+  {
+   "best": false,
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 36,
+   "seconds": 3.305410698,
+   "variant": 2
+  },
+  {
+   "best": false,
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 40,
+   "seconds": 3.280306154,
+   "variant": 3
+  },
+  {
+   "best": false,
+   "name": "exact bends, jittered order",
+   "routed": 36,
+   "seconds": 2.562303704,
+   "variant": 4
+  },
+  {
+   "best": true,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 41,
+   "seconds": 3.984404168,
+   "variant": 5
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 40,
+   "seconds": 3.640224204,
+   "variant": 6
+  },
+  {
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 41,
+   "seconds": 3.675162323,
+   "variant": 7
+  },
+  {
+   "best": false,
+   "name": "exact bends, shortest first",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 39,
+   "seconds": 0.264259089,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "fast bends, shortest first, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 39,
+   "seconds": 0.26175239,
+   "stage": "rescue",
+   "variant": 1
+  },
+  {
+   "best": false,
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 39,
+   "seconds": 0.27252001,
+   "stage": "rescue",
+   "variant": 2
+  },
+  {
+   "best": true,
+   "name": "fast bends, jittered order, escape plan",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 39,
+   "seconds": 0.254174957,
+   "stage": "rescue",
+   "variant": 3
+  },
+  {
+   "best": false,
+   "name": "exact bends, jittered order",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 39,
+   "seconds": 0.263105591,
+   "stage": "rescue",
+   "variant": 4
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 39,
+   "seconds": 0.263848193,
+   "stage": "rescue",
+   "variant": 5
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 39,
+   "seconds": 0.265653716,
+   "stage": "rescue",
+   "variant": 6
+  },
+  {
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 39,
+   "seconds": 0.265372201,
+   "stage": "rescue",
+   "variant": 7
+  },
+  {
+   "best": false,
+   "name": "exact bends, shortest first",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 39,
+   "seconds": 0.11486649,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "fast bends, shortest first, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 39,
+   "seconds": 0.11601185,
+   "stage": "rescue",
+   "variant": 1
+  },
+  {
+   "best": false,
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 39,
+   "seconds": 0.118858258,
+   "stage": "rescue",
+   "variant": 2
+  },
+  {
+   "best": false,
+   "name": "fast bends, jittered order, escape plan",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 39,
+   "seconds": 0.123617427,
+   "stage": "rescue",
+   "variant": 3
+  },
+  {
+   "best": true,
+   "name": "exact bends, jittered order",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 39,
+   "seconds": 0.116498456,
+   "stage": "rescue",
+   "variant": 4
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 39,
+   "seconds": 0.116827045,
+   "stage": "rescue",
+   "variant": 5
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 39,
+   "seconds": 0.134607963,
+   "stage": "rescue",
+   "variant": 6
+  },
+  {
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 39,
+   "seconds": 0.118960269,
+   "stage": "rescue",
+   "variant": 7
+  }
+ ],
+ "vias": 0,
+ "why_open": {
+  "congested": 10,
+  "neck_down": 0,
+  "neck_pins": [],
+  "next": [
+   "route again with --soft-zones: 1 pin is walled in only by zone fills",
+   "10 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)"
+  ],
+  "pins": 11,
+  "proved": [],
+  "seconds": 0.192500622,
+  "soft_only": 1,
+  "via_in_pad": 0,
+  "walled_in": 0
+ },
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 963809,
+   "commits": 39,
+   "expansions": 766761,
+   "field_cells": 29049988,
+   "fields": 67,
+   "fixed_checks": 627985,
+   "flood_cells": 221466,
+   "rips": 0,
+   "searches": 69
+  },
+  "negotiation": {
+   "cell_checks": 1884654,
+   "commits": 21,
+   "expansions": 1154954,
+   "field_cells": 24934028,
+   "fields": 43,
+   "fixed_checks": 315790,
+   "flood_cells": 967788,
+   "rips": 21,
+   "searches": 71
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 2848463,
+   "commits": 60,
+   "expansions": 1921715,
+   "field_cells": 53984016,
+   "fields": 110,
+   "fixed_checks": 943775,
+   "flood_cells": 1189254,
+   "rips": 21,
+   "searches": 140
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 13698488,
+   "commits": 609,
+   "expansions": 20710858,
+   "field_cells": 373827584,
+   "fields": 1044,
+   "fixed_checks": 7663999,
+   "flood_cells": 3657078,
+   "rips": 0,
+   "searches": 1098
+  },
+  "negotiation": {
+   "cell_checks": 40164243,
+   "commits": 402,
+   "expansions": 28594869,
+   "field_cells": 520384136,
+   "fields": 1048,
+   "fixed_checks": 11189024,
+   "flood_cells": 21261638,
+   "rips": 405,
+   "searches": 1474
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 50,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 53862731,
+   "commits": 1011,
+   "expansions": 49305727,
+   "field_cells": 894211720,
+   "fields": 2092,
+   "fixed_checks": 18853073,
+   "flood_cells": 24918716,
+   "rips": 405,
+   "searches": 2572
+  }
+ }
+}

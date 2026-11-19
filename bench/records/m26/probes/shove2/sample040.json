@@ -1,0 +1,337 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 97.8,
+ "connections": 91,
+ "copper_layers": 2,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 40260923,
+ "failures": [
+  "bga_conn_070: bga_component.118 -> TP070.1  ()",
+  "bga_conn_045: bga_component.136 -> TP045.1  ()"
+ ],
+ "line_crossings": 964,
+ "open": 2,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.035,
+ "rescue": {
+  "adopted": false,
+  "connections": 91,
+  "mode": "both",
+  "passes": [
+   {
+    "adopted": false,
+    "mode": "warm",
+    "relaxed_stages": [
+     {
+      "clearance_lowered_mm": 0.04,
+      "routed": 89
+     }
+    ],
+    "routed": 89,
+    "seconds": 208.878432581
+   },
+   {
+    "adopted": false,
+    "mode": "fresh",
+    "relaxed_stages": [
+     {
+      "clearance_lowered_mm": 0.04,
+      "routed": 89
+     }
+    ],
+    "routed": 89,
+    "seconds": 188.87088671
+   }
+  ],
+  "routed_after": 89,
+  "routed_before": 89,
+  "seconds": 397.749319291
+ },
+ "routed": 89,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-11-17T12:57:12Z",
+  "input": "/home/dingo/Programming/TraceMaker/bench/data/tscircuit/boards/srj20/sample040/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "shove2/sample040/out.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "1500"
+   },
+   {
+    "name": "--work",
+    "value": "40000000"
+   },
+   {
+    "name": "--seed",
+    "value": "501"
+   },
+   {
+    "name": "",
+    "value": "../srj20-again/sample040/first/a1/out.kicad_pcb"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "1.5"
+   },
+   {
+    "name": "--fast-bends",
+    "value": "false"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "2"
+   },
+   {
+    "name": "--variants",
+    "value": "2"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--view-port",
+    "value": "9802"
+   },
+   {
+    "name": "--json",
+    "value": "shove2/sample040/out.json"
+   }
+  ],
+  "output": "shove2/sample040/out.kicad_pcb",
+  "seed": 501,
+  "threads": 2,
+  "time_limit_s": 1500.0,
+  "time_total_s": 0.0,
+  "variants": 2,
+  "version": "0.12.1",
+  "work_budget": 40000000
+ },
+ "seconds": 596.580796543,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 720,
+  "bends_per_connection": 3.4615,
+  "connections": 208,
+  "detour_length_mm": 1557.644115,
+  "detour_octile_mm": 1148.270713,
+  "detour_ratio": 1.3565,
+  "length_mm": 1557.644115,
+  "long_detours": 21,
+  "off_angle_segments": 1055,
+  "segments": 1243,
+  "short_segments": 57,
+  "stair_steps": 34,
+  "vias": 356
+ },
+ "time_limited": false,
+ "tracks": 1243,
+ "tunnels": 0,
+ "variant": 0,
+ "variant_name": "breakout profile",
+ "variant_seconds": 37.219548698,
+ "variants": [
+  {
+   "best": true,
+   "name": "breakout profile",
+   "routed": 89,
+   "seconds": 37.219548698,
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "breakout seeded 1",
+   "routed": 89,
+   "seconds": 33.124534656,
+   "variant": 1
+  },
+  {
+   "best": true,
+   "name": "breakout profile",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 89,
+   "seconds": 0.157171707,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "breakout seeded 1",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 89,
+   "seconds": 0.15622873,
+   "stage": "rescue",
+   "variant": 1
+  },
+  {
+   "best": false,
+   "name": "breakout profile",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 89,
+   "seconds": 0.191838885,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "best": true,
+   "name": "breakout seeded 1",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 89,
+   "seconds": 0.301760542,
+   "stage": "rescue",
+   "variant": 1
+  }
+ ],
+ "via_shove_trials": 114,
+ "vias": 356,
+ "why_open": {
+  "congested": 4,
+  "neck_down": 0,
+  "neck_pins": [],
+  "next": [
+   "4 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)"
+  ],
+  "pins": 4,
+  "proved": [],
+  "seconds": 0.150048183,
+  "soft_only": 0,
+  "via_in_pad": 0,
+  "walled_in": 0
+ },
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 36182,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 17222,
+   "flood_cells": 31414,
+   "rips": 0,
+   "searches": 16
+  },
+  "negotiation": {
+   "cell_checks": 65090956,
+   "commits": 384,
+   "expansions": 31293228,
+   "field_cells": 81202528,
+   "fields": 156,
+   "fixed_checks": 12630242,
+   "flood_cells": 35842044,
+   "rips": 760,
+   "searches": 2292
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 65127138,
+   "commits": 384,
+   "expansions": 31293228,
+   "field_cells": 81202528,
+   "fields": 156,
+   "fixed_checks": 12647464,
+   "flood_cells": 35873458,
+   "rips": 760,
+   "searches": 2308
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 576451,
+   "commits": 0,
+   "expansions": 240004,
+   "field_cells": 1664632,
+   "fields": 2,
+   "fixed_checks": 7153352,
+   "flood_cells": 266146,
+   "rips": 0,
+   "searches": 72
+  },
+  "negotiation": {
+   "cell_checks": 368650818,
+   "commits": 1554,
+   "expansions": 191713834,
+   "field_cells": 617385110,
+   "fields": 910,
+   "fixed_checks": 54178142,
+   "flood_cells": 196926017,
+   "rips": 2515,
+   "searches": 8116
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 369227269,
+   "commits": 1554,
+   "expansions": 191953838,
+   "field_cells": 619049742,
+   "fields": 912,
+   "fixed_checks": 61331494,
+   "flood_cells": 197192163,
+   "rips": 2515,
+   "searches": 8188
+  }
+ }
+}

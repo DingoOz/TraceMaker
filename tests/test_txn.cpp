@@ -5,13 +5,16 @@
 
 #include <unistd.h>
 
+#include <algorithm>
 #include <cmath>
+#include <functional>
 #include <filesystem>
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <string>
 
 #include "drc/drc.hpp"
+#include "geom/shape.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
 #include "io/srj/srj.hpp"
@@ -194,6 +197,53 @@ TEST_CASE("clearance ramp ending relaxed: the legalising round does not mark the
   CHECK(r.best.routed > 0);
   CHECK_FALSE(r.best.time_limited);
   CHECK(errors(l.board, l.rules, r.best) == 0);
+}
+
+// The ramp starts relaxed, so a warm start was never scored under the board's rules: a ramp that lost some of its routes returned a
+// worse board than it was given (rule 4; srj20 sample040, 2 open in, 16 out). The warm start is the floor (D191, M26 F8).
+TEST_CASE("clearance ramp from a warm start: never returns fewer routes than the warm start has", "[route][txn]") {
+  const auto l = load_problem();
+  route::RouterOptions plain = options();
+  plain.round_work = 3000000;
+  plain.rounds = 1;
+  const auto start = route::route_portfolio(l.board, l.rules, plain, 1, {}, 1);
+  REQUIRE(start.best.routed == start.best.connections);  // complete: without the floor the ramp below returns 17 of 24
+  route::RouterOptions o = options();
+  o.round_work = 20000;  // too little to route again what the loose stage takes apart
+  o.rounds = 1;          // ends relaxed: only the legalising round runs under the board's rules
+  o.ramp_from_mm = 0.01;
+  o.ramp_step_mm = 0.02;
+  o.ramp_rounds = 1;
+  o.start_routes = &start.best.conn_routes;
+  const auto r = route::route_portfolio(l.board, l.rules, o, 2, {}, 1);
+  CHECK(r.best.routed >= start.best.routed);
+  CHECK(errors(l.board, l.rules, r.best) == 0);
+}
+
+// --order-all 4 (M26 F7): every variant routes the connections with the most straight-line crossings first, so the routes come back in that order.
+TEST_CASE("order 4 in every variant: the most crossing connections first", "[route][txn]") {
+  const auto l = load_problem();
+  route::RouterOptions o = options();
+  o.round_work = 3000000;
+  o.rounds = 1;
+  o.order_all = 4;
+  const auto r = route::route_portfolio(l.board, l.rules, o, 2, {}, 1);
+  REQUIRE(r.best.routed == r.best.connections);
+  const auto& cr = r.best.conn_routes;
+  auto pos = [&](int pad) { return l.board.pads[static_cast<std::size_t>(pad)].pos; };
+  std::vector<int> crossings(cr.size(), 0);
+  for (std::size_t i = 0; i < cr.size(); ++i)
+    for (std::size_t j = 0; j < cr.size(); ++j) {
+      if (i == j || cr[i].pad_b < 0 || cr[j].pad_b < 0) continue;
+      const auto p = pos(cr[i].pad_a), q = pos(cr[i].pad_b), u = pos(cr[j].pad_a), v = pos(cr[j].pad_b);
+      if (p == u || p == v || q == u || q == v) continue;
+      if (geom::segments_intersect(p, q, u, v)) ++crossings[i];
+    }
+  CHECK(*std::max_element(crossings.begin(), crossings.end()) > 0);
+  CHECK(std::is_sorted(crossings.begin(), crossings.end(), std::greater<int>()));
+  long sum = 0;
+  for (const int n : crossings) sum += n;
+  CHECK(r.best.line_crossings == sum / 2);  // the summary's count (F9) is the same lines'
 }
 
 TEST_CASE("clearance ramp with breathing: still legal under the board's rules and the same at any thread count", "[route][txn]") {

@@ -1,0 +1,5 @@
+{"board": "Aleste-520EX_aleste", "arm": "r25-edge0b", "connections": 730, "routed": 710, "open": 20}
+{"board": "fifogfx_c64cart", "arm": "open-edge0b", "connections": 77, "routed": 37, "open": 40}
+{"board": "kitspace_d20_tri_r0.3", "arm": "r25-edge0b", "connections": 117, "routed": 77, "open": 40}
+{"board": "PCIE-to-MXM-Adapter_PCIEx1toMXM3.0", "arm": "r25-edge0b", "connections": 21, "routed": 13, "open": 8}
+{"board": "zx-sizif-512-ext_sizif512ext", "arm": "r25-edge0b", "connections": 116, "routed": 115, "open": 1}

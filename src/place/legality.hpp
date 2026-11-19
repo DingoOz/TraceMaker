@@ -38,6 +38,11 @@ class Legality {
   bool inside_ok(int part, Point pos, int rot, bool lenient = false) const;
   // Exact test of two parts.
   bool pair_conflict(int a, Point pa, int ra, int b, Point pb, int rb) const;
+  // M24 (D192): the parts of pair_conflict a kept overlap is judged by. `hard_conflict`: holes and copper only (what KiCad
+  // reports by position: clearance, shorts, holes in courtyards). `courtyards_overlap`: the courtyards really intersect,
+  // without the courtyard clearance (what KiCad reports as a courtyard overlap between the two footprints).
+  bool hard_conflict(int a, Point pa, int ra, int b, Point pb, int rb) const;
+  bool courtyards_overlap(int a, Point pa, int ra, int b, Point pb, int rb) const;
 
   // Index of placed parts (all parts present after reset).
   void reset(const Placement& pl);
@@ -45,6 +50,8 @@ class Legality {
   void insert(int part, Point pos, int rot);
   void remove(int part);
   bool present(int part) const { return present_[z(part)] != 0; }
+  Point pos(int part) const { return pos_[z(part)]; }
+  int rot(int part) const { return rot_[z(part)]; }
   // First placed part that conflicts with `part` at (pos, rot), skipping `part` itself and skip1/skip2; -1 if none.
   int find_conflict(int part, Point pos, int rot, int skip1 = -1, int skip2 = -1) const;
   // Every placed part that conflicts (sorted).
@@ -56,6 +63,8 @@ class Legality {
   void neighbours(const Box& box, std::vector<int>& out) const;
 
  private:
+  enum class Test { All, Hard, Courtyards };
+  bool pair_test(int a, Point pa, int ra, int b, Point pb, int rb, Test t) const;
   void cells_of(const Box& b, int& cx0, int& cy0, int& cx1, int& cy1) const;
   const Problem& p_;
   Coord cell_ = 2'000'000;
@@ -68,6 +77,7 @@ class Legality {
   mutable std::uint32_t epoch_ = 0;
   // Board edge segments in a bucket grid.
   std::vector<Shape> segs_;
+  std::size_t edge_segs_ = 0;  // segs_[0, edge_segs_) are Edge.Cuts, the rest Margin
   std::vector<std::vector<int>> seg_cells_;
   std::vector<std::vector<int>> fixed_cells_;  // Problem::fixed_copper in the same grid
   Coord reach_ = 0;                            // neighbour search inflation (largest clearance of any kind)
@@ -115,5 +125,8 @@ struct Violations {
   std::vector<int> outside_parts;
 };
 Violations check_all(const Problem& p, const Placement& pl);
+// M24 (D192): the pairs of check_all whose courtyards really overlap and whose holes and copper are clear (normalised a < b,
+// sorted): the input overlaps a closure move may keep.
+std::vector<std::pair<int, int>> keepable_pairs(const Problem& p, const Placement& pl);
 
 }  // namespace tmk::place

@@ -379,6 +379,7 @@ struct LoopCli {
   int crules_weight_pct = 100;
   bool crules_two_stage = true;
   double clearance_mm = -1;
+  bool hull_courtyards = false;  // --hull-courtyards: the convex-hull courtyard model before M24
   long work = 3'000'000;
   int route_threads = 8;
   int rounds = 3, eco_rounds = 4, eco_candidates = 5;
@@ -390,6 +391,7 @@ struct LoopCli {
   std::string advice;      // --place-advice: proposed placements and moves (doc 17 stage 4)
   int closure_routes = 40;  // closure: trials routed
   int closure_stall = 6;    // closure: trials without improvement before a radical one
+  bool closure_keep_overlaps = false;  // closure: a part may keep the overlaps it has in the input (M24, D192)
   std::string learn;        // closure: learned bandit prior (JSON), read before and updated after the run
   std::string judge = "route";  // closure: "route" (tracemaker route --work, the product route) or "portfolio" (in-memory check)
   std::string router;           // closure: the tracemaker binary for the route judge (default: beside this one)
@@ -471,6 +473,7 @@ int run_loop_mode(const LoopCli& c) {
   apply_component_rules(lb.board, c.component_rules, c.rules_override, c.edge_attraction, eo);
   setup_flip(lb, c.o.flip, c.keep_side, eo);
   if (c.clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(c.clearance_mm);
+  eo.exact_courtyards = !c.hull_courtyards;
   // The loop works on the refine problem (the board's courtyard rule, else KiCad's 0): every full-mode result,
   // placed with 0.25 mm or 0, is legal in it.
   place::ExtractOptions eo_refine = eo;
@@ -556,6 +559,11 @@ int run_loop_mode(const LoopCli& c) {
     place::ClosureOptions co;
     co.max_routes = c.closure_routes;
     co.stall = c.closure_stall;
+    co.keep_overlaps = c.closure_keep_overlaps;
+    if (co.keep_overlaps) {
+      co.input_pairs = place::keepable_pairs(P, input);
+      log("closure: parts may keep their " + std::to_string(co.input_pairs.size()) + " input overlap pair(s), and gain none");
+    }
     co.beta = c.beta;
     co.alpha_cross_mm = c.o.alpha_cross_mm;
     co.via_mm = c.o.flip ? c.o.via_mm : 0;
@@ -823,6 +831,7 @@ int main(int argc, char** argv) {
   double decap_standoff_mm = 2.0;
   int crules_weight_pct = 100;
   bool crules_two_stage = true;
+  bool hull_courtyards = false;
   double clearance_mm = -1;
   app.add_option("board", in, "Input .kicad_pcb")->required()->check(CLI::ExistingFile);
   app.add_option("-o,--output", out, "Output .kicad_pcb")->required();
@@ -835,6 +844,7 @@ int main(int argc, char** argv) {
   app.add_option("--effort", o.effort, "Annealing moves per run = effort x 4000 x movable parts");
   app.add_option("--alpha-cross-mm", o.alpha_cross_mm, "Cost of one airwire crossing in mm of signal HPWL");
   app.add_option("--courtyard-clearance-mm", clearance_mm, "Override the courtyard clearance (default: rules, else 0.25 mm)");
+  app.add_flag("--hull-courtyards", hull_courtyards, "Model each courtyard as the convex hull of its graphics (before M24) instead of its outlines as KiCad builds them");
   app.add_flag("--move-connectors", move_connectors, "Also move connectors that touch the board edge");
   app.add_flag("--scratch", scratch, "The input has no placement (parts piled or beside the board, as after importing a schematic): "
                                      "input positions of movable parts carry no intent and are never fallen back to");
@@ -903,6 +913,7 @@ int main(int argc, char** argv) {
                  "routable/eco: placement advice file (JSON: seeds = proposed placements, eco = proposed moves; doc 17 stage 4), each kept only if it routes more")
       ->check(CLI::ExistingFile);
   app.add_option("--closure-routes", lc.closure_routes, "closure: trial placements routed at most (doc 04 §11)");
+  app.add_flag("--closure-keep-overlaps", lc.closure_keep_overlaps, "closure: a part that overlaps others in the input may move if it then overlaps only those parts (no new pair; M24)");
   app.add_option("--closure-stall", lc.closure_stall, "closure: trials without improvement before a radical one (re-place around the failures or the whole board)");
   app.add_option("--closure-judge", lc.judge,
                  "closure: what routes each trial: route = `tracemaker route --work <--route-check> --no-kb` (the product route; default), "
@@ -966,6 +977,7 @@ int main(int argc, char** argv) {
     lc.crules_weight_pct = crules_weight_pct;
     lc.crules_two_stage = crules_two_stage;
     lc.clearance_mm = clearance_mm;
+    lc.hull_courtyards = hull_courtyards;
     lc.work = route_check > 0 ? route_check : 3'000'000;
     lc.route_threads = route_threads;
     lc.no_fallback = no_fallback;
@@ -1047,6 +1059,7 @@ int main(int argc, char** argv) {
     const int crules_ties = apply_component_rules(lb.board, component_rules, rules_override, edge_attraction, eo);
     setup_flip(lb, o.flip, keep_side, eo);
     if (clearance_mm >= 0) eo.courtyard_clearance = mm_to_nm(clearance_mm);
+    eo.exact_courtyards = !hull_courtyards;
     // Refine keeps the human's spacing rule (KiCad's default courtyard clearance is 0); full mode aims for
     // 0.25 mm and falls back to 0 when the board is too dense for it.
     if (o.mode == "refine") eo.default_clearance = 0;

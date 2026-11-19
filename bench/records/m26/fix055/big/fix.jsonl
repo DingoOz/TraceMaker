@@ -1,0 +1,5 @@
+{"arm": "W1a", "seed": "403", "seconds": 1820, "open_json": 4, "vias": 82, "unconnected_after": 5, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"arm": "W1b", "seed": "404", "seconds": 1825, "open_json": 5, "vias": 78, "unconnected_after": 6, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"arm": "R", "seed": "403", "seconds": 1804, "open_json": 2, "vias": 0, "unconnected_after": 2, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"arm": "W2", "seed": "403", "seconds": 1846, "open_json": 8, "vias": 88, "unconnected_after": 9, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"arm": "R2", "seed": "403", "seconds": 1802, "open_json": 2, "vias": 0, "unconnected_after": 2, "added_errors": {}, "error_gate": "pass", "clean": false}

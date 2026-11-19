@@ -112,6 +112,11 @@ struct RouterOptions {
   std::vector<std::int8_t> layer_dir;
   // Pitches per 45-degree lattice step, per copper index (--layer-diag-pen, D174); empty or 0 = no penalty. Independent of layer_dir.
   std::vector<double> layer_diag_pen;
+  // Lanes under a ball-grid package (M26 F6): on the layers away from its pads, a track cell inside the package that is off every ball row and
+  // column line (more than a quarter ball pitch from it) costs this many pitches, for connections at least package_lanes_mm long. The long
+  // cross-board connections then run straight between the rows of dog-bone vias, as a designer's do, instead of weaving across them. 0 = off.
+  double package_lanes = 0;
+  double package_lanes_mm = 8.0;
   double package_pen = -1;      // -1 = automatic (3 on a two-layer board with a ball-grid package, else 0); pitches per lattice step for tracks on the pad layer inside a ball-grid package (doc 16 F3; 0 = off)
   // Strict searches from the crowded end (doc 05 §55, M20 C5): a strict search starts from the end with more routed copper of other nets
   // and more pads of other nets of its own part near it. A boxed-in source is proved in a few expansions; a boxed-in target only after the
@@ -145,6 +150,7 @@ struct RouterOptions {
   std::string state_out;        // portfolio: after every round the best routes so far are written here (atomically), so an interrupted or out-of-time run can be resumed
   std::string state_in;         // portfolio: start from the routes saved in this file (written by state_out); a missing file is ignored
   const std::vector<ConnRoute>* start_routes = nullptr;  // portfolio: start from these routes as from state_in (the local relax rescue, doc 20 §2.2); state_in wins
+  bool warm_floor = true;  // portfolio with a ramp: a warm start is scored under the board's rules first and returned if the run ends worse (D191); off where the caller already keeps the better of the two (the relax rescue)
   bool relax_late = false;      // with relax: plain rounds under the board's rules first; when they stall, start the stages afresh (not from the stalled state), and keep the best legal result of all
   bool relax = false;           // portfolio: relax, route, legalise: ramp stages at 60 % and 80 % of the board's clearance with legalisation and breathing between (D104); needs round_work (20 M by default)
   double ramp_from_mm = 0;      // portfolio: > 0 starts at this clearance (every class and the board minimum lowered by the difference) and raises it by ramp_step_mm per stage up to the board's own; each stage warm-starts from the last one's routes that are still legal (clearance continuation, doc 16 §12.3)
@@ -232,6 +238,7 @@ struct RouterOptions {
   bool fanout_hold = false;     // D156: with the escape plan, each open pin's straight corridor (as --escape-stubs offers it) is held by a placeholder track of its net through the strict first pass, so no other net's track or via takes it before the pin is routed; dropped when the pin is routed and before negotiation
   bool escape_stubs = false;    // with the escape plan: a pin offers the end of its (long, straight) corridor as a start point, reached by one exact off-lattice segment at a discount: parallel escapes at the pad pitch, which the lattice cannot draw
   bool soft_mask_graphics = false;  // net-less solder-mask openings drawn as footprint graphics (solder jumpers, MEMS microphones) do not keep tracks and vias out; KiCad flags what lies in them
+  bool soft_bridged_masks = false;  // rule fit (doc 20 §2.8): a pad's mask opening that already exposes another net's pad does not keep tracks out
   bool soft_copper_graphics = false;  // board copper graphics (polygons on a copper layer) take the net of the pads, tracks and vias of the one net they touch (a manual pour), so that net's pins inside are not enclosed and no other net may touch them
   bool via_drops = false;       // pins of dense packages may drop to a via 0.7-1.5 mm out, off the lattice, between the neighbours' tracks (the designer's supply vias), then go on on the other layer
   bool bundle_escape = false;   // doc 05 §50: the connections that leave one side of a dense package for one side of another part are placed first as a block of parallel straight lanes in pin order (route/bundle.hpp); the rest is routed as usual and may not rip the lanes
@@ -254,7 +261,9 @@ struct RouterOptions {
   double soft_growth = 0.0;     // crossing cost grows by this fraction of soft_cost_mm per negotiation pass (PathFinder, doc 16)
   double soft_cost_mm = 1.0;    // base cost of crossing another net's routed copper (before history)
   std::uint64_t seed = 1;
-  int order = 0;                // connection order: 0 shortest first, 1 longest first, 2 shortest first with seeded jitter
+  int order = 0;                // connection order: 0 shortest first, 1 longest first, 2 shortest first with seeded jitter, 3 deep package pins first,
+                                // 4 most straight-line crossings with other connections first, then longest first (M26 F7)
+  int order_all = -1;           // the portfolio: this order in every variant (-1 = each variant's own; M26 F7)
   // Connections to route first ("REF.NUM" pairs, either orientation): learned from earlier failures (doc 06 T3).
   std::vector<std::pair<std::string, std::string>> priority;
   std::vector<std::string> first_nets;  // routed first, also after restarts; other nets do not rip them (crystal lines)
@@ -412,6 +421,7 @@ struct RouteResult {
   int micro_vias = 0;           // micro vias placed
   int blind_vias = 0;           // blind/buried vias placed
   double escape_corridor_mm = 0;   // total length of the corridors reserved (centrelines, version 1)
+  long line_crossings = 0;         // pairs of connections whose straight pad-to-pad lines cross (M26 F9): a two-layer board with many per connection may need more layers
   int package_pin_edges = 0;       // spanning-tree edges between two pins of one dense package, for nets with 3+ pins there (--radial-supply makes them rarer)
   int window_escalations = 0;      // --window-escalate: whole-board windows given to searches that hit their window's edge
   int via_shoves = 0;              // --via-shove: stuck connections routed after moving another net's via

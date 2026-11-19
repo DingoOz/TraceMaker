@@ -240,6 +240,22 @@ Obstacles::Obstacles(model::Board& board, const model::DesignRules& rules) : b_(
       a.net = pad.net;
       for (const auto& sh : a.shapes) a.box.add(sh.box);
       a.box = a.box.inflated(a.margin);
+      // Does the opening already expose another net's pad copper on this side's outer layer?
+      const model::LayerMask outer = model::layer_bit(side == 0 ? 0 : b_.copper_count() - 1);
+      for (const auto& q : b_.pads) {
+        if (a.bridged) break;
+        if (q.net <= 0 || q.net == pad.net || !(q.copper & outer)) continue;
+        const Coord reach = std::max(q.size_x, q.size_y);
+        if (const geom::Box near = a.box.inflated(reach); q.pos.x < near.x0 || q.pos.x > near.x1 || q.pos.y < near.y0 || q.pos.y > near.y1) continue;
+        for (const auto& qs : drc::pad_shapes(q)) {
+          for (const auto& u : a.shapes)
+            if (geom::closer_than(qs, u, a.margin)) {
+              a.bridged = true;
+              break;
+            }
+          if (a.bridged) break;
+        }
+      }
       agrid_[side]->insert(static_cast<int>(apertures_[side].size()), a.box);
       apertures_[side].push_back(std::move(a));
     }
@@ -849,12 +865,43 @@ void Obstacles::remove_item(int item) {
       if (h.item == item) h.removed = true;
 }
 
+int Obstacles::bridged_mask_openings() const {
+  int n = 0;
+  for (const auto& side : apertures_)
+    for (const auto& a : side) n += a.bridged ? 1 : 0;
+  return n;
+}
+
+int Obstacles::mask_graphics_over_pads() const {
+  int n = 0;
+  for (int side = 0; side < 2; ++side) {
+    const model::LayerMask outer = model::layer_bit(side == 0 ? 0 : b_.copper_count() - 1);
+    for (const auto& m : mask_open_[side]) {
+      bool over = false;
+      for (const auto& q : b_.pads) {
+        if (over) break;
+        if (q.net <= 0 || !(q.copper & outer)) continue;
+        const Coord reach = std::max(q.size_x, q.size_y);
+        if (const geom::Box near = m.box.inflated(reach); q.pos.x < near.x0 || q.pos.x > near.x1 || q.pos.y < near.y0 || q.pos.y > near.y1) continue;
+        for (const auto& qs : drc::pad_shapes(q))
+          if (geom::closer_than(qs, m, 1)) {
+            over = true;
+            break;
+          }
+      }
+      n += over ? 1 : 0;
+    }
+  }
+  return n;
+}
+
 void Obstacles::aperture_codes(const Shape& s, int layer, bool via_probe, const std::function<void(model::NetId)>& hit) const {
   const int side = layer == 0 ? 0 : layer == b_.copper_count() - 1 ? 1 : -1;
   if (side >= 0) {
     const Coord extra = 1'000 + (via_probe ? via_mask_ : 0);
     agrid_[side]->query(s.box.inflated(extra + 1), [&](int id) {
       const auto& a = apertures_[side][static_cast<std::size_t>(id)];
+      if (a.bridged && soft_bridged_masks_) return;
       for (const auto& u : a.shapes)
         if (geom::closer_than(s, u, a.margin + extra)) {
           hit(a.net);

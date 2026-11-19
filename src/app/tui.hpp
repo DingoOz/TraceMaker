@@ -51,7 +51,9 @@ std::vector<Entry> parse_options(const std::string& text);
 // A flag's value in an options file: 1 for true/on/yes/1, 0 for false/off/no/0, -1 for anything else.
 int truth(const std::string& value);
 
-enum class Action { none, quit, run, print, save };
+// run: route now in this process; background: route in a process of its own and show the jobs screen; jobs and
+// options: move between the two screens; edit: open the selected job's options on the options screen.
+enum class Action { none, quit, run, print, save, background, jobs, options, edit };
 
 // How a piece of text is painted. The terminal layer maps these to colours (or to bold, dim and reverse under
 // NO_COLOR); the model only says what the text is.
@@ -110,6 +112,19 @@ class Model {
 
   // Sets a field by its label or its argument spelling (e.g. "board", "--output"); false if there is none.
   bool set(const std::string& name, const std::string& value);
+  // Replaces every value with a job's arguments (from "route" on, without it), kept in "this run": the job's command is
+  // the whole of its options, so the files' values are cleared too. Returns one message per argument it could not
+  // place; `config` receives the value of --config, which is no field (the caller reads that file first).
+  std::vector<std::string> load_args(const std::vector<std::string>& args, std::string* config = nullptr);
+  // One option of a rerun, in "this run": a value option takes `value`, a flag is set to the spelling (`value`
+  // empty) or cleared (`value` == "-"). False if no field has that spelling.
+  bool set_run(const std::string& spelling, const std::string& value);
+  // The folder the command runs in (a job's own, after load_args); empty: the current one. The command line then
+  // starts with `cd`.
+  void set_workdir(std::string d) { workdir_ = std::move(d); }
+  const std::string& workdir() const { return workdir_; }
+  // Lines of advice shown above the command (from the jobs screen or earlier runs on the board).
+  void set_advice(std::vector<std::string> a) { advice_ = std::move(a); }
 
   // The file of the target scope.
   const std::string& save_path() const { return path_[static_cast<int>(target_)]; }
@@ -136,7 +151,8 @@ class Model {
   std::size_t sel_ = 0;          // index into visible()
   mutable std::size_t top_ = 0;  // first visible row on screen; follows the selection when rendering
   bool show_hidden_ = false;
-  std::string filter_, buffer_, status_, error_;
+  std::string filter_, buffer_, status_, error_, workdir_;
+  std::vector<std::string> advice_;
   Scope target_ = Scope::file;
   bool enabled_[kScopes] = {false, false, false, true};
   bool exists_[kScopes] = {false, false, false, false};
@@ -152,5 +168,18 @@ Action run_terminal(Model& m);
 // The same for a scripted key sequence (tests): characters stand for themselves, and <up> <down> <pgup> <pgdn> <home>
 // <end> <enter> <space> <esc> <bs> <del> <lt> name the others. Ends with `print` when the keys run out.
 Action run_keys(Model& m, const std::string& keys);
+// The key names of run_keys turned into key codes.
+std::vector<int> parse_keys(const std::string& keys);
+// A shell word: as it is when it is safe, else in single quotes.
+std::string shell_quote(const std::string& s);
+
+// Drawing pieces shared by the two screens.
+namespace draw {
+std::string fit(const std::string& s, std::size_t w, bool pad = false);
+std::vector<std::string> wrap(const std::string& s, std::size_t w, std::size_t lines);
+Line boxed(std::vector<Span> content, std::size_t w, bool highlight = false, const Span* right = nullptr);
+Line border(const char* l, const char* r, std::vector<Span> left, std::vector<Span> right, std::size_t w);
+std::string short_path(const std::string& p);
+}  // namespace draw
 
 }  // namespace tmk::app::tui

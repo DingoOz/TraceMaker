@@ -191,6 +191,52 @@ Shape translated(const Shape& s, Point d) {
 
 std::vector<Point> convex_hull(std::vector<Point> pts) { return geom::convex_hull(std::move(pts)); }
 
+std::vector<std::vector<Point>> courtyard_outlines(const std::vector<const model::Graphic*>& gs, Coord tol) {
+  std::vector<std::vector<Point>> loops;
+  std::vector<std::vector<Point>> open;  // lines and flattened arcs, start to end
+  for (const auto* g : gs) {
+    switch (g->kind) {
+      case model::Graphic::Kind::Line: open.push_back({g->a, g->b}); break;
+      case model::Graphic::Kind::Arc: open.push_back(geom::arc_points(g->a, g->c, g->b, 5'000)); break;
+      case model::Graphic::Kind::Circle: {
+        const Coord rad = geom::kiround(std::hypot(static_cast<double>(g->b.x - g->a.x), static_cast<double>(g->b.y - g->a.y)));
+        auto c = geom::circle_points(g->a, rad, 5'000);
+        if (c.size() > 1 && c.front() == c.back()) c.pop_back();
+        loops.push_back(std::move(c));
+        break;
+      }
+      case model::Graphic::Kind::Rect:
+      case model::Graphic::Kind::Poly: loops.push_back(g->pts); break;
+      default: return {};  // a curve: not flattened here
+    }
+  }
+  auto near = [&](Point a, Point b) { return std::llabs(a.x - b.x) <= tol && std::llabs(a.y - b.y) <= tol; };
+  std::vector<char> used(open.size(), 0);
+  for (std::size_t i = 0; i < open.size(); ++i) {
+    if (used[i]) continue;
+    used[i] = 1;
+    std::vector<Point> loop = open[i];
+    while (!near(loop.back(), loop.front()) || loop.size() < 3) {
+      bool grew = false;
+      for (std::size_t j = 0; j < open.size() && !grew; ++j) {
+        if (used[j]) continue;
+        const auto& q = open[j];
+        if (near(q.front(), loop.back())) loop.insert(loop.end(), q.begin() + 1, q.end());
+        else if (near(q.back(), loop.back())) loop.insert(loop.end(), q.rbegin() + 1, q.rend());
+        else continue;
+        used[j] = 1;
+        grew = true;
+      }
+      if (!grew) return {};  // an open end: KiCad calls this a malformed courtyard
+    }
+    loop.pop_back();  // the closing point repeats the first
+    loops.push_back(std::move(loop));
+  }
+  for (const auto& l : loops)
+    if (l.size() < 3) return {};
+  return loops;
+}
+
 Shape inset_convex(const Shape& s, Coord t) {
   const std::size_t n = s.pts.size();
   if (n < 3 || t <= 0) return s;
@@ -283,6 +329,7 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
   // Board outline.
   const drc::CopperModel cm = drc::build_copper(b);
   p.edges = cm.edges;
+  p.margins = cm.margins;
 
   // Copper clearances: net class (or board minimum), local overrides; with custom clearance rules, their
   // largest minimum as an upper bound (conditions are not evaluated here: conservative).
@@ -434,13 +481,15 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
     pt.pos0 = fp.pos;
     pt.angle0 = fp.angle;
 
-    // Courtyards: convex hull of every courtyard graphic per side (a superset of KiCad's courtyard polygon,
-    // so a placement legal here is legal in KiCad).
+    // Courtyards: the closed outlines of each side's courtyard graphics, as KiCad builds them (exact_courtyards, M24), else the convex
+    // hull of every courtyard graphic per side (a superset of KiCad's courtyard polygon, so a placement legal here is legal in KiCad).
     std::array<std::vector<Point>, 2> cpts;
+    std::array<std::vector<const model::Graphic*>, 2> cgs;
     for (int gi : fp.graphics) {
       const auto& g = b.graphics[z(gi)];
       const int side = g.layer == "F.CrtYd" ? 0 : g.layer == "B.CrtYd" ? 1 : -1;
       if (side < 0) continue;
+      cgs[z(side)].push_back(&g);
       auto& v = cpts[z(side)];
       switch (g.kind) {
         case model::Graphic::Kind::Line: v.push_back(g.a); v.push_back(g.b); break;
@@ -479,15 +528,27 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
       pad_box.add(one);
     }
     // Courtyard shapes per side (offsets from the origin).
-    std::array<std::vector<Shape>, 2> cy0;
+    std::array<std::vector<Shape>, 2> cy0, cy0_hull;  // the courtyards, and the convex hull of each (for the inset edge test)
     for (int s = 0; s < 2; ++s) {
       if (cpts[z(s)].size() < 3) continue;
       auto hull = geom::convex_hull(cpts[z(s)]);
       if (hull.size() < 3) continue;
-      for (auto& q : hull) q = q - fp.pos;
-      cy0[z(s)].push_back(Shape::polygon(std::move(hull), 0));
+      auto loops = opt.exact_courtyards ? courtyard_outlines(cgs[z(s)]) : std::vector<std::vector<Point>>{};
+      if (loops.empty()) {
+        for (auto& q : hull) q = q - fp.pos;
+        cy0[z(s)].push_back(Shape::polygon(hull, 0));
+        cy0_hull[z(s)].push_back(Shape::polygon(std::move(hull), 0));
+        continue;
+      }
+      for (auto& l : loops) {
+        auto h = geom::convex_hull(l);
+        for (auto& q : l) q = q - fp.pos;
+        for (auto& q : h) q = q - fp.pos;
+        cy0[z(s)].push_back(Shape::polygon(std::move(l), 0));
+        cy0_hull[z(s)].push_back(Shape::polygon(std::move(h), 0));
+      }
     }
-    if (!pad_box.empty() && std::find(opt.pads_only.begin(), opt.pads_only.end(), fp.reference) != opt.pads_only.end()) cy0 = {};
+    if (!pad_box.empty() && std::find(opt.pads_only.begin(), opt.pads_only.end(), fp.reference) != opt.pads_only.end()) cy0 = {}, cy0_hull = {};
     pt.copper_only = std::find(opt.copper_only.begin(), opt.copper_only.end(), fp.reference) != opt.copper_only.end();
     if (cy0[0].empty() && cy0[1].empty() && !pad_box.empty()) {
       // No courtyard: the pad bounding box inflated by 0.25 mm, or for large sparse footprints (shield headers,
@@ -535,10 +596,12 @@ Problem extract(const model::Board& b, const model::DesignRules& rules, const st
       };
       for (int s = 0; s < 2; ++s) {
         const int to = fl ? 1 - s : s;  // a flipped part's front courtyard is on the back
-        for (const auto& sh : cy0[z(s)]) {
+        for (std::size_t k = 0; k < cy0[z(s)].size(); ++k) {
+          const Shape& sh = cy0[z(s)][k];
           g.cy[z(to)].push_back(rot_shape(pre(sh)));
           g.body.add(g.cy[z(to)].back().box);
-          g.cy_in[z(to)].push_back(rot_shape(inset_convex(pre(sh), kEdgeTolerance)));
+          // The edge test insets a convex shape: the hull of this outline (the same shape for a hull courtyard or a fallback box).
+          g.cy_in[z(to)].push_back(rot_shape(inset_convex(pre(k < cy0_hull[z(s)].size() ? cy0_hull[z(s)][k] : sh), kEdgeTolerance)));
           g.edge_box.add(g.cy_in[z(to)].back().box);
         }
       }

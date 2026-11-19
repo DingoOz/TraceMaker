@@ -1,0 +1,9 @@
+{"board": "sample040", "arm": "k0", "seconds": 3313, "open": 20, "vias": 270, "unconnected_after": 20, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"board": "sample040", "arm": "k1", "seconds": 3327, "open": 18, "vias": 300, "unconnected_after": 18, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"board": "sample040", "arm": "k2", "seconds": 3329, "open": 15, "vias": 292, "unconnected_after": 15, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"board": "sample070", "arm": "k0", "seconds": 3345, "open": 19, "vias": 206, "unconnected_after": 19, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"board": "sample152", "arm": "k0", "seconds": 3346, "open": 16, "vias": 308, "unconnected_after": 16, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"board": "sample070", "arm": "k1", "seconds": 3375, "open": 15, "vias": 226, "unconnected_after": 15, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"board": "sample152", "arm": "k2", "seconds": 3396, "open": 12, "vias": 284, "unconnected_after": 12, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"board": "sample070", "arm": "k2", "seconds": 3396, "open": 16, "vias": 238, "unconnected_after": 16, "added_errors": {}, "error_gate": "pass", "clean": false}
+{"board": "sample152", "arm": "k1", "seconds": 3421, "open": 12, "vias": 288, "unconnected_after": 12, "added_errors": {}, "error_gate": "pass", "clean": false}

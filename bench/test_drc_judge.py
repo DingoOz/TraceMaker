@@ -25,6 +25,20 @@ def report(*entries, unit="mm"):
 
 
 class PhysicalGateTests(unittest.TestCase):
+    def test_courtyard_pairs_keep_a_moved_overlap_but_add_a_new_neighbour(self):
+        def fp(ref, x):
+            return {"uuid": ref, "description": f"Footprint {ref}", "pos": {"x": x, "y": 0}}
+        before = report(violation("courtyards_overlap", items=[fp("U4", 0), fp("C1", 1)]))
+        moved = report(violation("courtyards_overlap", items=[fp("U4", 0), fp("C1", 2)]))
+        new = report(violation("courtyards_overlap", items=[fp("U4", 0), fp("C2", 2)]))
+        self.assertEqual(judge.added_errors(before, moved, placement=True)["added_errors"], {"courtyards_overlap": 1})
+        self.assertEqual(judge.added_errors(before, moved, placement=True, courtyard_pairs=True)["added_errors"], {})
+        self.assertEqual(judge.added_errors(before, new, placement=True, courtyard_pairs=True)["added_errors"], {"courtyards_overlap": 1})
+        edge = {"description": "Segment on Edge.Cuts", "pos": {"x": 9, "y": 0}}
+        pad0 = report(violation("copper_edge_clearance", items=[edge, item("Pad 1", x=8, ref="C3")]))
+        pad1 = report(violation("copper_edge_clearance", items=[edge, item("Pad 1", x=7, ref="C3")]))
+        self.assertEqual(judge.added_errors(pad0, pad1, placement=True, courtyard_pairs=True)["added_errors"], {})
+
     def test_same_count_replacement_is_added(self):
         before, after = report(violation()), report(violation(items=[item(x=3)]))
         result = judge.added_errors(before, after)

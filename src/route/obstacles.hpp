@@ -102,6 +102,16 @@ class Obstacles {
   // Net-less solder-mask openings drawn as footprint graphics (a solder-jumper's bridge, a MEMS microphone's pad group) no longer keep copper out; KiCad's
   // mask checks flag what then lies in them (judgement, not a short). Off by default.
   void set_soft_mask_graphics(bool on) { soft_mask_graphics_ = on; }
+  // Rule fit (doc 20 §2.8): a pad's solder-mask opening that already exposes another net's pad copper on that side no longer keeps
+  // tracks out. On a card-edge connector with fingers on both sides and openings through both masks, every back finger lies in the
+  // front finger's opening, so no track can leave any of them (PCBench fifogfx_c64cart: 40 of 104 connections, open on the bare
+  // board); the designer's layout has one solder_mask_bridge per finger there. Off by default.
+  void set_soft_bridged_masks(bool on) { soft_bridged_masks_ = on; }
+  // Pad openings that already expose another net's pad (both sides).
+  int bridged_mask_openings() const;
+  // Solder-mask openings drawn as graphics that already lie over a pad with a net (a solder jumper's bridge over its two pads): the
+  // evidence on which the rule fit turns set_soft_mask_graphics on.
+  int mask_graphics_over_pads() const;
   // Net-less copper drawn as BOARD graphics (an EasyEDA import's pours as polygons on a copper layer) is fixed copper that no track may touch, and pins inside it are
   // enclosed; soft, it is ignored like a zone fill (KiCad then flags what touches it). Off by default.
   void set_soft_copper_graphics(bool on) { soft_copper_graphics_ = on; }  // (unused since the net inference of board copper graphics: Board::infer_graphic_nets)
@@ -194,7 +204,9 @@ class Obstacles {
     Coord margin = 0;
     model::NetId net = 0;
     geom::Box box;
+    bool bridged = false;  // another net's pad copper already lies in the opening on this side (a card-edge finger behind another)
   };
+  bool soft_bridged_masks_ = false;
   std::vector<Aperture> apertures_[2];               // pad solder-mask openings per side
   std::unique_ptr<index::UniformGrid> agrid_[2];
   std::vector<std::pair<int, geom::Shape>> texts_;   // copper text boxes (copper index, rectangle)

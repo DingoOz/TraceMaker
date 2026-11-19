@@ -3769,3 +3769,55 @@ Fields under 500 k cells still go to the CPU (D158): with every field on the CPU
 (`--time-total 120`, the 33 boards) the difference is not measurable: +13 connections with the GPU, −18 with `--no-gpu`, both within the
 noise of time-limited runs. The work curve above predicts about +15 to +20 for a speed-up of this size. The doc 18 gate is not met; the
 speed-up is kept because it is exact and makes every run faster.
+
+## 84. The warm start is the ramp's floor (2026-11-17, D191, M26 F8)
+
+**Problem.** A clearance ramp (§41.2, and `--relax`, which turns one on) starts under lowered clearances, so the board a warm start brings
+(`--warm-pcb`, `--state-in`) was never scored under the board's own rules. `best_final` only held states reached under the board's rules
+after the ramp, and the run could return a board with fewer routes than it was given, against rule 4. On srj20 sample040, warm from a board
+with 2 open, a ramp that ran out of rounds while relaxed (`--ramp-from 0.01 --rounds 2`) returned 16 open.
+
+**Change.** Before the first round, the first variant scores the warm start under the board's rules with no search (work 1, no time: the
+same round that legalises a run ending relaxed). The run returns that result if nothing it finds routes more. It is only a floor: the
+stages and the breathing still start from what the ramp finds. The relax rescue (§68) already keeps the better of its start and its
+result, so it turns the floor off (`RouterOptions::warm_floor`), and a run without a warm start is unchanged.
+
+**Measured** (`bench/records/m26`). On the same sample040 run, the old binary returned 16 open and the new one 2: the warm start's count,
+judged by KiCad with no added error. The scoring round moves some of the copper (370 of 1,243 segments and 111 of 356 vias differ from the warm
+board) but routes the same connections. A test (`tests/test_txn.cpp`) warm-starts a ramp from a complete 24-connection board, which
+without the floor returned 17 routed. The default route is unchanged: the floor applies only to explicit warm starts with a ramp.
+
+## 85. Connection order by crossings, in every variant (2026-11-17, D191, M26 F7)
+
+**Problem.** A designer routes the long connections that cross the board first. The breakout portfolio (D101) draws each variant's order
+from shortest first, deep package pins first and jittered. `--order` reaches variant 0 only, so no run could put the long, crossing
+connections first in every variant.
+
+**Change.** `--order 4` sorts the connections by how many other connections' straight pad-to-pad lines cross their own (most first),
+then longest first. Lines that share a pad do not cross, and a connection to a zone has no line. `--order-all N` gives every variant
+order N. Both are off by default. A test checks that with `--order-all 4` the routes come back in descending crossing count.
+
+**Measured** (`bench/records/m26`, F7). From nothing on srj20 152, 070 and 040 (3300 s, 16 variants), the control left 7, 7 and 6 open.
+Crossings first left 10, 8 and 13; longest first 12, 7 and 12. One order in every variant loses the portfolio's diversity, and the
+connections that had room in the short-first order fail instead. Not adopted.
+
+## 86. Lanes under a ball-grid package (2026-11-17, D191, M26 F6)
+
+**Problem.** On the srj20 boards that never finish, most open connections cross under the BGA to the opposite side. The best boards weave
+those tracks between the vias inside the package, closing the channels the inner balls need. A designer runs them straight along the ball
+rows and columns on the far layer, between the rows of dog-bone vias.
+
+**Change.** `--package-lanes PEN` (pitches per lattice step). Inside a ball-grid package (the boxes of doc 16 F3) and on a layer other than
+its pad layer, a track cell more than a quarter ball pitch from every ball row and column line costs PEN extra. This applies only to
+connections at least `--package-lanes-mm` long (8 mm), so the dog-bone escapes are unaffected. It is a cost, never a block. A penalty,
+not a bonus, keeps the search's lower bounds valid. It is off by default.
+
+**Measured.** See doc 18 §21 (F6).
+
+## 87. Crossings per connection in the summary, and a layer hint (2026-11-17, D191, M26 F9)
+
+Every route writes `line_crossings` to the summary: pairs of connections whose straight pad-to-pad lines cross, counted once when the
+connections are planned (`line_crossings` in `router.cpp`, also used by `--order 4`). On a two-layer board with connections open through
+congestion and at least 11.5 crossings per connection (`kTwoLayerCrossings`), the "next" advice adds a line suggesting `--try-layers 2,4`.
+The threshold comes from the router's count on all 200 srj20 boards. The eight boards above it (11.8-14.6) were never routed clean on two
+layers. The highest board that has been routed clean is at 11.0 (`bench/records/m26/f9`). The routing is unchanged.

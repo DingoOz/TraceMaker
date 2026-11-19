@@ -1,0 +1,1571 @@
+{
+ "EtherCAT_shield_v1_EtherCAT_shield_v1": {
+  "open": 16,
+  "onz": 0,
+  "zn": [
+   "GND",
+   "GNDPWR"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.25",
+    "0.6",
+    "0.4"
+   ]
+  ],
+  "minw": 0.2,
+  "med": 0.25,
+  "below": 0.09638167192271305,
+  "desvias": 154,
+  "ourvias": 148,
+  "deslen": 2871.0132613808914,
+  "ourlen": 2264.549178,
+  "pitch": 0.075,
+  "layers": null,
+  "path": "ROOT/bench/results/m17-c1-txn8/boards/EtherCAT_shield_v1_EtherCAT_shield_v1.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "Net-(C12-Pad1)",
+    4
+   ],
+   [
+    "Net-(C16-Pad1)",
+    2
+   ],
+   [
+    "Net-(R18-Pad1)",
+    1
+   ],
+   [
+    "SIO3",
+    1
+   ],
+   [
+    "Net-(R19-Pad2)",
+    1
+   ],
+   [
+    "SIO2",
+    1
+   ]
+  ],
+  "zonetracklen": 710.5339130511873
+ },
+ "Hardware_Playground_E3_Pcb_rev0.3": {
+  "open": 15,
+  "onz": 0,
+  "zn": [
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.25",
+    "0.8",
+    "0.4"
+   ]
+  ],
+  "minw": 0.25,
+  "med": 0.254,
+  "below": 0.0,
+  "desvias": 349,
+  "ourvias": 262,
+  "deslen": 2842.7896983023393,
+  "ourlen": null,
+  "pitch": 0.075,
+  "layers": null,
+  "path": "ROOT/bench/results/rel090w-tierB/boards/Hardware_Playground_E3_Pcb_rev0.3.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "+VB",
+    11
+   ],
+   [
+    "F1_1",
+    2
+   ],
+   [
+    "Q1_2",
+    1
+   ],
+   [
+    "Q2_2",
+    1
+   ]
+  ],
+  "zonetracklen": 51.19234867848973
+ },
+ "Hardware_Playground_serial_gw_ATMEGA328P": {
+  "open": 0,
+  "onz": 0,
+  "zn": [
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.25",
+    "0.8",
+    "0.4"
+   ]
+  ],
+  "minw": 0.25,
+  "med": 0.25,
+  "below": 0.0,
+  "desvias": 25,
+  "ourvias": 57,
+  "deslen": 672.9181057399456,
+  "ourlen": 695.872008,
+  "pitch": 0.035,
+  "layers": null,
+  "path": "ROOT/bench/results/soak-c-relax/boards/Hardware_Playground_serial_gw_ATMEGA328P.kicad_pcb.route.json",
+  "failnets": [],
+  "zonetracklen": 181.93670944500556
+ },
+ "MicroMaple_MicroMaple": {
+  "open": 3,
+  "onz": 0,
+  "zn": [
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.25",
+    "0.6",
+    "0.4"
+   ],
+   [
+    "Power",
+    "0.2",
+    "0.4",
+    "0.6",
+    "0.4"
+   ]
+  ],
+  "minw": 0.25,
+  "med": 0.25,
+  "below": 0.0,
+  "desvias": 64,
+  "ourvias": 115,
+  "deslen": 1410.0422600850047,
+  "ourlen": 1513.269649,
+  "pitch": 0.075,
+  "layers": null,
+  "path": "ROOT/bench/results/soak-c-relax9/boards/MicroMaple_MicroMaple.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "/RST",
+    1
+   ],
+   [
+    "/PA11",
+    1
+   ],
+   [
+    "/PB2",
+    1
+   ]
+  ],
+  "zonetracklen": 74.14114140372634
+ },
+ "fifogfx_c64cart": {
+  "open": 40,
+  "onz": 0,
+  "zn": [],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.381",
+    "0.6",
+    "0.4"
+   ],
+   [
+    "Power",
+    "0.2",
+    "1.524",
+    "0.6",
+    "0.4"
+   ]
+  ],
+  "minw": 0.381,
+  "med": 0.381,
+  "below": 0.0,
+  "desvias": 0,
+  "ourvias": 14,
+  "deslen": 3209.5212564563108,
+  "ourlen": null,
+  "pitch": 0.095,
+  "layers": null,
+  "path": "ROOT/bench/results/final-tierB/boards/fifogfx_c64cart.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "+5V",
+    2
+   ],
+   [
+    "/~ROMH",
+    1
+   ],
+   [
+    "/~RESET",
+    1
+   ],
+   [
+    "/~NMI",
+    1
+   ],
+   [
+    "/PHI2",
+    1
+   ],
+   [
+    "/A15",
+    1
+   ]
+  ],
+  "zonetracklen": 0
+ },
+ "kitspace_OtterPill": {
+  "open": 4,
+  "onz": 0,
+  "zn": [
+   "GND",
+   "Net-(C3-Pad2",
+   "VBUS"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.25",
+    "0.8",
+    "0.4"
+   ]
+  ],
+  "minw": 0.157,
+  "med": 0.157,
+  "below": 0.8065559095648986,
+  "desvias": 144,
+  "ourvias": 93,
+  "deslen": 651.5357072589991,
+  "ourlen": 808.763844,
+  "pitch": 0.075,
+  "layers": 2,
+  "path": "ROOT/bench/results/rescue-warm-bd/boards/kitspace_OtterPill.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "SCL",
+    1
+   ],
+   [
+    "PB7",
+    1
+   ],
+   [
+    "PB8",
+    1
+   ],
+   [
+    "SWDIO",
+    1
+   ]
+  ],
+  "zonetracklen": 59.51090043005823
+ },
+ "kitspace_ardfpga": {
+  "open": 0,
+  "onz": 0,
+  "zn": [
+   "+3.3V",
+   "+5V",
+   "GND",
+   "Net-(D3-Pad2",
+   "V+"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.1524",
+    "0.1524",
+    "0.8",
+    "0.4"
+   ]
+  ],
+  "minw": 0.1524,
+  "med": 0.1524,
+  "below": 0.0,
+  "desvias": 186,
+  "ourvias": 171,
+  "deslen": 2242.2487038615122,
+  "ourlen": 2589.654512,
+  "pitch": 0.05,
+  "layers": null,
+  "path": "ROOT/bench/results/soak-c-relax9/boards/kitspace_ardfpga.kicad_pcb.route.json",
+  "failnets": [],
+  "zonetracklen": 146.24333250954015
+ },
+ "kitspace_teensy-fx": {
+  "open": 0,
+  "onz": 0,
+  "zn": [
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.25",
+    "0.8",
+    "0.4"
+   ],
+   [
+    "power",
+    "0.2",
+    "0.6",
+    "0.8",
+    "0.4"
+   ]
+  ],
+  "minw": 0.25,
+  "med": 0.25,
+  "below": 0.0,
+  "desvias": 115,
+  "ourvias": 138,
+  "deslen": 3517.548755135622,
+  "ourlen": 3304.527387,
+  "pitch": 0.075,
+  "layers": 4,
+  "path": "ROOT/bench/results/base-bd-relax2/boards/kitspace_teensy-fx.kicad_pcb.route.json",
+  "failnets": [],
+  "zonetracklen": 86.4260173218461
+ },
+ "kitspace_test-jig": {
+  "open": 30,
+  "onz": 5,
+  "zn": [
+   "GND",
+   "GNDA"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.2",
+    "0.7",
+    "0.3"
+   ]
+  ],
+  "minw": 0.2,
+  "med": 0.2,
+  "below": 0.0,
+  "desvias": 123,
+  "ourvias": 101,
+  "deslen": 3241.575646698865,
+  "ourlen": 1694.696403,
+  "pitch": 0.065,
+  "layers": 2,
+  "path": "ROOT/bench/results/c3-bd-pour2/boards/kitspace_test-jig.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "+3V3",
+    7
+   ],
+   [
+    "GND",
+    5
+   ],
+   [
+    "Net-(JP3-Pad1)",
+    2
+   ],
+   [
+    "/TP_5V",
+    2
+   ],
+   [
+    "Net-(JP11-Pad1)",
+    2
+   ],
+   [
+    "Net-(JP12-Pad1)",
+    2
+   ]
+  ],
+  "zonetracklen": 742.2226846193255
+ },
+ "memsarray_mems_modules": {
+  "open": 1,
+  "onz": 0,
+  "zn": [
+   "DGND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.1524",
+    "0.254",
+    "0.6",
+    "0.4"
+   ]
+  ],
+  "minw": 0.1524,
+  "med": 0.254,
+  "below": 0.04838381648076753,
+  "desvias": 2,
+  "ourvias": 2,
+  "deslen": 44.80729132682957,
+  "ourlen": 28.222894,
+  "pitch": 0.065,
+  "layers": null,
+  "path": "ROOT/bench/results/soak-c-relax9/boards/memsarray_mems_modules.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "DVDD",
+    1
+   ]
+  ],
+  "zonetracklen": 23.534216372289162
+ },
+ "poncho_fpga_fpga-dongle": {
+  "open": 9,
+  "onz": 0,
+  "zn": [
+   "+1V2",
+   "+3V3",
+   "+5V",
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.1905",
+    "0.25",
+    "0.762",
+    "0.4064"
+   ]
+  ],
+  "minw": 0.2032,
+  "med": 0.25,
+  "below": 0.004690180474694266,
+  "desvias": 216,
+  "ourvias": 335,
+  "deslen": 7663.466070262724,
+  "ourlen": 8052.15922,
+  "pitch": 0.07,
+  "layers": 2,
+  "path": "ROOT/bench/results/txn-txn-tierB/boards/poncho_fpga_fpga-dongle.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "/FPGA_IO_BANK2_22",
+    1
+   ],
+   [
+    "/FPGA_IO_BANK2_21",
+    1
+   ],
+   [
+    "/I2C_SCL",
+    1
+   ],
+   [
+    "/RAM_D10",
+    1
+   ],
+   [
+    "/FPGA_IO_BANK2_20",
+    1
+   ],
+   [
+    "/FPGA_IO_BANK2_18",
+    1
+   ]
+  ],
+  "zonetracklen": 1291.7223701520488
+ },
+ "96boards-robomezzi_96boards-robomezzi": {
+  "open": 1,
+  "onz": 0,
+  "zn": [
+   "5V",
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.1778",
+    "0.254",
+    "0.6096",
+    "0.3048"
+   ],
+   [
+    "Power",
+    "0.1778",
+    "0.381",
+    "0.6096",
+    "0.3048"
+   ]
+  ],
+  "minw": 0.2032,
+  "med": 0.254,
+  "below": 0.09527639506385797,
+  "desvias": 113,
+  "ourvias": 122,
+  "deslen": 2366.795399482168,
+  "ourlen": 2014.411419,
+  "pitch": 0.07,
+  "layers": null,
+  "path": "ROOT/bench/results/pc-routable-50M/boards/96boards-robomezzi_96boards-robomezzi.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "Net-(C13-Pad1)",
+    1
+   ]
+  ],
+  "zonetracklen": 111.3710327157393
+ },
+ "DronPi_dronPi": {
+  "open": 11,
+  "onz": 3,
+  "zn": [
+   "GND",
+   "Power"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.25",
+    "0.6",
+    "0.4"
+   ],
+   [
+    "Aux",
+    "0.2",
+    "0.45",
+    "0.6",
+    "0.4"
+   ],
+   [
+    "Servo",
+    "0.2",
+    "0.8",
+    "0.8",
+    "0.6"
+   ]
+  ],
+  "minw": 0.2,
+  "med": 0.25,
+  "below": 0.004921856809154486,
+  "desvias": 138,
+  "ourvias": 161,
+  "deslen": 2804.723898843834,
+  "ourlen": 2958.795626,
+  "pitch": 0.075,
+  "layers": 2,
+  "path": "ROOT/bench/results/base-bd-relax2/boards/DronPi_dronPi.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "GND",
+    3
+   ],
+   [
+    "+3v3",
+    2
+   ],
+   [
+    "SPI_CLK",
+    2
+   ],
+   [
+    "SPI_MISO",
+    2
+   ],
+   [
+    "Net-(C13-Pad1)",
+    1
+   ],
+   [
+    "SPI_CS_MPU",
+    1
+   ]
+  ],
+  "zonetracklen": 325.71373306141766
+ },
+ "ErgodoneWithHole_ErgoDone": {
+  "open": 2,
+  "onz": 0,
+  "zn": [],
+  "cls": [
+   [
+    "Default",
+    "0.3048",
+    "0.3048",
+    "0.6096",
+    "0.508"
+   ]
+  ],
+  "minw": 0.2032,
+  "med": 0.6096,
+  "below": 0.028000935333841494,
+  "desvias": 29,
+  "ourvias": 37,
+  "deslen": 5601.675346672904,
+  "ourlen": 4594.180267,
+  "pitch": 0.1,
+  "layers": null,
+  "path": "ROOT/bench/results/rel0110-tierC/boards/ErgodoneWithHole_ErgoDone.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "Net-(J2-Pad4)",
+    1
+   ],
+   [
+    "Net-(J2-Pad1)",
+    1
+   ]
+  ],
+  "zonetracklen": 0
+ },
+ "Hardware_Playground_multisensor_cr2032": {
+  "open": 0,
+  "onz": 0,
+  "zn": [
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.25",
+    "0.25",
+    "0.8",
+    "0.4"
+   ]
+  ],
+  "minw": 0.25,
+  "med": 0.25,
+  "below": 0.0,
+  "desvias": 39,
+  "ourvias": 52,
+  "deslen": 727.6425216915268,
+  "ourlen": 732.11675,
+  "pitch": 0.08,
+  "layers": null,
+  "path": "ROOT/bench/results/soak-c-relax9/boards/Hardware_Playground_multisensor_cr2032.kicad_pcb.route.json",
+  "failnets": [],
+  "zonetracklen": 161.94310511437465
+ },
+ "Hardware_Playground_sd_wav_pcm5100": {
+  "open": 1,
+  "onz": 0,
+  "zn": [
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.25",
+    "0.25",
+    "0.8",
+    "0.4"
+   ]
+  ],
+  "minw": 0.25,
+  "med": 0.25,
+  "below": 0.0,
+  "desvias": 24,
+  "ourvias": 83,
+  "deslen": 957.3929933841981,
+  "ourlen": null,
+  "pitch": 0.04,
+  "layers": null,
+  "path": "ROOT/bench/results/final11-tierC/boards/Hardware_Playground_sd_wav_pcm5100.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "/BTN1",
+    1
+   ]
+  ],
+  "zonetracklen": 268.5740380316646
+ },
+ "P8000_WDC_Emulator_P8000_WDC_Emulator": {
+  "open": 10,
+  "onz": 1,
+  "zn": [
+   "+3V3",
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.254",
+    "0.2032",
+    "1.08",
+    "0.65"
+   ],
+   [
+    "12V",
+    "0.254",
+    "1.00076",
+    "1.08",
+    "0.65"
+   ],
+   [
+    "5V",
+    "0.254",
+    "1.00076",
+    "1.08",
+    "0.65"
+   ]
+  ],
+  "minw": 0.2032,
+  "med": 0.2032,
+  "below": 0.0,
+  "desvias": 27,
+  "ourvias": 71,
+  "deslen": 9162.246783461891,
+  "ourlen": null,
+  "pitch": 0.075,
+  "layers": null,
+  "path": "ROOT/bench/results/crules-soft-tierC/boards/P8000_WDC_Emulator_P8000_WDC_Emulator.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "/PA6",
+    2
+   ],
+   [
+    "/STATUS1",
+    1
+   ],
+   [
+    "/RST1",
+    1
+   ],
+   [
+    "//ASTB",
+    1
+   ],
+   [
+    "Net-(1C1-Pad1)",
+    1
+   ],
+   [
+    "/PC6",
+    1
+   ]
+  ],
+  "zonetracklen": 674.3755470326943
+ },
+ "PCIE-to-MXM-Adapter_PCIEx1toMXM3.0": {
+  "open": 28,
+  "onz": 5,
+  "zn": [
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.25",
+    "0.8",
+    "0.4"
+   ]
+  ],
+  "minw": 0.2,
+  "med": 0.2,
+  "below": 0.6560587972663147,
+  "desvias": 135,
+  "ourvias": 127,
+  "deslen": 2575.1110143918004,
+  "ourlen": 1440.876317,
+  "pitch": 0.075,
+  "layers": 2,
+  "path": "ROOT/bench/results/c3-bd-pour2/boards/PCIE-to-MXM-Adapter_PCIEx1toMXM3.0.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "+12V",
+    5
+   ],
+   [
+    "GND",
+    5
+   ],
+   [
+    "+3V3",
+    4
+   ],
+   [
+    "/PERST",
+    2
+   ],
+   [
+    "/SMCLK",
+    1
+   ],
+   [
+    "/SMDAT",
+    1
+   ]
+  ],
+  "zonetracklen": 206.80420297928814
+ },
+ "kitspace_d20_tri_r0.3": {
+  "open": 123,
+  "onz": 0,
+  "zn": [
+   "gnd"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.1016",
+    "0.1143",
+    "0.46",
+    "0.2"
+   ]
+  ],
+  "minw": 0.1143,
+  "med": 0.15,
+  "below": 0.0,
+  "desvias": 262,
+  "ourvias": 349,
+  "deslen": 2951.983160461068,
+  "ourlen": 1671.671444,
+  "pitch": 0.035,
+  "layers": null,
+  "path": "ROOT/bench/results/m17-c1-txn8/boards/kitspace_d20_tri_r0.3.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "colb_3",
+    5
+   ],
+   [
+    "colg_7",
+    4
+   ],
+   [
+    "colb_4",
+    4
+   ],
+   [
+    "colg_6",
+    4
+   ],
+   [
+    "colg_4",
+    4
+   ],
+   [
+    "row_6",
+    4
+   ]
+  ],
+  "zonetracklen": 60.52995070107514
+ },
+ "mechkeys_58r-mxalps": {
+  "open": 0,
+  "onz": 0,
+  "zn": [
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.1905",
+    "0.381",
+    "0.6096",
+    "0.3048"
+   ],
+   [
+    "10m",
+    "0.2032",
+    "0.254",
+    "0.6096",
+    "0.3048"
+   ],
+   [
+    "20m",
+    "0.254",
+    "0.508",
+    "0.6096",
+    "0.3048"
+   ]
+  ],
+  "minw": 0.2032,
+  "med": 0.381,
+  "below": 0.01966282497052922,
+  "desvias": 77,
+  "ourvias": 276,
+  "deslen": 6225.131612804122,
+  "ourlen": null,
+  "pitch": 0.15,
+  "layers": null,
+  "path": "ROOT/bench/results/cap1m-tierC/boards/mechkeys_58r-mxalps.kicad_pcb.route.json",
+  "failnets": [],
+  "zonetracklen": 89.97686168185155
+ },
+ "motor-high-current-sensors_CurrentSensorPCB_line": {
+  "open": 1,
+  "onz": 1,
+  "zn": [
+   "+3.3VADC",
+   "+5VA",
+   "AGND",
+   "DGND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.25",
+    "0.6",
+    "0.4"
+   ],
+   [
+    "HV",
+    "0.25",
+    "0.25",
+    "0.6",
+    "0.4"
+   ],
+   [
+    "HV_IC",
+    "0.25",
+    "0.25",
+    "0.6",
+    "0.4"
+   ]
+  ],
+  "minw": 0.25,
+  "med": 0.25,
+  "below": 0.0,
+  "desvias": 117,
+  "ourvias": 271,
+  "deslen": 3180.359828802806,
+  "ourlen": 3822.200111,
+  "pitch": 0.075,
+  "layers": 2,
+  "path": "ROOT/bench/results/m24-keep10m-b/boards/motor-high-current-sensors_CurrentSensorPCB_line.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "AGND",
+    1
+   ]
+  ],
+  "zonetracklen": 755.9814085523751
+ },
+ "rvi_v2x_hardware_V2X": {
+  "open": 8,
+  "onz": 0,
+  "zn": [
+   "12V0_B",
+   "4V1",
+   "4V1F1",
+   "GND",
+   "GPS_ANT",
+   "GSM_ANT",
+   "Net-(C48-Pad1",
+   "Net-(D10-Pad1",
+   "Net-(D8-Pad1"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.25",
+    "0.6",
+    "0.4"
+   ],
+   [
+    "PWR",
+    "0.2",
+    "0.5",
+    "0.6",
+    "0.4"
+   ],
+   [
+    "RF",
+    "0.2",
+    "1.33",
+    "0.6",
+    "0.4"
+   ]
+  ],
+  "minw": 0.25,
+  "med": 0.25,
+  "below": 0.0,
+  "desvias": 416,
+  "ourvias": 413,
+  "deslen": 4514.072030424815,
+  "ourlen": 4395.213785,
+  "pitch": 0.075,
+  "layers": 2,
+  "path": "ROOT/bench/results/rescue-warm-bd/boards/rvi_v2x_hardware_V2X.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "3V3",
+    2
+   ],
+   [
+    "SEQ_DM",
+    1
+   ],
+   [
+    "SEQ_DP",
+    1
+   ],
+   [
+    "CAN_TXD",
+    1
+   ],
+   [
+    "SIM_RXD",
+    1
+   ],
+   [
+    "SIM_NET",
+    1
+   ]
+  ],
+  "zonetracklen": 1156.820883756518
+ },
+ "zx-sizif-512-ext_sizif512ext": {
+  "open": 30,
+  "onz": 0,
+  "zn": [
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.2",
+    "0.5",
+    "0.3"
+   ],
+   [
+    "Hipower",
+    "0.2",
+    "1",
+    "0.8",
+    "0.4"
+   ],
+   [
+    "power",
+    "0.2",
+    "0.5",
+    "0.8",
+    "0.4"
+   ]
+  ],
+  "minw": 0.2,
+  "med": 0.2,
+  "below": 0.0,
+  "desvias": 294,
+  "ourvias": 430,
+  "deslen": 10955.947015957378,
+  "ourlen": 9939.659879,
+  "pitch": 0.065,
+  "layers": 2,
+  "path": "ROOT/bench/results/txn-txn-tierC/boards/zx-sizif-512-ext_sizif512ext.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "+3V3",
+    8
+   ],
+   [
+    "/~RST",
+    2
+   ],
+   [
+    "Net-(C32-Pad1)",
+    1
+   ],
+   [
+    "Net-(C26-Pad1)",
+    1
+   ],
+   [
+    "+3.3VA",
+    1
+   ],
+   [
+    "/MIDI_R",
+    1
+   ]
+  ],
+  "zonetracklen": 949.791850542521
+ },
+ "Aleste-520EX_aleste": {
+  "open": 162,
+  "onz": 0,
+  "zn": [],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.4",
+    "1",
+    "0.5"
+   ]
+  ],
+  "minw": 0.4,
+  "med": 0.4,
+  "below": 0.0,
+  "desvias": 1041,
+  "ourvias": 1263,
+  "deslen": 57005.5538457287,
+  "ourlen": 37961.864891,
+  "pitch": 0.1,
+  "layers": 2,
+  "path": "ROOT/bench/results/rescue-warm-bd/boards/Aleste-520EX_aleste.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "/CPU/D3",
+    4
+   ],
+   [
+    "/CPU/~RESET",
+    4
+   ],
+   [
+    "/CPU/D2",
+    3
+   ],
+   [
+    "/CPU/D4",
+    3
+   ],
+   [
+    "/CPU/D6",
+    3
+   ],
+   [
+    "/CPU/D7",
+    3
+   ]
+  ],
+  "zonetracklen": 0
+ },
+ "CoreOne-xCORE200-Original_CoreOne": {
+  "open": 0,
+  "onz": 0,
+  "zn": [
+   "GNDD",
+   "GNDPWR"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.15",
+    "0.2",
+    "0.8",
+    "0.5"
+   ],
+   [
+    "50Ohm",
+    "0.2",
+    "0.35",
+    "0.6",
+    "0.3"
+   ],
+   [
+    "75Ohm",
+    "0.3",
+    "0.2",
+    "0.6",
+    "0.3"
+   ]
+  ],
+  "minw": 0.135,
+  "med": 0.2,
+  "below": 0.22227890919002466,
+  "desvias": 428,
+  "ourvias": 372,
+  "deslen": 7325.544445491021,
+  "ourlen": 6956.657385,
+  "pitch": 0.055,
+  "layers": 4,
+  "path": "ROOT/bench/results/thin-bd-relax-final9-sub/boards/CoreOne-xCORE200-Original_CoreOne.kicad_pcb.route.json",
+  "failnets": [],
+  "zonetracklen": 626.8189672511552
+ },
+ "KiCad-Library_Teensy_test_layout": {
+  "open": 0,
+  "onz": 0,
+  "zn": [
+   "+1V8",
+   "+3V3_REG",
+   "+5V",
+   "CHASSIS",
+   "GND",
+   "ISOGND12",
+   "ISOGND34",
+   "UGND",
+   "VBULK",
+   "VUU"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.1778",
+    "0.1778",
+    "0.635",
+    "0.381"
+   ],
+   [
+    "Jack",
+    "0.254",
+    "0.4064",
+    "0.635",
+    "0.381"
+   ],
+   [
+    "JackLine",
+    "0.3048",
+    "0.3048",
+    "0.635",
+    "0.381"
+   ]
+  ],
+  "minw": 0.1778,
+  "med": 0.2032,
+  "below": 0.0,
+  "desvias": 374,
+  "ourvias": 608,
+  "deslen": 11571.693210436937,
+  "ourlen": 13434.201169,
+  "pitch": 0.055,
+  "layers": 2,
+  "path": "ROOT/bench/results/vfix-bd-relax2/boards/KiCad-Library_Teensy_test_layout.kicad_pcb.route.json",
+  "failnets": [],
+  "zonetracklen": 934.166386050822
+ },
+ "LeeChee_1800": {
+  "open": 0,
+  "onz": 0,
+  "zn": [
+   "Earth"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2",
+    "0.25",
+    "0.6",
+    "0.4"
+   ]
+  ],
+  "minw": 0.25,
+  "med": 0.25,
+  "below": 0.0,
+  "desvias": 381,
+  "ourvias": 584,
+  "deslen": 22648.868530528038,
+  "ourlen": 19157.777848,
+  "pitch": 0.075,
+  "layers": null,
+  "path": "ROOT/bench/results/m17-c1-base8/boards/LeeChee_1800.kicad_pcb.route.json",
+  "failnets": [],
+  "zonetracklen": 4337.279610204254
+ },
+ "MonApollo_analog-board": {
+  "open": 28,
+  "onz": 1,
+  "zn": [
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2032",
+    "0.254",
+    "1.016",
+    "0.508"
+   ],
+   [
+    "POWER",
+    "0.254",
+    "0.3048",
+    "1.27",
+    "0.635"
+   ]
+  ],
+  "minw": 0.2032,
+  "med": 0.254,
+  "below": 0.03172265069860244,
+  "desvias": 262,
+  "ourvias": 782,
+  "deslen": 16043.408093241738,
+  "ourlen": 14623.869394,
+  "pitch": 0.075,
+  "layers": 2,
+  "path": "ROOT/bench/results/rescue-warm-bd/boards/MonApollo_analog-board.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "-12V",
+    1
+   ],
+   [
+    "GND",
+    1
+   ],
+   [
+    "+5V",
+    1
+   ],
+   [
+    "RES CV",
+    1
+   ],
+   [
+    "PWM A EG2 AMT CV",
+    1
+   ],
+   [
+    "/DAC7",
+    1
+   ]
+  ],
+  "zonetracklen": 450.2989528216006
+ },
+ "TCKB_Kicad_TCKB": {
+  "open": 15,
+  "onz": 0,
+  "zn": [
+   "GNDPWR"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.2032",
+    "0.4064",
+    "0.6",
+    "0.4"
+   ],
+   [
+    "POWER",
+    "0.2032",
+    "0.508",
+    "1",
+    "0.4"
+   ]
+  ],
+  "minw": 0.25,
+  "med": 0.25,
+  "below": 0.9016546089159196,
+  "desvias": 247,
+  "ourvias": 231,
+  "deslen": 12296.60599690814,
+  "ourlen": 10214.731045,
+  "pitch": 0.1,
+  "layers": 2,
+  "path": "ROOT/bench/results/lm-m22all/boards/TCKB_Kicad_TCKB.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "Col_2_",
+    1
+   ],
+   [
+    "Col_6_",
+    1
+   ],
+   [
+    "LED_LINE_4",
+    1
+   ],
+   [
+    "LIGHT_CS",
+    1
+   ],
+   [
+    "LED_COL_5",
+    1
+   ],
+   [
+    "LED_LINE_0",
+    1
+   ]
+  ],
+  "zonetracklen": 569.4533944037573
+ },
+ "dorkyboard_keyboard": {
+  "open": 2,
+  "onz": 0,
+  "zn": [
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.16",
+    "0.25",
+    "0.6",
+    "0.4"
+   ]
+  ],
+  "minw": 0.25,
+  "med": 0.25,
+  "below": 0.0,
+  "desvias": 68,
+  "ourvias": 179,
+  "deslen": 12097.561273506373,
+  "ourlen": 13204.877006,
+  "pitch": 0.065,
+  "layers": 2,
+  "path": "ROOT/bench/results/thin-bd-relax-final9-sub/boards/dorkyboard_keyboard.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "/matrix/Col5",
+    1
+   ],
+   [
+    "/matrix/Row0",
+    1
+   ]
+  ],
+  "zonetracklen": 199.58915484905103
+ },
+ "front-end-modules_LimeSDR_Sony": {
+  "open": 0,
+  "onz": 0,
+  "zn": [
+   "+2V",
+   "+3.3V",
+   "+3.3V_uC",
+   "+5V",
+   "GND",
+   "Net-(C106-Pad1",
+   "Net-(C13-Pad1",
+   "Net-(C14-Pad1",
+   "PWR"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.1",
+    "0.1",
+    "0.35",
+    "0.2"
+   ]
+  ],
+  "minw": 0.15,
+  "med": 0.3,
+  "below": 0.0,
+  "desvias": 237,
+  "ourvias": 234,
+  "deslen": 1917.1223869985406,
+  "ourlen": 1975.236068,
+  "pitch": 0.03,
+  "layers": null,
+  "path": "ROOT/bench/results/m17-c1-relax8/boards/front-end-modules_LimeSDR_Sony.kicad_pcb.route.json",
+  "failnets": [],
+  "zonetracklen": 565.4167159986407
+ },
+ "mechkeys_LFK78": {
+  "open": 17,
+  "onz": 0,
+  "zn": [
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.1905",
+    "0.381",
+    "0.6096",
+    "0.3048"
+   ]
+  ],
+  "minw": 0.254,
+  "med": 0.381,
+  "below": 0.003422119160871993,
+  "desvias": 340,
+  "ourvias": 895,
+  "deslen": 19219.645236394168,
+  "ourlen": 20690.156866,
+  "pitch": 0.095,
+  "layers": null,
+  "path": "ROOT/bench/results/m17-c1-txn8/boards/mechkeys_LFK78.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "R9",
+    2
+   ],
+   [
+    "L_CB2",
+    2
+   ],
+   [
+    "LED_SCL",
+    2
+   ],
+   [
+    "LED_SDA",
+    2
+   ],
+   [
+    "+5V",
+    1
+   ],
+   [
+    "R_CA4",
+    1
+   ]
+  ],
+  "zonetracklen": 127.32050130557344
+ },
+ "mini_mass_prog_bench_prog_rig": {
+  "open": 2,
+  "onz": 0,
+  "zn": [
+   "+5V",
+   "/Programming Socket #0/5V_SOCKET",
+   "/Programming Socket #1/5V_SOCKET",
+   "/Programming Socket #2/5V_SOCKET",
+   "/Programming Socket #3/5V_SOCKET",
+   "/Programming Socket #4/5V_SOCKET",
+   "/Programming Socket #5/5V_SOCKET",
+   "/Programming Socket #6/5V_SOCKET",
+   "/Programming Socket #7/5V_SOCKET",
+   "/Programming Socket #8/5V_SOCKET",
+   "GND"
+  ],
+  "cls": [
+   [
+    "Default",
+    "0.19",
+    "0.2",
+    "0.7",
+    "0.3"
+   ]
+  ],
+  "minw": 0.3,
+  "med": 0.3,
+  "below": 0.0,
+  "desvias": 332,
+  "ourvias": 454,
+  "deslen": 12796.462286660613,
+  "ourlen": 14137.307784,
+  "pitch": 0.065,
+  "layers": 4,
+  "path": "ROOT/bench/results/txn-txn-tierD/boards/mini_mass_prog_bench_prog_rig.kicad_pcb.route.json",
+  "failnets": [
+   [
+    "/SPI2_CLK",
+    1
+   ],
+   [
+    "/Programming Socket #0/I2C_SDA",
+    1
+   ]
+  ],
+  "zonetracklen": 2065.760321208706
+ }
+}

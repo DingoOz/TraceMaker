@@ -29,6 +29,7 @@ struct Move {
   std::string what;
   std::int64_t score = 0;
   std::size_t order = 0;
+  bool keeps = false;  // legal only because it keeps an input overlap (M24): ranked after every strictly legal move
   std::vector<std::int64_t> key() const {
     std::vector<std::int64_t> k;
     for (const auto& q : poses) k.insert(k.end(), {q.part, q.pos.x, q.pos.y, q.rot});
@@ -73,11 +74,30 @@ class Ranker {
   // A part may take (np, r) only if it has no conflict there at all: a moved part that still overlaps something is
   // a new violation (placer.cpp counts it so, and KiCad reports a changed overlap as a new error), even when the
   // input had an overlap between the same parts.
-  bool ok(const Legality& L, int a, Point np, int r) const { return L.legal(a, np, r); }
+  // With keep_overlaps (M24) the input's own pairs may stay: the part may overlap only parts whose courtyards it overlapped
+  // in the input (keepable_pairs), and only by courtyard: holes and copper must stay clear of them (KiCad reports those
+  // by position, so a moved clearance error or short is a new one).
+  bool ok(const Legality& L, int a, Point np, int r) const {
+    if (!o_.keep_overlaps) return L.legal(a, np, r);
+    if (!L.inside_ok(a, np, r)) return false;
+    if (L.find_conflict(a, np, r) < 0) return true;
+    std::vector<int> c;
+    L.conflicts(a, np, r, c);
+    for (int b : c) {
+      if (!std::binary_search(o_.input_pairs.begin(), o_.input_pairs.end(), std::pair<int, int>{std::min(a, b), std::max(a, b)})) return false;
+      if (L.hard_conflict(a, np, r, b, L.pos(b), L.rot(b))) return false;
+    }
+    keeps_ = true;
+    return true;
+  }
+  mutable bool keeps_ = false;  // set by ok() when a move is legal only by the keep rule; add() takes it
 
   std::vector<Move> moves(int arm, const std::set<std::vector<std::int64_t>>& tried) {
     std::vector<Move> out;
+    keeps_ = false;
     auto add = [&](Move m) {
+      m.keeps = keeps_;
+      keeps_ = false;
       if (tried.count(m.key())) return;
       m.score = score(m.poses);
       m.order = out.size();
@@ -95,6 +115,7 @@ class Ranker {
         for (int d = 0; d < 4; ++d)
           for (int s : steps) {
             const Point np = snap(pos + Point{dirs[d][0] * s * o_.pitch, dirs[d][1] * s * o_.pitch});
+            keeps_ = false;
             if (ok(L_, a, np, r)) add(Move{{{a, np, static_cast<std::uint8_t>(r)}}, p_.parts[z(a)].ref + " shift " + dname[d] + " " + fmt_mm(s * o_.pitch) + " mm"});
           }
       }
@@ -107,6 +128,7 @@ class Ranker {
         for (int dr = arm == kRotate ? 1 : 0; dr <= 3; ++dr) {
           const int r2 = arm == kRotate ? with_turn(r, r + dr) : ((r ^ kFlipBit) & kFlipBit) | ((r + dr) & 3);
           const Point np = snap(c - centre(pt, r2));
+          keeps_ = false;
           if (!ok(L_, a, np, r2)) continue;
           add(Move{{{a, np, static_cast<std::uint8_t>(r2)}},
                    pt.ref + (arm == kRotate ? " rotate " + std::to_string(90 * dr) : std::string(" flip to the other side") + (dr ? ", turn " + std::to_string(90 * dr) : ""))});
@@ -135,7 +157,10 @@ class Ranker {
     } else if (arm == kRoom) {
       room_moves(add);
     }
-    std::sort(out.begin(), out.end(), [](const Move& x, const Move& y) { return x.score != y.score ? x.score < y.score : x.order < y.order; });
+    std::sort(out.begin(), out.end(), [](const Move& x, const Move& y) {
+      if (x.keeps != y.keeps) return y.keeps;
+      return x.score != y.score ? x.score < y.score : x.order < y.order;
+    });
     return out;
   }
 
@@ -160,6 +185,7 @@ class Ranker {
         if (p_.parts[i].movable && static_cast<int>(i) != own && box_dist(p_, static_cast<int>(i), pl_, pad) < o_.room) nb.push_back(static_cast<int>(i));
       if (nb.size() < 2) continue;  // one neighbour: the shift arm has that move
       for (int s = 1; s <= 2; ++s) {
+        keeps_ = false;
         Legality L = L_;
         for (int i : nb) L.remove(i);
         Move m;
@@ -350,7 +376,7 @@ ClosureResult placement_closure(const Problem& p, const Placement& start, const 
       const PlaceReport pr = place(q, t, po);
       what = "re-place " + std::to_string(po.focus.size()) + " parts around the failures (seed " + std::to_string(window_k) + ")";
       const Metrics m = measure(p, t, &res.pl);
-      if (!pr.legal || m.new_overlaps > 0 || m.new_outside > 0) {
+      if (!pr.legal || (o.keep_overlaps ? m.new_pairs : m.new_overlaps) > 0 || m.new_outside > 0) {
         say(o.log, "  window: " + what + ": not legal, skipped");
         ++res.stats[z(arm)].pulls;  // a wasted pull still counts against the arm, without a route
         ++total;

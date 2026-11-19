@@ -1,0 +1,105 @@
+{
+ "boards": {
+  "sample152": {
+   "escape_corridors": 0,
+   "sites": 8,
+   "track F.Cu": 6,
+   "track B.Cu": 8,
+   "via, inside BGA": 1,
+   "via, outside BGA": 1
+  },
+  "sample040": {
+   "escape_corridors": 0,
+   "sites": 8,
+   "track F.Cu": 8,
+   "track B.Cu": 7,
+   "via, inside BGA": 3
+  },
+  "sample070": {
+   "escape_corridors": 0,
+   "sites": 8,
+   "track F.Cu": 8,
+   "track B.Cu": 7,
+   "via, inside BGA": 3,
+   "via, outside BGA": 1
+  },
+  "sample064": {
+   "escape_corridors": 0,
+   "sites": 32,
+   "track F.Cu": 30,
+   "via, inside BGA": 11,
+   "track B.Cu": 31,
+   "via, outside BGA": 1
+  },
+  "sample176": {
+   "escape_corridors": null,
+   "sites": 36,
+   "track F.Cu": 30,
+   "via, inside BGA": 13,
+   "track B.Cu": 34,
+   "via, outside BGA": 1,
+   "free": 1
+  },
+  "sample120": {
+   "escape_corridors": 0,
+   "sites": 20,
+   "track F.Cu": 18,
+   "via, inside BGA": 5,
+   "track B.Cu": 17,
+   "via, outside BGA": 1
+  },
+  "sample008": {
+   "escape_corridors": 0,
+   "sites": 56,
+   "track F.Cu": 52,
+   "free": 4,
+   "track B.Cu": 46,
+   "via, inside BGA": 13,
+   "via, outside BGA": 4
+  },
+  "sample088": {
+   "escape_corridors": null,
+   "sites": 68,
+   "track F.Cu": 52,
+   "track B.Cu": 54,
+   "free": 4,
+   "via, inside BGA": 9,
+   "via, outside BGA": 5
+  },
+  "sample144": {
+   "escape_corridors": 0,
+   "sites": 56,
+   "track F.Cu": 47,
+   "via, inside BGA": 17,
+   "track B.Cu": 44,
+   "free": 1,
+   "via, outside BGA": 2
+  },
+  "sample200": {
+   "escape_corridors": 0,
+   "sites": 56,
+   "track F.Cu": 48,
+   "track B.Cu": 50,
+   "via, inside BGA": 17,
+   "free": 1,
+   "via, outside BGA": 5
+  },
+  "sample032": {
+   "escape_corridors": 0,
+   "sites": 72,
+   "track F.Cu": 65,
+   "track B.Cu": 58,
+   "via, inside BGA": 17,
+   "via, outside BGA": 5,
+   "free": 1
+  }
+ },
+ "total": {
+  "sites": 420,
+  "track F.Cu": 364,
+  "track B.Cu": 356,
+  "via, inside BGA": 109,
+  "via, outside BGA": 26,
+  "free": 12
+ }
+}

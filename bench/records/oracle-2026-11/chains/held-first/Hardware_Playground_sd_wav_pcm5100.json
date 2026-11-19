@@ -1,0 +1,37 @@
+{
+ "baseline": {
+  "connections": 1,
+  "open": 1,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/final11-tierC/boards/Hardware_Playground_sd_wav_pcm5100.kicad_pcb",
+ "connections": [
+  {
+   "a": "J1.1",
+   "b": "U1.8",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 2,
+   "first_nets": [
+    "/BTN2",
+    "/nRST"
+   ],
+   "net": "/BTN1",
+   "nets_lifted": 2,
+   "reason": "boxed_in",
+   "runs": 5
+  }
+ ],
+ "copper_layers": 2,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "closed_depth_1": 1
+ }
+}

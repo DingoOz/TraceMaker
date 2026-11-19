@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "app/tui.hpp"
+#include "app/tui_jobs.hpp"
 
 using namespace tmk::app::tui;
 
@@ -235,4 +236,38 @@ TEST_CASE("tui: the screen is a frame with a help panel for the option under the
     for (const Span& sp : l.spans) joined += sp.text;
     REQUIRE(joined == l.text);
   }
+}
+
+TEST_CASE("tui: a job's arguments fill the screen and a rerun's options go on top", "[tui]") {
+  Model m("tracemaker route", sample());
+  m.set("--via-cost-mm", "5");  // a file's value: the job's command replaces it
+  std::string cfg;
+  const auto problems = m.load_args({"in.kicad_pcb", "-o", "out.kicad_pcb", "--soft-zones", "--first-nets=A", "--bogus", "--config", "c.conf"}, &cfg);
+  REQUIRE(problems.size() == 1);
+  REQUIRE(cfg == "c.conf");
+  m.set_workdir("/w");
+  REQUIRE(m.set_run("--pair-twists", ""));
+  REQUIRE(m.set_run("--soft-zones", "-"));
+  REQUIRE(m.command_line() == "cd /w && tracemaker route in.kicad_pcb --output out.kicad_pcb --pair-twists --first-nets A");
+}
+
+TEST_CASE("tui: advice for a two-layer job left open at its time limit", "[tui]") {
+  nlohmann::json live = {{"pid", 1}, {"state", "done"}, {"exit", 3}, {"cwd", "/w"},
+                         {"argv", {"tracemaker", "route", "in.kicad_pcb", "-o", "out.kicad_pcb", "--json", "out.json", "--relax"}}};
+  Job j = parse_job(live, nullptr);
+  j.summary = {{"routed", 85}, {"connections", 87}, {"copper_layers", 2}, {"line_crossings", 87 * 12}, {"time_limited", true},
+               {"why_open", {{"next", {"4 pins are open through congestion"}}}}};
+  const auto adv = advise(j);
+  auto find = [&](const std::string& opt) {
+    return std::find_if(adv.begin(), adv.end(), [&](const Advice& a) {
+      return std::any_of(a.set.begin(), a.set.end(), [&](const auto& kv) { return kv.first == opt; });
+    });
+  };
+  REQUIRE(find("--try-layers") != adv.end());
+  REQUIRE(find("--try-layers")->set.front().second == "2,4");
+  REQUIRE(find("--warm-pcb")->set[1].second == "/w/out-next.kicad_pcb");  // a warm start never overwrites the board it starts from
+  REQUIRE(find("--relax") == adv.end());  // already on
+  REQUIRE(std::any_of(adv.begin(), adv.end(), [](const Advice& a) { return a.text == "Router: 4 pins are open through congestion"; }));
+  j.summary["routed"] = 87;
+  REQUIRE(advise(j).size() == 1);  // complete: only the DRC check
 }

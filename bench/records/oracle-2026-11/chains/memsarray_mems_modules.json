@@ -1,0 +1,36 @@
+{
+ "baseline": {
+  "connections": 1,
+  "open": 1,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/soak-c-relax9/boards/memsarray_mems_modules.kicad_pcb",
+ "connections": [
+  {
+   "a": "MIC1.2",
+   "b": "C1.1",
+   "blockers_from": "",
+   "closed": false,
+   "depth": 0,
+   "fail": "no_path_bare",
+   "first_blockers": -1,
+   "first_nets": [],
+   "joint": false,
+   "net": "DVDD",
+   "nets_lifted": 0,
+   "reason": "boxed_in",
+   "runs": 1
+  }
+ ],
+ "copper_layers": 2,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "no_path_bare": 1
+ }
+}

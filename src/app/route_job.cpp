@@ -33,6 +33,8 @@
 #include "crules/names.hpp"
 #include "drc/copper.hpp"
 #include "drc/drc.hpp"
+#include "drc/fit_rules.hpp"
+#include "route/obstacles.hpp"
 #include "drc/refill.hpp"
 #include "drc/rule_engine.hpp"
 #include "geom/clip.hpp"
@@ -56,6 +58,10 @@
 
 namespace tmk::app {
 namespace {
+
+// Crossings per connection above which a two-layer board is flagged for more layers (M26 F9). On srj20 the eight boards above it were never
+// routed clean; the highest board that was is 11.0 (bench/records/m26/f9).
+constexpr double kTwoLayerCrossings = 11.5;
 
 // A supply net by its name (D184): the last hierarchy component is GND, VCC, VDD, VSS, VEE, VBUS, VIN, VBAT, VSYS, VMOT, VPP or PWR
 // (optionally with an A/D/P prefix and an A/D/IO/Q suffix, then '_', '-', '.', '+', a digit or nothing), starts with '+', or is a voltage
@@ -327,6 +333,33 @@ RouteJobResult run_route_job(RouteJob job) {
       if (ld.diag_pen[static_cast<std::size_t>(l)] > 0) log(fmt("45-degree steps on %s: +%.3g pitches each", bd.copper_name(l).c_str(), ld.diag_pen[static_cast<std::size_t>(l)]));
   }
   auto rules = io::read_design_rules(job.in);  // component rules may add net classes (in memory only)
+  nlohmann::json fit_summary;
+  if (job.fit_rules || !job.fit_rules_from.empty()) {
+    drc::FitOptions fo;
+    fo.clearance_floor = static_cast<Coord>(std::llround(job.fit_clearance_floor_mm * 1e6));
+    fo.edge_floor = static_cast<Coord>(std::llround(job.fit_edge_floor_mm * 1e6));
+    const auto fit = job.fit_rules_from.empty() ? drc::fit_rules(lb.board, rules, fo) : drc::fit_rules(io::read_board_file(job.fit_rules_from).board, rules, fo);
+    fit_summary = {{"reference", job.fit_rules_from.empty() ? job.in : job.fit_rules_from}, {"violations", fit.violations}, {"changes", nlohmann::json::array()}};
+    for (const auto& c : fit.changes) {
+      fit_summary["changes"].push_back({{"rule", c.rule}, {"from_mm", nm_to_mm(c.from)}, {"to_mm", nm_to_mm(c.to)}, {"evidence", c.evidence}, {"note", c.note}});
+      log(fmt("rule fit: %s %.4g mm -> %.4g mm (%d %s)", c.rule.c_str(), nm_to_mm(c.from), nm_to_mm(c.to), c.evidence, c.note.empty() ? "violations on the reference" : c.note.c_str()));
+    }
+    // Mask openings the board's own pads already bridge (route/obstacles.hpp, set_soft_bridged_masks).
+    const route::Obstacles fit_obs(lb.board, rules);
+    if (const int bridged = fit_obs.bridged_mask_openings(); bridged > 0) {
+      opt.soft_bridged_masks = true;
+      fit_summary["bridged_mask_openings"] = bridged;
+      log(fmt("rule fit: %d pad solder-mask openings already expose another net's pad: they no longer keep tracks out (KiCad reports solder_mask_bridge there, as on the board itself)", bridged));
+    }
+    // Openings drawn as graphics over pads (solder jumpers; doc 05 §48, D127): the existing --soft-mask-graphics, turned on by the evidence.
+    if (const int drawn = fit_obs.mask_graphics_over_pads(); drawn > 0 && !opt.soft_mask_graphics) {
+      opt.soft_mask_graphics = true;
+      fit_summary["mask_graphics_over_pads"] = drawn;
+      log(fmt("rule fit: %d solder-mask openings drawn as graphics lie over pads: mask graphics no longer keep tracks out (--soft-mask-graphics)", drawn));
+    }
+    if (fit.changes.empty() && !opt.soft_bridged_masks && !opt.soft_mask_graphics) log("rule fit: the reference's copper breaks none of the fitted rules; nothing relaxed");
+    else if (!fit.changes.empty()) log(fmt("rule fit: %zu values relaxed; the output breaks the board's stated rules where they were (KiCad's DRC will report it)", fit.changes.size()));
+  }
   // Zones without a fill (a generated board, or one saved before filling; doc 05 §54): left unfilled, the router does not see the planes,
   // so a plane net's pads are joined by tracks round the board (1,773 mm of GND and +54V track, some on the other net's plane layer, on
   // a 1,194-connection WholeBoard board) and fine-pitch escapes fight them. Filled in memory as KiCad will fill them and routed with soft
@@ -983,6 +1016,7 @@ RouteJobResult run_route_job(RouteJob job) {
       o2.sink = nullptr;
       o2.rounds = 0, o2.round_work = 0;  // relax's own: rounds of 20 M until complete or --time
       if (warm) o2.start_routes = &plain_routes;
+      o2.warm_floor = false;  // the pass's result is kept only if it beats the plain one anyway
       if (opt.work_budget > 0) {
         constexpr long kRescueRound = 20'000'000;
         const long rounds = std::max(1L, (opt.work_budget + kRescueRound - 1) / kRescueRound);
@@ -1866,6 +1900,13 @@ RouteJobResult run_route_job(RouteJob job) {
     if (congested > 0)
       next.push_back(fmt("%d pin%s open through congestion: more search (%s--work, --variants) or more copper layers (--try-layers 2,4 routes each count "
                          "and compares them)", congested, congested == 1 ? " is" : "s are", job.rescue || opt.relax ? "" : "the relax rescue without --no-rescue, "));
+    // M26 F9: on two layers, connections whose straight lines cross this often (per connection) were never routed clean on srj20;
+    // calibration in bench/records/m26/f9.
+    if (congested > 0 && lb.board.copper_count() == 2 && res.connections > 0 &&
+        static_cast<double>(res.line_crossings) / res.connections >= kTwoLayerCrossings)
+      next.push_back(fmt("the connections' straight lines cross %.1f times each (%ld crossings for %d connections): two-layer boards this crossed were "
+                         "not routed clean in testing; consider a third or fourth layer (--try-layers 2,4)",
+                         static_cast<double>(res.line_crossings) / res.connections, res.line_crossings, res.connections));
     for (const auto& n : next) log("  next: " + n.get<std::string>());
     why_open = {{"pins", pads.size()}, {"walled_in", proved.size()}, {"soft_only", soft_only}, {"congested", congested}, {"neck_down", neck},
                 {"via_in_pad", vip}, {"proved", proved}, {"neck_pins", neck_pins}, {"next", next}, {"seconds", why_s}};
@@ -1893,7 +1934,7 @@ RouteJobResult run_route_job(RouteJob job) {
                  {"vias", res.vias.size()},  {"seconds", job_seconds},         {"variant_seconds", res.seconds},
                  {"expansions", res.expansions}, {"pitch_mm", nm_to_mm(res.pitch)}, {"failures", res.failures},
                  {"variant", best_index}, {"variant_name", best_name}, {"escape_corridors", res.escape_corridors},
-                 {"escape_corridor_mm", res.escape_corridor_mm}, {"package_pin_edges", res.package_pin_edges}, {"escape_reclaimed", res.escape_reclaimed},
+                 {"escape_corridor_mm", res.escape_corridor_mm}, {"package_pin_edges", res.package_pin_edges}, {"line_crossings", res.line_crossings}, {"escape_reclaimed", res.escape_reclaimed},
                  {"bundle_groups", res.bundle_groups}, {"bundle_spines", res.bundle_spines}, {"bundle_conns", res.bundle_conns}, {"bundle_lanes", res.bundle_lanes}, {"tunnels", res.tunnels}};
   if (!variant_rows.empty()) out.summary["variants"] = std::move(variant_rows);
   // M22 repair steps (D156), only when they ran: a run without them writes the summary it always did.
@@ -1912,6 +1953,7 @@ RouteJobResult run_route_job(RouteJob job) {
   if (!rescue_summary.is_null()) out.summary["rescue"] = rescue_summary;
   if (!repair_summary.is_null()) out.summary["repair"] = repair_summary;
   if (!why_open.is_null()) out.summary["why_open"] = why_open;
+  if (!fit_summary.is_null()) out.summary["fitted_rules"] = fit_summary;
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
   if (!widen_summary.is_null()) out.summary["widen"] = widen_summary;
   if (!octilinear_summary.is_null()) out.summary["octilinear"] = octilinear_summary;

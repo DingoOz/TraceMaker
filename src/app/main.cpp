@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // tracemaker: command-line front end. Subcommands grow with the roadmap (route, place, bench, serve, replay).
 #include <CLI/CLI.hpp>
+#include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -14,6 +15,8 @@
 #include <thread>
 
 #include "app/causes.hpp"
+#include "app/chains.hpp"
+#include "drc/fit_rules.hpp"
 #include "app/defects.hpp"
 #include "app/inspect.hpp"
 #include "advice/advice.hpp"
@@ -21,6 +24,7 @@
 #include "analysis/return_path.hpp"
 #include "app/route_job.hpp"
 #include "app/tui.hpp"
+#include "app/tui_jobs.hpp"
 #include "core/live.hpp"
 #include "core/rng.hpp"
 #include "crules/engine.hpp"
@@ -238,6 +242,21 @@ int cmd_layers(const std::string& in, int count, const std::string& out) {
     if (const fs::path src = fs::path(in).replace_extension(ext); fs::exists(src)) fs::copy_file(src, fs::path(out).replace_extension(ext), fs::copy_options::overwrite_existing);
   std::printf("%s: %d -> %d copper layers, written to %s\n", in.c_str(), had, count, out.c_str());
   for (const auto& n : notes) std::printf("  %s\n", n.c_str());
+  return 0;
+}
+
+// What route --fit-rules would relax on a board (doc 20 §2.8): read-only.
+int cmd_fit_rules(const std::string& path, const std::string& from, const std::string& json_out) {
+  auto rules = tmk::io::read_design_rules(path);
+  const auto ref = tmk::io::read_board_file(from.empty() ? path : from);
+  const auto fit = tmk::drc::fit_rules(ref.board, rules);
+  nlohmann::json out{{"board", path}, {"reference", from.empty() ? path : from}, {"violations", fit.violations}, {"changes", nlohmann::json::array()}};
+  std::printf("%s: %d errors of the fitted kinds on %s, %zu values to relax\n", path.c_str(), fit.violations, from.empty() ? "its own copper" : from.c_str(), fit.changes.size());
+  for (const auto& c : fit.changes) {
+    std::printf("  %-34s %.4g mm -> %.4g mm  (%d %s)\n", c.rule.c_str(), tmk::nm_to_mm(c.from), tmk::nm_to_mm(c.to), c.evidence, c.note.empty() ? "violations" : c.note.c_str());
+    out["changes"].push_back({{"rule", c.rule}, {"from_mm", tmk::nm_to_mm(c.from)}, {"to_mm", tmk::nm_to_mm(c.to)}, {"evidence", c.evidence}, {"note", c.note}});
+  }
+  if (!json_out.empty()) std::ofstream(json_out) << out.dump(1) << "\n";
   return 0;
 }
 
@@ -796,8 +815,45 @@ std::vector<std::string> config_args(CLI::App& cmd, const std::string& path) {
 
 // `tracemaker tui`: the options screen for `route`. Returns the exit code; `next` holds the arguments of the run the
 // user asked for, if any.
+// Starts `tracemaker route ARGS` in a process of its own (two forks: it is no child of the screen, which may end first),
+// in `dir` when given, with its output going to `log`. Returns the pid of the route process, or -1.
+pid_t start_route_in_background(const std::vector<std::string>& args, const std::string& dir, const std::string& log) {
+  int fd[2];
+  if (::pipe(fd) != 0) return -1;
+  const pid_t first = ::fork();
+  if (first < 0) return -1;
+  if (first == 0) {
+    ::close(fd[0]);
+    ::setsid();
+    const pid_t second = ::fork();
+    if (second != 0) {
+      if (::write(fd[1], &second, sizeof second) < 0) ::_exit(1);
+      ::_exit(0);
+    }
+    ::close(fd[1]);
+    if (!dir.empty() && ::chdir(dir.c_str()) != 0) ::_exit(126);
+    const int in = ::open("/dev/null", O_RDONLY), lo = ::open(log.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (in >= 0) ::dup2(in, 0);
+    if (lo >= 0) ::dup2(lo, 1), ::dup2(lo, 2);
+    std::vector<std::string> all{"tracemaker", "route"};
+    all.insert(all.end(), args.begin(), args.end());
+    std::vector<char*> av;
+    for (auto& a : all) av.push_back(a.data());
+    av.push_back(nullptr);
+    ::execv("/proc/self/exe", av.data());
+    ::_exit(127);
+  }
+  ::close(fd[1]);
+  pid_t pid = -1;
+  if (::read(fd[0], &pid, sizeof pid) != sizeof pid) pid = -1;
+  ::close(fd[0]);
+  int st = 0;
+  ::waitpid(first, &st, 0);
+  return pid;
+}
+
 int cmd_tui(CLI::App& app, CLI::App& route, const std::string& board, const std::string& out, const std::string& config,
-            const std::string& keys, bool scripted, std::vector<std::string>& next) {
+            const std::string& keys, bool scripted, bool start_on_jobs, std::vector<std::string>& next) {
   namespace tui = tmk::app::tui;
   tui::Model m("tracemaker route", tui_fields(route), [&](const std::vector<std::string>& args) {
     std::vector<std::string> all{"route"};
@@ -840,7 +896,92 @@ int cmd_tui(CLI::App& app, CLI::App& route, const std::string& board, const std:
   if (!first_problem.empty()) m.set_status("cannot use a line of " + first_problem);
   if (!board.empty()) m.set("board", board);
   if (!out.empty()) m.set("--output", out);
-  const tui::Action a = scripted ? tui::run_keys(m, keys) : tui::run_terminal(m);
+
+  // Jobs (doc 02 §2.2): the live files of this user's route runs. A board given here is also matched against them, so
+  // the options screen opens with the advice of its last run.
+  const std::string live = tui::live_folder();
+  auto load_jobs = [&](bool all) { return tui::read_jobs(live, all ? 7 * 86400.0 : 86400.0, 200); };
+  if (!board.empty()) {
+    std::error_code ec;
+    const std::string want = fs::weakly_canonical(board, ec).string();
+    for (const auto& j : load_jobs(true)) {
+      if (j.state == "running" || fs::weakly_canonical(j.path(j.board()), ec).string() != want) continue;
+      std::vector<std::string> lines;
+      for (const auto& adv : tui::advise(j)) lines.push_back(adv.text);
+      if (!lines.empty()) lines.insert(lines.begin(), "last run on this board: " + std::to_string(j.routed()) + " of " + std::to_string(j.total()) + " routed");
+      m.set_advice(lines);
+      break;
+    }
+  }
+
+  // Keys of a scripted session go to whichever screen is showing, in order; when they run out the command is printed.
+  const std::vector<int> script = tui::parse_keys(keys);
+  std::size_t at = 0;
+  auto drive = [&](auto& screen, auto on_save) {
+    while (at < script.size()) {
+      const tui::Action r = screen.press(script[at++]);
+      if (r == tui::Action::save)
+        on_save();
+      else if (r != tui::Action::none)
+        return r;
+    }
+    return tui::Action::print;
+  };
+  tui::Action a = start_on_jobs ? tui::Action::jobs : tui::Action::options;
+  std::string jobs_status;
+  for (;;) {
+    if (a == tui::Action::jobs) {
+      tui::JobsModel jm(load_jobs);
+      if (!jobs_status.empty()) jm.set_status(jobs_status);
+      a = scripted ? drive(jm, [] {}) : tui::run_terminal(jm);
+      if (scripted && a == tui::Action::print) {  // the jobs screen has no command of its own: show what it shows
+        for (const auto& l : jm.render(40, 120)) std::printf("%s\n", l.text.c_str());
+        return 0;
+      }
+      if (a == tui::Action::edit) {
+        const tui::Job* j = jm.selected();
+        std::string cfg;
+        for (const std::string& p : m.load_args(j->argv, &cfg)) std::fprintf(stderr, "warning: job %d: %s\n", j->pid, p.c_str());
+        m.set_workdir(j->cwd);
+        std::string status = "options of job " + std::to_string(j->pid) + ", run in its folder";
+        if (!cfg.empty()) {  // its --config file: shown in the file scope, as the screen shows a --config file
+          const std::string cp = j->path(cfg);
+          m.enable_scope(tui::Scope::file, cp, load(tui::Scope::file, cp));
+          status += "; also " + cp;
+        }
+        std::vector<std::string> lines;
+        for (const auto& adv : tui::advise(*j)) lines.push_back(adv.text);
+        if (const tui::Advice* c = jm.chosen()) {
+          for (const auto& [sp, v] : c->set) m.set_run(sp, v);
+          for (const auto& sp : c->unset) m.set_run(sp, "-");
+          status = "applied: " + c->text + " (in this run; s saves to a scope)";
+        }
+        m.set_advice(lines);
+        m.set_status(status);
+      }
+      if (a == tui::Action::edit || a == tui::Action::options) {
+        a = tui::Action::options;
+        continue;
+      }
+      break;  // quit
+    }
+    a = scripted ? drive(m, [&] { tui::save_options(m); }) : tui::run_terminal(m);
+    if (a == tui::Action::jobs) continue;
+    if (a == tui::Action::background) {
+      const std::string dir = m.workdir();
+      std::string output;
+      for (const auto& f : m.fields())
+        if (f.arg == "--output") output = f.value;
+      const std::string log = (output.empty() ? std::string("tracemaker-route") : output) + ".log";
+      const pid_t pid = start_route_in_background(m.args(), dir, log);
+      jobs_status = pid > 0 ? "started route as pid " + std::to_string(pid) + ", its output in " + (dir.empty() ? log : (fs::path(dir) / log).string())
+                            : std::string("cannot start the route process");
+      std::fprintf(stderr, "%s\n%s\n", m.command_line().c_str(), jobs_status.c_str());
+      a = tui::Action::jobs;
+      continue;
+    }
+    break;
+  }
   if (scripted && !m.status().empty()) std::fprintf(stderr, "%s\n", m.status().c_str());
   if (a == tui::Action::print) {
     std::printf("%s\n", m.command_line().c_str());
@@ -848,6 +989,7 @@ int cmd_tui(CLI::App& app, CLI::App& route, const std::string& board, const std:
     std::fprintf(stderr, "%s\n", m.command_line().c_str());
     next = m.args();
     next.insert(next.begin(), "route");
+    if (!m.workdir().empty() && ::chdir(m.workdir().c_str()) != 0) throw std::runtime_error("cannot enter " + m.workdir());
   }
   return 0;
 }
@@ -1006,7 +1148,8 @@ static int run_main(int argc, char** argv) {
   route->add_option("--guide-pen", ropt.guide_pen, "Guide: pitches per lattice step off the guide")->group("");
   route->add_option("--guide-radius", ropt.guide_radius, "Guide: pitches around the guide that count as on it")->group("");
   route->add_option("--via-cost-mm", ropt.via_cost_mm, "Cost of a via as equivalent track length");
-  route->add_option("--order", ropt.order, "Connection order: 0 shortest first, 1 longest first, 2 jittered, 3 deep package pins first")->group("");
+  route->add_option("--order", ropt.order, "Connection order: 0 shortest first, 1 longest first, 2 jittered, 3 deep package pins first, 4 most crossings first")->group("");
+  route->add_option("--order-all", ropt.order_all, "Portfolio: use this connection order (as --order) in every variant, not each variant's own")->group("");
   route->add_option("--seed", ropt.seed);
   route->add_flag("!--no-strict-first", ropt.strict_first, "Negotiate from the first pass (no strict-only pass)")->group("");
   route->add_option("--polish", ropt.polish_fraction, "Reserve this share of the budget (0-0.9) to rebuild the open connections of the best state")->group("");
@@ -1027,6 +1170,8 @@ static int run_main(int argc, char** argv) {
   route->add_option("--layer-dir-pen", ropt.layer_dir_pen,
                     "Cost (pitches per step) of orthogonal steps against the layer's preferred direction (by default even layers horizontal, odd vertical; automatic 0.3 on breakout boards and with --layer-dir)");
   route->add_flag("--layer-dir-swap", ropt.layer_dir_swap, "Preferred directions the other way round (even layers vertical)")->group("");
+  route->add_option("--package-lanes", ropt.package_lanes, "Lanes under a ball-grid package: extra cost (pitches per step) of a long connection's track off the ball rows and columns on the far layer (0 = off)")->group("");
+  route->add_option("--package-lanes-mm", ropt.package_lanes_mm, "Lanes under a ball-grid package: only for connections at least this long (mm)")->group("");
   route->add_option("--package-pen", ropt.package_pen, "Extra cost (pitches per step) of tracks on the pad layer inside a ball-grid package: escapes take a via early")->group("");
   route->add_flag("--crowded-source", ropt.crowded_source,
                   "Every strict search starts from the end with more copper and pads of other nets near it, a boxed-in pin is proved at once (doc 05 §55; the portfolio does so in four of its eight variants by default)");
@@ -1124,7 +1269,7 @@ static int run_main(int argc, char** argv) {
   route->add_flag("--escape-plan,!--no-escape-plan", ropt.escape_plan, "Reserve escape corridors for the pins of dense packages (QFP, BGA) before routing");
   route->add_option("--escape-length", ropt.escape_length_mm, "Escape plan: perimeter corridors run this far (mm) past the package edge, as far as no fixed copper is in the way (default 2): bundles of parallel straight escapes")->group("");
   route->add_option("--fanout-heads", ropt.fanout_heads_mm, "Before routing, each perimeter pin of a dense four-sided package gets the first part of its route, this far (mm) past the package: straight, or in staggered 45-degree bundles toward the destinations, whichever a side has room for; fixed copper of the pin's net during routing, not written out (0 = off)")->group("");
-  route->add_option("--fanout-heads-min-pins", ropt.fanout_heads_min_pins, "With --fanout-heads: perimeter pins a package needs (default 24)")->group("");
+  route->add_option("--fanout-heads-min-pins", ropt.fanout_heads_min_pins, "With --fanout-heads: perimeter pins a package needs (default 32)")->group("");
   route->add_flag("--fanout-hold", ropt.fanout_hold, "Escape plan: through the strict first pass, each open pin's straight corridor is held by a placeholder track of its net, so other nets route round it; released once the pin is routed and before negotiation")->group("");
   route->add_flag("--escape-stubs", ropt.escape_stubs, "Escape plan: a pin offers the end of its straight corridor (see --escape-length) as a start point, one exact off-lattice segment at a discount: parallel escapes at the pad pitch")->group("");
   route->add_flag("--soft-mask-graphics", ropt.soft_mask_graphics, "Solder-mask openings drawn as footprint graphics (solder jumpers, a MEMS microphone's pad group) do not keep tracks and vias out; KiCad flags what then lies in them (judgement)")->group("");
@@ -1230,6 +1375,14 @@ static int run_main(int argc, char** argv) {
       ->delimiter(',');
   route->add_option("--layer-diag-pen", r_job.layer_diag_pen, "Extra cost (pitches per step) of 45-degree steps, as LAYER=PITCHES entries or one value for every layer, e.g. F.Cu=0.3")
       ->delimiter(',');
+  route->add_flag("--fit-rules", r_job.fit_rules,
+                  "Relax the rules the board's own pads and existing tracks already break (edge and hole clearance, clearance, minimum "
+                  "width, annular ring) to what that copper has, and say so; the output then breaks the stated rules there too (doc 20 §2.8)");
+  route->add_option("--fit-rules-from", r_job.fit_rules_from,
+                    "Fit the rules to this board instead (an earlier layout of the same board): as --fit-rules, and each net class's track "
+                    "width and via also come down to what its tracks there use")->check(CLI::ExistingFile);
+  route->add_option("--fit-clearance-floor", r_job.fit_clearance_floor_mm, "With a rule fit: no clearance is fitted below this, mm (default 0.09)")->check(CLI::Range(0.0, 10.0));
+  route->add_option("--fit-edge-floor", r_job.fit_edge_floor_mm, "With a rule fit: the copper-to-edge clearance is not fitted below this, mm (default 0)")->check(CLI::Range(0.0, 10.0));
   bool r_no_fill_planes = false;
   route->add_flag("--no-fill-planes", r_no_fill_planes,
                   "Leave zones that have no fill unfilled while routing (default: fill them in memory and route with --soft-zones, so plane "
@@ -1476,6 +1629,26 @@ static int run_main(int argc, char** argv) {
   causes_cmd->add_flag("--baseline-only", ca_opt.baseline_only, "Only the run on the board as it is (for a copy with more layers)");
   causes_cmd->add_flag("--soft-zones", ca_opt.soft_zones, "Zone fills do not block other nets (as route --soft-zones)");
   causes_cmd->add_flag("!--no-fill-planes", ca_opt.fill_planes, "Do not fill zones that have no fill (route fills them in memory and routes soft)");
+  auto* chains_cmd = app.add_subcommand("chains", "How deep a rip-up chain each open connection of a routed board needs: the nets to lift for it, and whether they route again (a measurement; doc 20 §2.9)");
+  std::string ch_board, ch_json;
+  tmk::app::ChainsOptions ch_opt;
+  chains_cmd->add_option("board", ch_board, "A routed board")->required()->check(CLI::ExistingFile);
+  chains_cmd->add_option("--json", ch_json, "Write the measurement as JSON");
+  chains_cmd->add_option("--rules-from", ch_opt.rules_from, "Read the design rules beside this board instead")->check(CLI::ExistingFile);
+  chains_cmd->add_option("--baseline-work", ch_opt.baseline_work, "Work of the run on the board as it is (default 10 M)");
+  chains_cmd->add_option("--work", ch_opt.work, "Work of each run on a changed copy (default 2 M)");
+  chains_cmd->add_option("--max-depth", ch_opt.max_depth, "Chains deeper than this are given up (default 4)")->check(CLI::Range(1, 16));
+  chains_cmd->add_option("--max-nets", ch_opt.max_nets, "Chains that lift more nets than this are given up (default 32)")->check(CLI::Range(1, 1000));
+  chains_cmd->add_option("--rip-mm", ch_opt.rip_mm, "A blocking net's copper is lifted within this distance of the new route, mm (default 1; 0 = the whole net)")->check(CLI::Range(0.0, 100.0));
+  chains_cmd->add_option("--threads", ch_opt.threads, "Open connections measured at once (the result does not depend on it; default 8)")->check(CLI::Range(1, 256));
+  chains_cmd->add_option("--seed", ch_opt.seed, "Router seed (default 1)");
+  chains_cmd->add_flag("--soft-zones", ch_opt.soft_zones, "Zone fills do not block other nets (as route --soft-zones)");
+  chains_cmd->add_flag("!--no-fill-planes", ch_opt.fill_planes, "Do not fill zones that have no fill");
+  auto* fit_cmd = app.add_subcommand("fit-rules", "Rules a board's own copper breaks, and the values route --fit-rules would relax them to (read-only; doc 20 §2.8)");
+  std::string fi_board, fi_from, fi_json;
+  fit_cmd->add_option("board", fi_board, "A board (its project files supply the rules)")->required()->check(CLI::ExistingFile);
+  fit_cmd->add_option("--from", fi_from, "Fit to this board's copper instead (an earlier layout of the same board)")->check(CLI::ExistingFile);
+  fit_cmd->add_option("--json", fi_json, "Write the fit as JSON");
   auto* cuts_cmd = app.add_subcommand("cuts", "Cut test of a routed board's topology: cuts between pads and vias that cannot hold their wires, vias with no room in their cell (doc 05 §67)");
   std::string cu_board, cu_rules, cu_json;
   double cu_clearance = -1, cu_max_gap = 2.0;
@@ -1551,6 +1724,8 @@ static int run_main(int argc, char** argv) {
   tui->add_option("-o,--output", t_out, "Output .kicad_pcb");
   tui->add_option("--config", t_config, "Options file to start from (if it exists) and to save to");
   auto* t_keys_opt = tui->add_option("--keys", t_keys, "Test: take these keys instead of opening the terminal, then print the command")->group("");
+  bool t_jobs = false;
+  tui->add_flag("--jobs", t_jobs, "Open on the jobs screen: this user's route runs, what each has left, its options and what to change on a rerun");
 
   CLI11_PARSE(app, argc, argv);
   if (*tui) {
@@ -1558,7 +1733,7 @@ static int run_main(int argc, char** argv) {
     // as if the user had typed the command.
     std::vector<std::string> next;
     try {
-      const int rc = cmd_tui(app, *route, t_board, t_out, t_config, t_keys, t_keys_opt->count() > 0, next);
+      const int rc = cmd_tui(app, *route, t_board, t_out, t_config, t_keys, t_keys_opt->count() > 0, t_jobs, next);
       if (next.empty()) return rc;
       std::reverse(next.begin(), next.end());
       app.clear();
@@ -1638,6 +1813,12 @@ static int run_main(int argc, char** argv) {
     if (*layers_cmd) return cmd_layers(ly_in, ly_count, ly_out);
     if (*walled_cmd) return cmd_walled(wa_board, wa_pins, wa_soft, wa_vip, wa_json);
     if (*cuts_cmd) return cmd_cuts(cu_board, cu_rules, cu_clearance, cu_max_gap, cu_json);
+    if (*fit_cmd) return cmd_fit_rules(fi_board, fi_from, fi_json);
+    if (*chains_cmd) {
+      const auto j = tmk::app::measure_chains(ch_board, ch_opt, true);
+      if (!ch_json.empty()) std::ofstream(ch_json) << j.dump(1) << "\n";
+      return 0;
+    }
     if (*causes_cmd) {
       const auto j = tmk::app::classify_open_connections(ca_board, ca_opt, true);
       if (!ca_json.empty()) std::ofstream(ca_json) << j.dump(1) << "\n";

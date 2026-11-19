@@ -1,0 +1,507 @@
+{
+ "baseline": {
+  "connections": 28,
+  "open": 27,
+  "routed": 1,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/rescue-warm-bd/boards/MonApollo_analog-board.kicad_pcb",
+ "connections": [
+  {
+   "a": "Q8.2",
+   "b": "U12.5",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "OSCB MIX CV"
+   ],
+   "joint": true,
+   "net": "GND",
+   "nets_lifted": 1,
+   "reason": "no_legal_path",
+   "runs": 6
+  },
+  {
+   "a": "U4.12",
+   "b": "U11.12",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "Net-(U11-Pad11)"
+   ],
+   "joint": false,
+   "net": "+5V",
+   "nets_lifted": 2,
+   "reason": "boxed_in",
+   "runs": 17
+  },
+  {
+   "a": "U28.6",
+   "b": "TR17.2",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 4,
+   "first_blockers": 2,
+   "first_nets": [
+    "SH22",
+    "VOL CV"
+   ],
+   "joint": false,
+   "net": "RES CV",
+   "nets_lifted": 5,
+   "reason": "no_legal_path",
+   "runs": 29
+  },
+  {
+   "a": "R22.1",
+   "b": "U22.1",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "-12V"
+   ],
+   "joint": false,
+   "net": "PWM A EG2 AMT CV",
+   "nets_lifted": 1,
+   "reason": "no_legal_path",
+   "runs": 10
+  },
+  {
+   "a": "J3.28",
+   "b": "U6.26",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "GND"
+   ],
+   "joint": false,
+   "net": "/DAC7",
+   "nets_lifted": 2,
+   "reason": "boxed_in",
+   "runs": 16
+  },
+  {
+   "a": "J3.23",
+   "b": "U6.23",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "/DAC2"
+   ],
+   "joint": true,
+   "net": "/DAC10",
+   "nets_lifted": 1,
+   "reason": "boxed_in",
+   "runs": 8
+  },
+  {
+   "a": "R93.1",
+   "b": "U25.6",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "SH14"
+   ],
+   "joint": true,
+   "net": "OSCA MIX CV",
+   "nets_lifted": 1,
+   "reason": "no_legal_path",
+   "runs": 14
+  },
+  {
+   "a": "R146.1",
+   "b": "U28.9",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "VOL CV"
+   ],
+   "joint": true,
+   "net": "AMP LFO AMT CV",
+   "nets_lifted": 1,
+   "reason": "boxed_in",
+   "runs": 12
+  },
+  {
+   "a": "R103.1",
+   "b": "U23.6",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 2,
+   "first_nets": [
+    "SH4",
+    "PWM A LFO AMT CV"
+   ],
+   "joint": true,
+   "net": "NOISE MIX CV",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 14
+  },
+  {
+   "a": "R129.1",
+   "b": "U27.1",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "-12V"
+   ],
+   "joint": true,
+   "net": "FIL OSCB  AMT CV",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 16
+  },
+  {
+   "a": "R49.2",
+   "b": "U25.9",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 2,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "-12V"
+   ],
+   "joint": false,
+   "net": "OSCB INIT CV",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 35
+  },
+  {
+   "a": "EG2.10",
+   "b": "U34.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 2,
+   "first_nets": [
+    "+12V",
+    "SH25"
+   ],
+   "joint": false,
+   "net": "EG2 ATT CV",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 36
+  },
+  {
+   "a": "EG1.9",
+   "b": "U33.7",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "-12V"
+   ],
+   "joint": true,
+   "net": "EG1 DEC CV",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 17
+  },
+  {
+   "a": "EG1.10",
+   "b": "U33.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "+12V",
+    "-12V"
+   ],
+   "joint": false,
+   "net": "EG1 ATT CV",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 38
+  },
+  {
+   "a": "U39.14",
+   "b": "R97.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 4,
+   "first_nets": [
+    "-12V",
+    "DB0",
+    "PWM A LFO AMT CV",
+    "Net-(R102-Pad1)"
+   ],
+   "joint": false,
+   "net": "NOISE",
+   "nets_lifted": 10,
+   "reason": "not_attempted",
+   "runs": 57
+  },
+  {
+   "a": "R82.1",
+   "b": "U24.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 4,
+   "first_nets": [
+    "DAC MUX EN1",
+    "OSCA GLIDE CV",
+    "Net-(R72-Pad2)",
+    "OSC EG2 MOD"
+   ],
+   "joint": false,
+   "net": "OSCA PITCH CV",
+   "nets_lifted": 11,
+   "reason": "not_attempted",
+   "runs": 68
+  },
+  {
+   "a": "U12.1",
+   "b": "U36.13",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 3,
+   "first_nets": [
+    "DB0",
+    "DB2",
+    "DB1"
+   ],
+   "joint": false,
+   "net": "OSCB SAW",
+   "nets_lifted": 3,
+   "reason": "not_attempted",
+   "runs": 15
+  },
+  {
+   "a": "U12.16",
+   "b": "U36.12",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 3,
+   "first_nets": [
+    "DB0",
+    "DB2",
+    "DB1"
+   ],
+   "joint": false,
+   "net": "OSCB TRI",
+   "nets_lifted": 3,
+   "reason": "not_attempted",
+   "runs": 15
+  },
+  {
+   "a": "U11.16",
+   "b": "U36.19",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "DB0",
+    "DB2",
+    "DB1"
+   ],
+   "joint": false,
+   "net": "OSCA SAW",
+   "nets_lifted": 11,
+   "reason": "not_attempted",
+   "runs": 68
+  },
+  {
+   "a": "J3.13",
+   "b": "U36.7",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "DB7"
+   ],
+   "joint": false,
+   "net": "DB5",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 50
+  },
+  {
+   "a": "U11.1",
+   "b": "U36.18",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "DB0",
+    "DB2",
+    "DB1"
+   ],
+   "joint": false,
+   "net": "OSCA PULSE",
+   "nets_lifted": 11,
+   "reason": "not_attempted",
+   "runs": 67
+  },
+  {
+   "a": "J3.14",
+   "b": "U36.8",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "DB7"
+   ],
+   "joint": false,
+   "net": "DB6",
+   "nets_lifted": 4,
+   "reason": "not_attempted",
+   "runs": 50
+  },
+  {
+   "a": "U12.8",
+   "b": "U36.14",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 3,
+   "first_blockers": 4,
+   "first_nets": [
+    "DB0",
+    "DB2",
+    "DB1",
+    "OSCB MOD"
+   ],
+   "joint": false,
+   "net": "OSCB PULSE",
+   "nets_lifted": 11,
+   "reason": "not_attempted",
+   "runs": 36
+  },
+  {
+   "a": "J3.11",
+   "b": "U36.5",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 2,
+   "first_nets": [
+    "GND",
+    "LFO DMUX EN"
+   ],
+   "joint": false,
+   "net": "DB3",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 16
+  },
+  {
+   "a": "U11.9",
+   "b": "U36.17",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 4,
+   "first_nets": [
+    "DB0",
+    "DB2",
+    "DAC MUX EN1",
+    "DB1"
+   ],
+   "joint": false,
+   "net": "OSCA TRI",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 75
+  },
+  {
+   "a": "U11.8",
+   "b": "U36.16",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 5,
+   "first_nets": [
+    "DB2",
+    "DAC MUX EN1",
+    "DB1",
+    "OSCB PITCH CV",
+    "Net-(U11-Pad7)"
+   ],
+   "joint": false,
+   "net": "OSC SYNC",
+   "nets_lifted": 16,
+   "reason": "not_attempted",
+   "runs": 93
+  },
+  {
+   "a": "R68.2",
+   "b": "U24.6",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 8,
+   "first_nets": [
+    "-12V",
+    "SH10",
+    "SH11",
+    "PWM B CV",
+    "OSCA GLIDE CV",
+    "OSCB PITCH CV",
+    "Net-(R105-Pad2)",
+    "Net-(U11-Pad11)"
+   ],
+   "joint": false,
+   "net": "GLIDE AMT CV",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 67
+  }
+ ],
+ "copper_layers": 2,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "closed_depth_1": 4,
+  "closed_depth_2": 2,
+  "closed_depth_3": 1,
+  "closed_depth_4": 1,
+  "closed_joint": 7,
+  "lifted_net_no_path_bare": 2,
+  "too_deep": 10
+ }
+}

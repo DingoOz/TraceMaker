@@ -1,0 +1,40 @@
+{
+ "baseline": {
+  "connections": 1,
+  "open": 1,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/pc-routable-50M/boards/96boards-robomezzi_96boards-robomezzi.kicad_pcb",
+ "connections": [
+  {
+   "a": "C13.1",
+   "b": "U6.10",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 1,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 3,
+   "first_nets": [
+    "1V8",
+    "SPI0_MISO",
+    "MPU_FSYNC"
+   ],
+   "joint": false,
+   "net": "Net-(C13-Pad1)",
+   "nets_lifted": 3,
+   "reason": "boxed_in",
+   "runs": 9
+  }
+ ],
+ "copper_layers": 4,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "lifted_net_no_path_bare": 1
+ }
+}

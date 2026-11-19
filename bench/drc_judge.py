@@ -71,7 +71,14 @@ def placement_error(violation):
         violation["type"] in REFILL_ROUTING_TYPES or not own_footprint(violation))
 
 
-def violations(report, *, predicate=None):
+# M24 (D192): with courtyard_pairs, an error a footprint carries with it is matched by the footprints (and pads) it names, wherever
+# they are: a courtyard overlap by its pair of footprints, a malformed courtyard by its footprint, a pad too close to the board edge
+# by that pad. A part that moves while it keeps overlapping the same neighbour then keeps its error instead of adding one; an
+# overlap with a new neighbour is still added. Clearance, shorts and holes stay matched by position.
+PAIR_TYPES = frozenset({"courtyards_overlap", "malformed_courtyard", "copper_edge_clearance"})
+
+
+def violations(report, *, predicate=None, courtyard_pairs=False):
     """Error multiset: type, physical items, severity; item order is irrelevant."""
     unit = report.get("coordinate_units", "mm")
     if unit not in UNIT_NM:
@@ -84,6 +91,9 @@ def violations(report, *, predicate=None):
         for item in violation.get("items", []):
             pos = item.get("pos", {})
             position = tuple(_nm(pos[axis], unit) for axis in ("x", "y")) if pos else ()
+            if courtyard_pairs and violation["type"] in PAIR_TYPES:
+                items.append(("", item.get("description", ""), ()))  # the raw description keeps "of REF"
+                continue
             items.append(("" if position else item.get("uuid", ""),
                           _description(item.get("description", "")), position))
         # PTH pads and multilayer zones do not name the affected copper layer
@@ -117,7 +127,7 @@ def capped_types(report):
             if count >= CAPS.get(kind, CAPS["default"])}
 
 
-def added_errors(before, after, *, placement=False):
+def added_errors(before, after, *, placement=False, courtyard_pairs=False):
     """A removed error cannot cancel a new physical instance of the same type.
 
     Capped types with errors on either side are unknown even if the listed
@@ -131,8 +141,9 @@ def added_errors(before, after, *, placement=False):
     evaluated = excluded & error_types
     evaluated = evaluated & PLACEMENT_ERRORS if placement else evaluated - NOT_ROUTING
     predicate = placement_error if placement else routing_error
-    additions = violations(after, predicate=predicate) - violations(before, predicate=predicate)
-    all_additions = violations(after) - violations(before)
+    cp = courtyard_pairs
+    additions = violations(after, predicate=predicate, courtyard_pairs=cp) - violations(before, predicate=predicate, courtyard_pairs=cp)
+    all_additions = violations(after, courtyard_pairs=cp) - violations(before, courtyard_pairs=cp)
     additions = Counter({key: n for key, n in additions.items() if key[0] not in excluded})
     all_additions = Counter({key: n for key, n in all_additions.items() if key[0] not in excluded})
     added = instance_counts(additions)

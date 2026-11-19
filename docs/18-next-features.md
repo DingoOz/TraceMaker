@@ -520,11 +520,57 @@ against 5. It is the fanout's via sites that need protecting, not the layer dire
 | F5 | **Fewer vias per connection.** Measure vias per connection, then make a via on a breakout board dearer, or cap layer changes per connection at two, so most connections use one via (the dog-bone) or two | 300-360 vias for 80-108 connections (3-4 each) [R] | S | Vias per connection on the eleven boards from 3-4 to under 2, with no more open than with F2 alone |
 | F6 | **Lanes under the package.** Plan straight row and column lanes on the far layer between the reserved via sites (version 2's step 3 grid) and give the long cross-board connections a cost bonus for using them, not a reservation | Six of 176's nine open, 10 of 008's 14, 11 of 088's 17 and 12 of 200's 14 cross to the opposite side [R] | M | Combined with F2 and F3: open cross-board connections down by half |
 | F7 | **Long, crossing connections first.** Order connections by length and crossing count once their sites are reserved. Routing the always-open nets first on its own gets those nets routed but leaves others open instead (040 12-15 against the control's 8, 152 8-17 against 7) | first-nets experiment [R]; a designer routes the long ones first | S | Better than F2 + F3 without it on the eleven boards |
-| F8 | **The best board includes the warm start.** `router.cpp` keeps `best_final` only from states reached at the real rules after the ramp, so an arm can return a worse board than it was given. Start `best_final` from the warm board when that board is legal | rule 4; seen in every warm-start campaign [R] | S | A test: a warm start that the ramp cannot improve returns the warm board byte-identical |
+| F8 | **The best board includes the warm start.** `router.cpp` keeps `best_final` only from states reached at the real rules after the ramp, so an arm can return a worse board than it was given. Start `best_final` from the warm board when that board is legal | rule 4; seen in every warm-start campaign [R] | S | A test: a ramp from a warm start never returns fewer routes than the warm start |
 | F9 | **Tell the user when two layers will not do.** Add the crossing count per connection and the via-site occupancy to the run report and to the layer-count advisor (D138), so a board like 032 (1,431 crossings for 108 connections, 18 open) is flagged for a third layer | crossings rank the open boards 1-9, 11 and 16 of 200 [R] | S | The advisor flags the boards with the most crossings, and none of the boards that were always clean |
 
 **Order and gate.** F8 first (a correctness fix), then F1. F2 and F3 together are the core; F4-F7 are measured on top of them. The milestone's
 gate: on the eleven boards, at the srj20-never recipe (6 arms, 1 h), at least 3 clean and at most 50 open connections in all (from 105).
 On the full srj20 set at the standard budget, no board that was clean is lost. With the options off, `quick` and `mid` are byte-identical.
 Tune on the boards numbered 1-100 (008, 032, 040, 064, 070, 088) and report on all eleven (doc 16 §1's held-out rule).
+
+**F8 built (2026-11-17, doc 05 §84).** A warm start is scored under the board's rules before the ramp and returned if the run ends worse.
+On srj20 sample040 the same lossy ramp went from 16 open (the old binary) to 2 (the warm start's count). The default route is unchanged
+(`bench/records/m26`).
+
+**F1, F2, F3 and F5 measured (2026-11-17).** No srj20 run had reserved a site: the breakout portfolio never sets the escape plan. Of the
+420 dog-bone sites of the open balls, 12 are free; tracks take most of them (F.Cu 87 %, B.Cu 85 %), vias inside the package 26 % and vias
+outside it 6 %, and no blocking via is another ball's own dog-bone via. From nothing on 152, 070 and 040 (3300 s, 16 variants), the control
+left 7, 7 and 6 open. Hard reservations lost on every board (`--escape-plan` 8, 9, 9; `--escape-flow` 9, 12, 14), and so did guidance
+(`--pin-via-pen 2` 8, 9, 9; the same over 1.5 mm 7, 8, 12; `--via-cost-mm 6` 7, 9, 14). Warm from the 2-open boards, every arm (escape plan,
+flow, pin rescue, end game, via cost) ended at 2 open. F2 and F3 are dropped as specified; F5 as a dearer via is dropped. The records are in
+`bench/records/m26`.
+
+**F4, F6, F7 and F9 (2026-11-17).** F4: none of the 420 sites is blocked by vias alone. `--via-shove`, which moves a via with the tracks
+that end at it, tried 427 moves on the three 2-open boards and kept none. F7 (`--order 4`, crossings first, and `--order-all`, doc 05
+§85) and F6 (`--package-lanes`, doc 05 §86) were built as options. From nothing they left 7-13 and 7-16 open against the control's 6-7, so
+both stay off. F9 (doc 05 §87) is adopted: every summary has `line_crossings`. At ≥ 11.5 crossings per connection on two layers, the
+advice suggests more layers, which flags the eight hardest srj20 boards and none that has ever been routed clean. With the options off,
+`quick` and `mid` are byte-identical.
+
+**Outcome.** The gate is not met. Every way tried of imposing a designer's structure, hard or as a cost (reserved sites, a via-free band,
+dearer vias, lanes, one order, layer directions in the srj20 record), left more open than the router's unconstrained portfolio at the same
+budget. The open connections are lost to board-wide congestion of tracks, not to any one via or ordering choice. What helped on these boards
+was budget and diversity: more variants in parallel, seeds, warm starts and the ramp. F8 keeps those gains, and F9 tells the user when two
+layers are unlikely to do. The structure a designer imposes may still pay off as a complete fan-out, routed first and then kept, instead of
+as a bias inside the negotiated search. That is a different milestone (a fan-out stage with its own rip-up rules), not built here. Measured afterwards as a fixed dog-bone fan-out written into the board before routing (`bench/records/m26/fanout`): 12-20 open
+against the control's 6-7 on the same three boards, so a kept fan-out does not help either.
+
+## 22. Group G: boards that never complete, by cause (2026-11-19, D194, M27)
+
+Asked on 2026-11-19: some boards never reach 100 %; rules may be relaxed and compute spent; what is the cause and what can be done?
+The work and its numbers are in doc 20 §1.1 and §2.8-§2.10 and in `bench/records/oracle-2026-11`. In short:
+
+- **G1, the designer oracle (done).** The router is given the designer's finished layout with some nets removed. On ten boards it
+  puts its own open nets back (search); on ten it cannot put back the designer's own nets (modelling).
+- **G2, the rule fit (done, opt-in, D194).** `route --fit-rules` relaxes what the board's own copper already breaks: mask openings
+  that already expose another net's pad, minimums, and with `--fit-rules-from` the class values of an earlier layout. 33 boards from
+  nothing: 890 → 771 open and 3 → 6 complete; 734 and 8 with the designer's layout. Six boards complete for the first time.
+- **G3, the chain measurement (done).** `tracemaker chains`: 141 of 261 open connections route on no board; of the 120 with
+  blockers, 62 are kept out by one net and 41 close, 17 of them by routing the connection and its blockers together.
+- **G4, a joint re-route as a router step (open).** The measurement's joint step as the last step of the default route, against
+  equal extra budget.
+- **G5, escapes with no slack (open).** sizif's QFN supply pins leave only on the pad's centre line; the lattice misses it.
+- **G6, an exact model for ball grids (open, doc 20 §2.10).** Chains close nothing on srj20's 152, 040 and 070.
+- **G7, the fit in the ladder (open).** Run it when connections are left open and keep the better result, for users who accept the
+  relaxation.
 

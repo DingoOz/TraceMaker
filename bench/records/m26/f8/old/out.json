@@ -1,0 +1,305 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 82.42,
+ "connections": 91,
+ "copper_layers": 2,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 2185007,
+ "failures": [
+  "bga_conn_026: bga_component.137 -> TP026.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_042: bga_component.42 -> TP042.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_030: bga_component.96 -> TP030.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_058: bga_component.143 -> TP058.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_070: bga_component.118 -> TP070.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_001: bga_component.41 -> TP001.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_055: bga_component.138 -> TP055.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_012: bga_component.79 -> TP012.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_019: bga_component.59 -> TP019.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_088: bga_component.51 -> TP088.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_061: bga_component.145 -> TP061.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_016: bga_component.131 -> TP016.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_024: bga_component.108 -> TP024.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_080: bga_component.149 -> TP080.1  (open in the relaxed rounds too; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_035: bga_component.32 -> TP035.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)",
+  "bga_conn_045: bga_component.136 -> TP045.1  (its route of the relaxed round broke the board's clearance; the legalising round keeps only legal routes and does not search)"
+ ],
+ "open": 16,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.035,
+ "routed": 75,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-11-17T07:27:40Z",
+  "input": "/home/dingo/Programming/TraceMaker/bench/data/tscircuit/boards/srj20/sample040/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "bench/results/m26/f8b/old/out.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "300"
+   },
+   {
+    "name": "--seed",
+    "value": "5"
+   },
+   {
+    "name": "",
+    "value": "2"
+   },
+   {
+    "name": "",
+    "value": "bench/results/srj20-again/sample040/first/a1/out.kicad_pcb"
+   },
+   {
+    "name": "--relax",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "0.01"
+   },
+   {
+    "name": "",
+    "value": "0.02"
+   },
+   {
+    "name": "",
+    "value": "1"
+   },
+   {
+    "name": "",
+    "value": "1000000"
+   },
+   {
+    "name": "--fast-bends",
+    "value": "false"
+   },
+   {
+    "name": "--time-total",
+    "value": "300"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "4"
+   },
+   {
+    "name": "--variants",
+    "value": "4"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--view-port",
+    "value": "8941"
+   },
+   {
+    "name": "--json",
+    "value": "bench/results/m26/f8b/old/out.json"
+   }
+  ],
+  "output": "bench/results/m26/f8b/old/out.kicad_pcb",
+  "seed": 5,
+  "threads": 4,
+  "time_limit_s": 300.0,
+  "time_total_s": 300.0,
+  "variants": 4,
+  "version": "0.12.1",
+  "work_budget": 0
+ },
+ "seconds": 11.942291645,
+ "style": {
+  "acute_angles": 4,
+  "arcs": 0,
+  "bends": 513,
+  "bends_per_connection": 3.3097,
+  "connections": 155,
+  "detour_length_mm": 1293.620051,
+  "detour_octile_mm": 962.789494,
+  "detour_ratio": 1.3436,
+  "length_mm": 1293.620051,
+  "long_detours": 16,
+  "off_angle_segments": 807,
+  "segments": 916,
+  "short_segments": 30,
+  "stair_steps": 21,
+  "vias": 280
+ },
+ "time_limited": false,
+ "tracks": 916,
+ "tunnels": 0,
+ "variant": 3,
+ "variant_name": "breakout seeded 3",
+ "variant_seconds": 2.142190385,
+ "variants": [
+  {
+   "best": false,
+   "name": "breakout profile",
+   "routed": 74,
+   "seconds": 2.183343403,
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "breakout seeded 1",
+   "routed": 75,
+   "seconds": 2.12515268,
+   "variant": 1
+  },
+  {
+   "best": false,
+   "name": "breakout seeded 2",
+   "routed": 74,
+   "seconds": 2.172260754,
+   "variant": 2
+  },
+  {
+   "best": true,
+   "name": "breakout seeded 3",
+   "routed": 75,
+   "seconds": 2.142190385,
+   "variant": 3
+  }
+ ],
+ "vias": 280,
+ "why_open": {
+  "congested": 32,
+  "neck_down": 0,
+  "neck_pins": [],
+  "next": [
+   "32 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)"
+  ],
+  "pins": 32,
+  "proved": [],
+  "seconds": 0.51552249,
+  "soft_only": 0,
+  "via_in_pad": 0,
+  "walled_in": 0
+ },
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 289869,
+   "commits": 1,
+   "expansions": 73908,
+   "field_cells": 1166712,
+   "fields": 1,
+   "fixed_checks": 5143601,
+   "flood_cells": 242783,
+   "rips": 0,
+   "searches": 4
+  },
+  "negotiation": {
+   "cell_checks": 2967770,
+   "commits": 7,
+   "expansions": 1752913,
+   "field_cells": 10056778,
+   "fields": 9,
+   "fixed_checks": 6473610,
+   "flood_cells": 1189983,
+   "rips": 11,
+   "searches": 23
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 3257639,
+   "commits": 8,
+   "expansions": 1826821,
+   "field_cells": 11223490,
+   "fields": 10,
+   "fixed_checks": 11617211,
+   "flood_cells": 1432766,
+   "rips": 11,
+   "searches": 27
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 1251825,
+   "commits": 4,
+   "expansions": 350810,
+   "field_cells": 4700106,
+   "fields": 4,
+   "fixed_checks": 20653467,
+   "flood_cells": 1061595,
+   "rips": 0,
+   "searches": 16
+  },
+  "negotiation": {
+   "cell_checks": 12116765,
+   "commits": 32,
+   "expansions": 7584866,
+   "field_cells": 40631336,
+   "fields": 37,
+   "fixed_checks": 25677820,
+   "flood_cells": 4793948,
+   "rips": 49,
+   "searches": 97
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 13368590,
+   "commits": 36,
+   "expansions": 7935676,
+   "field_cells": 45331442,
+   "fields": 41,
+   "fixed_checks": 46331287,
+   "flood_cells": 5855543,
+   "rips": 49,
+   "searches": 113
+  }
+ }
+}

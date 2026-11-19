@@ -1,0 +1,337 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 97.33,
+ "connections": 75,
+ "copper_layers": 2,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 40038136,
+ "failures": [
+  "bga_conn_047: bga_component.11 -> TP047.1  (boxed in; escapes/neck-down: boxed in; via shove failed; negotiated: transaction rolled back)",
+  "bga_conn_036: bga_component.49 -> TP036.1  (boxed in; escapes/neck-down: boxed in; via shove failed; negotiated: transaction rolled back)"
+ ],
+ "line_crossings": 818,
+ "open": 2,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.035,
+ "rescue": {
+  "adopted": false,
+  "connections": 75,
+  "mode": "both",
+  "passes": [
+   {
+    "adopted": false,
+    "mode": "warm",
+    "relaxed_stages": [
+     {
+      "clearance_lowered_mm": 0.04,
+      "routed": 73
+     }
+    ],
+    "routed": 73,
+    "seconds": 217.659560003
+   },
+   {
+    "adopted": false,
+    "mode": "fresh",
+    "relaxed_stages": [
+     {
+      "clearance_lowered_mm": 0.04,
+      "routed": 73
+     }
+    ],
+    "routed": 73,
+    "seconds": 190.466105461
+   }
+  ],
+  "routed_after": 73,
+  "routed_before": 73,
+  "seconds": 408.125665464
+ },
+ "routed": 73,
+ "run": {
+  "board": "unrouted.kicad_pcb",
+  "date": "2026-11-17T12:57:22Z",
+  "input": "/home/dingo/Programming/TraceMaker/bench/data/tscircuit/boards/srj20/sample070/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "shove2/sample070/out.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "1500"
+   },
+   {
+    "name": "--work",
+    "value": "40000000"
+   },
+   {
+    "name": "--seed",
+    "value": "501"
+   },
+   {
+    "name": "",
+    "value": "../srj20-again/sample070/first/a1/out.kicad_pcb"
+   },
+   {
+    "name": "",
+    "value": "true"
+   },
+   {
+    "name": "",
+    "value": "1.5"
+   },
+   {
+    "name": "--fast-bends",
+    "value": "false"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "2"
+   },
+   {
+    "name": "--variants",
+    "value": "2"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--view-port",
+    "value": "9803"
+   },
+   {
+    "name": "--json",
+    "value": "shove2/sample070/out.json"
+   }
+  ],
+  "output": "shove2/sample070/out.kicad_pcb",
+  "seed": 501,
+  "threads": 2,
+  "time_limit_s": 1500.0,
+  "time_total_s": 0.0,
+  "variants": 2,
+  "version": "0.12.1",
+  "work_budget": 40000000
+ },
+ "seconds": 606.691667889,
+ "style": {
+  "acute_angles": 9,
+  "arcs": 0,
+  "bends": 599,
+  "bends_per_connection": 3.7673,
+  "connections": 159,
+  "detour_length_mm": 1232.541223,
+  "detour_octile_mm": 880.722576,
+  "detour_ratio": 1.3995,
+  "length_mm": 1232.541223,
+  "long_detours": 19,
+  "off_angle_segments": 922,
+  "segments": 1031,
+  "short_segments": 35,
+  "stair_steps": 15,
+  "vias": 302
+ },
+ "time_limited": false,
+ "tracks": 1031,
+ "tunnels": 0,
+ "variant": 0,
+ "variant_name": "breakout profile",
+ "variant_seconds": 35.437433655,
+ "variants": [
+  {
+   "best": true,
+   "name": "breakout profile",
+   "routed": 73,
+   "seconds": 35.437433655,
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "breakout seeded 1",
+   "routed": 73,
+   "seconds": 35.033818974,
+   "variant": 1
+  },
+  {
+   "best": false,
+   "name": "breakout profile",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 73,
+   "seconds": 0.12468506,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "best": true,
+   "name": "breakout seeded 1",
+   "rescue_kept": false,
+   "rescue_mode": "warm",
+   "routed": 73,
+   "seconds": 0.125590337,
+   "stage": "rescue",
+   "variant": 1
+  },
+  {
+   "best": true,
+   "name": "breakout profile",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 73,
+   "seconds": 0.12996594,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "breakout seeded 1",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 73,
+   "seconds": 0.194301,
+   "stage": "rescue",
+   "variant": 1
+  }
+ ],
+ "via_shove_trials": 180,
+ "vias": 302,
+ "why_open": {
+  "congested": 4,
+  "neck_down": 0,
+  "neck_pins": [],
+  "next": [
+   "4 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)"
+  ],
+  "pins": 4,
+  "proved": [],
+  "seconds": 0.146070749,
+  "soft_only": 0,
+  "via_in_pad": 0,
+  "walled_in": 0
+ },
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 22744,
+   "commits": 0,
+   "expansions": 2263,
+   "field_cells": 481600,
+   "fields": 1,
+   "fixed_checks": 2157003,
+   "flood_cells": 17751,
+   "rips": 0,
+   "searches": 29
+  },
+  "negotiation": {
+   "cell_checks": 68703324,
+   "commits": 252,
+   "expansions": 30877488,
+   "field_cells": 58657304,
+   "fields": 115,
+   "fixed_checks": 8450629,
+   "flood_cells": 36618092,
+   "rips": 848,
+   "searches": 2536
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 68726068,
+   "commits": 252,
+   "expansions": 30879751,
+   "field_cells": 59138904,
+   "fields": 116,
+   "fixed_checks": 10607632,
+   "flood_cells": 36635843,
+   "rips": 848,
+   "searches": 2565
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 357960,
+   "commits": 0,
+   "expansions": 36606,
+   "field_cells": 2273696,
+   "fields": 4,
+   "fixed_checks": 10206612,
+   "flood_cells": 276960,
+   "rips": 0,
+   "searches": 122
+  },
+  "negotiation": {
+   "cell_checks": 385085606,
+   "commits": 1569,
+   "expansions": 187972572,
+   "field_cells": 402514458,
+   "fields": 631,
+   "fixed_checks": 40166404,
+   "flood_cells": 209430222,
+   "rips": 3664,
+   "searches": 11601
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 385443566,
+   "commits": 1569,
+   "expansions": 188009178,
+   "field_cells": 404788154,
+   "fields": 635,
+   "fixed_checks": 50373016,
+   "flood_cells": 209707182,
+   "rips": 3664,
+   "searches": 11723
+  }
+ }
+}
