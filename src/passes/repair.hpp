@@ -31,6 +31,9 @@ struct RepairOptions {
   // connection; a connection with no such route is left alone), on the layers that route uses. "both": along the route, then the ends.
   std::string select = "ends";
   std::vector<double> route_radii_mm{0.2, 1};  // "route": distance from that route's copper, tried in turn
+  // > 1: every attempt runs this many portfolio variants (different orders and costs) on `threads` threads and takes the best; each has
+  // `step_work`. 1 = one router with the job's options, as before.
+  int variants = 1, threads = 0;
 };
 
 // One routing attempt: an open connection, a window radius, what it lifted, and whether it was kept.

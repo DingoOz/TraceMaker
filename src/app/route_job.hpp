@@ -187,9 +187,10 @@ RouteJobResult run_layer_advisor(RouteJob job, std::vector<int> counts);
 // only the open connections are searched. Rung 1 is the job as given. Rung 2 routes what is open with the rules fitted to the board's own
 // copper (`fit_rules`, or `fit_rules_from` when the job names a reference) and the repair windows along each connection's bare-board route
 // and round its ends. Each entry of `extra_layers` (e.g. 2, 4) is one more rung with that many copper layers added to the input's count.
-// The ladder stops at the first rung with nothing open; a rung that does not lower the open count is discarded (rule 4). The summary's
+// With `masks_rung`, a rung before the layers lets tracks through pad solder-mask openings (RouterOptions::soft_pad_masks), and the layer
+// rungs keep that. The ladder stops at the first rung with nothing open; a rung that does not lower the open count is discarded (rule 4). The summary's
 // "finish" lists every rung with what it relaxed. Needs an output path.
-RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers);
+RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool masks_rung = false);
 
 // Buses (doc 05 §38): the groups `specs` ("NAME=PATTERN") name on the board, then, with `detect`, the groups found in
 // the net names that share no net with an earlier group. Each group gets the skew limit of the board's custom

@@ -455,9 +455,16 @@ RepairResult repair_open(const model::Board& base, const model::DesignRules& rul
         for (std::size_t i = 0; i < cur.vias.size(); ++i)
           if (!v_lift[i]) step.vias.push_back(cur.vias[i]);
         const route::RouterOptions o = step_options();
-        const route::RouteResult r = route::Router(step, rules, o).run();
-        st.work = r.expansions;
-        out.work += r.expansions;
+        route::RouteResult r;
+        if (ro.variants > 1) {
+          auto pr = route::route_portfolio(step, rules, o, ro.variants, {}, ro.threads);
+          for (const auto& w : pr.work) st.work += w.total().expansions;
+          r = std::move(pr.best);
+        } else {
+          r = route::Router(step, rules, o).run();
+          st.work = r.expansions;
+        }
+        out.work += st.work;
         model::Board after = step;
         after.tracks.insert(after.tracks.end(), r.tracks.begin(), r.tracks.end());
         after.vias.insert(after.vias.end(), r.vias.begin(), r.vias.end());
