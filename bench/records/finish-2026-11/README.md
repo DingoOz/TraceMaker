@@ -283,7 +283,8 @@ fifogfx (40) is the card-edge case of D194. DronPi and PCIE have 1 each (under t
 - d20 (129): layers do nothing on top; 27 pins are walled in by the earlier rungs' own copper. Not measured with focused repair.
 - Boards one or two short (robomezzi, dorkyboard, PCIE on top, TCKB, V2X, CoreOne at 60 M): each open pin is walled in by a neighbour's
   track that the repair lifts and the router lays back the same way.
-- Memory: mini_mass at six layers passes 100 GB (above). Not investigated.
+- Memory: mini_mass at six layers passes 100 GB (above). One variant on one thread under a 30 GB cap ends in `std::bad_alloc` after 34 s,
+  before any routing: the size of the search state, not a leak. The router does not check memory before it starts.
 - On top is not always the better order: PCIE completes fitted from nothing and is left 1-2 short on top; OtterPill completes only fitted from
   the designer's layout from nothing. `route --finish` has the on-top order only.
 - No change to the default route: every option here is off unless asked for. Quick tier: 30 of 30 outputs byte-identical (`finq` against `fitq-new`).
