@@ -15,6 +15,8 @@ Follows `bench/records/oracle-2026-11` (rule fit, chain measurement); the arms `
   completed ardfpga for the first time before the runs were stopped (below).
 - Nine designer layouts run tracks through other nets' pad solder-mask openings (KiCad reports 3 to 118 `solder_mask_bridge` on them). Fitted
   from the designer's layout (D197), memsarray completes for the first time, sizif goes 38 → 26, LFK78 31 → 27.
+- `route --finish --finish-masks --finish-layers 2,4`, one command per board, 29 of the 30 boards open at base: **881 → 219 open, 8 complete**
+  (127 of the 219 are d20). Its totals are better than the best of the hand-run arms without the 60 M runs.
 - Best arm per board, no designer layout needed: **890 → 245 open, 16 of 33 complete** (3 before). With the designer's layout as reference:
   233 open, 17 complete. 129 of the 245 are d20.
 - KiCad 10.0.6 on the newly complete outputs: 0 unconnected on 12 of 13 checked (MicroMaple's `toplay4` output has 1 unconnected item; its
@@ -139,8 +141,9 @@ table. 169 open connections had no route with the other nets' copper off the boa
 
 ## `route --finish` end to end (`finish/results.jsonl`)
 
-One command per board: `route --work 20000000 --finish --finish-masks --finish-layers 2,4`, three jobs at a time, on the 24 boards open at
-base less the six largest (Aleste, d20, MonApollo, LFK78, sizif, poncho). Open connections after each rung; (x) = rung discarded, no better.
+One command per board: `route --work 20000000 --finish --finish-masks --finish-layers 2,4`, on the 30 boards open at base: 24 three at a
+time, then the six largest two at a time (`scripts/finishrun.py`, `finishrun2.py`). Open connections after each rung; (x) = rung discarded,
+no better.
 
 | Board | base | fitted rules | + pad masks | + 2 layers | + 4 layers | final | layers | seconds |
 |---|--:|--:|--:|--:|--:|--:|--:|--:|
@@ -168,10 +171,17 @@ base less the six largest (Aleste, d20, MonApollo, LFK78, sizif, poncho). Open c
 | mini_mass_prog_bench_prog_rig | 9 | 5 | 5 (x) | stopped | – | (5) | – | 1449 |
 | P8000_WDC_Emulator_P8000_WDC_Emulator | 25 | 17 | 16 | 0 | – | 0 | 4 | 1461 |
 | CoreOne-xCORE200-Original_CoreOne | 19 | 12 | 12 (x) | 10 | 10 (x) | 10 | 6 | 1657 |
-| **23 boards** | 313 | | | | | 56 | | 11793 |
+| mechkeys_LFK78 | 45 | 31 | 27 | 12 | 8 | 8 | 6 | 1929 |
+| Aleste-520EX_aleste | 250 | 182 | 159 | 1 | 0 | 0 | 6 | 2415 |
+| poncho_fpga_fpga-dongle | 33 | 26 | 26 (x) | 7 | 6 | 6 | 6 | 1679 |
+| MonApollo_analog-board | 44 | 30 | 22 | 14 | 12 | 12 | 6 | 2313 |
+| zx-sizif-512-ext_sizif512ext | 54 | 38 | 26 | 12 | 10 | 10 | 6 | 1662 |
+| kitspace_d20_tri_r0.3 | 142 | 128 | 127 | 127 (x) | 127 (x) | 127 | 4 | 2141 |
+| **29 boards** | 881 | | | | | 219 | | 23,932 |
 
-Seven of the 23 complete (memsarray, sd_wav, fifogfx, ErgoDone, test-jig, MicroMaple, P8000); KiCad 10.0.6: 0 unconnected on all seven
-(`finish/kicad-judge.json`). 313 open become 56. Eight more end with 1 to 3 open.
+Eight of the 29 complete (Aleste, memsarray, sd_wav, fifogfx, ErgoDone, test-jig, MicroMaple, P8000); KiCad 10.0.6: 0 unconnected on all
+eight (`finish/kicad-judge.json`). 881 open become 219, of which 127 are d20; the other 28 boards go from 739 to 92. Six more end 1 short.
+Aleste-520EX: 250 → 182 → 159 → 1 → 0 in 40 minutes, at six layers.
 
 mini_mass was stopped by hand in its fourth rung: at six copper layers the process passed 100 GB of memory and was still growing (20 M work,
 8 variants; its searches there fail after about 21 M expansions each). The same board at `toplay4` is what exhausted the machine's memory at

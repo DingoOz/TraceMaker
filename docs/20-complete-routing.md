@@ -323,8 +323,9 @@ The ladder on top of the 60 M run completes ardfpga at rung 2 and MicroMaple at 
 stopped. Best arm per board, no designer layout used: **245 open, 16 of 33 complete**; KiCad 10.0.6 finds 0 unconnected on those
 outputs it was given (12 of 13; the one with an unconnected item has a second complete output without).
 
-As one command (`route --work 20000000 --finish --finish-masks --finish-layers 2,4`) on 23 of the boards (the six largest left out, one
-stopped): 313 open become 56 and seven boards complete, KiCad 0 unconnected on each; eight more end 1 to 3 short.
+As one command (`route --work 20000000 --finish --finish-masks --finish-layers 2,4`) on 29 of the 30 boards open at base (one stopped):
+881 open become 219 and eight boards complete, KiCad 0 unconnected on each; six more end 1 short. d20 holds 127 of the 219: the other 28
+boards go from 739 to 92. Aleste-520EX completes in 40 minutes (250 → 182 → 159 → 1 → 0, six layers).
 
 What it does not do:
 
@@ -382,5 +383,5 @@ Each step:
 | §2.8 rule fit (`--fit-rules`, opt-in) | 2026-11-19 | 33 boards from nothing: 890 → 771 open, 3 → 6 complete (own pads); 734 and 8 with the designer's layout; six boards complete for the first time; 3-5 boards worse | D194 |
 | §2.9 chain measurement (`tracemaker chains`) | 2026-11-19 | 261 open: 141 route on no board; of 120 with blockers 62 have one, 41 close (17 joint) | |
 | §2.11 repair along the route, focused attempts (opt-in) | 2026-11-19 | after 20 M on 33 boards: 28 (ends), 30 (route, 39 % less work), 47 (both) of 887 closed, none complete; 3× budget closes 159. Not a default step | D195 |
-| §2.12 `route --finish` (opt-in) | 2026-11-19 | rung 2 on top: 890 → 597 open, 7 complete; +4 layers 10 (Aleste 250 → 0); best arm per board 245 open, 16 of 33 complete | D196 |
+| §2.12 `route --finish` (opt-in) | 2026-11-19 | one command with masks and +2, +4 layers on 29 boards: 881 → 219 open (127 on d20), 8 complete (Aleste 250 → 0); best arm per board, hand-run arms and 60 M included: 16 of 33 complete | D196 |
 | §2.13 pad mask openings from a reference (opt-in) | 2026-11-19 | 9 of 33 designer layouts have tracks in pad openings; memsarray complete, sizif 38 → 26, LFK78 31 → 27 | D197 |

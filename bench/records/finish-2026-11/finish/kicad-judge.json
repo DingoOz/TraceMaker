@@ -33,5 +33,11 @@
  "P8000_WDC_Emulator_P8000_WDC_Emulator": {
   "unconnected": 0,
   "added": {}
+ },
+ "Aleste-520EX_aleste": {
+  "unconnected": 0,
+  "added": {
+   "copper_edge_clearance": 8
+  }
  }
 }

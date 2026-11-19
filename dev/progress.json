@@ -1107,7 +1107,7 @@
           "done": false
         },
         {
-          "text": "G7 route --finish (D196): rungs on top of one another; rung 2 890 -> 597 open, 7 complete; +4 layers 10 (Aleste 250 -> 0); pad masks from a reference (D197): memsarray complete",
+          "text": "G7 route --finish (D196): rungs on top of one another, with --finish-fresh, --finish-masks, --finish-layers; one command on 29 boards 881 -> 219 open, 8 complete (Aleste 250 -> 0); pad masks from a reference (D197): memsarray complete",
           "done": true
         },
         {

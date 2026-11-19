@@ -7,11 +7,12 @@ without stopping for questions and record the assumptions.
 
 - **16 of the 33 failing PCBench boards now complete** by the best arm per board, against 3 before; open connections 890 → 245, of which
   129 are one board (d20). KiCad 10.0.6 finds 0 unconnected items on every newly complete board (on at least one of its complete outputs).
-- **`route --finish`** is the command that does it: one run per board took 23 of the boards from 313 open to 56 and completed seven.
+- **`route --finish`** is the command that does it: one run per board (`--finish --finish-masks --finish-layers 2,4`, 20 M) took 29 of
+  the 30 open boards from 881 open to 219 and completed eight. Aleste-520EX completes in 40 minutes. 127 of the 219 are d20.
 - The joint re-route (the step I set out to build) **does not beat more budget** and is not a default step. It is useful inside the ladder.
 - **At 15:05 UTC the machine ran low on memory and the session stopped all my background runs.** I had too many jobs going, and one board
   (mini_mass at six layers) uses over 100 GB on its own. Some measurements are unfinished because of it (below).
-- Nothing is pushed beyond PR #93. The new work is three local commits on branch `joint-reroute` in `TraceMaker-rm3`.
+- Nothing is pushed beyond PR #93. The new work is local commits on branch `joint-reroute` in `TraceMaker-rm3`.
 
 ## What was done
 
@@ -45,7 +46,8 @@ First-time completes tonight: Aleste-520EX (250 open on every earlier run → 0 
 layers), memsarray (pad masks), ardfpga (fitted rules on top of the 60 M run), LeeChee (repair with eight variants, or 60 M), serial_gw and
 teensy-fx (60 M alone).
 
-`route --finish --finish-masks --finish-layers 2,4` as one command, 23 boards: 313 → 56 open, seven complete, eight more 1 to 3 short.
+`route --finish --finish-masks --finish-layers 2,4` as one command, 29 boards: 881 → 219 open (739 → 92 without d20), eight complete, six
+more 1 short. With `--finish-fresh` PCIE completes too (30 → 2 → 0).
 
 ## Checks
 
@@ -98,5 +100,5 @@ A95-A105 in `dev/assumptions.md`. The ones you may want to overrule:
 1. Decide whether `joint-reroute` goes up as a PR on top of #93.
 2. Finish the stopped runs with a memory cap; the ladder on the 60 M run looked like the strongest arm (of the 8 boards it reached that
    the 60 M run had left open, 5 completed: fifogfx, test-jig, ardfpga, memsarray, MicroMaple).
-3. G8 in doc 18: a rung that routes from nothing with the fitted rules and keeps the better board; pins walled in by earlier rungs.
+3. G8 in doc 18: pins walled in by earlier rungs (d20), and the boards 1 short. The from-nothing rung is built (`--finish-fresh`).
 4. The memory growth on mini_mass.
