@@ -17,7 +17,8 @@ Follows `bench/records/oracle-2026-11` (rule fit, chain measurement); the arms `
   from the designer's layout (D197), memsarray completes for the first time, sizif goes 38 → 26, LFK78 31 → 27.
 - `route --finish --finish-masks --finish-layers 2,4`, one command per board, 29 of the 30 boards open at base: **881 → 219 open, 8 complete**
   (127 of the 219 are d20).
-- Best arm per board, no designer layout needed: **890 → 245 open, 16 of 33 complete** (3 before). With the designer's layout as reference:
+- Best arm per board, no designer layout needed: **890 → 245 open, 16 of 33 complete** (3 before); the stronger ladder (60 M, the
+  from-nothing rung, eight repair variants) then completed DronPi and Teensy_test_layout: **18 of 33**. With the designer's layout as reference:
   233 open, 17 complete. 129 of the 245 are d20.
 - KiCad 10.0.6 on the newly complete outputs: 0 unconnected on 12 of 13 checked (MicroMaple's `toplay4` output has 1 unconnected item; its
   `c60lay2` output has none), no shorts; added violations only of the kinds that were relaxed (`ontop/kicad-judge.json`).
@@ -188,6 +189,25 @@ mini_mass was stopped by hand in its fourth rung: at six copper layers the proce
 15:05. `route --finish` now writes its output after every rung it keeps, so a ladder stopped part-way leaves its best board (it did not yet
 when this was run: mini_mass's 5-open board was lost).
 
+### The stronger ladder on the boards one or two short (`finish-strong/results.jsonl`)
+
+`route --work 60000000 --finish --finish-fresh --repair-variants 8 --finish-masks --finish-layers 2,4`, eight boards, three at a time.
+
+| Board | as given (60 M) | fitted rules | from the board as given | + pad masks | + 2 layers | + 4 layers | final | KiCad unconnected |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|
+| Hardware_Playground_serial_gw | 0 | – | – | – | – | – | 0 | 0 |
+| kitspace_teensy-fx | 0 | – | – | – | – | – | 0 | 0 |
+| LeeChee_1800 | 0 | – | – | – | – | – | 0 | 0 |
+| PCIE-to-MXM-Adapter | 30 | 0 | – | – | – | – | 0 | 0 |
+| KiCad-Library_Teensy_test_layout | 16 | 1 | 0 | – | – | – | 0 | 0 |
+| DronPi_dronPi | 11 | 8 | 9 (x) | 0 | – | – | 0 | 0 |
+| 96boards-robomezzi | 2 | 1 | 1 (x) | 1 (x) | 1 (x) | 1 (x) | 1 | |
+| dorkyboard_keyboard | 2 | 1 | not finished when this was written | | | | | |
+
+Six of the eight complete, all at the board's own layer count; DronPi and Teensy_test_layout for the first time on any arm. With them
+**18 of the 33 boards have a complete output** (3 before). Teensy_test_layout's output has 499 clearance violations more than the unrouted
+board in KiCad: its fitted class clearance is what let it complete.
+
 ### The from-nothing rung (`--finish --finish-fresh --finish-masks`, 20 M)
 
 | Board | as given | fitted rules, on top | fitted rules, from the board as given | + pad masks | final |
@@ -310,6 +330,7 @@ fifogfx (40) is the card-edge case of D194. DronPi and PCIE have 1 each (under t
 ## Files
 
 - `repair/results.jsonl`: one row per board and repair arm. `ontop/results.jsonl`: one row per board and arm of the ladders.
+- `finish-strong/`: the stronger ladder on eight boards, and KiCad on its completes.
 - `finish/results.jsonl`, `finish/kicad-judge.json`: `route --finish` end to end, and KiCad on its seven complete outputs.
 - `ontop/kicad-judge.json`: KiCad 10.0.6 on the newly complete outputs (unconnected items; violations added over the unrouted board).
 - `scripts/`: the run scripts (`ROOT` = the repository; the binaries were frozen copies of the build at each step).

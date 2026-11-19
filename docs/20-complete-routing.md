@@ -327,6 +327,10 @@ As one command (`route --work 20000000 --finish --finish-masks --finish-layers 2
 881 open become 219 and eight boards complete, KiCad 0 unconnected on each; six more end 1 short. d20 holds 127 of the 219: the other 28
 boards go from 739 to 92. Aleste-520EX completes in 40 minutes (250 → 182 → 159 → 1 → 0, six layers).
 
+With three times the budget, the from-nothing rung and eight repair variants (`--work 60000000 --finish --finish-fresh --repair-variants 8
+--finish-masks --finish-layers 2,4`) six of the eight boards that ended one or two short complete at their own layer count, DronPi and
+Teensy_test_layout for the first time: **18 of the 33 boards now have a complete output**, KiCad 0 unconnected on each.
+
 What it does not do:
 
 - **Memory.** mini_mass at six layers passed 100 GB in the plain run of its fourth rung and was stopped. The ladder writes its output after
@@ -383,5 +387,5 @@ Each step:
 | §2.8 rule fit (`--fit-rules`, opt-in) | 2026-11-19 | 33 boards from nothing: 890 → 771 open, 3 → 6 complete (own pads); 734 and 8 with the designer's layout; six boards complete for the first time; 3-5 boards worse | D194 |
 | §2.9 chain measurement (`tracemaker chains`) | 2026-11-19 | 261 open: 141 route on no board; of 120 with blockers 62 have one, 41 close (17 joint) | |
 | §2.11 repair along the route, focused attempts (opt-in) | 2026-11-19 | after 20 M on 33 boards: 28 (ends), 30 (route, 39 % less work), 47 (both) of 887 closed, none complete; 3× budget closes 159. Not a default step | D195 |
-| §2.12 `route --finish` (opt-in) | 2026-11-19 | one command with masks and +2, +4 layers on 29 boards: 881 → 219 open (127 on d20), 8 complete (Aleste 250 → 0); best arm per board, hand-run arms and 60 M included: 16 of 33 complete | D196 |
+| §2.12 `route --finish` (opt-in) | 2026-11-19 | one command with masks and +2, +4 layers on 29 boards: 881 → 219 open (127 on d20), 8 complete (Aleste 250 → 0); with 60 M, the from-nothing rung and 8 repair variants six of eight near-complete boards finish: 18 of 33 have a complete output | D196 |
 | §2.13 pad mask openings from a reference (opt-in) | 2026-11-19 | 9 of 33 designer layouts have tracks in pad openings; memsarray complete, sizif 38 → 26, LFK78 31 → 27 | D197 |
