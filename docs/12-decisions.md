@@ -209,6 +209,9 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D192](decisions/D192.md) | Exact courtyard outlines and closure moves that keep the input's overlaps | accepted |
 | [D193](decisions/D193.md) | tui jobs screen and rerun advice | accepted |
 | [D194](decisions/D194.md) | Rule fit: relax the rules a board's own copper already breaks | accepted |
+| [D195](decisions/D195.md) | Repair windows along the connection's bare-board route, focused attempts | accepted |
+| [D196](decisions/D196.md) | route --finish: rungs on top of one another towards a complete board | accepted |
+| [D197](decisions/D197.md) | Rule fit from a reference: pad mask openings its tracks cross | accepted |
 <!-- END decision index -->
 
 ## Risks

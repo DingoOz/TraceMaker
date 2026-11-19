@@ -1351,6 +1351,7 @@ static int run_main(int argc, char** argv) {
   route->add_option("--repair-work", r_job.repair_opt.step_work, "Repair: work budget of each attempt in search expansions (default 3000000)");
   route->add_option("--repair-branches", r_job.repair_opt.max_branches, "Repair: a window that would lift more branches (the tracks and vias of one net between two pads or junctions) stops growing (default 64)");
   route->add_option("--repair-conns", r_job.repair_opt.max_conns, "Repair: open connections tried at most (default 64)");
+  route->add_flag("--repair-focus", r_job.repair_opt.focus, "Repair: an attempt routes only the open connection's net and the nets it lifted copper of (default: everything that is open)");
   route->add_option("--repair-variants", r_job.repair_opt.variants, "Repair: portfolio variants run for each attempt, the best taken (default 1: one router with the run's options)")->check(CLI::Range(1, 64));
   route->add_option("--repair-select", r_job.repair_opt.select,
                     "Repair: where the copper to lift is looked for. ends (default): round the two ends of the open connection; route: along the route "

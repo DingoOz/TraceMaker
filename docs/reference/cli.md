@@ -247,6 +247,10 @@ OPTIONS:
           --escape-plan, --no-escape-plan{false}
                               Reserve escape corridors for the pins of dense packages (QFP,
                               BGA) before routing
+          --soft-pad-masks    Pad solder-mask openings do not keep other nets' tracks and vias
+                              out; KiCad reports solder_mask_bridge where one lies in an
+                              opening (judgement; --fit-rules-from turns it on when the
+                              reference does it; doc 20 §2.13)
           --soft-copper-graphics
                               Board copper graphics (polygons on a copper layer, e.g. an
                               EasyEDA import's pours) take the net of the one net whose pads,
@@ -319,6 +323,20 @@ OPTIONS:
                               vias of one net between two pads or junctions) stops growing
                               (default 64)
           --repair-conns INT  Repair: open connections tried at most (default 64)
+          --repair-focus      Repair: an attempt routes only the open connection's net and the
+                              nets it lifted copper of (default: everything that is open)
+          --repair-variants INT:INT in [1 - 64]
+                              Repair: portfolio variants run for each attempt, the best taken
+                              (default 1: one router with the run's options)
+          --repair-select TEXT:{ends,route,both}
+                              Repair: where the copper to lift is looked for. ends (default):
+                              round the two ends of the open connection; route: along the route
+                              the connection takes with the other nets' unlocked copper off the
+                              board (one more routing run per connection); both: route, then
+                              ends
+          --repair-route-mm FLOAT ...
+                              Repair, --repair-select route or both: distances from that route,
+                              tried in turn (default 0.2,1)
           --rescue-mode TEXT:{warm,fresh,both}
                               How the rescue routes again with relax: warm (from the plain
                               run's routes), fresh (from nothing) or both (warm, then fresh
@@ -399,6 +417,18 @@ OPTIONS:
           --copper-layers INT:INT in [2 - 32]
                               Route with this many copper layers (even): inner layers are
                               added, or empty ones removed, in the output too
+          --finish            Rungs towards a complete board, each on top of the one before
+                              (what is routed stays): the run as given; then the open
+                              connections with the rules fitted to the board's own copper
+                              (--fit-rules, or --fit-rules-from when given) and repair windows;
+                              then one rung per --finish-layers entry. Stops at the first rung
+                              with nothing open; the summary's "finish" lists what each rung
+                              relaxed (doc 20 §2.12)
+          --finish-masks      With --finish: a rung after the fitted rules where pad
+                              solder-mask openings no longer keep tracks out (--soft-pad-masks)
+          --finish-layers INT ...
+                              With --finish: later rungs that add this many copper layers to
+                              the board's count (e.g. 2,4); none by default
           --try-layers INT ...
                               Layer-count advisor: route with each count (e.g. 2,4,6), fewest
                               first, stop at the first that completes and write that board; the

@@ -567,10 +567,16 @@ The work and its numbers are in doc 20 §1.1 and §2.8-§2.10 and in `bench/reco
   nothing: 890 → 771 open and 3 → 6 complete; 734 and 8 with the designer's layout. Six boards complete for the first time.
 - **G3, the chain measurement (done).** `tracemaker chains`: 141 of 261 open connections route on no board; of the 120 with
   blockers, 62 are kept out by one net and 41 close, 17 of them by routing the connection and its blockers together.
-- **G4, a joint re-route as a router step (open).** The measurement's joint step as the last step of the default route, against
-  equal extra budget.
+- **G4, a joint re-route as a router step (done, gate not met; D195, doc 20 §2.11).** Built into the repair stage
+  (`--repair-select route|both`, `--repair-focus`, `--repair-variants`). After a 20 M run it closes 30 to 47 of 887 open connections and
+  completes no board; three times the budget closes 159. Not a default step; used inside G7.
 - **G5, escapes with no slack (open).** sizif's QFN supply pins leave only on the pad's centre line; the lattice misses it.
 - **G6, an exact model for ball grids (open, doc 20 §2.10).** Chains close nothing on srj20's 152, 040 and 070.
-- **G7, the fit in the ladder (open).** Run it when connections are left open and keep the better result, for users who accept the
-  relaxation.
+- **G7, the fit in the ladder (done as an option; D196, D197, doc 20 §2.12 and §2.13).** `route --finish`: each rung routes only what
+  is open, on top of the rung before: fitted rules with repair, then pad mask openings (`--finish-masks`), then layers
+  (`--finish-layers`). On the 33 boards rung 2 takes 890 open to 597 and 7 complete; with layers 10 (Aleste 250 → 0); the best arm per
+  board completes 16 of 33. Not in the default route.
+- **G8, what the ladder leaves (open).** Pins walled in by an earlier rung's copper (d20: 129 open, layers change nothing); boards one
+  or two short where a repair window lays the neighbour's track back the same way; the from-nothing order as a rung (PCIE, OtterPill);
+  the focused repair on all 33 boards and the ladder on the 60 M run, which were stopped unfinished.
 

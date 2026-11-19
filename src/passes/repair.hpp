@@ -31,6 +31,10 @@ struct RepairOptions {
   // connection; a connection with no such route is left alone), on the layers that route uses. "both": along the route, then the ends.
   std::string select = "ends";
   std::vector<double> route_radii_mm{0.2, 1};  // "route": distance from that route's copper, tried in turn
+  // An attempt routes only the open connection's net and the nets it lifted copper of; every other net is left as it is (its open
+  // connections too). Without it each attempt routes everything that is open, and on a board with many open connections the attempt's
+  // budget goes to those: PCBench d20 with two layers added, 129 open, 126 attempts, every one ended with more open than before.
+  bool focus = false;
   // > 1: every attempt runs this many portfolio variants (different orders and costs) on `threads` threads and takes the best; each has
   // `step_work`. 1 = one router with the job's options, as before.
   int variants = 1, threads = 0;

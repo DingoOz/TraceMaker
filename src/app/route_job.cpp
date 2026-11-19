@@ -2228,6 +2228,7 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
       if (j.fit_rules_from.empty()) j.fit_rules_from = job.in;
       j.repair = "on";
       j.repair_opt.select = "both";
+      j.repair_opt.focus = true;
     }
     if (rg.layers > 0) j.copper_layers = rg.layers;
     if (rg.masks) j.opt.soft_pad_masks = true;

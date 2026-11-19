@@ -454,7 +454,17 @@ RepairResult repair_open(const model::Board& base, const model::DesignRules& rul
           if (!t_lift[i]) step.tracks.push_back(cur.tracks[i]);
         for (std::size_t i = 0; i < cur.vias.size(); ++i)
           if (!v_lift[i]) step.vias.push_back(cur.vias[i]);
-        const route::RouterOptions o = step_options();
+        route::RouterOptions o = step_options();
+        std::set<std::string> left_out;  // focus: the nets this attempt does not route
+        if (ro.focus) {
+          std::set<NetId> in{own};
+          for (const auto& x : lifted) in.insert(graph->net(x));
+          for (const auto& n : base.nets)
+            if (n.id > 0 && !n.name.empty() && !in.count(n.id)) {
+              left_out.insert(n.name);
+              if (std::find(o.skip_nets.begin(), o.skip_nets.end(), n.name) == o.skip_nets.end()) o.skip_nets.push_back(n.name);
+            }
+        }
         route::RouteResult r;
         if (ro.variants > 1) {
           auto pr = route::route_portfolio(step, rules, o, ro.variants, {}, ro.threads);
@@ -495,8 +505,21 @@ RepairResult repair_open(const model::Board& base, const model::DesignRules& rul
         nv.insert(nv.end(), r.vias.begin(), r.vias.end());
         out.tracks = std::move(nt);
         out.vias = std::move(nv);
-        out.unrouted = r.unrouted;
-        out.failures = r.failures;
+        if (ro.focus) {  // the nets left out keep their open connections and explanations
+          std::vector<route::RouteResult::Unrouted> un;
+          std::vector<std::string> fl;
+          for (const auto& x : out.unrouted)
+            if (left_out.count(x.net)) un.push_back(x);
+          for (const auto& f : out.failures)
+            if (left_out.count(f.substr(0, f.find(": ")))) fl.push_back(f);
+          un.insert(un.end(), r.unrouted.begin(), r.unrouted.end());
+          fl.insert(fl.end(), r.failures.begin(), r.failures.end());
+          out.unrouted = std::move(un);
+          out.failures = std::move(fl);
+        } else {
+          out.unrouted = r.unrouted;
+          out.failures = r.failures;
+        }
         out.changed = true;
         cur = current();
         cur_root = pad_roots(cur);
