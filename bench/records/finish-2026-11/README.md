@@ -18,7 +18,7 @@ Follows `bench/records/oracle-2026-11` (rule fit, chain measurement); the arms `
 - `route --finish --finish-masks --finish-layers 2,4`, one command per board, 29 of the 30 boards open at base: **881 → 219 open, 8 complete**
   (127 of the 219 are d20).
 - Best arm per board, no designer layout needed: **890 → 245 open, 16 of 33 complete** (3 before); the stronger ladder (60 M, the
-  from-nothing rung, eight repair variants) then completed DronPi and Teensy_test_layout: **18 of 33**. With the designer's layout as reference:
+  from-nothing rung, eight repair variants) then completed DronPi, Teensy_test_layout and dorkyboard: **19 of 33**. With the designer's layout as reference:
   233 open, 17 complete. 129 of the 245 are d20.
 - KiCad 10.0.6 on the newly complete outputs: 0 unconnected on 12 of 13 checked (MicroMaple's `toplay4` output has 1 unconnected item; its
   `c60lay2` output has none), no shorts; added violations only of the kinds that were relaxed (`ontop/kicad-judge.json`).
@@ -202,10 +202,10 @@ when this was run: mini_mass's 5-open board was lost).
 | KiCad-Library_Teensy_test_layout | 16 | 1 | 0 | – | – | – | 0 | 0 |
 | DronPi_dronPi | 11 | 8 | 9 (x) | 0 | – | – | 0 | 0 |
 | 96boards-robomezzi | 2 | 1 | 1 (x) | 1 (x) | 1 (x) | 1 (x) | 1 | |
-| dorkyboard_keyboard | 2 | 1 | not finished when this was written | | | | | |
+| dorkyboard_keyboard | 2 | 1 | 2 (x) | 0 | – | – | 0 | 0 |
 
-Six of the eight complete, all at the board's own layer count; DronPi and Teensy_test_layout for the first time on any arm. With them
-**18 of the 33 boards have a complete output** (3 before). Teensy_test_layout's output has 499 clearance violations more than the unrouted
+Seven of the eight complete, all at the board's own layer count; DronPi, Teensy_test_layout and dorkyboard for the first time on any arm.
+With them **19 of the 33 boards have a complete output** (3 before). Teensy_test_layout's output has 499 clearance violations more than the unrouted
 board in KiCad: its fitted class clearance is what let it complete.
 
 ### The from-nothing rung (`--finish --finish-fresh --finish-masks`, 20 M)

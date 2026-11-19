@@ -5,7 +5,7 @@ without stopping for questions and record the assumptions.
 
 ## Summary
 
-- **18 of the 33 failing PCBench boards now have a complete output**, against 3 before. By the best arm per board open connections go
+- **19 of the 33 failing PCBench boards now have a complete output**, against 3 before. By the best arm per board open connections go
   890 → 245, of which 129 are one board (d20). KiCad 10.0.6 finds 0 unconnected items on every newly complete board (on at least one of its complete outputs).
 - **`route --finish`** is the command that does it: one run per board (`--finish --finish-masks --finish-layers 2,4`, 20 M) took 29 of
   the 30 open boards from 881 open to 219 and completed eight. Aleste-520EX completes in 40 minutes. 127 of the 219 are d20.
@@ -41,11 +41,11 @@ without stopping for questions and record the assumptions.
 | … then 4 more layers (32 boards) | 274 | 10 |
 | Best arm per board, no designer layout | 245 | 16 |
 | Best arm per board, designer layout allowed as reference | 233 | 17 |
-| … plus the stronger ladder on the boards 1-2 short (60 M, from-nothing rung, 8 repair variants) | | 18 |
+| … plus the stronger ladder on the boards 1-2 short (60 M, from-nothing rung, 8 repair variants) | | 19 |
 
 First-time completes tonight: Aleste-520EX (250 open on every earlier run → 0 at six layers), P8000 (+2 layers), MicroMaple (+2 or +4
 layers), memsarray (pad masks), ardfpga (fitted rules on top of the 60 M run), LeeChee (repair with eight variants, or 60 M), serial_gw and
-teensy-fx (60 M alone), DronPi and Teensy_test_layout (the stronger ladder, at their own layer count).
+teensy-fx (60 M alone), DronPi, Teensy_test_layout and dorkyboard (the stronger ladder, at their own layer count).
 
 `route --finish --finish-masks --finish-layers 2,4` as one command, 29 boards: 881 → 219 open (739 → 92 without d20), eight complete, six
 more 1 short. With `--finish-fresh` PCIE completes too (30 → 2 → 0).

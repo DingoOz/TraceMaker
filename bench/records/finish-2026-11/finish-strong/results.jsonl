@@ -5,3 +5,4 @@
 {"board": "DronPi_dronPi", "exit": 0, "seconds": 953, "base_open": 11, "open": 0, "complete": true, "layers": 2, "rungs": [["as given", 11, true], ["fitted rules", 8, true], ["fitted rules, from the board as given", 9, false], ["fitted rules, pad mask openings open to tracks", 0, true]]}
 {"board": "LeeChee_1800", "exit": 0, "seconds": 282, "base_open": 5, "open": 0, "complete": true, "layers": 2, "rungs": [["as given", 0, true]]}
 {"board": "KiCad-Library_Teensy_test_layout", "exit": 0, "seconds": 1118, "base_open": 18, "open": 0, "complete": true, "layers": 2, "rungs": [["as given", 16, true], ["fitted rules", 1, true], ["fitted rules, from the board as given", 0, true]]}
+{"board": "dorkyboard_keyboard", "exit": 0, "seconds": 1199, "base_open": 3, "open": 0, "complete": true, "layers": 2, "rungs": [["as given", 2, true], ["fitted rules", 1, true], ["fitted rules, from the board as given", 2, false], ["fitted rules, pad mask openings open to tracks", 0, true]]}
