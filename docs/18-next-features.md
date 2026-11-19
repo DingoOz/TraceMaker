@@ -555,3 +555,22 @@ layers are unlikely to do. The structure a designer imposes may still pay off as
 as a bias inside the negotiated search. That is a different milestone (a fan-out stage with its own rip-up rules), not built here. Measured afterwards as a fixed dog-bone fan-out written into the board before routing (`bench/records/m26/fanout`): 12-20 open
 against the control's 6-7 on the same three boards, so a kept fan-out does not help either.
 
+## 22. Group G: boards that never complete, by cause (2026-11-19, D194, M27)
+
+Asked on 2026-11-19: some boards never reach 100 %; rules may be relaxed and compute spent; what is the cause and what can be done?
+The work and its numbers are in doc 20 §1.1 and §2.8-§2.10 and in `bench/records/oracle-2026-11`. In short:
+
+- **G1, the designer oracle (done).** The router is given the designer's finished layout with some nets removed. On ten boards it
+  puts its own open nets back (search); on ten it cannot put back the designer's own nets (modelling).
+- **G2, the rule fit (done, opt-in, D194).** `route --fit-rules` relaxes what the board's own copper already breaks: mask openings
+  that already expose another net's pad, minimums, and with `--fit-rules-from` the class values of an earlier layout. 33 boards from
+  nothing: 890 → 771 open and 3 → 6 complete; 734 and 8 with the designer's layout. Six boards complete for the first time.
+- **G3, the chain measurement (done).** `tracemaker chains`: 141 of 261 open connections route on no board; of the 120 with
+  blockers, 62 are kept out by one net and 41 close, 17 of them by routing the connection and its blockers together.
+- **G4, a joint re-route as a router step (open).** The measurement's joint step as the last step of the default route, against
+  equal extra budget.
+- **G5, escapes with no slack (open).** sizif's QFN supply pins leave only on the pad's centre line; the lattice misses it.
+- **G6, an exact model for ball grids (open, doc 20 §2.10).** Chains close nothing on srj20's 152, 040 and 070.
+- **G7, the fit in the ladder (open).** Run it when connections are left open and keep the better result, for users who accept the
+  relaxation.
+

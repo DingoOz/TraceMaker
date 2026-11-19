@@ -51,6 +51,11 @@ SUBCOMMANDS:
   causes                      Why connections stay open on a routed board: each open connection
                               is routed again with other nets' copper removed near its ends,
                               away from them or everywhere (doc 05 §55)
+  chains                      How deep a rip-up chain each open connection of a routed board
+                              needs: the nets to lift for it, and whether they route again (a
+                              measurement; doc 20 §2.9)
+  fit-rules                   Rules a board's own copper breaks, and the values route
+                              --fit-rules would relax them to (read-only; doc 20 §2.8)
   cuts                        Cut test of a routed board's topology: cuts between pads and vias
                               that cannot hold their wires, vias with no room in their cell
                               (doc 05 §67)
@@ -370,6 +375,20 @@ OPTIONS:
           --layer-diag-pen TEXT ...
                               Extra cost (pitches per step) of 45-degree steps, as
                               LAYER=PITCHES entries or one value for every layer, e.g. F.Cu=0.3
+          --fit-rules         Relax the rules the board's own pads and existing tracks already
+                              break (edge and hole clearance, clearance, minimum width, annular
+                              ring) to what that copper has, and say so; the output then breaks
+                              the stated rules there too (doc 20 §2.8)
+          --fit-rules-from TEXT:FILE
+                              Fit the rules to this board instead (an earlier layout of the
+                              same board): as --fit-rules, and each net class's track width and
+                              via also come down to what its tracks there use
+          --fit-clearance-floor FLOAT:FLOAT in [0 - 10]
+                              With a rule fit: no clearance is fitted below this, mm (default
+                              0.09)
+          --fit-edge-floor FLOAT:FLOAT in [0 - 10]
+                              With a rule fit: the copper-to-edge clearance is not fitted below
+                              this, mm (default 0)
           --no-fill-planes    Leave zones that have no fill unfilled while routing (default:
                               fill them in memory and route with --soft-zones, so plane nets
                               drop vias into their planes)
@@ -877,6 +896,62 @@ OPTIONS:
           --no-fill-planes{false}
                               Do not fill zones that have no fill (route fills them in memory
                               and routes soft)
+```
+
+### `tracemaker chains`
+
+```text
+How deep a rip-up chain each open connection of a routed board needs: the nets
+to lift for it, and whether they route again (a measurement; doc 20 §2.9)
+
+
+tracemaker chains [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED    A routed board
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --json TEXT         Write the measurement as JSON
+          --rules-from TEXT:FILE
+                              Read the design rules beside this board instead
+          --baseline-work INT Work of the run on the board as it is (default 10 M)
+          --work INT          Work of each run on a changed copy (default 2 M)
+          --max-depth INT:INT in [1 - 16]
+                              Chains deeper than this are given up (default 4)
+          --max-nets INT:INT in [1 - 1000]
+                              Chains that lift more nets than this are given up (default 32)
+          --rip-mm FLOAT:FLOAT in [0 - 100]
+                              A blocking net's copper is lifted within this distance of the new
+                              route, mm (default 1; 0 = the whole net)
+          --threads INT:INT in [1 - 256]
+                              Open connections measured at once (the result does not depend on
+                              it; default 8)
+          --seed UINT         Router seed (default 1)
+          --soft-zones        Zone fills do not block other nets (as route --soft-zones)
+          --no-fill-planes{false}
+                              Do not fill zones that have no fill
+```
+
+### `tracemaker fit-rules`
+
+```text
+Rules a board's own copper breaks, and the values route --fit-rules would relax
+them to (read-only; doc 20 §2.8)
+
+
+tracemaker fit-rules [OPTIONS] board
+
+
+POSITIONALS:
+  board TEXT:FILE REQUIRED    A board (its project files supply the rules)
+
+OPTIONS:
+  -h,     --help              Print this help message and exit
+          --from TEXT:FILE    Fit to this board's copper instead (an earlier layout of the same
+                              board)
+          --json TEXT         Write the fit as JSON
 ```
 
 ### `tracemaker cuts`

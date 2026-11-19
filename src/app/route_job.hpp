@@ -94,6 +94,11 @@ struct RouteJob {
   // Zones without a fill (doc 05 §54): filled in memory before routing and routed with soft zones, so a plane net's pads drop a via into
   // their plane instead of being joined by tracks; --no-fill-planes turns it off (the zones are then ignored while routing).
   bool fill_planes = true;
+  // --fit-rules (doc 20 §2.8, D194): relax the rules the board's own copper already breaks to what that copper has (drc/fit_rules.hpp).
+  // The reference is the input board, or `fit_rules_from` (an earlier layout of the same board; its tracks also give class widths and vias).
+  bool fit_rules = false;
+  std::string fit_rules_from;
+  double fit_clearance_floor_mm = 0.09, fit_edge_floor_mm = 0.0;
   std::string warm_pcb;           // --warm-pcb: a routed board whose tracks and vias are the starting point (kept where legal under the input's rules; nets of one connection)
   std::string rules_override;     // --rules-override: user override file (JSON, doc 15 §6.3); empty = none
   // Advice (doc 17, issue #26). The engine never talks to a model: it reads an advice file, and an advisor (any program

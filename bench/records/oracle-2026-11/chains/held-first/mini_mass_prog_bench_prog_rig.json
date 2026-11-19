@@ -1,0 +1,38 @@
+{
+ "baseline": {
+  "connections": 2,
+  "open": 1,
+  "routed": 1,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/txn-txn-tierD/boards/mini_mass_prog_bench_prog_rig.kicad_pcb",
+ "connections": [
+  {
+   "a": "U2.19",
+   "b": "U27.15",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 2,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 2,
+   "first_nets": [
+    "+5V",
+    "/SPI2_MISO"
+   ],
+   "net": "/Programming Socket #0/I2C_SDA",
+   "nets_lifted": 3,
+   "reason": "boxed_in",
+   "runs": 20
+  }
+ ],
+ "copper_layers": 4,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "lifted_net_no_path_bare": 1
+ }
+}

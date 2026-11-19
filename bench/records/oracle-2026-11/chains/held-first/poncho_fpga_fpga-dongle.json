@@ -1,0 +1,164 @@
+{
+ "baseline": {
+  "connections": 9,
+  "open": 9,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/txn-txn-tierB/boards/poncho_fpga_fpga-dongle.kicad_pcb",
+ "connections": [
+  {
+   "a": "U5.45",
+   "b": "U4.43",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "/RAM_D9"
+   ],
+   "net": "/RAM_D10",
+   "nets_lifted": 4,
+   "reason": "boxed_in",
+   "runs": 65
+  },
+  {
+   "a": "U4.106",
+   "b": "P4.21",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "/RxD"
+   ],
+   "net": "/I2C_SCL",
+   "nets_lifted": 10,
+   "reason": "not_attempted",
+   "runs": 80
+  },
+  {
+   "a": "U4.117",
+   "b": "P5.15",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "/FPGA_IO_BANK1_10"
+   ],
+   "net": "/FPGA_IO_BANK1_6",
+   "nets_lifted": 4,
+   "reason": "not_attempted",
+   "runs": 44
+  },
+  {
+   "a": "U4.8",
+   "b": "P6.12",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "/FPGA_IO_BANK2_7"
+   ],
+   "net": "/FPGA_IO_BANK2_5",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 44
+  },
+  {
+   "a": "U4.26",
+   "b": "P6.28",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "/FPGA_IO_BANK2_19"
+   ],
+   "net": "/FPGA_IO_BANK2_21",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 23
+  },
+  {
+   "a": "U4.21",
+   "b": "P6.23",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "/FPGA_IO_BANK2_17"
+   ],
+   "net": "/FPGA_IO_BANK2_16",
+   "nets_lifted": 4,
+   "reason": "not_attempted",
+   "runs": 42
+  },
+  {
+   "a": "U4.23",
+   "b": "P6.25",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "/FPGA_IO_BANK2_19"
+   ],
+   "net": "/FPGA_IO_BANK2_18",
+   "nets_lifted": 4,
+   "reason": "not_attempted",
+   "runs": 43
+  },
+  {
+   "a": "U4.25",
+   "b": "P6.27",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "/FPGA_IO_BANK2_19"
+   ],
+   "net": "/FPGA_IO_BANK2_20",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 24
+  },
+  {
+   "a": "U4.28",
+   "b": "P6.29",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "+3V3"
+   ],
+   "net": "/FPGA_IO_BANK2_22",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 38
+  }
+ ],
+ "copper_layers": 2,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "closed_depth_2": 2,
+  "too_deep": 7
+ }
+}

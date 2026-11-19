@@ -1,0 +1,183 @@
+{
+ "baseline": {
+  "connections": 10,
+  "open": 10,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/crules-soft-tierC/boards/P8000_WDC_Emulator_P8000_WDC_Emulator.kicad_pcb",
+ "connections": [
+  {
+   "a": "X2.19",
+   "b": "X6.6",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "/D7"
+   ],
+   "net": "/STATUS1",
+   "nets_lifted": 1,
+   "reason": "no_legal_path",
+   "runs": 9
+  },
+  {
+   "a": "X4.5",
+   "b": "D5.12",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "/PA7",
+    "/PC2"
+   ],
+   "net": "/PA6",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 38
+  },
+  {
+   "a": "D4.1",
+   "b": "X6.10",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "/D7"
+   ],
+   "net": "/RST1",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 12
+  },
+  {
+   "a": "X2.10",
+   "b": "D7.15",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "/D7"
+   ],
+   "net": "//ASTB",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 11
+  },
+  {
+   "a": "D1.34",
+   "b": "X4.5",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "/PA7",
+    "/PC2"
+   ],
+   "net": "/PA6",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 38
+  },
+  {
+   "a": "X4.29",
+   "b": "X4.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "/PC2",
+    "GND"
+   ],
+   "net": "Net-(1C1-Pad1)",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 36
+  },
+  {
+   "a": "D1.28",
+   "b": "X4.16",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "GND"
+   ],
+   "net": "/PC6",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 35
+  },
+  {
+   "a": "D1.27",
+   "b": "X4.14",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "GND"
+   ],
+   "net": "/PC5",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 22
+  },
+  {
+   "a": "X3.4",
+   "b": "D3.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "Net-(D1-Pad18)"
+   ],
+   "net": "+3V3",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 33
+  },
+  {
+   "a": "D4.11",
+   "b": "D7.11",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "/STATUS1",
+    "GND"
+   ],
+   "net": "Net-(D4-Pad11)",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 44
+  }
+ ],
+ "copper_layers": 2,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "closed_depth_1": 3,
+  "too_deep": 7
+ }
+}

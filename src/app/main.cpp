@@ -15,6 +15,8 @@
 #include <thread>
 
 #include "app/causes.hpp"
+#include "app/chains.hpp"
+#include "drc/fit_rules.hpp"
 #include "app/defects.hpp"
 #include "app/inspect.hpp"
 #include "advice/advice.hpp"
@@ -240,6 +242,21 @@ int cmd_layers(const std::string& in, int count, const std::string& out) {
     if (const fs::path src = fs::path(in).replace_extension(ext); fs::exists(src)) fs::copy_file(src, fs::path(out).replace_extension(ext), fs::copy_options::overwrite_existing);
   std::printf("%s: %d -> %d copper layers, written to %s\n", in.c_str(), had, count, out.c_str());
   for (const auto& n : notes) std::printf("  %s\n", n.c_str());
+  return 0;
+}
+
+// What route --fit-rules would relax on a board (doc 20 §2.8): read-only.
+int cmd_fit_rules(const std::string& path, const std::string& from, const std::string& json_out) {
+  auto rules = tmk::io::read_design_rules(path);
+  const auto ref = tmk::io::read_board_file(from.empty() ? path : from);
+  const auto fit = tmk::drc::fit_rules(ref.board, rules);
+  nlohmann::json out{{"board", path}, {"reference", from.empty() ? path : from}, {"violations", fit.violations}, {"changes", nlohmann::json::array()}};
+  std::printf("%s: %d errors of the fitted kinds on %s, %zu values to relax\n", path.c_str(), fit.violations, from.empty() ? "its own copper" : from.c_str(), fit.changes.size());
+  for (const auto& c : fit.changes) {
+    std::printf("  %-34s %.4g mm -> %.4g mm  (%d %s)\n", c.rule.c_str(), tmk::nm_to_mm(c.from), tmk::nm_to_mm(c.to), c.evidence, c.note.empty() ? "violations" : c.note.c_str());
+    out["changes"].push_back({{"rule", c.rule}, {"from_mm", tmk::nm_to_mm(c.from)}, {"to_mm", tmk::nm_to_mm(c.to)}, {"evidence", c.evidence}, {"note", c.note}});
+  }
+  if (!json_out.empty()) std::ofstream(json_out) << out.dump(1) << "\n";
   return 0;
 }
 
@@ -1252,7 +1269,7 @@ static int run_main(int argc, char** argv) {
   route->add_flag("--escape-plan,!--no-escape-plan", ropt.escape_plan, "Reserve escape corridors for the pins of dense packages (QFP, BGA) before routing");
   route->add_option("--escape-length", ropt.escape_length_mm, "Escape plan: perimeter corridors run this far (mm) past the package edge, as far as no fixed copper is in the way (default 2): bundles of parallel straight escapes")->group("");
   route->add_option("--fanout-heads", ropt.fanout_heads_mm, "Before routing, each perimeter pin of a dense four-sided package gets the first part of its route, this far (mm) past the package: straight, or in staggered 45-degree bundles toward the destinations, whichever a side has room for; fixed copper of the pin's net during routing, not written out (0 = off)")->group("");
-  route->add_option("--fanout-heads-min-pins", ropt.fanout_heads_min_pins, "With --fanout-heads: perimeter pins a package needs (default 24)")->group("");
+  route->add_option("--fanout-heads-min-pins", ropt.fanout_heads_min_pins, "With --fanout-heads: perimeter pins a package needs (default 32)")->group("");
   route->add_flag("--fanout-hold", ropt.fanout_hold, "Escape plan: through the strict first pass, each open pin's straight corridor is held by a placeholder track of its net, so other nets route round it; released once the pin is routed and before negotiation")->group("");
   route->add_flag("--escape-stubs", ropt.escape_stubs, "Escape plan: a pin offers the end of its straight corridor (see --escape-length) as a start point, one exact off-lattice segment at a discount: parallel escapes at the pad pitch")->group("");
   route->add_flag("--soft-mask-graphics", ropt.soft_mask_graphics, "Solder-mask openings drawn as footprint graphics (solder jumpers, a MEMS microphone's pad group) do not keep tracks and vias out; KiCad flags what then lies in them (judgement)")->group("");
@@ -1358,6 +1375,14 @@ static int run_main(int argc, char** argv) {
       ->delimiter(',');
   route->add_option("--layer-diag-pen", r_job.layer_diag_pen, "Extra cost (pitches per step) of 45-degree steps, as LAYER=PITCHES entries or one value for every layer, e.g. F.Cu=0.3")
       ->delimiter(',');
+  route->add_flag("--fit-rules", r_job.fit_rules,
+                  "Relax the rules the board's own pads and existing tracks already break (edge and hole clearance, clearance, minimum "
+                  "width, annular ring) to what that copper has, and say so; the output then breaks the stated rules there too (doc 20 §2.8)");
+  route->add_option("--fit-rules-from", r_job.fit_rules_from,
+                    "Fit the rules to this board instead (an earlier layout of the same board): as --fit-rules, and each net class's track "
+                    "width and via also come down to what its tracks there use")->check(CLI::ExistingFile);
+  route->add_option("--fit-clearance-floor", r_job.fit_clearance_floor_mm, "With a rule fit: no clearance is fitted below this, mm (default 0.09)")->check(CLI::Range(0.0, 10.0));
+  route->add_option("--fit-edge-floor", r_job.fit_edge_floor_mm, "With a rule fit: the copper-to-edge clearance is not fitted below this, mm (default 0)")->check(CLI::Range(0.0, 10.0));
   bool r_no_fill_planes = false;
   route->add_flag("--no-fill-planes", r_no_fill_planes,
                   "Leave zones that have no fill unfilled while routing (default: fill them in memory and route with --soft-zones, so plane "
@@ -1604,6 +1629,26 @@ static int run_main(int argc, char** argv) {
   causes_cmd->add_flag("--baseline-only", ca_opt.baseline_only, "Only the run on the board as it is (for a copy with more layers)");
   causes_cmd->add_flag("--soft-zones", ca_opt.soft_zones, "Zone fills do not block other nets (as route --soft-zones)");
   causes_cmd->add_flag("!--no-fill-planes", ca_opt.fill_planes, "Do not fill zones that have no fill (route fills them in memory and routes soft)");
+  auto* chains_cmd = app.add_subcommand("chains", "How deep a rip-up chain each open connection of a routed board needs: the nets to lift for it, and whether they route again (a measurement; doc 20 §2.9)");
+  std::string ch_board, ch_json;
+  tmk::app::ChainsOptions ch_opt;
+  chains_cmd->add_option("board", ch_board, "A routed board")->required()->check(CLI::ExistingFile);
+  chains_cmd->add_option("--json", ch_json, "Write the measurement as JSON");
+  chains_cmd->add_option("--rules-from", ch_opt.rules_from, "Read the design rules beside this board instead")->check(CLI::ExistingFile);
+  chains_cmd->add_option("--baseline-work", ch_opt.baseline_work, "Work of the run on the board as it is (default 10 M)");
+  chains_cmd->add_option("--work", ch_opt.work, "Work of each run on a changed copy (default 2 M)");
+  chains_cmd->add_option("--max-depth", ch_opt.max_depth, "Chains deeper than this are given up (default 4)")->check(CLI::Range(1, 16));
+  chains_cmd->add_option("--max-nets", ch_opt.max_nets, "Chains that lift more nets than this are given up (default 32)")->check(CLI::Range(1, 1000));
+  chains_cmd->add_option("--rip-mm", ch_opt.rip_mm, "A blocking net's copper is lifted within this distance of the new route, mm (default 1; 0 = the whole net)")->check(CLI::Range(0.0, 100.0));
+  chains_cmd->add_option("--threads", ch_opt.threads, "Open connections measured at once (the result does not depend on it; default 8)")->check(CLI::Range(1, 256));
+  chains_cmd->add_option("--seed", ch_opt.seed, "Router seed (default 1)");
+  chains_cmd->add_flag("--soft-zones", ch_opt.soft_zones, "Zone fills do not block other nets (as route --soft-zones)");
+  chains_cmd->add_flag("!--no-fill-planes", ch_opt.fill_planes, "Do not fill zones that have no fill");
+  auto* fit_cmd = app.add_subcommand("fit-rules", "Rules a board's own copper breaks, and the values route --fit-rules would relax them to (read-only; doc 20 §2.8)");
+  std::string fi_board, fi_from, fi_json;
+  fit_cmd->add_option("board", fi_board, "A board (its project files supply the rules)")->required()->check(CLI::ExistingFile);
+  fit_cmd->add_option("--from", fi_from, "Fit to this board's copper instead (an earlier layout of the same board)")->check(CLI::ExistingFile);
+  fit_cmd->add_option("--json", fi_json, "Write the fit as JSON");
   auto* cuts_cmd = app.add_subcommand("cuts", "Cut test of a routed board's topology: cuts between pads and vias that cannot hold their wires, vias with no room in their cell (doc 05 §67)");
   std::string cu_board, cu_rules, cu_json;
   double cu_clearance = -1, cu_max_gap = 2.0;
@@ -1768,6 +1813,12 @@ static int run_main(int argc, char** argv) {
     if (*layers_cmd) return cmd_layers(ly_in, ly_count, ly_out);
     if (*walled_cmd) return cmd_walled(wa_board, wa_pins, wa_soft, wa_vip, wa_json);
     if (*cuts_cmd) return cmd_cuts(cu_board, cu_rules, cu_clearance, cu_max_gap, cu_json);
+    if (*fit_cmd) return cmd_fit_rules(fi_board, fi_from, fi_json);
+    if (*chains_cmd) {
+      const auto j = tmk::app::measure_chains(ch_board, ch_opt, true);
+      if (!ch_json.empty()) std::ofstream(ch_json) << j.dump(1) << "\n";
+      return 0;
+    }
     if (*causes_cmd) {
       const auto j = tmk::app::classify_open_connections(ca_board, ca_opt, true);
       if (!ca_json.empty()) std::ofstream(ca_json) << j.dump(1) << "\n";

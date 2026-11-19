@@ -1,0 +1,274 @@
+{
+ "baseline": {
+  "connections": 15,
+  "open": 12,
+  "routed": 3,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/lm-m22all/boards/TCKB_Kicad_TCKB.kicad_pcb",
+ "connections": [
+  {
+   "a": "D46.1",
+   "b": "U1.45",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "BOOT0"
+   ],
+   "joint": false,
+   "net": "Col_2_",
+   "nets_lifted": 1,
+   "reason": "boxed_in",
+   "runs": 5
+  },
+  {
+   "a": "D50.1",
+   "b": "U1.5",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 3,
+   "first_blockers": 1,
+   "first_nets": [
+    "Line_2_"
+   ],
+   "joint": false,
+   "net": "Col_6_",
+   "nets_lifted": 3,
+   "reason": "boxed_in",
+   "runs": 40
+  },
+  {
+   "a": "R17.1",
+   "b": "U4.25",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 3,
+   "first_blockers": 1,
+   "first_nets": [
+    "LED_LINE_1"
+   ],
+   "joint": false,
+   "net": "LED_COL_5",
+   "nets_lifted": 5,
+   "reason": "boxed_in",
+   "runs": 48
+  },
+  {
+   "a": "Q1.1",
+   "b": "U4.26",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 4,
+   "first_blockers": 4,
+   "first_nets": [
+    "Line_2_",
+    "Line_3_",
+    "USART_RX_2",
+    "SWO_2"
+   ],
+   "joint": false,
+   "net": "LED_LINE_0",
+   "nets_lifted": 8,
+   "reason": "boxed_in",
+   "runs": 60
+  },
+  {
+   "a": "D58.1",
+   "b": "U1.42",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "Col_1_"
+   ],
+   "joint": false,
+   "net": "Col_0_",
+   "nets_lifted": 2,
+   "reason": "boxed_in",
+   "runs": 21
+  },
+  {
+   "a": "D53.1",
+   "b": "U1.12",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "Line_3_"
+   ],
+   "joint": false,
+   "net": "Col_9_",
+   "nets_lifted": 3,
+   "reason": "boxed_in",
+   "runs": 46
+  },
+  {
+   "a": "Q8.1",
+   "b": "U4.20",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 6,
+   "first_nets": [
+    "Col_7_",
+    "LIGHT_MISO",
+    "LED_COL_3",
+    "LED_COL_4",
+    "USART_RX_2",
+    "SWO_2"
+   ],
+   "joint": false,
+   "net": "LED_COL_2",
+   "nets_lifted": 10,
+   "reason": "not_attempted",
+   "runs": 55
+  },
+  {
+   "a": "D28.1",
+   "b": "U1.19",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 9,
+   "first_nets": [
+    "Col_5_",
+    "Col_6_",
+    "Net-(D49-Pad2)",
+    "Net-(LED45-Pad2)",
+    "LIGHT_MISO",
+    "Line_3_",
+    "LIGHT_SCK",
+    "LIGHT_MOSI",
+    "LED_COL_3"
+   ],
+   "joint": false,
+   "net": "Col_11_",
+   "nets_lifted": 15,
+   "reason": "not_attempted",
+   "runs": 63
+  },
+  {
+   "a": "Q7.1",
+   "b": "U4.19",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 8,
+   "first_nets": [
+    "Col_6_",
+    "Col_7_",
+    "Net-(LED28-Pad2)",
+    "LIGHT_MISO",
+    "LED_COL_3",
+    "LED_COL_4",
+    "USART_RX_2",
+    "SWO_2"
+   ],
+   "joint": false,
+   "net": "LED_COL_1",
+   "nets_lifted": 18,
+   "reason": "not_attempted",
+   "runs": 87
+  },
+  {
+   "a": "D64.1",
+   "b": "U1.20",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 4,
+   "first_nets": [
+    "Col_7_",
+    "Net-(LED28-Pad2)",
+    "LIGHT_MOSI",
+    "LED_LINE_4"
+   ],
+   "joint": false,
+   "net": "Col_12_",
+   "nets_lifted": 13,
+   "reason": "not_attempted",
+   "runs": 78
+  },
+  {
+   "a": "Q6.1",
+   "b": "U4.18",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 17,
+   "first_nets": [
+    "Col_4_",
+    "Col_5_",
+    "Col_7_",
+    "Col_10_",
+    "Net-(LED1-Pad2)",
+    "Net-(LED14-Pad1)",
+    "Net-(LED10-Pad2)",
+    "Net-(LED28-Pad2)",
+    "LIGHT_MISO",
+    "LIGHT_SCK",
+    "LIGHT_MOSI",
+    "LED_COL_3",
+    "USART_RX_2",
+    "SWO_2",
+    "Net-(R3-Pad1)",
+    "DIS_BKLIGHT",
+    "TBD"
+   ],
+   "joint": false,
+   "net": "LED_COL_0",
+   "nets_lifted": 25,
+   "reason": "not_attempted",
+   "runs": 89
+  },
+  {
+   "a": "D44.1",
+   "b": "U1.21",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 8,
+   "first_nets": [
+    "Col_6_",
+    "Col_7_",
+    "Col_12_",
+    "Net-(LED14-Pad1)",
+    "Net-(LED28-Pad2)",
+    "Net-(LED45-Pad2)",
+    "LIGHT_MOSI",
+    "LED_COL_4"
+   ],
+   "joint": false,
+   "net": "Col_13_",
+   "nets_lifted": 17,
+   "reason": "not_attempted",
+   "runs": 83
+  }
+ ],
+ "copper_layers": 2,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "closed_depth_1": 1,
+  "closed_depth_2": 1,
+  "closed_depth_3": 2,
+  "closed_depth_4": 1,
+  "lifted_net_no_path_bare": 2,
+  "too_deep": 5
+ }
+}

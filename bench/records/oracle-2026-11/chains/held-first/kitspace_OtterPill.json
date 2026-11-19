@@ -1,0 +1,87 @@
+{
+ "baseline": {
+  "connections": 4,
+  "open": 4,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/rescue-warm-bd/boards/kitspace_OtterPill.kicad_pcb",
+ "connections": [
+  {
+   "a": "U4.6",
+   "b": "R10.2",
+   "blockers_from": "",
+   "closed": false,
+   "depth": 0,
+   "fail": "no_path_bare",
+   "first_blockers": -1,
+   "first_nets": [],
+   "net": "SCL",
+   "nets_lifted": 0,
+   "reason": "boxed_in",
+   "runs": 1
+  },
+  {
+   "a": "J4.8",
+   "b": "U2.43",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "PB5",
+    "PB6"
+   ],
+   "net": "PB7",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 43
+  },
+  {
+   "a": "J4.5",
+   "b": "U2.45",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "PB2"
+   ],
+   "net": "PB8",
+   "nets_lifted": 4,
+   "reason": "not_attempted",
+   "runs": 32
+  },
+  {
+   "a": "U2.34",
+   "b": "J5.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "PB2",
+    "VBUS"
+   ],
+   "net": "SWDIO",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 42
+  }
+ ],
+ "copper_layers": 2,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "lifted_net_no_path_bare": 1,
+  "no_path_bare": 1,
+  "too_deep": 2
+ }
+}

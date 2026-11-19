@@ -372,6 +372,7 @@ struct Router::Impl {
     obs = std::make_unique<Obstacles>(b, rules);
     obs->set_soft_zones(opt.soft_zones);
     obs->set_soft_mask_graphics(opt.soft_mask_graphics);
+    obs->set_soft_bridged_masks(opt.soft_bridged_masks);
     obs->set_soft_copper_graphics(opt.soft_copper_graphics);
     if (opt.soft_zones) soft_fills = std::make_unique<drc::ZoneFills>(obs->copper());
     for (std::size_t n = 0; n < b.nets.size(); ++n)

@@ -1,0 +1,161 @@
+{
+ "fifogfx_c64cart": {
+  "fit3": {
+   "unconnected": 0,
+   "added": {
+    "copper_edge_clearance": 3,
+    "solder_mask_bridge": 41
+   }
+  },
+  "fitref3": {
+   "unconnected": 0,
+   "added": {
+    "copper_edge_clearance": 3,
+    "solder_mask_bridge": 41
+   }
+  }
+ },
+ "kitspace_test-jig": {
+  "fit3": {
+   "unconnected": 0,
+   "added": {
+    "clearance": 167,
+    "solder_mask_bridge": 38
+   }
+  },
+  "fitref3": {
+   "unconnected": 0,
+   "added": {
+    "clearance": 167,
+    "solder_mask_bridge": 40
+   }
+  }
+ },
+ "PCIE-to-MXM-Adapter_PCIEx1toMXM3.0": {
+  "fit3": {
+   "unconnected": 0,
+   "added": {
+    "copper_edge_clearance": 21,
+    "solder_mask_bridge": 131
+   }
+  },
+  "fitref3": {
+   "unconnected": 0,
+   "added": {
+    "copper_edge_clearance": 25,
+    "solder_mask_bridge": 147
+   }
+  }
+ },
+ "ErgodoneWithHole_ErgoDone": {
+  "fit3": {
+   "unconnected": 0,
+   "added": {
+    "annular_width": 34
+   }
+  },
+  "fitref3": {
+   "unconnected": 0,
+   "added": {
+    "annular_width": 24,
+    "clearance": 287,
+    "hole_clearance": 61
+   }
+  }
+ },
+ "Hardware_Playground_sd_wav_pcm5100": {
+  "fit3": {
+   "unconnected": 0,
+   "added": {
+    "clearance": 21
+   }
+  },
+  "fitref3": {
+   "unconnected": 0,
+   "added": {
+    "clearance": 23
+   }
+  }
+ },
+ "kitspace_OtterPill": {
+  "fit3": {
+   "unconnected": 11,
+   "added": {}
+  },
+  "fitref3": {
+   "unconnected": 0,
+   "added": {
+    "clearance": 81,
+    "copper_edge_clearance": 28,
+    "track_width": 59
+   }
+  }
+ },
+ "Hardware_Playground_multisensor_cr2032": {
+  "fit3": {
+   "unconnected": 0,
+   "added": {
+    "clearance": 35,
+    "copper_edge_clearance": 7
+   }
+  },
+  "fitref3": {
+   "unconnected": 0,
+   "added": {
+    "clearance": 34,
+    "copper_edge_clearance": 9
+   }
+  }
+ },
+ "front-end-modules_LimeSDR_Sony": {
+  "fit3": {
+   "unconnected": 1,
+   "added": {
+    "clearance": 2,
+    "copper_edge_clearance": 14
+   }
+  },
+  "fitref3": {
+   "unconnected": 0,
+   "added": {
+    "annular_width": 199,
+    "copper_edge_clearance": 13,
+    "hole_clearance": 199
+   }
+  }
+ },
+ "KiCad-Library_Teensy_test_layout": {
+  "fit3": {
+   "unconnected": 2,
+   "added": {
+    "clearance": 499,
+    "solder_mask_bridge": 3
+   }
+  },
+  "fitref3": {
+   "unconnected": 2,
+   "added": {
+    "clearance": 499,
+    "solder_mask_bridge": 3
+   }
+  }
+ },
+ "TCKB_Kicad_TCKB": {
+  "fit3": {
+   "unconnected": 12,
+   "added": {
+    "clearance": 499,
+    "copper_edge_clearance": 7,
+    "hole_clearance": 199
+   }
+  },
+  "fitref3": {
+   "unconnected": 9,
+   "added": {
+    "clearance": 499,
+    "copper_edge_clearance": 3,
+    "hole_clearance": 199
+   }
+  }
+ }
+}

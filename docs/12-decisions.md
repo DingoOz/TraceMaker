@@ -208,6 +208,7 @@ Records D1–D131 were converted from the rows of this table on 2026-10-21; thei
 | [D191](decisions/D191.md) | M26: finish srj20's last BGA boards with a reserved fanout | accepted |
 | [D192](decisions/D192.md) | Exact courtyard outlines and closure moves that keep the input's overlaps | accepted |
 | [D193](decisions/D193.md) | tui jobs screen and rerun advice | accepted |
+| [D194](decisions/D194.md) | Rule fit: relax the rules a board's own copper already breaks | accepted |
 <!-- END decision index -->
 
 ## Risks

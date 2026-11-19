@@ -1,0 +1,42 @@
+{
+ "baseline": {
+  "connections": 2,
+  "open": 1,
+  "routed": 1,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/thin-bd-relax-final9-sub/boards/dorkyboard_keyboard.kicad_pcb",
+ "connections": [
+  {
+   "a": "U1.30",
+   "b": "SW109.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 6,
+   "first_nets": [
+    "/matrix/Row10",
+    "/matrix/Row8",
+    "/matrix/Col5",
+    "/matrix/Col6",
+    "GND",
+    "+5V"
+   ],
+   "net": "/matrix/Row0",
+   "nets_lifted": 14,
+   "reason": "boxed_in",
+   "runs": 71
+  }
+ ],
+ "copper_layers": 2,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "too_deep": 1
+ }
+}

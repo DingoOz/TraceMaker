@@ -496,7 +496,8 @@ class Checker {
         const Coord thr = req > 0 ? req - o_.epsilon : 0;
         for (const auto& s : c.shapes)
           if (geom::closer_than(cshape(a), s, thr)) {
-            add("hole_clearance", &c, ao, -1, req, layer);
+            // The measured gap is recorded for the rule fit (drc/fit_rules.hpp); KiCad's report does not print it.
+            add("hole_clearance", &c, ao, static_cast<Coord>(std::max(0.0, geom::gap(cshape(a), s))), req, layer);
             if (!ao) rep_.violations.back().items.push_back({describe(a), a.pos});
             break;
           }
@@ -580,7 +581,14 @@ class Checker {
           for (const auto& s : it.shapes)
             if (geom::closer_than(s, e, edge_threshold(it, s, req))) { hit = true; break; }
         if (hit) {
-          add("copper_edge_clearance", &it, nullptr, -1, req, layer);
+          // The measured gap, for the rule fit (drc/fit_rules.hpp): the smallest over the item's shapes (-1 for a zone fill).
+          double g = -1;
+          if (!fill_index(it))
+            for (const auto& s : it.shapes) {
+              const double gs = std::max(0.0, geom::gap(s, e));
+              if (g < 0 || gs < g) g = gs;
+            }
+          add("copper_edge_clearance", &it, nullptr, static_cast<Coord>(g), req, layer);
           break;
         }
       }

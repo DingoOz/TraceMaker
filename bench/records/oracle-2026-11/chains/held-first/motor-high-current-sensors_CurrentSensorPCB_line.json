@@ -1,0 +1,18 @@
+{
+ "baseline": {
+  "connections": 0,
+  "open": 0,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/m24-keep10m-b/boards/motor-high-current-sensors_CurrentSensorPCB_line.kicad_pcb",
+ "connections": [],
+ "copper_layers": 2,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {}
+}

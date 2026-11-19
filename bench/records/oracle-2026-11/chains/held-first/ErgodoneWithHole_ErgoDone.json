@@ -1,0 +1,49 @@
+{
+ "baseline": {
+  "connections": 2,
+  "open": 2,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/rel0110-tierC/boards/ErgodoneWithHole_ErgoDone.kicad_pcb",
+ "connections": [
+  {
+   "a": "J4.2",
+   "b": "J2.4",
+   "blockers_from": "",
+   "closed": false,
+   "depth": 0,
+   "fail": "no_path_bare",
+   "first_blockers": -1,
+   "first_nets": [],
+   "net": "Net-(J2-Pad4)",
+   "nets_lifted": 0,
+   "reason": "boxed_in",
+   "runs": 1
+  },
+  {
+   "a": "J3.2",
+   "b": "J2.1",
+   "blockers_from": "",
+   "closed": false,
+   "depth": 0,
+   "fail": "no_path_bare",
+   "first_blockers": -1,
+   "first_nets": [],
+   "net": "Net-(J2-Pad1)",
+   "nets_lifted": 0,
+   "reason": "not_attempted",
+   "runs": 1
+  }
+ ],
+ "copper_layers": 2,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "no_path_bare": 2
+ }
+}

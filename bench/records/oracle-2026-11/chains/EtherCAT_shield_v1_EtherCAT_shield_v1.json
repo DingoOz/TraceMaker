@@ -1,0 +1,268 @@
+{
+ "baseline": {
+  "connections": 16,
+  "open": 14,
+  "routed": 2,
+  "work": 10000000
+ },
+ "board": "ROOT/bench/results/m17-c1-txn8/boards/EtherCAT_shield_v1_EtherCAT_shield_v1.kicad_pcb",
+ "connections": [
+  {
+   "a": "C16.1",
+   "b": "U1.56",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 1,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 3,
+   "first_nets": [
+    "TX1_P",
+    "RX1_N",
+    "RX1_P"
+   ],
+   "joint": false,
+   "net": "Net-(C16-Pad1)",
+   "nets_lifted": 3,
+   "reason": "boxed_in",
+   "runs": 15
+  },
+  {
+   "a": "C18.1",
+   "b": "U1.59",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 1,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 2,
+   "first_nets": [
+    "TX1_P",
+    "RX2_P"
+   ],
+   "joint": false,
+   "net": "Net-(C16-Pad1)",
+   "nets_lifted": 2,
+   "reason": "boxed_in",
+   "runs": 15
+  },
+  {
+   "a": "U1.6",
+   "b": "C14.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 1,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 2,
+   "first_nets": [
+    "+3V3",
+    "Net-(R12-Pad1)"
+   ],
+   "joint": false,
+   "net": "Net-(C12-Pad1)",
+   "nets_lifted": 2,
+   "reason": "boxed_in",
+   "runs": 17
+  },
+  {
+   "a": "C12.1",
+   "b": "U1.6",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 1,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 2,
+   "first_nets": [
+    "+3V3",
+    "Net-(R12-Pad1)"
+   ],
+   "joint": false,
+   "net": "Net-(C12-Pad1)",
+   "nets_lifted": 2,
+   "reason": "boxed_in",
+   "runs": 17
+  },
+  {
+   "a": "U1.38",
+   "b": "C15.1",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 2,
+   "first_nets": [
+    "GPIO1",
+    "GPIO11"
+   ],
+   "joint": true,
+   "net": "Net-(C12-Pad1)",
+   "nets_lifted": 2,
+   "reason": "boxed_in",
+   "runs": 14
+  },
+  {
+   "a": "R18.1",
+   "b": "U1.8",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 1,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "Net-(R12-Pad1)"
+   ],
+   "joint": false,
+   "net": "Net-(R18-Pad1)",
+   "nets_lifted": 1,
+   "reason": "boxed_in",
+   "runs": 7
+  },
+  {
+   "a": "U1.24",
+   "b": "U1.38",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 2,
+   "first_nets": [
+    "GPIO1",
+    "GPIO11"
+   ],
+   "joint": true,
+   "net": "Net-(C12-Pad1)",
+   "nets_lifted": 2,
+   "reason": "boxed_in",
+   "runs": 14
+  },
+  {
+   "a": "U1.35",
+   "b": "J8.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "GPIO0"
+   ],
+   "joint": false,
+   "net": "SIO3",
+   "nets_lifted": 4,
+   "reason": "boxed_in",
+   "runs": 37
+  },
+  {
+   "a": "U2.6",
+   "b": "U1.43",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "LAN9252_IRQ"
+   ],
+   "joint": false,
+   "net": "Net-(R19-Pad2)",
+   "nets_lifted": 16,
+   "reason": "boxed_in",
+   "runs": 58
+  },
+  {
+   "a": "U1.17",
+   "b": "J6.2",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "SYNC1"
+   ],
+   "joint": false,
+   "net": "SIO0",
+   "nets_lifted": 2,
+   "reason": "boxed_in",
+   "runs": 20
+  },
+  {
+   "a": "P1.9",
+   "b": "U1.23",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "Net-(C12-Pad1)",
+    "GPIO10",
+    "GPIO8"
+   ],
+   "joint": false,
+   "net": "GPIO4",
+   "nets_lifted": 7,
+   "reason": "boxed_in",
+   "runs": 52
+  },
+  {
+   "a": "P1.5",
+   "b": "U1.21",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 1,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "GPIO5"
+   ],
+   "joint": false,
+   "net": "GPIO6",
+   "nets_lifted": 1,
+   "reason": "boxed_in",
+   "runs": 13
+  },
+  {
+   "a": "P1.6",
+   "b": "U1.30",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 1,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "GPIO10"
+   ],
+   "joint": false,
+   "net": "GPIO14",
+   "nets_lifted": 1,
+   "reason": "boxed_in",
+   "runs": 14
+  },
+  {
+   "a": "U1.19",
+   "b": "J4.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "+3V3"
+   ],
+   "joint": false,
+   "net": "SCK",
+   "nets_lifted": 3,
+   "reason": "boxed_in",
+   "runs": 35
+  }
+ ],
+ "copper_layers": 2,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "closed_depth_2": 1,
+  "closed_joint": 2,
+  "lifted_net_no_path_bare": 8,
+  "too_deep": 3
+ }
+}

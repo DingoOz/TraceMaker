@@ -1074,6 +1074,43 @@
           "done": false
         }
       ]
+    },
+    {
+      "id": "M27",
+      "title": "Boards that never complete: tell modelling from search, and fit the rules",
+      "status": "in_progress",
+      "gate": "G2: of the 33 failing PCBench boards from nothing at 20 M, >= 6 complete with the fit against 3 without, KiCad 0 unconnected and no short (met: 6 own pads, 8 designer's layout). G4: beats equal extra budget on the search boards. quick byte-identical with options off",
+      "deliverables": "Designer oracle, route --fit-rules (D194), tracemaker chains, records bench/records/oracle-2026-11, doc 20 \u00a71.1 and \u00a72.8-\u00a72.10",
+      "tasks": [
+        {
+          "text": "G1 designer oracle on the never-complete boards: search boards and modelling boards",
+          "done": true
+        },
+        {
+          "text": "G2 route --fit-rules / --fit-rules-from: minimums, class values, mask openings already bridged (D194); 890 -> 771 / 734 open, 6 / 8 complete",
+          "done": true
+        },
+        {
+          "text": "G3 tracemaker chains: 141 of 261 open route on no board; 62 of 120 blocked by one net; 41 close (17 joint)",
+          "done": true
+        },
+        {
+          "text": "G4 joint re-route of an open connection with its minimal blockers as a router step, against equal extra budget",
+          "done": false
+        },
+        {
+          "text": "G5 escapes with no slack laid off the lattice (sizif QFN supply pins)",
+          "done": false
+        },
+        {
+          "text": "G6 exact interstice model for ball grids (doc 20 \u00a72.10)",
+          "done": false
+        },
+        {
+          "text": "G7 the fit as a rung of the default ladder, keeping the better result",
+          "done": false
+        }
+      ]
     }
   ]
 }

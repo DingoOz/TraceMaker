@@ -33,6 +33,8 @@
 #include "crules/names.hpp"
 #include "drc/copper.hpp"
 #include "drc/drc.hpp"
+#include "drc/fit_rules.hpp"
+#include "route/obstacles.hpp"
 #include "drc/refill.hpp"
 #include "drc/rule_engine.hpp"
 #include "geom/clip.hpp"
@@ -331,6 +333,33 @@ RouteJobResult run_route_job(RouteJob job) {
       if (ld.diag_pen[static_cast<std::size_t>(l)] > 0) log(fmt("45-degree steps on %s: +%.3g pitches each", bd.copper_name(l).c_str(), ld.diag_pen[static_cast<std::size_t>(l)]));
   }
   auto rules = io::read_design_rules(job.in);  // component rules may add net classes (in memory only)
+  nlohmann::json fit_summary;
+  if (job.fit_rules || !job.fit_rules_from.empty()) {
+    drc::FitOptions fo;
+    fo.clearance_floor = static_cast<Coord>(std::llround(job.fit_clearance_floor_mm * 1e6));
+    fo.edge_floor = static_cast<Coord>(std::llround(job.fit_edge_floor_mm * 1e6));
+    const auto fit = job.fit_rules_from.empty() ? drc::fit_rules(lb.board, rules, fo) : drc::fit_rules(io::read_board_file(job.fit_rules_from).board, rules, fo);
+    fit_summary = {{"reference", job.fit_rules_from.empty() ? job.in : job.fit_rules_from}, {"violations", fit.violations}, {"changes", nlohmann::json::array()}};
+    for (const auto& c : fit.changes) {
+      fit_summary["changes"].push_back({{"rule", c.rule}, {"from_mm", nm_to_mm(c.from)}, {"to_mm", nm_to_mm(c.to)}, {"evidence", c.evidence}, {"note", c.note}});
+      log(fmt("rule fit: %s %.4g mm -> %.4g mm (%d %s)", c.rule.c_str(), nm_to_mm(c.from), nm_to_mm(c.to), c.evidence, c.note.empty() ? "violations on the reference" : c.note.c_str()));
+    }
+    // Mask openings the board's own pads already bridge (route/obstacles.hpp, set_soft_bridged_masks).
+    const route::Obstacles fit_obs(lb.board, rules);
+    if (const int bridged = fit_obs.bridged_mask_openings(); bridged > 0) {
+      opt.soft_bridged_masks = true;
+      fit_summary["bridged_mask_openings"] = bridged;
+      log(fmt("rule fit: %d pad solder-mask openings already expose another net's pad: they no longer keep tracks out (KiCad reports solder_mask_bridge there, as on the board itself)", bridged));
+    }
+    // Openings drawn as graphics over pads (solder jumpers; doc 05 §48, D127): the existing --soft-mask-graphics, turned on by the evidence.
+    if (const int drawn = fit_obs.mask_graphics_over_pads(); drawn > 0 && !opt.soft_mask_graphics) {
+      opt.soft_mask_graphics = true;
+      fit_summary["mask_graphics_over_pads"] = drawn;
+      log(fmt("rule fit: %d solder-mask openings drawn as graphics lie over pads: mask graphics no longer keep tracks out (--soft-mask-graphics)", drawn));
+    }
+    if (fit.changes.empty() && !opt.soft_bridged_masks && !opt.soft_mask_graphics) log("rule fit: the reference's copper breaks none of the fitted rules; nothing relaxed");
+    else if (!fit.changes.empty()) log(fmt("rule fit: %zu values relaxed; the output breaks the board's stated rules where they were (KiCad's DRC will report it)", fit.changes.size()));
+  }
   // Zones without a fill (a generated board, or one saved before filling; doc 05 §54): left unfilled, the router does not see the planes,
   // so a plane net's pads are joined by tracks round the board (1,773 mm of GND and +54V track, some on the other net's plane layer, on
   // a 1,194-connection WholeBoard board) and fine-pitch escapes fight them. Filled in memory as KiCad will fill them and routed with soft
@@ -1924,6 +1953,7 @@ RouteJobResult run_route_job(RouteJob job) {
   if (!rescue_summary.is_null()) out.summary["rescue"] = rescue_summary;
   if (!repair_summary.is_null()) out.summary["repair"] = repair_summary;
   if (!why_open.is_null()) out.summary["why_open"] = why_open;
+  if (!fit_summary.is_null()) out.summary["fitted_rules"] = fit_summary;
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
   if (!widen_summary.is_null()) out.summary["widen"] = widen_summary;
   if (!octilinear_summary.is_null()) out.summary["octilinear"] = octilinear_summary;
