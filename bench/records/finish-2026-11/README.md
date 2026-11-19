@@ -178,6 +178,14 @@ mini_mass was stopped by hand in its fourth rung: at six copper layers the proce
 15:05. `route --finish` now writes its output after every rung it keeps, so a ladder stopped part-way leaves its best board (it did not yet
 when this was run: mini_mass's 5-open board was lost).
 
+### The from-nothing rung (`--finish --finish-fresh --finish-masks`, 20 M)
+
+| Board | as given | fitted rules, on top | fitted rules, from the board as given | + pad masks | final |
+|---|--:|--:|--:|--:|--:|
+| PCIE-to-MXM-Adapter | 30 | 2 | 0 | – | 0 |
+| KiCad-Library_Teensy_test_layout | 18 | 3 | 1 | 1 (x) | 1 |
+| kitspace_OtterPill | 11 | 9 | 11 (x) | 9 (x) | 9 |
+
 ## Other arms
 
 | Board | topfit | toprv8 | toplay2 | topfocus | fit3 | fitseed2 | fitseed3 | fitseed4 | fitseed5 |
@@ -286,7 +294,7 @@ fifogfx (40) is the card-edge case of D194. DronPi and PCIE have 1 each (under t
 - Memory: mini_mass at six layers passes 100 GB (above). One variant on one thread under a 30 GB cap ends in `std::bad_alloc` after 34 s,
   before any routing: the size of the search state, not a leak. The router does not check memory before it starts.
 - On top is not always the better order: PCIE completes fitted from nothing and is left 1-2 short on top; OtterPill completes only fitted from
-  the designer's layout from nothing. `route --finish` has the on-top order only.
+  the designer's layout from nothing. `route --finish --finish-fresh` adds the from-nothing order as a rung (above).
 - No change to the default route: every option here is off unless asked for. Quick tier: 30 of 30 outputs byte-identical (`finq` against `fitq-new`).
 
 ## Files

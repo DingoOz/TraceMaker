@@ -424,6 +424,9 @@ OPTIONS:
                               then one rung per --finish-layers entry. Stops at the first rung
                               with nothing open; the summary's "finish" lists what each rung
                               relaxed (doc 20 §2.12)
+          --finish-fresh      With --finish: a rung after the fitted rules that routes the
+                              board as given with the fitted rules from the start, kept when it
+                              leaves fewer open
           --finish-masks      With --finish: a rung after the fitted rules where pad
                               solder-mask openings no longer keep tracks out (--soft-pad-masks)
           --finish-layers INT ...

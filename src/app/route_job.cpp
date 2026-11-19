@@ -2178,7 +2178,7 @@ RouteJobResult run_layer_advisor(RouteJob job, std::vector<int> counts) {
   return std::move(*best);
 }
 
-RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool masks_rung) {
+RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool masks_rung, bool fresh_rung) {
   namespace fs = std::filesystem;
   auto log = [&](const std::string& line) {
     if (job.log) job.log(line);
@@ -2201,8 +2201,12 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
     bool fit = false;
     int layers = 0;  // 0 = as the board
     bool masks = false;
+    bool fresh = false;  // from the board as given, not on top of the rung before
   };
   std::vector<Rung> rungs{{"as given", false, 0, false}, {"fitted rules", true, 0, false}};
+  // On top is not always the better order: with other rules the whole board may route where the earlier copper is in the way (PCBench
+  // PCIE: 0 open fitted from nothing, 1-2 on top). Kept, like every rung, only when fewer connections are open.
+  if (fresh_rung) rungs.push_back({"fitted rules, from the board as given", true, 0, false, true});
   if (masks_rung) rungs.push_back({"fitted rules, pad mask openings open to tracks", true, 0, true});
   for (const int add : extra_layers)
     if (add > 0) rungs.push_back({fmt("fitted rules%s, %d copper layers", masks_rung ? ", pad mask openings open to tracks" : "", layers0 + add), true, layers0 + add, masks_rung});
@@ -2218,7 +2222,7 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
     j.json_out.clear();
     j.items_out.clear();
     j.hold = false;
-    if (best) {
+    if (best && !rg.fresh) {
       j.in = best_tmp;
       j.reroute = false;  // what the rungs before routed stays
       j.warm_pcb.clear();

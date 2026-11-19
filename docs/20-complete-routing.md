@@ -305,8 +305,9 @@ copper stays unless a repair window lifts it, and a window is kept only when few
 
 1. the run as given;
 2. the rules fitted to the board as given (§2.8), with the repair of §2.11 (route and ends, focused);
-3. with `--finish-masks`: pad solder-mask openings no longer keep tracks out (§2.13);
-4. with `--finish-layers 2,4`: two, then four copper layers more than the board has.
+3. with `--finish-fresh`: the board as given routed with the fitted rules from the start, kept when it leaves fewer open;
+4. with `--finish-masks`: pad solder-mask openings no longer keep tracks out (§2.13);
+5. with `--finish-layers 2,4`: two, then four copper layers more than the board has.
 
 The summary's `finish.rungs` lists every rung: open before and after, layers, the fitted rules.
 
@@ -330,8 +331,9 @@ What it does not do:
 - **Memory.** mini_mass at six layers passed 100 GB in the plain run of its fourth rung and was stopped. The ladder writes its output after
   every rung it keeps, so a stopped ladder leaves its best board.
 
-- **Order.** PCIE completes with the rules fitted from nothing and stays 1-2 short on top; OtterPill completes only from nothing with
-  the designer's layout as reference. The ladder has the on-top order only.
+- **Order.** PCIE completes with the rules fitted from nothing and stays 1-2 short on top. The `--finish-fresh` rung is for that: with it
+  PCIE completes in one command (30 → 2 → 0) and Teensy_test goes 3 → 1. OtterPill completes only from nothing with the designer's
+  layout as reference (11 → 9 on top, the fresh rung 11: discarded).
 - **Pins walled in by an earlier rung.** Added layers help a pin only if it can reach a via. On d20 (129 open, 27 pins walled in by
   tracks of the rungs before) two and four layers more change nothing.
 - **Budget.** Three times the budget finishes three boards the ladder leaves one or two short. The two add up; which to spend first was
