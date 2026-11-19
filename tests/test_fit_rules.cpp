@@ -265,3 +265,62 @@ TEST_CASE("route --finish: the fitted-rules rung routes what the run as given le
   job.out.clear();
   CHECK_THROWS(app::run_finish(job, {}));
 }
+
+// Two long pads of other nets leave a 1 mm gap between them; with the board's 0.4 mm mask expansion their openings leave 0.2 mm of it,
+// less than a track. With `through`, a track of net A already runs through the gap (as a designer's layout would have it).
+namespace {
+std::string mask_gap_board(bool through) {
+  std::string text = R"((kicad_pcb (version 20171130) (host pcbnew 5.1.6)
+  (general (thickness 1.6))
+  (layers
+    (0 F.Cu signal)
+    (31 B.Cu signal)
+    (44 Edge.Cuts user)
+  )
+  (setup (pad_to_mask_clearance 0.4))
+  (net 0 "")
+  (net 1 A)
+  (net 2 B)
+  (net 3 C)
+  (module T:P (layer F.Cu) (at 5 10)
+    (fp_text reference P1 (at 0 0) (layer F.SilkS))
+    (pad 1 smd rect (at 0 0) (size 1 1) (layers F.Cu F.Mask) (net 1 A)))
+  (module T:P (layer F.Cu) (at 25 10)
+    (fp_text reference P2 (at 0 0) (layer F.SilkS))
+    (pad 1 smd rect (at 0 0) (size 1 1) (layers F.Cu F.Mask) (net 1 A)))
+  (module T:W (layer F.Cu) (at 15 5)
+    (fp_text reference W1 (at 0 0) (layer F.SilkS))
+    (pad 1 smd rect (at 0 0) (size 1 9) (layers F.Cu F.Mask) (net 2 B)))
+  (module T:W (layer F.Cu) (at 15 15)
+    (fp_text reference W2 (at 0 0) (layer F.SilkS))
+    (pad 1 smd rect (at 0 0) (size 1 9) (layers F.Cu F.Mask) (net 3 C)))
+  (gr_line (start 0 0) (end 30 0) (layer Edge.Cuts) (width 0.1))
+  (gr_line (start 30 0) (end 30 20) (layer Edge.Cuts) (width 0.1))
+  (gr_line (start 30 20) (end 0 20) (layer Edge.Cuts) (width 0.1))
+  (gr_line (start 0 20) (end 0 0) (layer Edge.Cuts) (width 0.1))
+)";
+  if (through) text += "  (segment (start 5 10) (end 25 10) (width 0.25) (layer F.Cu) (net 1))\n";
+  return text + ")\n";
+}
+}  // namespace
+
+TEST_CASE("rule fit: pad mask openings the reference's tracks run through are counted, and soft they let a track pass", "[fit][route]") {
+  TempDir d;
+  const fs::path p = d.dir / "gap.kicad_pcb", q = d.dir / "ref.kicad_pcb";
+  std::ofstream(p) << mask_gap_board(false);
+  std::ofstream(q) << mask_gap_board(true);
+  auto lb = io::read_board_file(p.string());
+  auto ref = io::read_board_file(q.string());
+  const auto rules = io::read_design_rules(p.string());
+  CHECK(route::Obstacles(lb.board, rules).mask_openings_over_tracks() == 0);
+  CHECK(route::Obstacles(ref.board, rules).mask_openings_over_tracks() == 2);  // the openings of W1 and W2
+  route::RouterOptions o;
+  o.work_budget = 300'000;
+  o.gpu_device = -1;
+  o.allow_vias = false;  // the other layer is no way round
+  const auto strict = route::Router(lb.board, rules, o).run();
+  REQUIRE(strict.connections == 1);
+  CHECK(strict.routed == 0);
+  o.soft_pad_masks = true;
+  CHECK(route::Router(lb.board, rules, o).run().routed == 1);
+}

@@ -137,6 +137,47 @@ table. 169 open connections had no route with the other nets' copper off the boa
 | **complete** | 6 | 9 | 10 | 11 | 11 |
 | boards run | 33 | 14 | 13 | 12 | 12 |
 
+## `route --finish` end to end (`finish/results.jsonl`)
+
+One command per board: `route --work 20000000 --finish --finish-masks --finish-layers 2,4`, three jobs at a time, on the 24 boards open at
+base less the six largest (Aleste, d20, MonApollo, LFK78, sizif, poncho). Open connections after each rung; (x) = rung discarded, no better.
+
+| Board | base | fitted rules | + pad masks | + 2 layers | + 4 layers | final | layers | seconds |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|
+| memsarray_mems_modules | 1 | 1 (x) | 0 | – | – | 0 | 2 | 26 |
+| Hardware_Playground_sd_wav_pcm5100 | 2 | 0 | – | – | – | 0 | 2 | 86 |
+| Hardware_Playground_serial_gw_ATMEGA328P | 1 | 1 (x) | 1 (x) | 1 (x) | 1 (x) | 1 | 2 | 116 |
+| fifogfx_c64cart | 40 | 0 | – | – | – | 0 | 2 | 91 |
+| kitspace_ardfpga | 7 | 6 | 6 (x) | 3 | 3 (x) | 3 | 4 | 525 |
+| kitspace_OtterPill | 11 | 9 | 9 (x) | 4 | 3 | 3 | 6 | 487 |
+| Hardware_Playground_E3_Pcb_rev0.3 | 19 | 17 | 17 (x) | 4 | 4 (x) | 4 | 4 | 509 |
+| MicroMaple_MicroMaple | 9 | 8 | 7 | 0 | – | 0 | 4 | 488 |
+| ErgodoneWithHole_ErgoDone | 2 | 0 | – | – | – | 0 | 2 | 90 |
+| EtherCAT_shield_v1_EtherCAT_shield_v1 | 26 | 17 | 16 | 16 (x) | 16 (x) | 16 | 2 | 1270 |
+| kitspace_test-jig | 32 | 0 | – | – | – | 0 | 2 | 112 |
+| DronPi_dronPi | 11 | 9 | 2 | 1 | 1 (x) | 1 | 4 | 326 |
+| motor-high-current-sensors_CurrentSensorPCB_line | 5 | 3 | 3 (x) | 3 (x) | 3 (x) | 3 | 2 | 204 |
+| PCIE-to-MXM-Adapter_PCIEx1toMXM3.0 | 30 | 2 | 2 (x) | 1 | 1 (x) | 1 | 4 | 393 |
+| kitspace_teensy-fx | 2 | 2 (x) | 2 (x) | 2 (x) | 2 (x) | 2 | 4 | 356 |
+| KiCad-Library_Teensy_test_layout | 18 | 3 | 3 (x) | 2 | 2 (x) | 2 | 4 | 436 |
+| rvi_v2x_hardware_V2X | 21 | 10 | 10 (x) | 4 | 4 (x) | 4 | 4 | 800 |
+| 96boards-robomezzi_96boards-robomezzi | 2 | 1 | 1 (x) | 1 (x) | 1 (x) | 1 | 4 | 256 |
+| TCKB_Kicad_TCKB | 22 | 8 | 4 | 3 | 3 (x) | 3 | 4 | 881 |
+| LeeChee_1800 | 5 | 1 | 1 (x) | 1 (x) | 1 (x) | 1 | 2 | 627 |
+| dorkyboard_keyboard | 3 | 1 | 1 (x) | 1 (x) | 1 (x) | 1 | 2 | 596 |
+| mini_mass_prog_bench_prog_rig | 9 | 5 | 5 (x) | stopped | – | (5) | – | 1449 |
+| P8000_WDC_Emulator_P8000_WDC_Emulator | 25 | 17 | 16 | 0 | – | 0 | 4 | 1461 |
+| CoreOne-xCORE200-Original_CoreOne | 19 | 12 | 12 (x) | 10 | 10 (x) | 10 | 6 | 1657 |
+| **23 boards** | 313 | | | | | 56 | | 11793 |
+
+Seven of the 23 complete (memsarray, sd_wav, fifogfx, ErgoDone, test-jig, MicroMaple, P8000); KiCad 10.0.6: 0 unconnected on all seven
+(`finish/kicad-judge.json`). 313 open become 56. Eight more end with 1 to 3 open.
+
+mini_mass was stopped by hand in its fourth rung: at six copper layers the process passed 100 GB of memory and was still growing (20 M work,
+8 variants; its searches there fail after about 21 M expansions each). The same board at `toplay4` is what exhausted the machine's memory at
+15:05. `route --finish` now writes its output after every rung it keeps, so a ladder stopped part-way leaves its best board (it did not yet
+when this was run: mini_mass's 5-open board was lost).
+
 ## Other arms
 
 | Board | topfit | toprv8 | toplay2 | topfocus | fit3 | fitseed2 | fitseed3 | fitseed4 | fitseed5 |
@@ -242,6 +283,7 @@ fifogfx (40) is the card-edge case of D194. DronPi and PCIE have 1 each (under t
 - d20 (129): layers do nothing on top; 27 pins are walled in by the earlier rungs' own copper. Not measured with focused repair.
 - Boards one or two short (robomezzi, dorkyboard, PCIE on top, TCKB, V2X, CoreOne at 60 M): each open pin is walled in by a neighbour's
   track that the repair lifts and the router lays back the same way.
+- Memory: mini_mass at six layers passes 100 GB (above). Not investigated.
 - On top is not always the better order: PCIE completes fitted from nothing and is left 1-2 short on top; OtterPill completes only fitted from
   the designer's layout from nothing. `route --finish` has the on-top order only.
 - No change to the default route: every option here is off unless asked for. Quick tier: 30 of 30 outputs byte-identical (`finq` against `fitq-new`).
@@ -249,5 +291,6 @@ fifogfx (40) is the card-edge case of D194. DronPi and PCIE have 1 each (under t
 ## Files
 
 - `repair/results.jsonl`: one row per board and repair arm. `ontop/results.jsonl`: one row per board and arm of the ladders.
+- `finish/results.jsonl`, `finish/kicad-judge.json`: `route --finish` end to end, and KiCad on its seven complete outputs.
 - `ontop/kicad-judge.json`: KiCad 10.0.6 on the newly complete outputs (unconnected items; violations added over the unrouted board).
 - `scripts/`: the run scripts (`ROOT` = the repository; the binaries were frozen copies of the build at each step).

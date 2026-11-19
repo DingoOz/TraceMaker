@@ -322,7 +322,13 @@ The ladder on top of the 60 M run completes ardfpga at rung 2 and MicroMaple at 
 stopped. Best arm per board, no designer layout used: **245 open, 16 of 33 complete**; KiCad 10.0.6 finds 0 unconnected on those
 outputs it was given (12 of 13; the one with an unconnected item has a second complete output without).
 
+As one command (`route --work 20000000 --finish --finish-masks --finish-layers 2,4`) on 23 of the boards (the six largest left out, one
+stopped): 313 open become 56 and seven boards complete, KiCad 0 unconnected on each; eight more end 1 to 3 short.
+
 What it does not do:
+
+- **Memory.** mini_mass at six layers passed 100 GB in the plain run of its fourth rung and was stopped. The ladder writes its output after
+  every rung it keeps, so a stopped ladder leaves its best board.
 
 - **Order.** PCIE completes with the rules fitted from nothing and stays 1-2 short on top; OtterPill completes only from nothing with
   the designer's layout as reference. The ladder has the on-top order only.

@@ -191,3 +191,16 @@ TEST_CASE("repair along the bare-board route: a connection that locked copper cl
   CHECK(rep.open_after == 1);
   CHECK(!passes::repair_open(l.board, l.rules, plain, options(), passes::RepairOptions{}).summary().contains("no_bare_route"));
 }
+
+TEST_CASE("repair, focused: an attempt routes the connection's net and the nets it lifted, with the same result here", "[repair]") {
+  const auto l = load(false);
+  const auto plain = route::Router(l.board, l.rules, options()).run();
+  passes::RepairOptions ro;
+  ro.focus = true;
+  ro.select = "both";
+  ro.variants = 2;
+  const auto rep = passes::repair_open(l.board, l.rules, plain, options(), ro);
+  CHECK(rep.open_after == 0);
+  CHECK(rep.unrouted.empty());
+  CHECK(errors(l.board, l.rules, rep) == 0);
+}

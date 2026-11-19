@@ -2250,14 +2250,15 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
       best = std::move(r);
       best_tmp = tmp;
       best_open = open;
+      // The output is written after every rung that is kept: a ladder stopped part-way (time, memory) leaves its best board, not nothing.
+      fs::copy_file(best_tmp, final_out, fs::copy_options::overwrite_existing);
+      copy_project_files(job.in, final_out);
     } else {
       remove_tmp(tmp);
     }
     if (best_open == 0) break;
   }
-  fs::rename(best_tmp, final_out);
   remove_tmp(best_tmp);
-  copy_project_files(job.in, final_out);
   log(best_open == 0 ? fmt("finish: complete after %zu rung%s; written to %s", rows.size(), rows.size() == 1 ? "" : "s", final_out.c_str())
                      : fmt("finish: %d open after every rung; written to %s", best_open, final_out.c_str()));
   best->summary["finish"] = {{"rungs", rows}, {"complete", best_open == 0}, {"open", best_open}};
