@@ -25,6 +25,7 @@ var structtmk_1_1route_1_1RouteResult =
     [ "final_routed", "structtmk_1_1route_1_1RouteResult.html#aa4a5a6f7b3cef71bdf0a19c02877d40e", null ],
     [ "final_routes", "structtmk_1_1route_1_1RouteResult.html#ab7921e29e6add7087f6cb11634f23447", null ],
     [ "length_tuned", "structtmk_1_1route_1_1RouteResult.html#a5706ab2a27e11f154cee48b8ca11e42d", null ],
+    [ "line_crossings", "structtmk_1_1route_1_1RouteResult.html#a07ea390a92cefc7abd66768af9d53092", null ],
     [ "lns_fixed", "structtmk_1_1route_1_1RouteResult.html#a577ca343dcf5e569d2ccd1891afb8cbf", null ],
     [ "micro_vias", "structtmk_1_1route_1_1RouteResult.html#a2446befb46c3a668971094f29c9e213a", null ],
     [ "necked", "structtmk_1_1route_1_1RouteResult.html#ae1fee427ead2dd06ed3cd9fae165f327", null ],

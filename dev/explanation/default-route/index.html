@@ -1,0 +1,3329 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="An autorouter and component placer for KiCad">
+      
+      
+      
+        <link rel="canonical" href="https://dingooz.github.io/TraceMaker/dev/explanation/default-route/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../../01-requirements/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>How the default route decides - TraceMaker</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how-the-default-route-decides" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="TraceMaker" class="md-header__button md-logo" aria-label="TraceMaker" data-md-component="logo">
+      
+  <img src="../../assets/tracemaker-icon.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            TraceMaker
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              How the default route decides
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/DingoOz/TraceMaker" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DingoOz/TraceMaker
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../quick-start/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Quick start
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../tutorials/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../how-to/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  How-to guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Explanation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../project/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Project
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="TraceMaker" class="md-nav__button md-logo" aria-label="TraceMaker" data-md-component="logo">
+      
+  <img src="../../assets/tracemaker-icon.svg" alt="logo">
+
+    </a>
+    TraceMaker
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/DingoOz/TraceMaker" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    DingoOz/TraceMaker
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quick-start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick start
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../tutorials/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/first-board/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Route your first board
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorials/kicad-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Route from inside KiCad
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../how-to/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to guides
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/build-and-test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build and test
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/kicad-cli-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run kicad-cli from Docker
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use the GPUs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/run-report/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Read a run report
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/placement-closure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Move parts until a board routes
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/live-page/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Watch runs live
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fetch boards and run benchmarks
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/release/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Make a release
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/docs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Write and publish the docs
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command line
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../13-viewer-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Viewer protocol
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    C++ API
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Explanation
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Explanation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How the default route decides
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How the default route decides
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-example-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The example run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-options-and-budget" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Options and budget
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-reading-the-board-and-the-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Reading the board and the rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-failure-memory-across-runs-the-knowledge-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Failure memory across runs (the knowledge base)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-portfolio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The portfolio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-lattice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. The lattice
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-the-connection-plan-and-the-net-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. The connection plan and the net order
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-the-global-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. The global plan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-escapes-from-dense-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Escapes from dense packages
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-search-and-costs-one-connection-at-a-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Search and costs, one connection at a time
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-rip-up-negotiation-and-failure-memory-within-the-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Rip-up, negotiation and failure memory within the run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-clean-up-inside-each-variant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Clean-up inside each variant
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-choosing-the-result-and-the-relax-rescue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Choosing the result, and the relax rescue
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-repair" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Repair
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-after-route-passes-and-the-exact-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. After-route passes and the exact check
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-writing-the-board-and-the-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15. Writing the board, and the audit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-why-connections-are-open-and-the-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16. Why connections are open, and the summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-the-design-docs-and-the-code-differ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where the design docs and the code differ
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requirements
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-data-structures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data structures and DRC
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-placement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-routing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Routing
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-failure-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Failure memory
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-gpu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GPU acceleration
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-kicad-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KiCad integration
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../09-visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Live viewer
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-benchmarking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarking
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../14-placement-test-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Placement test plan
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../15-component-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Component-aware rules
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../16-bga-breakout-plan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BGA breakout
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../17-llm-advisor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advice files and advisors
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../19-agent-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent interface
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../project/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Project
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../11-roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../18-next-features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Candidate features
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--plan"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../20-complete-routing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Towards 100 % routed boards
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--partly-built"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../12-decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisions and risks
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-example-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The example run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-options-and-budget" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Options and budget
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-reading-the-board-and-the-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Reading the board and the rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-failure-memory-across-runs-the-knowledge-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Failure memory across runs (the knowledge base)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-portfolio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. The portfolio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-the-lattice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. The lattice
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-the-connection-plan-and-the-net-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. The connection plan and the net order
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-the-global-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. The global plan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-escapes-from-dense-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Escapes from dense packages
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-search-and-costs-one-connection-at-a-time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Search and costs, one connection at a time
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-rip-up-negotiation-and-failure-memory-within-the-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Rip-up, negotiation and failure memory within the run
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-clean-up-inside-each-variant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Clean-up inside each variant
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-choosing-the-result-and-the-relax-rescue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Choosing the result, and the relax rescue
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-repair" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Repair
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-after-route-passes-and-the-exact-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. After-route passes and the exact check
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-writing-the-board-and-the-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15. Writing the board, and the audit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-why-connections-are-open-and-the-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16. Why connections are open, and the summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where-the-design-docs-and-the-code-differ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where the design docs and the code differ
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/DingoOz/TraceMaker/edit/main/docs/explanation/default-route.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="how-the-default-route-decides">How the default route decides<a class="headerlink" href="#how-the-default-route-decides" title="Permanent link">&para;</a></h1>
+<p>This page follows one real board through <code>tracemaker route board.kicad_pcb -o out.kicad_pcb</code> with no other
+options, stage by stage, in the order the code runs them. For each stage it says what happens and why, which
+option changes it, where the design is written down (design doc section and decision record), and how to see it
+happen: a line of the log, a field of the <code>--json</code> summary, a section of the <code>--report</code> run report, or an event
+of the live viewer (<a href="../../13-viewer-protocol/">viewer protocol</a>).</p>
+<p>The pipeline is two functions. <code>run_route_job</code> in <a href="https://github.com/DingoOz/TraceMaker/blob/main/src/app/route_job.cpp"><code>src/app/route_job.cpp</code></a> runs
+the job: rules, portfolio, rescue, repairs, write, explanation. <code>route_portfolio</code> and <code>Router::Impl::run</code> in
+<a href="https://github.com/DingoOz/TraceMaker/blob/main/src/route/router.cpp"><code>src/route/router.cpp</code></a> route the board. Option names and defaults are in
+<a href="https://github.com/DingoOz/TraceMaker/blob/main/src/app/main.cpp"><code>src/app/main.cpp</code></a> and <a href="https://github.com/DingoOz/TraceMaker/blob/main/src/route/router.hpp"><code>src/route/router.hpp</code></a>; the
+<a href="../../reference/cli/">command-line reference</a> lists them all.</p>
+<h2 id="the-example-run">The example run<a class="headerlink" href="#the-example-run" title="Permanent link">&para;</a></h2>
+<p>The board is <code>tests/boards/plane_smd</code>, TraceMaker's own test board: four copper layers, filled plane zones,
+11 nets, 47 connections, one net class (0.1 mm track, 0.1 mm clearance). The run is recorded in
+<a href="https://github.com/DingoOz/TraceMaker/blob/main/bench/records/m25/README.md"><code>bench/records/m25</code></a> (log, JSON summary, run report, command):</p>
+<div class="highlight"><pre><span></span><code>tracemaker<span class="w"> </span>route<span class="w"> </span>plane_smd.kicad_pcb<span class="w"> </span>-o<span class="w"> </span>plane_smd.routed.kicad_pcb<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--json<span class="w"> </span>plane_smd.json<span class="w"> </span>--report<span class="w"> </span>plane_smd.report.md<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--no-kb<span class="w"> </span>--work<span class="w"> </span><span class="m">3000000</span><span class="w"> </span>--view<span class="w"> </span>--view-port<span class="w"> </span><span class="m">9951</span>
+</code></pre></div>
+<p>Two options differ from a plain default run, and both make the run repeatable. <code>--work 3000000</code> gives every
+router 3 M search expansions instead of stopping on <code>--time 120</code> (wall time depends on the machine).
+<code>--no-kb</code> stops the knowledge base from reordering the run with failures of earlier runs. <code>--json</code>,
+<code>--report</code> and <code>--view</code> only observe. The same command run twice wrote byte-identical boards.</p>
+<p>Result: 41 of 47 connections routed, 223 tracks, 0 vias, 0 DRC errors added, 13.2 s on 8 threads, exit code 3
+(connections left open).</p>
+<h2 id="1-options-and-budget">1. Options and budget<a class="headerlink" href="#1-options-and-budget" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> The <code>route</code> command fills <code>RouterOptions</code> (one router) and <code>RouteJob</code> (the stages around it). A
+<code>--config FILE</code> of <code>name = value</code> lines is read first; the command line wins. Every option given is recorded
+in the summary.</p>
+<p><strong>Why.</strong> The default stops on wall time (<code>--time 120</code>), which suits a person at a desk. A work budget
+(<code>--work N</code>, search expansions per router) makes the output the same on any machine and any thread count
+(rule 5: budgets by work units). <code>--time</code> then only stops a run that would take too long.</p>
+<p><strong>Options.</strong> <code>--time S</code> (per routing stage: the plain portfolio, each rescue pass, each advisor round),
+<code>--work N</code>, <code>--time-total T</code> (one deadline for the whole job; the plain run gets <code>--rescue-share</code> 0.75 of it),
+<code>--config FILE</code>, <code>--seed</code>.</p>
+<p><strong>Design.</strong> <a href="../../02-architecture/">doc 02</a> §6.2–6.3 (determinism, budgets); <a href="../../05-routing/">doc 05</a> §82;
+<a href="../../decisions/D047/">D47</a> (variant set independent of thread count), <a href="../../decisions/D186/">D186</a>
+(<code>--time-total</code>), <a href="../../decisions/D086/">D86</a> (reported time covers the whole job).</p>
+<p><strong>See it.</strong> <code>/run/options</code>, <code>/run/work_budget</code>, <code>/run/time_limit_s</code> and <code>/time_limited</code> in the JSON; the
+report's <em>Options and seed</em> section. In the example: work budget 3,000,000, time limit 120, stopped by the time
+limit: no. The live page's <code>budget</code> field reads <code>3000000 work, --time 120 s, 8 threads</code>.</p>
+<h2 id="2-reading-the-board-and-the-rules">2. Reading the board and the rules<a class="headerlink" href="#2-reading-the-board-and-the-rules" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> The <code>.kicad_pcb</code> is parsed into a document (kept for writing) and a board model. Rules are layered as
+KiCad layers them: KiCad's defaults, legacy rules stored in the board, the project file (<code>.kicad_pro</code>: net
+classes, minimums, tuning profiles), then custom rules (<code>.kicad_dru</code>). A <code>Default</code> net class is added when the
+project has none. Every existing track and via, locked or not, is fixed copper: the router never rips copper it
+did not place.</p>
+<p>Three things in this stage change the run without any option:</p>
+<ul>
+<li>A copper zone with a net and <strong>no fill</strong> is filled in memory and the run switches to soft zones (other nets
+  may route through fills; the zones are refilled afterwards, stage 13). A board saved with its fills routes
+  with the fills as walls.</li>
+<li><strong>Tuning profiles</strong> in the project (KiCad 10) route their nets at the profile's widest width and narrow them
+  afterwards.</li>
+<li>On a board with a plane zone, the <strong>critical nets</strong> (crystals, clocks, differential pairs) are found by
+  part role and name, but only for the audit after the route (stage 15).</li>
+</ul>
+<p>Custom rules the engine cannot apply are named as warnings before routing (rule 6).</p>
+<p><strong>Why.</strong> The router must route to the same rules KiCad's DRC will judge, read the way KiCad reads them.</p>
+<p><strong>Options.</strong> <code>--reroute</code> (strip unlocked copper first), <code>--soft-zones</code>, <code>--no-fill-planes</code>,
+<code>--copper-layers</code>, <code>--no-tracks-on</code>, <code>--layer-cost</code>, <code>--layer-dir</code>, <code>--no-critical-audit</code>,
+<code>--component-rules</code> (off by default).</p>
+<p><strong>Design.</strong> <a href="../../08-kicad-integration/">doc 08</a> §3.1–3.2; <a href="../../05-routing/">doc 05</a> §27, §33 (custom rules),
+§54 (unfilled zones), §58 (tuning profiles), §44 (critical nets); <a href="../../decisions/D108/">D108</a>,
+<a href="../../decisions/D151/">D151</a>, <a href="../../decisions/D072/">D72</a>, <a href="../../decisions/D140/">D140</a>,
+<a href="../../decisions/D145/">D145</a>, <a href="../../decisions/D117/">D117</a>.</p>
+<p><strong>See it.</strong> Log lines <code>planes: zone ... has no fill</code>, <code>tuning profile ...</code> and <code>warning: ...</code> when they apply;
+<code>/rules</code> in the JSON (files found, minimums, net classes, custom rules); the report's <em>Rules</em> section. In the
+example the project file was found, there is no <code>.kicad_dru</code>, the board minimums are 0.1 mm clearance and track,
+and the one class <code>Default</code> holds 11 nets. The report says "The readers reported nothing they could not read."
+The zones were saved filled, so there is no <code>planes:</code> line: the fills are walls. The log names the critical nets:</p>
+<div class="highlight"><pre><span></span><code>critical nets: 2 found (component roles and differential pairs), audited after the route only; ...
+</code></pre></div>
+<h2 id="3-failure-memory-across-runs-the-knowledge-base">3. Failure memory across runs (the knowledge base)<a class="headerlink" href="#3-failure-memory-across-runs-the-knowledge-base" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> The knowledge base (<code>~/.local/share/tracemaker/kb.sqlite</code>) is opened by default. Connections that
+failed before on a board with the same features go to the front of every variant's order. With fewer variants
+than eight, it also picks which variants to run (a bandit over earlier wins). After the run it records this
+run's failures and winner.</p>
+<p><strong>Why.</strong> Tier T3 of the failure memory: a hard connection routed early has more room.</p>
+<p><strong>Options.</strong> <code>--kb FILE</code>, <code>--no-kb</code>.</p>
+<p><strong>Design.</strong> <a href="../../06-failure-learning/">doc 06</a> §4; <a href="../../decisions/D006/">D6</a>.</p>
+<p><strong>See it.</strong> The log line <code>knowledge base: N connections that failed before are routed first</code>. The example used
+<code>--no-kb</code>, so there is none. Without it, a second default run on the same board starts differently from the
+first: one reason a default run is not repeatable.</p>
+<h2 id="4-the-portfolio">4. The portfolio<a class="headerlink" href="#4-the-portfolio" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> A default run is a portfolio: up to eight differently tuned routers race, one per thread, each on its
+own copy of the board. The size is <code>--variants</code> if given, else 8 with <code>--work</code>, else <code>--threads</code> (8), at most
+8. The designed eight:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">#</th>
+<th>Name in the log</th>
+<th>What differs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0</td>
+<td>exact bends, shortest first</td>
+<td>nine direction states per lattice point (exact turn costs)</td>
+</tr>
+<tr>
+<td style="text-align: right;">1</td>
+<td>fast bends, shortest first, crowded source</td>
+<td>one state per point; strict searches start from the more crowded end</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>fast bends, longest first</td>
+<td>longest connections first; pitch ×2 on lattices of 3 M points or more</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>fast bends, jittered order, escape plan</td>
+<td>shortest first with seeded jitter; escape corridors reserved</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>exact bends, jittered order</td>
+<td>as 3 with another seed, exact bends, no escape plan</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>fast bends, cheap vias, crowded source</td>
+<td>via cost ×0.4; pitch ×2 on large lattices, ×0.5 on small ones (under 1 M points)</td>
+</tr>
+<tr>
+<td style="text-align: right;">6</td>
+<td>fast bends, cheap crossings, escape plan, crowded source</td>
+<td>crossing routed copper costs ×0.5 in negotiation</td>
+</tr>
+<tr>
+<td style="text-align: right;">7</td>
+<td>fast bends, dear vias, crowded source</td>
+<td>via cost ×2.5</td>
+</tr>
+</tbody>
+</table>
+<p>A two-layer board that is mostly one ball-grid breakout gets a different list instead: the breakout profile and
+seeded variants, in rounds that warm-start from the best of the round before.</p>
+<p>In wall-clock mode, the first variant to route everything at time <em>T</em> gives the others until 2<em>T</em> + 5 s. With
+<code>--work</code> there is no shared deadline. Only the first variant streams to the viewer.</p>
+<p><strong>Why.</strong> No one setting wins on every board; on this board three variants tie for first and two of the others
+are five connections behind. Running them side by side costs threads, not wall time.</p>
+<p><strong>Options.</strong> <code>--threads</code>, <code>--variants</code> (above 8 adds seeded variants, up to 64), <code>--halving</code>, <code>--seed</code>,
+<code>--escape-all</code>, <code>--breakout-portfolio</code>, <code>--no-fine-variant</code>.</p>
+<p><strong>Design.</strong> <a href="../../05-routing/">doc 05</a> §12, §22, §25, §41, §55; <a href="../../decisions/D047/">D47</a>,
+<a href="../../decisions/D033/">D33</a>, <a href="../../decisions/D016/">D16</a>, <a href="../../decisions/D063/">D63</a>,
+<a href="../../decisions/D101/">D101</a>, <a href="../../decisions/D143/">D143</a>.</p>
+<p><strong>See it.</strong> <code>portfolio: 8 variants on 8 threads</code> and one line per variant in the log; <code>/variants</code> in the JSON;
+the report's portfolio table. The example:</p>
+<div class="highlight"><pre><span></span><code>  variant 0 exact bends, shortest first    routed 39 in 2.4 s
+  variant 1 fast bends, shortest first, crowded source routed 41 in 3.7 s
+  variant 2 fast bends, longest first (2x pitch on large boards) routed 36 in 3.3 s
+  variant 3 fast bends, jittered order, escape plan routed 40 in 3.3 s
+  variant 4 exact bends, jittered order    routed 36 in 2.6 s
+  variant 5 fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source routed 41 in 4.0 s  &lt;- best
+  variant 6 fast bends, cheap crossings, escape plan, crowded source routed 40 in 3.6 s
+  variant 7 fast bends, dear vias, crowded source routed 41 in 3.7 s
+</code></pre></div>
+<p>Stages 5 to 10 happen inside each variant.</p>
+<h2 id="5-the-lattice">5. The lattice<a class="headerlink" href="#5-the-lattice" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> Each variant builds its obstacle model (fixed copper, fills, keep-outs, the rule engine) and a
+routing lattice. The automatic pitch is the smallest (track width + clearance) over the net classes, divided by
+six, rounded down to 5 µm, held between 25 and 100 µm. The lattice is only where the search looks: every path
+becomes tracks and vias and is checked exactly before it is committed (stage 14).</p>
+<p><strong>Why.</strong> Six steps per track pitch let lattice tracks pass between fine-pitch pads; integer lattice costs keep
+the search exact and deterministic.</p>
+<p><strong>Options.</strong> <code>--pitch-um</code>; the variants' scales (stage 4).</p>
+<p><strong>Design.</strong> <a href="../../05-routing/">doc 05</a> §2, §25; <a href="../../decisions/D004/">D4</a>, <a href="../../decisions/D016/">D16</a>,
+<a href="../../decisions/D063/">D63</a>.</p>
+<p><strong>See it.</strong> <code>pitch</code> in the summary line and <code>/pitch_mm</code> in the JSON (the kept variant's). In the example
+(0.1 + 0.1) mm / 6 gives 0.030 mm. Variant 5 halves it on this small board to the 0.025 mm floor, and variant 5
+was kept, so the log says <code>pitch 0.025 mm</code>.</p>
+<h2 id="6-the-connection-plan-and-the-net-order">6. The connection plan and the net order<a class="headerlink" href="#6-the-connection-plan-and-the-net-order" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> Pads already joined by copper are grouped (union-find), and each net's groups are joined by a minimum
+spanning tree. An edge's length is the copper gap between the pads, with a tiny share of the centre distance to
+break ties; a pad may also connect into a fill of its own net. Then the order: shortest first (variant 2:
+longest first; 3 and 4: shortest first with seeded jitter), then the knowledge base's earlier failures to the
+front, then critical nets and <code>--first-nets</code>, then buses.</p>
+<p><strong>Why.</strong> Short connections first leave the long ones the open board; planning by copper gap stops a pin from
+being joined across a foreign pin to a farther one.</p>
+<p><strong>Options.</strong> <code>--no-plan-gap</code>, <code>--first-nets</code>, <code>--first-nets-ordered</code>, <code>--critical-first</code>, <code>--bus</code>,
+<code>--buses</code>, <code>--only-net</code>, <code>--skip-net</code>.</p>
+<p><strong>Design.</strong> <a href="../../05-routing/">doc 05</a> §17, §49; <a href="../../decisions/D054/">D54</a>, <a href="../../decisions/D128/">D128</a>.</p>
+<p><strong>See it.</strong> <code>/connections</code> (47 here) and <code>/line_crossings</code> (38: how often the straight lines of the planned
+connections cross) in the JSON; the <code>ratsnest</code> events in the viewer.</p>
+<h2 id="7-the-global-plan">7. The global plan<a class="headerlink" href="#7-the-global-plan" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> None, by default. The global router (coarse tiles, corridors, a congestion map) runs only with
+<code>--global</code> or <code>--global-congestion</code>. A default run goes straight from the connection plan to detailed search.</p>
+<p><strong>Why.</strong> Measured on the benchmark sets, the corridors did not route more than the portfolio without them, so
+the global router stays off.</p>
+<p><strong>Options.</strong> <code>--global</code>, <code>--cut-report</code>.</p>
+<p><strong>Design.</strong> <a href="../../05-routing/">doc 05</a> §4, §13, §16, §19; <a href="../../decisions/D053/">D53</a>,
+<a href="../../decisions/D056/">D56</a>.</p>
+<p><strong>See it.</strong> Nothing in a default run. With <code>--global</code>, <code>/over_cuts</code> and <code>/tightest_cut</code> appear in the summary.</p>
+<h2 id="8-escapes-from-dense-packages">8. Escapes from dense packages<a class="headerlink" href="#8-escapes-from-dense-packages" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> Variants 3 and 6 plan escapes: for the pins of dense packages (8 or more pads at 1.3 mm pitch or less)
+they reserve a corridor out of the package. Reserved cells are closed to other nets in strict searches and cost
+2 mm to cross in negotiated ones. A corridor is released when its connection is routed. Pins that can only leave
+off the lattice get forced off-lattice escapes later, on the ladder (stage 9).</p>
+<p><strong>Why.</strong> Without reservations, the first connections routed out of a package take the channels the inner pins
+need. In all eight variants, escape planning won on some board tiers and lost on others, so it runs in two.</p>
+<p><strong>Options.</strong> <code>--escape-plan</code>, <code>--escape-all</code> (all variants), <code>--escape-flow</code> (min-cost-flow channels for deep
+ball grids), <code>--via-in-pad</code>.</p>
+<p><strong>Design.</strong> <a href="../../05-routing/">doc 05</a> §3, §12, §14; <a href="../../16-bga-breakout-plan/">doc 16</a>;
+<a href="../../decisions/D032/">D32</a>, <a href="../../decisions/D033/">D33</a>, <a href="../../decisions/D049/">D49</a>.</p>
+<p><strong>See it.</strong> <code>escape_plan</code>, <code>escape_release</code> and <code>escape_dead</code> events in the viewer; <code>/escape_corridors</code> and
+<code>/escape_corridor_mm</code> in the JSON (of the kept variant). In the example the kept variant 5 plans no escapes
+(<code>/escape_corridors</code> is 0); the escape-plan variants 3 and 6 routed 40 each.</p>
+<h2 id="9-search-and-costs-one-connection-at-a-time">9. Search and costs, one connection at a time<a class="headerlink" href="#9-search-and-costs-one-connection-at-a-time" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> Inside a variant, connections are routed one after another in the order of stage 6. Each one climbs a
+ladder until a rung routes it:</p>
+<ol>
+<li>Already joined by copper (for example through a plane): counted as routed.</li>
+<li>Strict A* search on the lattice: eight directions on every copper layer, vias between layers, other nets'
+   copper closed. It tries windows of 2 and 6 mm around the connection (plus a quarter of its length) in the
+   first pass, and also 20 mm and the whole board in later strict attempts. A flood-fill reachability check
+   runs first when failure is likely, and a two-sided proof stops long strict searches that cannot succeed.</li>
+<li>If a pin is boxed in or the exact check refuses the path: forced off-lattice pad escapes, then a neck-down to
+   the board's minimum track width and a smaller via.</li>
+<li>From the second pass on: a negotiated search that may cross other nets' routed copper at a cost (stage 10).</li>
+<li>Still boxed in after negotiated escapes and neck-down: the connection is given up for this restart.</li>
+</ol>
+<p>The step costs are integers. A straight step costs the pitch <em>p</em>, a diagonal <em>p</em>√2, times the layer's cost. A
+45° turn adds <em>p</em>/2, a 90° turn 2<em>p</em>; sharper turns are not allowed. A via costs 3 mm of track. The heuristic is
+an exact cost-to-go field over the window when the window has at least 60,000 cells (on the GPU from 500,000
+cells, on the CPU below; both give the same numbers), otherwise the octile distance.</p>
+<p><strong>Why.</strong> A* with an exact field is optimal in its window and expands little beyond the path. Integer costs make
+CPU and GPU agree bit for bit (rules 2 and 3). Small windows first keep most searches cheap.</p>
+<p><strong>Options.</strong> <code>--via-cost-mm</code>, <code>--heuristic-weight</code>, <code>--no-field</code>, <code>--no-gpu</code>, <code>--fast-bends</code> (in every
+variant), <code>--crowded-source</code>, <code>--layer-dir</code>, <code>--layer-dir-pen</code>, <code>--layer-diag-pen</code>, <code>--micro-vias</code>,
+<code>--blind-vias</code>, <code>--power-width</code> (a wide strict search first for supply nets).</p>
+<p><strong>Design.</strong> <a href="../../05-routing/">doc 05</a> §2, §5, §6, §20, §28, §55, §62, §66, §83; <a href="../../07-gpu/">doc 07</a>;
+<a href="../../decisions/D004/">D4</a>, <a href="../../decisions/D009/">D9</a>, <a href="../../decisions/D044/">D44</a>,
+<a href="../../decisions/D073/">D73</a>, <a href="../../decisions/D143/">D143</a>, <a href="../../decisions/D154/">D154</a>,
+<a href="../../decisions/D158/">D158</a>, <a href="../../decisions/D189/">D189</a>.</p>
+<p><strong>See it.</strong> Per variant, on standard error:</p>
+<div class="highlight"><pre><span></span><code>searches: 74 ok (966377 expansions), 102 failed (1114685 expansions); fields 28 GPU + 112 CPU (1.43 s, 0 GPU fallbacks, 0 cache hits)
+reachability checks: 49, 36 proved unreachable, 1164397 cells visited
+</code></pre></div>
+<p><code>stats</code>, <code>track_add</code>, <code>via_add</code>, <code>frontier</code> and <code>heatmap</code> events in the viewer; <code>/work_all_variants</code> in the JSON
+splits the work by phase (first pass, negotiation, clean-up). The example's 49,305,727 expansions over all
+variants and passes are in the log's last <code>work</code> line. The connection <code>INT: U1.21 -&gt; U2.B2</code> shows the ladder:
+"boxed in; escapes/neck-down: skipped: identical earlier attempt failed (nogood); negotiated: boxed in (target);
+given up: boxed in on the routing lattice, even with routed copper negotiable".</p>
+<h2 id="10-rip-up-negotiation-and-failure-memory-within-the-run">10. Rip-up, negotiation and failure memory within the run<a class="headerlink" href="#10-rip-up-negotiation-and-failure-memory-within-the-run" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> The first pass is strict. Connections that fail go round again, the most-failed first, for up to 40
+passes. From the second pass a negotiated search may cross other nets' routed copper: crossing costs 1 mm plus
+four times the cell's history, and committing the path rips the crossed connections, which go back into the
+queue (PathFinder-style negotiated congestion). Each conflict adds to a history cost on its cells (2 pitches per
+recorded conflict), which every later search pays there. An attempt that failed in exactly the same situation (same window, mode and width) is a
+<em>nogood</em> and is skipped. When passes stop gaining, the router restarts: it rips everything and routes the
+hardest connections first, keeping history and nogoods (6 planned restarts, then up to 40 diversified ones while
+budget is left). A variant returns its best state, not its last.</p>
+<p><strong>Why.</strong> Rip-up lets a connection take room another one holds when the other has somewhere else to go. History
+makes contested cells dearer until the nets sort themselves out. Nogoods stop the router repeating a search
+whose answer it already knows.</p>
+<p><strong>Options.</strong> <code>--no-rip-up</code>, <code>--max-passes</code> (40), <code>--max-restarts</code> (6).</p>
+<p><strong>Design.</strong> <a href="../../05-routing/">doc 05</a> §7, §17, §41; <a href="../../06-failure-learning/">doc 06</a> §3.1, §3.3, §3.6;
+<a href="../../decisions/D006/">D6</a>, <a href="../../decisions/D099/">D99</a> (transactions, used on breakout boards).</p>
+<p><strong>See it.</strong> Per variant: <code>restarts 0; legality checks 2806693; rips 36, passes 2, boxed-in 54, nogood skips 26,
+history cells 382, transactions 0 kept of 0</code>. In the viewer, <code>track_remove</code> events (rips), <code>failure</code> events and a
+<code>stage</code> event <code>restart N</code>. In the JSON, <code>/stuck/unrouted_by_reason</code> and each open connection's cause. Five of the
+example's six open connections are <code>ripped_not_rerouted</code>, for example "GND: U2.B1 -&gt; U2.C3 (ripped up by SCK and
+not routed again)". With 3 M work per variant the budget ran out within one or two passes, before any restart.</p>
+<h2 id="11-clean-up-inside-each-variant">11. Clean-up inside each variant<a class="headerlink" href="#11-clean-up-inside-each-variant" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> When a variant ends in its best state, it cleans up: each connection is routed again with vias ten
+times dearer and kept if cheaper (up to 4 rounds), a neighbourhood search over vias, octilinear smoothing (each
+change exactly checked), then length, skew and delay tuning for nets with such rules. A variant that ended away
+from its best state returns that state without clean-up, unless the board has length, skew or delay rules.</p>
+<p><strong>Why.</strong> The search optimises one connection at a time on the board as it was then; clean-up revisits each one
+on the finished board.</p>
+<p><strong>Options.</strong> <code>--no-optimize</code>.</p>
+<p><strong>Design.</strong> <a href="../../05-routing/">doc 05</a> §8, §74; <a href="../../decisions/D173/">D173</a>.</p>
+<p><strong>See it.</strong> <code>clean-up: N connections improved</code> per variant; <code>/style</code> in the JSON. In the example the variants
+that ended in their best state report 34 and 37 improved; the others report 0, because they ended in negotiation
+away from their best state.</p>
+<h2 id="12-choosing-the-result-and-the-relax-rescue">12. Choosing the result, and the relax rescue<a class="headerlink" href="#12-choosing-the-result-and-the-relax-rescue" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> The portfolio keeps the variant that routed the most connections; ties go to fewer unfinished bus
+lanes, then fewer vias, then shorter copper. If connections are still open, the job routes again with <em>relax,
+route, legalise</em>, in two passes: <strong>warm</strong> (starting from the plain result's routes), then, if still open,
+<strong>fresh</strong> (from nothing). Each pass is a portfolio of eight that first routes under lowered clearance (60 %, then
+80 % of the board's), then moves the copper off the lattice until it meets the real rules (the legaliser, with
+the realizer for the last hand-over), and keeps only what is legal under the board's own rules. A pass is kept
+only if its legal result is better than the result before, so the rescue never makes a board worse. With
+<code>--work</code>, a pass gets rounds of at most 20 M expansions adding up to <code>--work</code>; without it, rounds of 20 M until
+the board is complete, 200 rounds, or <code>--time</code> again.</p>
+<p><strong>Why.</strong> Room that strict clearances hide can be found under relaxed ones and then made legal. A complete board
+never gets here. Because each pass has its own <code>--time</code>, an incomplete board can take about three times
+<code>--time</code>.</p>
+<p><strong>Options.</strong> <code>--no-rescue</code>, <code>--rescue-mode warm|fresh|both</code>, <code>--relax</code> (relax from the start, then no rescue),
+<code>--time-total</code>, <code>--rescue-share</code>.</p>
+<p><strong>Design.</strong> <a href="../../05-routing/">doc 05</a> §41.3, §68, §70, §71; <a href="../../decisions/D104/">D104</a>,
+<a href="../../decisions/D160/">D160</a>, <a href="../../decisions/D162/">D162</a>, <a href="../../decisions/D163/">D163</a>.</p>
+<p><strong>See it.</strong> Log lines <code>rescue (warm): ...</code>, <code>ramp stage 1/2 (clearance -0.0400 mm): 43 of 47 routed</code>,
+<code>warm start: 39 saved routes taken over, 4 not legal under these rules</code>; <code>stage</code> events <code>rescue</code> begin and end;
+<code>/rescue</code> in the JSON; the report's <em>Relax rescue</em> section. In the example variants 1, 5 and 7 tie at 41 and variant 5
+wins the tie-break (its result has no vias at all). Each rescue pass had one round of 3 M work, so only the first relaxed
+stage (clearance lowered by 0.04 mm) ran before legalising:</p>
+<div class="highlight"><pre><span></span><code>rescue (warm): 41 -&gt; 39 routed (no gain: the result before stands)
+rescue (fresh): 41 -&gt; 39 routed (no gain: the result before stands)
+</code></pre></div>
+<h2 id="13-repair">13. Repair<a class="headerlink" href="#13-repair" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> Two repairs, each run only when the board needs it, each kept only if fewer connections stay open.</p>
+<ul>
+<li><strong>Repair windows</strong>: when the input had unlocked tracks or vias and connections are open, the unlocked copper
+  within 1, 2 and 4 mm of each open connection is lifted and the area routed again (3 M work per attempt).</li>
+<li><strong>Refill repair</strong>: when the run used soft zones, the zones are refilled for the new copper as KiCad would fill
+  them; items left unconnected are routed again with the new fills as fixed copper, and thermal reliefs the new
+  copper starved are repaired pad by pad.</li>
+</ul>
+<p>Before them, an advisor is consulted only with <code>--advisor</code> (off), and the knowledge base records the run.</p>
+<p><strong>Why.</strong> The router never rips input copper (stage 2); a partly routed board can still need some of it moved.
+Soft zones trust stale fills during routing, so the refill is where their connectivity is proved.</p>
+<p><strong>Options.</strong> <code>--repair auto|on|off</code>, <code>--repair-window-mm</code>, <code>--repair-work</code>, <code>--soft-zones</code>,
+<code>--no-refill-repair</code>, <code>--advisor</code>.</p>
+<p><strong>Design.</strong> <a href="../../05-routing/">doc 05</a> §36, §36.1, §75; <a href="../../17-llm-advisor/">doc 17</a>;
+<a href="../../decisions/D172/">D172</a>, <a href="../../decisions/D085/">D85</a>, <a href="../../decisions/D137/">D137</a>.</p>
+<p><strong>See it.</strong> Log lines <code>repair: ...</code> and <code>soft zones: after refilling ...</code>; <code>stage</code> events <code>repair</code>; <code>/repair</code> and
+<code>/refill</code> in the JSON; the report's <em>Zone refill</em> section. The example has no input copper and no soft zones, so
+neither ran; the report says "The zones were not refilled by the router".</p>
+<h2 id="14-after-route-passes-and-the-exact-check">14. After-route passes and the exact check<a class="headerlink" href="#14-after-route-passes-and-the-exact-check" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> The after-route passes are off by default: <code>--octilinear</code> (0/45/90° doglegs), <code>--widen-power</code>,
+<code>--stitch-vias</code>. The one that runs without an option narrows tuning-profile nets to each layer's width. Each pass
+is a transaction, kept only if no net gets more unconnected items and no tuned net gets worse.</p>
+<p>No copper reaches the result without the exact geometric check: every committed path, every clean-up change and
+every legalised route is checked against the exact rules, never the lattice (rule 1). The GPU never makes that
+decision. With <code>--report</code>, the job also runs its own DRC on the board before and after (zones refilled first) and
+counts the errors added.</p>
+<p><strong>Why.</strong> Correctness before speed: the lattice and the GPU only propose; the exact check decides.</p>
+<p><strong>Options.</strong> <code>--octilinear</code>, <code>--widen-power</code>, <code>--power-width</code>, <code>--stitch-vias</code>, <code>--report</code>.</p>
+<p><strong>Design.</strong> <a href="../../05-routing/">doc 05</a> §5.4, §39, §58, §79, §80; <a href="../../03-data-structures/">doc 03</a> §6;
+<a href="../../decisions/D005/">D5</a>, <a href="../../decisions/D092/">D92</a>, <a href="../../decisions/D145/">D145</a>,
+<a href="../../decisions/D187/">D187</a>, <a href="../../decisions/D136/">D136</a>.</p>
+<p><strong>See it.</strong> <code>exact check rejected the lattice path</code> as a cause in the log when the check refuses a path;
+<code>legality checks N</code> per variant (2,806,693 in one example variant); <code>/drc</code> in the JSON and the report's <em>DRC
+before and after</em>. The example: <code>report: DRC before and after (zones refilled): 0 routing errors added</code>; errors
+0 before and after, unconnected items 47 before, 6 after.</p>
+<h2 id="15-writing-the-board-and-the-audit">15. Writing the board, and the audit<a class="headerlink" href="#15-writing-the-board-and-the-audit" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> Only the new tracks and vias are added to the document; every other byte of the input is written back
+unchanged (rule 8), and the project file is copied next to the output. Existing fills are not refilled; KiCad
+does that. On a board with a plane, the critical nets of stage 2 are then audited: vias, length, crossings of
+plane voids, and layer changes without a nearby return via.</p>
+<p><strong>Why.</strong> A designer's file must come back as it went in, apart from the routing.</p>
+<p><strong>Options.</strong> <code>-o</code>, <code>--emit-items</code> (for the KiCad plugin), <code>--no-critical-audit</code>, <code>--return-paths</code>.</p>
+<p><strong>Design.</strong> <a href="../../08-kicad-integration/">doc 08</a> §3; <a href="../../05-routing/">doc 05</a> §42, §44, §81;
+<a href="../../decisions/D007/">D7</a>, <a href="../../decisions/D114/">D114</a>, <a href="../../decisions/D188/">D188</a>.</p>
+<p><strong>See it.</strong> <code>tracemaker check-roundtrip</code> proves the round trip on any board. The example:
+<code>critical nets after the route: 2 nets, 0 vias, 0 plane void crossings, 0 layer changes without a return stitch</code>;
+<code>/critical_nets</code> in the JSON (XIN and XOUT, the crystal's nets); the report's <em>Signal-integrity audit</em>.</p>
+<h2 id="16-why-connections-are-open-and-the-summary">16. Why connections are open, and the summary<a class="headerlink" href="#16-why-connections-are-open-and-the-summary" title="Permanent link">&para;</a></h2>
+<p><strong>What.</strong> For every pin of an open connection (up to 400), the why-open proof floods the free space round the
+pin for a track of the net's width, against the fixed copper only. A pin no track or via can leave is <em>walled
+in</em>: no router connects it as placed. A pin only a narrower track can leave needs a neck-down; a pin walled in
+only by zone fills needs <code>--soft-zones</code>; the rest are <em>open through congestion</em>, where more search or more
+layers can help. The log ends with <code>next:</code> lines built from these classes. Exit code 0 means every connection
+is routed (with soft zones: nothing unconnected after the refill), 3 means some are open.</p>
+<p><strong>Why.</strong> An open connection should come with a reason the designer can act on, and a design change (a part
+moved, a rule, more layers) is suggested, never made.</p>
+<p><strong>Options.</strong> <code>--no-why-open</code>, <code>--json</code>, <code>--report</code>, <code>--try-layers 2,4</code>.</p>
+<p><strong>Design.</strong> <a href="../../05-routing/">doc 05</a> §55, §69; <a href="../../20-complete-routing/">doc 20</a> §2.4–2.5;
+<a href="../../decisions/D161/">D161</a>, <a href="../../decisions/D143/">D143</a>, <a href="../../decisions/D136/">D136</a>.</p>
+<p><strong>See it.</strong> <code>/why_open</code> and <code>/stuck</code> in the JSON; the report's <em>What is open and why</em>. The example:</p>
+<div class="highlight"><pre><span></span><code>routed 41/47 connections, 223 tracks, 0 vias, pitch 0.025 mm, 3110969 expansions, 13.18 s (best variant 3.98 s)
+why open: 11 pins of open connections; 0 walled in by fixed copper (0 of them with a via in the pad), 0 only for the class's track or via, 1 only by zone fills or copper graphics, 10 open through congestion (0.19 s)
+  next: route again with --soft-zones: 1 pin is walled in only by zone fills
+  next: 10 pins are open through congestion: more search (--work, --variants) or more copper layers (--try-layers 2,4 routes each count and compares them)
+</code></pre></div>
+<p>The pin walled in only by fills is <code>U2.B2</code> of net INT, the connection the ladder gave up on in stage 9.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Options</th>
+<th>Design doc</th>
+<th>Decisions</th>
+<th>Where you see it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Options and budget</td>
+<td><code>--time</code>, <code>--work</code>, <code>--time-total</code>, <code>--config</code></td>
+<td>doc 02 §6; doc 05 §82</td>
+<td>D47, D86, D186</td>
+<td><code>/run</code>, <code>/time_limited</code>; report <em>Options and seed</em></td>
+</tr>
+<tr>
+<td>2. Board and rules</td>
+<td><code>--soft-zones</code>, <code>--no-fill-planes</code>, <code>--reroute</code>, <code>--no-critical-audit</code></td>
+<td>doc 08 §3.1–3.2; doc 05 §27, §54, §58</td>
+<td>D72, D108, D140, D145, D151</td>
+<td><code>planes:</code>, <code>tuning profile</code>, <code>warning:</code> lines; <code>/rules</code>; report <em>Rules</em></td>
+</tr>
+<tr>
+<td>3. Knowledge base</td>
+<td><code>--kb</code>, <code>--no-kb</code></td>
+<td>doc 06 §4</td>
+<td>D6</td>
+<td><code>knowledge base: ...</code> line</td>
+</tr>
+<tr>
+<td>4. Portfolio</td>
+<td><code>--threads</code>, <code>--variants</code>, <code>--escape-all</code>, <code>--seed</code></td>
+<td>doc 05 §12, §22, §25, §55</td>
+<td>D16, D33, D47, D63, D101, D143</td>
+<td><code>variant N ...</code> lines; <code>/variants</code></td>
+</tr>
+<tr>
+<td>5. Lattice</td>
+<td><code>--pitch-um</code></td>
+<td>doc 05 §2, §25</td>
+<td>D4, D16, D63</td>
+<td><code>pitch</code> in the summary line; <code>/pitch_mm</code></td>
+</tr>
+<tr>
+<td>6. Plan and order</td>
+<td><code>--no-plan-gap</code>, <code>--first-nets</code>, <code>--bus</code></td>
+<td>doc 05 §17, §49</td>
+<td>D54, D128</td>
+<td><code>/connections</code>, <code>/line_crossings</code>; <code>ratsnest</code> events</td>
+</tr>
+<tr>
+<td>7. Global plan (off)</td>
+<td><code>--global</code></td>
+<td>doc 05 §4, §13, §19</td>
+<td>D53, D56</td>
+<td>nothing by default; <code>/over_cuts</code> with <code>--global</code></td>
+</tr>
+<tr>
+<td>8. Escapes</td>
+<td><code>--escape-plan</code>, <code>--escape-all</code>, <code>--escape-flow</code></td>
+<td>doc 05 §3, §12, §14</td>
+<td>D32, D33, D49</td>
+<td><code>escape_plan</code>, <code>escape_dead</code> events; <code>/escape_corridors</code></td>
+</tr>
+<tr>
+<td>9. Search and costs</td>
+<td><code>--via-cost-mm</code>, <code>--heuristic-weight</code>, <code>--no-field</code>, <code>--no-gpu</code>, <code>--fast-bends</code></td>
+<td>doc 05 §5, §6, §20, §28, §62, §66; doc 07</td>
+<td>D4, D9, D44, D73, D154, D158, D189</td>
+<td><code>searches:</code>, <code>reachability checks:</code> lines; <code>/work_all_variants</code></td>
+</tr>
+<tr>
+<td>10. Rip-up and failure memory</td>
+<td><code>--no-rip-up</code>, <code>--max-passes</code>, <code>--max-restarts</code></td>
+<td>doc 05 §7; doc 06 §3.1, §3.3, §3.6</td>
+<td>D6, D99</td>
+<td><code>rips, passes, ... nogood skips</code> line; <code>failure</code>, <code>track_remove</code> events; <code>/stuck</code></td>
+</tr>
+<tr>
+<td>11. Clean-up</td>
+<td><code>--no-optimize</code></td>
+<td>doc 05 §8, §74</td>
+<td>D173</td>
+<td><code>clean-up:</code> lines; <code>/style</code></td>
+</tr>
+<tr>
+<td>12. Result and relax rescue</td>
+<td><code>--no-rescue</code>, <code>--rescue-mode</code>, <code>--relax</code></td>
+<td>doc 05 §41.3, §68, §70, §71</td>
+<td>D104, D160, D162, D163</td>
+<td><code>rescue (warm):</code>, <code>rescue (fresh):</code> lines; <code>rescue</code> stage events; <code>/rescue</code></td>
+</tr>
+<tr>
+<td>13. Repair</td>
+<td><code>--repair</code>, <code>--soft-zones</code>, <code>--no-refill-repair</code></td>
+<td>doc 05 §36, §75</td>
+<td>D85, D137, D172</td>
+<td><code>repair:</code>, <code>soft zones:</code> lines; <code>/repair</code>, <code>/refill</code></td>
+</tr>
+<tr>
+<td>14. After-route passes, exact check</td>
+<td><code>--octilinear</code>, <code>--widen-power</code>, <code>--stitch-vias</code>, <code>--report</code></td>
+<td>doc 05 §5.4, §39, §80; doc 03 §6</td>
+<td>D5, D92, D136, D187</td>
+<td><code>legality checks</code> per variant; <code>/drc</code>; report <em>DRC before and after</em></td>
+</tr>
+<tr>
+<td>15. Write and audit</td>
+<td><code>-o</code>, <code>--no-critical-audit</code></td>
+<td>doc 08 §3; doc 05 §44, §81</td>
+<td>D7, D114, D188</td>
+<td><code>critical nets after the route:</code> line; <code>/critical_nets</code></td>
+</tr>
+<tr>
+<td>16. Why open, summary</td>
+<td><code>--no-why-open</code>, <code>--json</code>, <code>--report</code></td>
+<td>doc 05 §69; doc 20 §2.4–2.5</td>
+<td>D136, D143, D161</td>
+<td><code>why open:</code>, <code>next:</code> lines; <code>/why_open</code>, <code>/stuck</code>; exit code</td>
+</tr>
+</tbody>
+</table>
+<h2 id="where-the-design-docs-and-the-code-differ">Where the design docs and the code differ<a class="headerlink" href="#where-the-design-docs-and-the-code-differ" title="Permanent link">&para;</a></h2>
+<p>Read against the code for this page (commit <code>9b77616</code>); kept here until the docs or the code change.</p>
+<ul>
+<li><strong>The ladder.</strong> <a href="../../05-routing/">Doc 05</a> §6 describes rungs R0–R7. R0 (a global corridor) needs <code>--global</code>,
+  R3 exists only as the job's repair windows (stage 13), R4 and R5 were not built (§20), R6 is <code>--cut-report</code>.
+  The ladder that runs is the one in stage 9.</li>
+<li><strong>The search.</strong> §5.2 describes bidirectional A* on a radix heap; the code is one-directional A* on a binary
+  heap, with a short reverse search to detect a boxed-in target.</li>
+<li><strong>Parallelism.</strong> §5.3 routes connections with disjoint windows in parallel; the code routes the connections of
+  a variant one after another and runs variants in parallel.</li>
+<li><strong>The cost.</strong> §5.1 writes the step cost as a product of factors; the code adds integer terms (stage 9).</li>
+<li><strong>The pass stall test</strong> uses the variant's total rip count: after any rip, a pass that gains nothing does not
+  end the passes, which then run on to <code>--max-passes</code> or the budget.</li>
+<li><strong>Unreadable rules.</strong> Rule 6 says never to route on rules that could not be read. A custom rule whose condition
+  cannot be parsed is named in a warning and not applied; a missing project file is named only in the run
+  report.</li>
+<li><strong><code>--record</code> with <code>--view</code></strong>: the recording is skipped without a warning.</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Explanation">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Explanation
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../01-requirements/" class="md-footer__link md-footer__link--next" aria-label="Next: Requirements">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Requirements
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      GPL-3.0-or-later
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.top", "navigation.footer", "search.suggest", "search.highlight", "content.code.copy", "content.action.edit", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

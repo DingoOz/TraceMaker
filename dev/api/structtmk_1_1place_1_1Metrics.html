@@ -115,6 +115,8 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ae524570481e481cfe2c0d6bda4cd6726" id="r_ae524570481e481cfe2c0d6bda4cd6726"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae524570481e481cfe2c0d6bda4cd6726">new_overlaps</a> = 0</td></tr>
 <tr class="memdesc:ae524570481e481cfe2c0d6bda4cd6726"><td class="mdescLeft">&#160;</td><td class="mdescRight">Relative to a reference (the input) placement: violations where at least one involved movable part was moved.  <br /></td></tr>
 <tr class="memitem:ab1a2e0d308e0d00b6ae71d3bf4c34693" id="r_ab1a2e0d308e0d00b6ae71d3bf4c34693"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab1a2e0d308e0d00b6ae71d3bf4c34693">new_outside</a> = 0</td></tr>
+<tr class="memitem:aca675c31dd3057fff337929c8a59f297" id="r_aca675c31dd3057fff337929c8a59f297"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca675c31dd3057fff337929c8a59f297">new_pairs</a> = 0</td></tr>
+<tr class="memdesc:aca675c31dd3057fff337929c8a59f297"><td class="mdescLeft">&#160;</td><td class="mdescRight">overlapping pairs that do not overlap in the reference placement (M24: a moved part may keep its input pairs)  <br /></td></tr>
 <tr class="memitem:aa907db5f09110d4898eb190a820564d3" id="r_aa907db5f09110d4898eb190a820564d3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa907db5f09110d4898eb190a820564d3">conflicts</a></td></tr>
 <tr class="memdesc:aa907db5f09110d4898eb190a820564d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">"A/B" pairs and "A/outline" (movable-involved)  <br /></td></tr>
 </table>
@@ -136,7 +138,7 @@ Public Attributes</h2></td></tr>
 
 <p>"A/B" pairs and "A/outline" (movable-involved) </p>
 
-<p class="definition">Definition at line <a class="el" href="placer_8hpp_source.html#l00057">57</a> of file <a class="el" href="placer_8hpp_source.html">placer.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="placer_8hpp_source.html#l00058">58</a> of file <a class="el" href="placer_8hpp_source.html">placer.hpp</a>.</p>
 
 </div>
 </div>
@@ -258,6 +260,24 @@ Public Attributes</h2></td></tr>
 <p>Pairs whose parts both stayed put existed in the input and are not ours. </p>
 
 <p class="definition">Definition at line <a class="el" href="placer_8hpp_source.html#l00056">56</a> of file <a class="el" href="placer_8hpp_source.html">placer.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aca675c31dd3057fff337929c8a59f297" name="aca675c31dd3057fff337929c8a59f297"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca675c31dd3057fff337929c8a59f297">&#9670;&#160;</a></span>new_pairs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::place::Metrics::new_pairs = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>overlapping pairs that do not overlap in the reference placement (M24: a moved part may keep its input pairs) </p>
+
+<p class="definition">Definition at line <a class="el" href="placer_8hpp_source.html#l00057">57</a> of file <a class="el" href="placer_8hpp_source.html">placer.hpp</a>.</p>
 
 </div>
 </div>

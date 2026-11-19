@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['advice_0',['Advice',['../structtmk_1_1advice_1_1Advice.html',1,'tmk::advice']]],
+  ['advice_0',['Advice',['../structtmk_1_1advice_1_1Advice.html',1,'tmk::advice::Advice'],['../structtmk_1_1app_1_1tui_1_1Advice.html',1,'tmk::app::tui::Advice']]],
   ['adviceset_1',['AdviceSet',['../structtmk_1_1route_1_1RouterOptions_1_1AdviceSet.html',1,'tmk::route::RouterOptions']]],
   ['advisedmove_2',['AdvisedMove',['../structtmk_1_1place_1_1AdvisedMove.html',1,'tmk::place']]],
   ['advisedseed_3',['AdvisedSeed',['../structtmk_1_1place_1_1AdvisedSeed.html',1,'tmk::place']]],

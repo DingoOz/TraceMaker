@@ -11,6 +11,7 @@ var structtmk_1_1place_1_1ExtractOptions =
     [ "decap_weight", "structtmk_1_1place_1_1ExtractOptions.html#a246307be50ca75d0e5352e64b557f574", null ],
     [ "default_clearance", "structtmk_1_1place_1_1ExtractOptions.html#a897c32fcdd31da50aeb8a4d94e9ade21", null ],
     [ "edge_pulls", "structtmk_1_1place_1_1ExtractOptions.html#aa6c1e0e8ab6cc51e826b81ebe330f161", null ],
+    [ "exact_courtyards", "structtmk_1_1place_1_1ExtractOptions.html#a3157a448098eee5a491edafd2eea7ade", null ],
     [ "fix_edge_connectors", "structtmk_1_1place_1_1ExtractOptions.html#a8aca9fcaaa9150123d2cb27cff626ec6", null ],
     [ "flip", "structtmk_1_1place_1_1ExtractOptions.html#a004c427bf1081eec98d07bfa86ad125d", null ],
     [ "flip_ok", "structtmk_1_1place_1_1ExtractOptions.html#a39eefef89c937bb769de632418b18cd9", null ],

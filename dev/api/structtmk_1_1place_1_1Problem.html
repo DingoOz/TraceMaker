@@ -111,6 +111,8 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:a2ea88f32f924ce9c40d870abe74820fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">other closed Edge.Cuts loops  <br /></td></tr>
 <tr class="memitem:ab4949a5244b134eef91b202d295ce37a" id="r_ab4949a5244b134eef91b202d295ce37a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Shape.html">Shape</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4949a5244b134eef91b202d295ce37a">edges</a></td></tr>
 <tr class="memdesc:ab4949a5244b134eef91b202d295ce37a"><td class="mdescLeft">&#160;</td><td class="mdescRight">every Edge.Cuts piece as segments (r = 0)  <br /></td></tr>
+<tr class="memitem:a9641c18134f673133646f4c478c9f547" id="r_a9641c18134f673133646f4c478c9f547"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Shape.html">Shape</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9641c18134f673133646f4c478c9f547">margins</a></td></tr>
+<tr class="memdesc:a9641c18134f673133646f4c478c9f547"><td class="mdescLeft">&#160;</td><td class="mdescRight">Margin layer pieces with their stroke: KiCad holds pads off them too (D192).  <br /></td></tr>
 <tr class="memitem:af57b65b0b5ec24ab4a8005d2f05aafa5" id="r_af57b65b0b5ec24ab4a8005d2f05aafa5"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1place_1_1Keepout.html">Keepout</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af57b65b0b5ec24ab4a8005d2f05aafa5">keepouts</a></td></tr>
 <tr class="memitem:a443933d2f16640462ef84a0adb101a31" id="r_a443933d2f16640462ef84a0adb101a31"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1place_1_1CopperShape.html">CopperShape</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a443933d2f16640462ef84a0adb101a31">fixed_copper</a></td></tr>
 <tr class="memdesc:a443933d2f16640462ef84a0adb101a31"><td class="mdescLeft">&#160;</td><td class="mdescRight">board copper that never moves: tracks, vias, copper graphics and text  <br /></td></tr>
@@ -181,7 +183,7 @@ Public Attributes</h2></td></tr>
 
 <p>courtyard-to-courtyard clearance </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00124">124</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00125">125</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -199,7 +201,7 @@ Public Attributes</h2></td></tr>
 
 <p>not from a board rule or the command line </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00125">125</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00126">126</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -215,7 +217,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00123">123</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00124">124</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -251,7 +253,7 @@ Public Attributes</h2></td></tr>
 
 <p>pad copper to board edge </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00126">126</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00127">127</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -287,7 +289,7 @@ Public Attributes</h2></td></tr>
 
 <p>board copper that never moves: tracks, vias, copper graphics and text </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00121">121</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00122">122</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -302,6 +304,24 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00121">121</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a9641c18134f673133646f4c478c9f547" name="a9641c18134f673133646f4c478c9f547"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9641c18134f673133646f4c478c9f547">&#9670;&#160;</a></span>margins</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="structtmk_1_1geom_1_1Shape.html">Shape</a>&gt; tmk::place::Problem::margins</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Margin layer pieces with their stroke: KiCad holds pads off them too (D192). </p>
 
 <p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00120">120</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
@@ -321,7 +341,7 @@ Public Attributes</h2></td></tr>
 
 <p>largest copper clearance any item asks for </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00122">122</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00123">123</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -355,7 +375,7 @@ Public Attributes</h2></td></tr>
 
 <p>extraction decisions worth reporting </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00128">128</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00129">129</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>
@@ -423,7 +443,7 @@ Public Attributes</h2></td></tr>
 
 <p>where parts may go (outline bbox) </p>
 
-<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00127">127</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="problem_8hpp_source.html#l00128">128</a> of file <a class="el" href="problem_8hpp_source.html">problem.hpp</a>.</p>
 
 </div>
 </div>

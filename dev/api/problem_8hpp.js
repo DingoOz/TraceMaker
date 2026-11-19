@@ -14,6 +14,7 @@ var problem_8hpp =
     [ "tmk::place::Point", "structtmk_1_1place_1_1Point.html", "structtmk_1_1place_1_1Point" ],
     [ "tmk::place::Shape", "structtmk_1_1place_1_1Shape.html", "structtmk_1_1place_1_1Shape" ],
     [ "tmk::place::convex_hull", "namespacetmk_1_1place.html#ae48e6152f0da82ac8b731486a2e6e580", null ],
+    [ "tmk::place::courtyard_outlines", "namespacetmk_1_1place.html#a63c0c6a3143e5b8d435107122229830b", null ],
     [ "tmk::place::extract", "namespacetmk_1_1place.html#aa8585105a8a55b203699bd411f36b338", null ],
     [ "tmk::place::flip_layers", "namespacetmk_1_1place.html#a149c43ed4e5b5310a1b28c9998176c31", null ],
     [ "tmk::place::flipped", "namespacetmk_1_1place.html#ac2130bd81bb79b264295713b43fe63f4", null ],

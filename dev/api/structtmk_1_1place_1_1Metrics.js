@@ -8,6 +8,7 @@ var structtmk_1_1place_1_1Metrics =
     [ "hpwl", "structtmk_1_1place_1_1Metrics.html#a891a826fa2a5b98896c9892ef41bdece", null ],
     [ "new_outside", "structtmk_1_1place_1_1Metrics.html#ab1a2e0d308e0d00b6ae71d3bf4c34693", null ],
     [ "new_overlaps", "structtmk_1_1place_1_1Metrics.html#ae524570481e481cfe2c0d6bda4cd6726", null ],
+    [ "new_pairs", "structtmk_1_1place_1_1Metrics.html#aca675c31dd3057fff337929c8a59f297", null ],
     [ "outside", "structtmk_1_1place_1_1Metrics.html#ad1b23d36c3dc57c127298f13cd87f215", null ],
     [ "overlaps", "structtmk_1_1place_1_1Metrics.html#a03aedf7a84b3b7f246108534424441a8", null ],
     [ "side_vias", "structtmk_1_1place_1_1Metrics.html#adb9bc07351239fe25ba7df20a648e664", null ],

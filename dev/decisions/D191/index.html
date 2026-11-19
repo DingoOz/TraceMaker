@@ -1305,6 +1305,8 @@
       
         
       
+        
+      
     
     
     
@@ -1364,6 +1366,41 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/default-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How the default route decides
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -2245,8 +2282,15 @@ boards that need more layers. Every option starts off. The gate is in doc 11.</p
 <li><strong>Routing the always-open nets first alone.</strong> Measured: those nets get routed and others fail. Kept only as F7, after the sites are reserved.</li>
 </ul>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
-<p>Nothing is built yet. The tune/report split follows doc 16 §1 (tune on boards 1-100). F2 changes the escape plan's corridor semantics
+<p>F8 was built first (doc 05 §84): the warm start is the ramp's floor, turned off in the relax rescue, which already keeps the better result. The tune/report split follows doc 16 §1 (tune on boards 1-100). F2 changes the escape plan's corridor semantics
 under negotiated searches, so it must stay off by default until the gate is met. Docs changed: 11 (M26 row) and 18 (§21).</p>
+<p>F1, F2, F3 and F5 were then measured on 152, 070 and 040 (doc 18 §21). Sites are lost mostly to tracks, not vias; hard reservations and
+via-cost guidance both left more open than the control from nothing, and no option moved the 2-open warm boards. F2 and F3 (hard) and F5
+(dearer via) are not adopted; the options already in the router were enough to test them, so no new code was added for them.</p>
+<p>F4 (<code>--via-shove</code>, already built) kept none of 427 moves. F6 (<code>--package-lanes</code>) and F7 (<code>--order 4</code>, <code>--order-all</code>) were built as options
+and lost to the control, so they stay off (doc 05 §85-§86). F9 (doc 05 §87) is adopted: <code>line_crossings</code> in every summary and a
+two-layer hint at 11.5 crossings per connection. The gate (≥ 3 of the eleven clean) is not met. With the options off, <code>quick</code> and <code>mid</code> are
+byte-identical, so the default route is unchanged except the summary's new field. Docs changed: 05 (§84-§87).</p>
 
 
 

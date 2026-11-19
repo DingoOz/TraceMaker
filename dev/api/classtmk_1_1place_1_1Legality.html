@@ -98,21 +98,26 @@ $(function(){initNavTree('classtmk_1_1place_1_1Legality.html','','classtmk_1_1pl
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1015d63c7d91677892c2c33be4636164" id="r_a1015d63c7d91677892c2c33be4636164"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1015d63c7d91677892c2c33be4636164">Legality</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p)</td></tr>
-<tr class="memitem:a7e80497fea8876f39565e4ffa93800c3" id="r_a7e80497fea8876f39565e4ffa93800c3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7e80497fea8876f39565e4ffa93800c3">inside_ok</a> (int part, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pos, int rot, bool lenient=false) const</td></tr>
+<tr class="memitem:a7e80497fea8876f39565e4ffa93800c3" id="r_a7e80497fea8876f39565e4ffa93800c3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7e80497fea8876f39565e4ffa93800c3">inside_ok</a> (int part, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> <a class="el" href="#a57ee7049904c7caca8a9a53904a97427">pos</a>, int <a class="el" href="#a8294519fdac0c89e0e2d88fdd8a41aec">rot</a>, bool lenient=false) const</td></tr>
 <tr class="memdesc:a7e80497fea8876f39565e4ffa93800c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Board test (outline, cut-outs, keepouts, pad-to-edge clearance); independent of other parts.  <br /></td></tr>
 <tr class="memitem:ac0931b400d5fc1b54cd9680c261fba41" id="r_ac0931b400d5fc1b54cd9680c261fba41"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac0931b400d5fc1b54cd9680c261fba41">pair_conflict</a> (int a, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pa, int ra, int b, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pb, int rb) const</td></tr>
 <tr class="memdesc:ac0931b400d5fc1b54cd9680c261fba41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exact test of two parts.  <br /></td></tr>
+<tr class="memitem:a02b35d698d2d7e85763c9091a6194059" id="r_a02b35d698d2d7e85763c9091a6194059"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a02b35d698d2d7e85763c9091a6194059">hard_conflict</a> (int a, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pa, int ra, int b, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pb, int rb) const</td></tr>
+<tr class="memdesc:a02b35d698d2d7e85763c9091a6194059"><td class="mdescLeft">&#160;</td><td class="mdescRight">M24 (D192): the parts of pair_conflict a kept overlap is judged by.  <br /></td></tr>
+<tr class="memitem:ad8de6f756702092dbe3f6fa2d2840164" id="r_ad8de6f756702092dbe3f6fa2d2840164"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8de6f756702092dbe3f6fa2d2840164">courtyards_overlap</a> (int a, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pa, int ra, int b, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pb, int rb) const</td></tr>
 <tr class="memitem:aab895535d0bc75860daf74b2c47bd65f" id="r_aab895535d0bc75860daf74b2c47bd65f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab895535d0bc75860daf74b2c47bd65f">reset</a> (const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;pl)</td></tr>
 <tr class="memdesc:aab895535d0bc75860daf74b2c47bd65f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of placed parts (all parts present after reset).  <br /></td></tr>
 <tr class="memitem:aa99f3ff9ffa1141aafad10dd6d9bda42" id="r_aa99f3ff9ffa1141aafad10dd6d9bda42"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa99f3ff9ffa1141aafad10dd6d9bda42">clear</a> ()</td></tr>
-<tr class="memitem:a7903b710339c60801ed4703ea283fd23" id="r_a7903b710339c60801ed4703ea283fd23"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7903b710339c60801ed4703ea283fd23">insert</a> (int part, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pos, int rot)</td></tr>
+<tr class="memitem:a7903b710339c60801ed4703ea283fd23" id="r_a7903b710339c60801ed4703ea283fd23"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7903b710339c60801ed4703ea283fd23">insert</a> (int part, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> <a class="el" href="#a57ee7049904c7caca8a9a53904a97427">pos</a>, int <a class="el" href="#a8294519fdac0c89e0e2d88fdd8a41aec">rot</a>)</td></tr>
 <tr class="memitem:a0525f254453dad49499d25913b329762" id="r_a0525f254453dad49499d25913b329762"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0525f254453dad49499d25913b329762">remove</a> (int part)</td></tr>
 <tr class="memitem:a99982afdb4a16e862c7e182d3a8b9282" id="r_a99982afdb4a16e862c7e182d3a8b9282"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99982afdb4a16e862c7e182d3a8b9282">present</a> (int part) const</td></tr>
-<tr class="memitem:a2762ee3f4e7e230ae73ae7b40aae43ff" id="r_a2762ee3f4e7e230ae73ae7b40aae43ff"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2762ee3f4e7e230ae73ae7b40aae43ff">find_conflict</a> (int part, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pos, int rot, int skip1=-1, int skip2=-1) const</td></tr>
+<tr class="memitem:a57ee7049904c7caca8a9a53904a97427" id="r_a57ee7049904c7caca8a9a53904a97427"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57ee7049904c7caca8a9a53904a97427">pos</a> (int part) const</td></tr>
+<tr class="memitem:a8294519fdac0c89e0e2d88fdd8a41aec" id="r_a8294519fdac0c89e0e2d88fdd8a41aec"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8294519fdac0c89e0e2d88fdd8a41aec">rot</a> (int part) const</td></tr>
+<tr class="memitem:a2762ee3f4e7e230ae73ae7b40aae43ff" id="r_a2762ee3f4e7e230ae73ae7b40aae43ff"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2762ee3f4e7e230ae73ae7b40aae43ff">find_conflict</a> (int part, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> <a class="el" href="#a57ee7049904c7caca8a9a53904a97427">pos</a>, int <a class="el" href="#a8294519fdac0c89e0e2d88fdd8a41aec">rot</a>, int skip1=-1, int skip2=-1) const</td></tr>
 <tr class="memdesc:a2762ee3f4e7e230ae73ae7b40aae43ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">First placed part that conflicts with <span class="tt">part</span> at (pos, rot), skipping <span class="tt">part</span> itself and skip1/skip2; -1 if none.  <br /></td></tr>
-<tr class="memitem:a0058854f4fe5a39d174571e4b4773f13" id="r_a0058854f4fe5a39d174571e4b4773f13"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0058854f4fe5a39d174571e4b4773f13">conflicts</a> (int part, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pos, int rot, std::vector&lt; int &gt; &amp;out) const</td></tr>
+<tr class="memitem:a0058854f4fe5a39d174571e4b4773f13" id="r_a0058854f4fe5a39d174571e4b4773f13"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0058854f4fe5a39d174571e4b4773f13">conflicts</a> (int part, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> <a class="el" href="#a57ee7049904c7caca8a9a53904a97427">pos</a>, int <a class="el" href="#a8294519fdac0c89e0e2d88fdd8a41aec">rot</a>, std::vector&lt; int &gt; &amp;out) const</td></tr>
 <tr class="memdesc:a0058854f4fe5a39d174571e4b4773f13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Every placed part that conflicts (sorted).  <br /></td></tr>
-<tr class="memitem:ad2af876efb5a5e7f7360d34d5acac2ff" id="r_ad2af876efb5a5e7f7360d34d5acac2ff"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad2af876efb5a5e7f7360d34d5acac2ff">legal</a> (int part, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pos, int rot, int skip1=-1, int skip2=-1) const</td></tr>
+<tr class="memitem:ad2af876efb5a5e7f7360d34d5acac2ff" id="r_ad2af876efb5a5e7f7360d34d5acac2ff"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad2af876efb5a5e7f7360d34d5acac2ff">legal</a> (int part, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> <a class="el" href="#a57ee7049904c7caca8a9a53904a97427">pos</a>, int <a class="el" href="#a8294519fdac0c89e0e2d88fdd8a41aec">rot</a>, int skip1=-1, int skip2=-1) const</td></tr>
 <tr class="memitem:ab09da1084d4162656a1ca6b07c79492c" id="r_ab09da1084d4162656a1ca6b07c79492c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab09da1084d4162656a1ca6b07c79492c">neighbours</a> (const <a class="el" href="structtmk_1_1geom_1_1Box.html">Box</a> &amp;box, std::vector&lt; int &gt; &amp;out) const</td></tr>
 <tr class="memdesc:ab09da1084d4162656a1ca6b07c79492c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Placed parts whose bodies are within <span class="tt">margin</span> of the box.  <br /></td></tr>
 </table>
@@ -196,6 +201,47 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ad8de6f756702092dbe3f6fa2d2840164" name="ad8de6f756702092dbe3f6fa2d2840164"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8de6f756702092dbe3f6fa2d2840164">&#9670;&#160;</a></span>courtyards_overlap()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::place::Legality::courtyards_overlap </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a></td>          <td class="paramname"><span class="paramname"><em>pa</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>ra</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a></td>          <td class="paramname"><span class="paramname"><em>pb</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>rb</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a2762ee3f4e7e230ae73ae7b40aae43ff" name="a2762ee3f4e7e230ae73ae7b40aae43ff"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2762ee3f4e7e230ae73ae7b40aae43ff">&#9670;&#160;</a></span>find_conflict()</h2>
 
@@ -231,6 +277,50 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>First placed part that conflicts with <span class="tt">part</span> at (pos, rot), skipping <span class="tt">part</span> itself and skip1/skip2; -1 if none. </p>
+
+</div>
+</div>
+<a id="a02b35d698d2d7e85763c9091a6194059" name="a02b35d698d2d7e85763c9091a6194059"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02b35d698d2d7e85763c9091a6194059">&#9670;&#160;</a></span>hard_conflict()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::place::Legality::hard_conflict </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a></td>          <td class="paramname"><span class="paramname"><em>pa</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>ra</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>b</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a></td>          <td class="paramname"><span class="paramname"><em>pb</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>rb</em></span>&#160;) const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>M24 (D192): the parts of pair_conflict a kept overlap is judged by. </p>
+<p><span class="tt"><a class="el" href="#a02b35d698d2d7e85763c9091a6194059" title="M24 (D192): the parts of pair_conflict a kept overlap is judged by.">hard_conflict</a></span>: holes and copper only (what KiCad reports by position: clearance, shorts, holes in courtyards). <span class="tt"><a class="el" href="#ad8de6f756702092dbe3f6fa2d2840164">courtyards_overlap</a></span>: the courtyards really intersect, without the courtyard clearance (what KiCad reports as a courtyard overlap between the two footprints). </p>
 
 </div>
 </div>
@@ -336,7 +426,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="legality_8hpp_source.html#l00052">52</a> of file <a class="el" href="legality_8hpp_source.html">legality.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="legality_8hpp_source.html#l00059">59</a> of file <a class="el" href="legality_8hpp_source.html">legality.hpp</a>.</p>
 
 </div>
 </div>
@@ -406,6 +496,33 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a57ee7049904c7caca8a9a53904a97427" name="a57ee7049904c7caca8a9a53904a97427"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57ee7049904c7caca8a9a53904a97427">&#9670;&#160;</a></span>pos()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> tmk::place::Legality::pos </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>part</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="legality_8hpp_source.html#l00053">53</a> of file <a class="el" href="legality_8hpp_source.html">legality.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a99982afdb4a16e862c7e182d3a8b9282" name="a99982afdb4a16e862c7e182d3a8b9282"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a99982afdb4a16e862c7e182d3a8b9282">&#9670;&#160;</a></span>present()</h2>
 
@@ -429,7 +546,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="legality_8hpp_source.html#l00047">47</a> of file <a class="el" href="legality_8hpp_source.html">legality.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="legality_8hpp_source.html#l00052">52</a> of file <a class="el" href="legality_8hpp_source.html">legality.hpp</a>.</p>
 
 </div>
 </div>
@@ -466,6 +583,33 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Index of placed parts (all parts present after reset). </p>
+
+</div>
+</div>
+<a id="a8294519fdac0c89e0e2d88fdd8a41aec" name="a8294519fdac0c89e0e2d88fdd8a41aec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8294519fdac0c89e0e2d88fdd8a41aec">&#9670;&#160;</a></span>rot()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::place::Legality::rot </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>part</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="legality_8hpp_source.html#l00054">54</a> of file <a class="el" href="legality_8hpp_source.html">legality.hpp</a>.</p>
 
 </div>
 </div>

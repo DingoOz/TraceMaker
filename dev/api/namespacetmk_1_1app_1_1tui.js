@@ -16,17 +16,32 @@ var namespacetmk_1_1app_1_1tui =
       [ "tab", "namespacetmk_1_1app_1_1tui_1_1key.html#a17054ec8c75be770386c503ab86d9218", null ],
       [ "up", "namespacetmk_1_1app_1_1tui_1_1key.html#ab6dacb750930bd02da22271bf0322ddc", null ]
     ] ],
+    [ "draw", "namespacetmk_1_1app_1_1tui_1_1draw.html", [
+      [ "border", "namespacetmk_1_1app_1_1tui_1_1draw.html#a0f1757fb8feb486051de0d84fc096815", null ],
+      [ "boxed", "namespacetmk_1_1app_1_1tui_1_1draw.html#a3dfe3a68bb000c6e096a8c75d9c8defb", null ],
+      [ "fit", "namespacetmk_1_1app_1_1tui_1_1draw.html#a6630e2c27db9984cc82cb380e95898c6", null ],
+      [ "short_path", "namespacetmk_1_1app_1_1tui_1_1draw.html#a896d13e9fb837cbd5240797cc837c38a", null ],
+      [ "wrap", "namespacetmk_1_1app_1_1tui_1_1draw.html#ad83ccff58d7dd8f9278d963829b8d482", null ]
+    ] ],
     [ "Field", "structtmk_1_1app_1_1tui_1_1Field.html", "structtmk_1_1app_1_1tui_1_1Field" ],
     [ "Entry", "structtmk_1_1app_1_1tui_1_1Entry.html", "structtmk_1_1app_1_1tui_1_1Entry" ],
     [ "Span", "structtmk_1_1app_1_1tui_1_1Span.html", "structtmk_1_1app_1_1tui_1_1Span" ],
     [ "Line", "structtmk_1_1app_1_1tui_1_1Line.html", "structtmk_1_1app_1_1tui_1_1Line" ],
     [ "Model", "classtmk_1_1app_1_1tui_1_1Model.html", "classtmk_1_1app_1_1tui_1_1Model" ],
+    [ "JobSlot", "structtmk_1_1app_1_1tui_1_1JobSlot.html", "structtmk_1_1app_1_1tui_1_1JobSlot" ],
+    [ "Job", "structtmk_1_1app_1_1tui_1_1Job.html", "structtmk_1_1app_1_1tui_1_1Job" ],
+    [ "Advice", "structtmk_1_1app_1_1tui_1_1Advice.html", "structtmk_1_1app_1_1tui_1_1Advice" ],
+    [ "JobsModel", "classtmk_1_1app_1_1tui_1_1JobsModel.html", "classtmk_1_1app_1_1tui_1_1JobsModel" ],
     [ "Action", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42", [
       [ "none", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42a334c4a4c42fdb79d7ebc3e73b517e6f8", null ],
       [ "quit", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42adbd73c2b545209688ed794c0d5413d5a", null ],
       [ "run", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42aa53108f7543b75adbb34afc035d4cdf6", null ],
       [ "print", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42af7531e2d0ea27233ce00b5f01c5bf335", null ],
-      [ "save", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42a43781db5c40ecc39fd718685594f0956", null ]
+      [ "save", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42a43781db5c40ecc39fd718685594f0956", null ],
+      [ "background", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42ad229bbf31eaeebc7c88897732d8b932d", null ],
+      [ "jobs", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42a27a06a9e3d5e7f67eb604a39536208c9", null ],
+      [ "options", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42a93da65a9fd0004d9477aeac024e08e15", null ],
+      [ "edit", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42ade95b43bceeb4b998aed4aed5cef1ae7", null ]
     ] ],
     [ "Scope", "namespacetmk_1_1app_1_1tui.html#af62e91e46c12f1d7ccab33f622156c41", [
       [ "run", "namespacetmk_1_1app_1_1tui.html#af62e91e46c12f1d7ccab33f622156c41aa53108f7543b75adbb34afc035d4cdf6", null ],
@@ -56,12 +71,20 @@ var namespacetmk_1_1app_1_1tui =
       [ "tag_file", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101eac80a13ba87b4ccfc37291b52f8d87b1b", null ],
       [ "tag_run", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101eaf5d21e93ed39e31ccedf7759fccc5cd8", null ]
     ] ],
+    [ "advise", "namespacetmk_1_1app_1_1tui.html#aa8be7ba6bac83ad3bd0d81779a0cb9dc", null ],
     [ "display_width", "namespacetmk_1_1app_1_1tui.html#a12806bdb7911be327bf348f46bf4ddaa", null ],
+    [ "live_folder", "namespacetmk_1_1app_1_1tui.html#af15730e473235b72207402bdeabc09e2", null ],
+    [ "parse_job", "namespacetmk_1_1app_1_1tui.html#ace585b79b2d423c611874aa08ed5953a", null ],
+    [ "parse_keys", "namespacetmk_1_1app_1_1tui.html#a72945e0285d10db46933375a64c56367", null ],
     [ "parse_options", "namespacetmk_1_1app_1_1tui.html#a6ad579d1d9a5c73d87bc9dc69f0d0a0e", null ],
+    [ "read_jobs", "namespacetmk_1_1app_1_1tui.html#a9d40cde8e7d72f685933dc6fdc0844f0", null ],
+    [ "run_keys", "namespacetmk_1_1app_1_1tui.html#ac952f9a07534a3c009c2e763de4b71f6", null ],
     [ "run_keys", "namespacetmk_1_1app_1_1tui.html#a20aa2fa0d706efc7f338c40e0ac4587f", null ],
+    [ "run_terminal", "namespacetmk_1_1app_1_1tui.html#a6de12c034bf44e4a97e0de08c728cef3", null ],
     [ "run_terminal", "namespacetmk_1_1app_1_1tui.html#a4174f010511e7b92595293dc8d60d46b", null ],
     [ "save_options", "namespacetmk_1_1app_1_1tui.html#a45269a2f7aaddb1639db85ba04dd4071", null ],
     [ "scope_name", "namespacetmk_1_1app_1_1tui.html#ac7445048c8baac8f26a9c18747f26979", null ],
+    [ "shell_quote", "namespacetmk_1_1app_1_1tui.html#a477c688ed43f448d4340f931cd82954b", null ],
     [ "truth", "namespacetmk_1_1app_1_1tui.html#ab0e8cf2b7b4c06cf7d8a5a58e6ee5575", null ],
     [ "kScopes", "namespacetmk_1_1app_1_1tui.html#ad82a996edf25fcd699914ac31817c9b3", null ]
 ];

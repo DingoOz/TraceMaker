@@ -11,15 +11,20 @@ var classtmk_1_1app_1_1tui_1_1Model =
     [ "enable_scope", "classtmk_1_1app_1_1tui_1_1Model.html#ae039113c39e6e8e75c81bbe37c94e7a1", null ],
     [ "error", "classtmk_1_1app_1_1tui_1_1Model.html#a875cb710757f21c9aaed975c34ba9ac6", null ],
     [ "fields", "classtmk_1_1app_1_1tui_1_1Model.html#a7a856ece8add402d57fb1e2d6483a8d4", null ],
+    [ "load_args", "classtmk_1_1app_1_1tui_1_1Model.html#a41c44b7b19f968c5a0a2bf1f003fbcbd", null ],
     [ "load_config", "classtmk_1_1app_1_1tui_1_1Model.html#aae9c4863026e45682682972c754fe401", null ],
     [ "mark_saved", "classtmk_1_1app_1_1tui_1_1Model.html#a91ce6a8fc31ab9af04dbbdef3bc8c054", null ],
     [ "press", "classtmk_1_1app_1_1tui_1_1Model.html#a281d90638ed4578616ba0367d7f936c2", null ],
     [ "render", "classtmk_1_1app_1_1tui_1_1Model.html#aae4897a3e67e5377ba6a60b3faf722a2", null ],
     [ "save_path", "classtmk_1_1app_1_1tui_1_1Model.html#a39186ccf5382e079838166b41026f4ad", null ],
     [ "set", "classtmk_1_1app_1_1tui_1_1Model.html#abd9974ab893e06321bb932c3e289c941", null ],
+    [ "set_advice", "classtmk_1_1app_1_1tui_1_1Model.html#afb7a00eb42134e6b2a5ea84da21875c1", null ],
+    [ "set_run", "classtmk_1_1app_1_1tui_1_1Model.html#af7fd3ca7838216e396f8ba10a3a74f06", null ],
     [ "set_save_path", "classtmk_1_1app_1_1tui_1_1Model.html#ab43c9f3d000e58ea41c3aa703dcee079", null ],
     [ "set_status", "classtmk_1_1app_1_1tui_1_1Model.html#a144acbbfc09602899770bd7ad264c5da", null ],
     [ "set_target", "classtmk_1_1app_1_1tui_1_1Model.html#aad2fd813fbdfff1c2a1f07d01a2e386b", null ],
+    [ "set_workdir", "classtmk_1_1app_1_1tui_1_1Model.html#a2d17f6d43197f42de044c3abec90b474", null ],
     [ "status", "classtmk_1_1app_1_1tui_1_1Model.html#a46f750eb7482d00e31b2cb4f9e431c8a", null ],
-    [ "target", "classtmk_1_1app_1_1tui_1_1Model.html#a6baca481b2e89b4b2c6ca36efd98993d", null ]
+    [ "target", "classtmk_1_1app_1_1tui_1_1Model.html#a6baca481b2e89b4b2c6ca36efd98993d", null ],
+    [ "workdir", "classtmk_1_1app_1_1tui_1_1Model.html#a27269bcebd71dbc3cd02381565c4ab0b", null ]
 ];

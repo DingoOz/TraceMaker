@@ -1311,6 +1311,8 @@
       
         
       
+        
+      
     
     
     
@@ -1370,6 +1372,41 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../explanation/default-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How the default route decides
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -2431,6 +2468,12 @@ every later milestone can be watched while it is built.</p>
 <td><strong>Finish the BGA boards that never complete</strong> (planned 2026-11-17 after the srj20 ramp campaigns, doc 18 §21, D191)</td>
 <td>F1 find where the dog-bone via sites are lost; F2 a site reserved for its ball until the ball connects, in every search, the relax legaliser and the ramp; F3 a via-free band round the package; F4 move a blocking via, then route the ball; F5 fewer vias per connection; F6 lanes under the package with a cost bonus for cross-board connections; F7 long, crossing connections first; F8 the best board includes the warm start (rule 4); F9 the run report and layer advisor flag boards with too many crossings for two layers</td>
 <td>On the eleven srj20 boards never routed clean, at the srj20-never recipe: ≥ 3 clean and ≤ 50 open connections (from 105), KiCad-judged; no clean srj20 board lost at the standard budget; <code>quick</code> and <code>mid</code> byte-identical with the options off</td>
+</tr>
+<tr>
+<td>M27</td>
+<td><strong>Boards that never complete: tell modelling from search, and fit the rules</strong> (2026-11-19, doc 18 §22, doc 20 §1.1 and §2.8-§2.10, D194)</td>
+<td>G1 designer oracle: put the designer's own nets back in the designer's layout; G2 <code>route --fit-rules</code>: relax what the board's own copper already breaks, mask openings included; G3 <code>tracemaker chains</code>: blockers and chain depth of every open connection; G4 joint re-route of an open connection with its minimal blockers as a last step of the default route; G5 escapes with no slack laid off the lattice; G6 exact interstice model for ball grids; G7 the fit as a rung of the default ladder (keep the better result)</td>
+<td>G2: of the 33 failing PCBench boards from nothing at 20 M, ≥ 6 complete with the fit against 3 without, KiCad 0 unconnected and no short on each (met: 6 and 8). G4: beats the same run with equal extra budget on the search boards. <code>quick</code> byte-identical with the options off</td>
 </tr>
 </tbody>
 </table>

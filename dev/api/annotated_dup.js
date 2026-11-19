@@ -42,9 +42,14 @@ var annotated_dup =
           [ "Entry", "structtmk_1_1app_1_1tui_1_1Entry.html", "structtmk_1_1app_1_1tui_1_1Entry" ],
           [ "Span", "structtmk_1_1app_1_1tui_1_1Span.html", "structtmk_1_1app_1_1tui_1_1Span" ],
           [ "Line", "structtmk_1_1app_1_1tui_1_1Line.html", "structtmk_1_1app_1_1tui_1_1Line" ],
-          [ "Model", "classtmk_1_1app_1_1tui_1_1Model.html", "classtmk_1_1app_1_1tui_1_1Model" ]
+          [ "Model", "classtmk_1_1app_1_1tui_1_1Model.html", "classtmk_1_1app_1_1tui_1_1Model" ],
+          [ "JobSlot", "structtmk_1_1app_1_1tui_1_1JobSlot.html", "structtmk_1_1app_1_1tui_1_1JobSlot" ],
+          [ "Job", "structtmk_1_1app_1_1tui_1_1Job.html", "structtmk_1_1app_1_1tui_1_1Job" ],
+          [ "Advice", "structtmk_1_1app_1_1tui_1_1Advice.html", "structtmk_1_1app_1_1tui_1_1Advice" ],
+          [ "JobsModel", "classtmk_1_1app_1_1tui_1_1JobsModel.html", "classtmk_1_1app_1_1tui_1_1JobsModel" ]
         ] ],
         [ "CausesOptions", "structtmk_1_1app_1_1CausesOptions.html", "structtmk_1_1app_1_1CausesOptions" ],
+        [ "ChainsOptions", "structtmk_1_1app_1_1ChainsOptions.html", "structtmk_1_1app_1_1ChainsOptions" ],
         [ "RouteJob", "structtmk_1_1app_1_1RouteJob.html", "structtmk_1_1app_1_1RouteJob" ],
         [ "RouteJobResult", "structtmk_1_1app_1_1RouteJobResult.html", "structtmk_1_1app_1_1RouteJobResult" ]
       ] ],
@@ -104,6 +109,9 @@ var annotated_dup =
         [ "Violation", "structtmk_1_1drc_1_1Violation.html", "structtmk_1_1drc_1_1Violation" ],
         [ "DrcOptions", "structtmk_1_1drc_1_1DrcOptions.html", "structtmk_1_1drc_1_1DrcOptions" ],
         [ "DrcReport", "structtmk_1_1drc_1_1DrcReport.html", "structtmk_1_1drc_1_1DrcReport" ],
+        [ "FitOptions", "structtmk_1_1drc_1_1FitOptions.html", "structtmk_1_1drc_1_1FitOptions" ],
+        [ "FittedRule", "structtmk_1_1drc_1_1FittedRule.html", "structtmk_1_1drc_1_1FittedRule" ],
+        [ "FitReport", "structtmk_1_1drc_1_1FitReport.html", "structtmk_1_1drc_1_1FitReport" ],
         [ "ViaHeights", "structtmk_1_1drc_1_1ViaHeights.html", "structtmk_1_1drc_1_1ViaHeights" ],
         [ "LengthItems", "structtmk_1_1drc_1_1LengthItems.html", "structtmk_1_1drc_1_1LengthItems" ],
         [ "NetLength", "structtmk_1_1drc_1_1NetLength.html", "structtmk_1_1drc_1_1NetLength" ],

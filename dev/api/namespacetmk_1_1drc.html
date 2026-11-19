@@ -111,6 +111,9 @@ Classes</h2></td></tr>
 <tr class="memitem:Violation" id="r_Violation"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1Violation.html">Violation</a></td></tr>
 <tr class="memitem:DrcOptions" id="r_DrcOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1DrcOptions.html">DrcOptions</a></td></tr>
 <tr class="memitem:DrcReport" id="r_DrcReport"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1DrcReport.html">DrcReport</a></td></tr>
+<tr class="memitem:FitOptions" id="r_FitOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1FitOptions.html">FitOptions</a></td></tr>
+<tr class="memitem:FittedRule" id="r_FittedRule"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1FittedRule.html">FittedRule</a></td></tr>
+<tr class="memitem:FitReport" id="r_FitReport"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1FitReport.html">FitReport</a></td></tr>
 <tr class="memitem:ViaHeights" id="r_ViaHeights"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The length a via adds to its net in KiCad's length calculation (KiCad 10, BOARD_STACKUP::GetLayerDistance): the stackup between the two copper layers the via joins, with the copper of an outer layer in full and of an inner layer by half.  <a href="structtmk_1_1drc_1_1ViaHeights.html#details">More...</a><br /></td></tr>
 <tr class="memitem:LengthItems" id="r_LengthItems"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1drc_1_1LengthItems.html">LengthItems</a></td></tr>
@@ -174,6 +177,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:a1cd164d038f156e7590c2dce56bf3d35"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when no net is further outside its length or skew window in <span class="tt">with</span> than in <span class="tt">without</span> (a net not in a map is in range).  <br /></td></tr>
 <tr class="memitem:a4550789200edec8ef61885cb80b481f5" id="r_a4550789200edec8ef61885cb80b481f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4550789200edec8ef61885cb80b481f5">write_drc_json</a> (const <a class="el" href="structtmk_1_1drc_1_1DrcReport.html">DrcReport</a> &amp;rep, const std::string &amp;path)</td></tr>
 <tr class="memdesc:a4550789200edec8ef61885cb80b481f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the report in kicad-cli's JSON layout (violations, unconnected_items; positions in mm).  <br /></td></tr>
+<tr class="memitem:ac1240c536ecf912e4e2fe9fce32e2763" id="r_ac1240c536ecf912e4e2fe9fce32e2763"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1FitReport.html">FitReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1240c536ecf912e4e2fe9fce32e2763">fit_rules</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;reference, <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const <a class="el" href="structtmk_1_1drc_1_1FitOptions.html">FitOptions</a> &amp;opt={})</td></tr>
+<tr class="memdesc:ac1240c536ecf912e4e2fe9fce32e2763"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fits <span class="tt">rules</span> to <span class="tt">reference</span> (see above). Deterministic: the changes are in a fixed order (minimums, then classes in file order).  <br /></td></tr>
 <tr class="memitem:a1a7db7bba9f75137230a69fa3a34307f" id="r_a1a7db7bba9f75137230a69fa3a34307f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1a7db7bba9f75137230a69fa3a34307f">via_heights</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules)</td></tr>
 <tr class="memitem:a03ff68f31a7926da698be24e9d122e05" id="r_a03ff68f31a7926da698be24e9d122e05"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1drc_1_1NetLength.html">NetLength</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03ff68f31a7926da698be24e9d122e05">net_length</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const <a class="el" href="structtmk_1_1drc_1_1ViaHeights.html">ViaHeights</a> &amp;vh, const <a class="el" href="structtmk_1_1drc_1_1LengthItems.html">LengthItems</a> &amp;items, const <a class="el" href="structtmk_1_1model_1_1TuningProfile.html">model::TuningProfile</a> *profile)</td></tr>
 <tr class="memdesc:a03ff68f31a7926da698be24e9d122e05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Length and delay of <span class="tt">items</span>, all of one net.  <br /></td></tr>
@@ -565,6 +570,34 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Closed loops chained from Edge.Cuts pieces whose ends meet within <span class="tt">tol</span>; pieces that close no loop are dropped (<span class="tt">all_closed</span>, if given, tells whether any was). </p>
+
+</div>
+</div>
+<a id="ac1240c536ecf912e4e2fe9fce32e2763" name="ac1240c536ecf912e4e2fe9fce32e2763"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1240c536ecf912e4e2fe9fce32e2763">&#9670;&#160;</a></span>fit_rules()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1drc_1_1FitReport.html">FitReport</a> tmk::drc::fit_rules </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>reference</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rules</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1drc_1_1FitOptions.html">FitOptions</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>opt</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Fits <span class="tt">rules</span> to <span class="tt">reference</span> (see above). Deterministic: the changes are in a fixed order (minimums, then classes in file order). </p>
 
 </div>
 </div>

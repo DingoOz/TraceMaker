@@ -10,6 +10,7 @@ var structtmk_1_1place_1_1Problem =
     [ "edges", "structtmk_1_1place_1_1Problem.html#ab4949a5244b134eef91b202d295ce37a", null ],
     [ "fixed_copper", "structtmk_1_1place_1_1Problem.html#a443933d2f16640462ef84a0adb101a31", null ],
     [ "keepouts", "structtmk_1_1place_1_1Problem.html#af57b65b0b5ec24ab4a8005d2f05aafa5", null ],
+    [ "margins", "structtmk_1_1place_1_1Problem.html#a9641c18134f673133646f4c478c9f547", null ],
     [ "max_need", "structtmk_1_1place_1_1Problem.html#a2e1dc4e0f9944018303f456541764dce", null ],
     [ "nets", "structtmk_1_1place_1_1Problem.html#aa5668c227df2918134195cfa8dcb9ebd", null ],
     [ "notes", "structtmk_1_1place_1_1Problem.html#afc4b2640ab89b53f77fad68f4b35e469", null ],

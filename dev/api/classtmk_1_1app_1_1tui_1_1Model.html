@@ -127,6 +127,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a91ce6a8fc31ab9af04dbbdef3bc8c054"><td class="mdescLeft">&#160;</td><td class="mdescRight">Records that the target scope's file was written.  <br /></td></tr>
 <tr class="memitem:abd9974ab893e06321bb932c3e289c941" id="r_abd9974ab893e06321bb932c3e289c941"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd9974ab893e06321bb932c3e289c941">set</a> (const std::string &amp;name, const std::string &amp;value)</td></tr>
 <tr class="memdesc:abd9974ab893e06321bb932c3e289c941"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a field by its label or its argument spelling (e.g. "board", "--output"); false if there is none.  <br /></td></tr>
+<tr class="memitem:a41c44b7b19f968c5a0a2bf1f003fbcbd" id="r_a41c44b7b19f968c5a0a2bf1f003fbcbd"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a41c44b7b19f968c5a0a2bf1f003fbcbd">load_args</a> (const std::vector&lt; std::string &gt; &amp;<a class="el" href="#a3f451f73292b81835e74951c02abf4f8">args</a>, std::string *config=nullptr)</td></tr>
+<tr class="memdesc:a41c44b7b19f968c5a0a2bf1f003fbcbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces every value with a job's arguments (from "route" on, without it), kept in "this run": the job's command is the whole of its options, so the files' values are cleared too.  <br /></td></tr>
+<tr class="memitem:af7fd3ca7838216e396f8ba10a3a74f06" id="r_af7fd3ca7838216e396f8ba10a3a74f06"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7fd3ca7838216e396f8ba10a3a74f06">set_run</a> (const std::string &amp;spelling, const std::string &amp;value)</td></tr>
+<tr class="memdesc:af7fd3ca7838216e396f8ba10a3a74f06"><td class="mdescLeft">&#160;</td><td class="mdescRight">One option of a rerun, in "this run": a value option takes <span class="tt">value</span>, a flag is set to the spelling (<span class="tt">value</span> empty) or cleared (<span class="tt">value</span> == "-").  <br /></td></tr>
+<tr class="memitem:a2d17f6d43197f42de044c3abec90b474" id="r_a2d17f6d43197f42de044c3abec90b474"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d17f6d43197f42de044c3abec90b474">set_workdir</a> (std::string d)</td></tr>
+<tr class="memdesc:a2d17f6d43197f42de044c3abec90b474"><td class="mdescLeft">&#160;</td><td class="mdescRight">The folder the command runs in (a job's own, after load_args); empty: the current one.  <br /></td></tr>
+<tr class="memitem:a27269bcebd71dbc3cd02381565c4ab0b" id="r_a27269bcebd71dbc3cd02381565c4ab0b"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a27269bcebd71dbc3cd02381565c4ab0b">workdir</a> () const</td></tr>
+<tr class="memitem:afb7a00eb42134e6b2a5ea84da21875c1" id="r_afb7a00eb42134e6b2a5ea84da21875c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb7a00eb42134e6b2a5ea84da21875c1">set_advice</a> (std::vector&lt; std::string &gt; a)</td></tr>
+<tr class="memdesc:afb7a00eb42134e6b2a5ea84da21875c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lines of advice shown above the command (from the jobs screen or earlier runs on the board).  <br /></td></tr>
 <tr class="memitem:a39186ccf5382e079838166b41026f4ad" id="r_a39186ccf5382e079838166b41026f4ad"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a39186ccf5382e079838166b41026f4ad">save_path</a> () const</td></tr>
 <tr class="memdesc:a39186ccf5382e079838166b41026f4ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">The file of the target scope.  <br /></td></tr>
 <tr class="memitem:ab43c9f3d000e58ea41c3aa703dcee079" id="r_ab43c9f3d000e58ea41c3aa703dcee079"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab43c9f3d000e58ea41c3aa703dcee079">set_save_path</a> (std::string p)</td></tr>
@@ -137,7 +146,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00077">77</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00079">79</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Member Typedef Documentation</h2>
 <a id="a446561dd836bf6d52bdc97deb17cb2e2" name="a446561dd836bf6d52bdc97deb17cb2e2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a446561dd836bf6d52bdc97deb17cb2e2">&#9670;&#160;</a></span>Check</h2>
@@ -153,7 +162,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Says what is wrong with a list of arguments (the command line's own parser); empty if nothing is. </p>
 
-<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00080">80</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00082">82</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
 
 </div>
 </div>
@@ -246,7 +255,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00096">96</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00098">98</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
 
 </div>
 </div>
@@ -293,7 +302,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00107">107</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00109">109</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
 
 </div>
 </div>
@@ -366,7 +375,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00119">119</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00134">134</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
 
 </div>
 </div>
@@ -393,7 +402,31 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00120">120</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00135">135</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a41c44b7b19f968c5a0a2bf1f003fbcbd" name="a41c44b7b19f968c5a0a2bf1f003fbcbd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41c44b7b19f968c5a0a2bf1f003fbcbd">&#9670;&#160;</a></span>load_args()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::string &gt; tmk::app::tui::Model::load_args </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>args</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string *</td>          <td class="paramname"><span class="paramname"><em>config</em></span><span class="paramdefsep"> = </span><span class="paramdefval">nullptr</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replaces every value with a job's arguments (from "route" on, without it), kept in "this run": the job's command is the whole of its options, so the files' values are cleared too. </p>
+<p>Returns one message per argument it could not place; <span class="tt">config</span> receives the value of &ndash;config, which is no field (the caller reads that file first). </p>
 
 </div>
 </div>
@@ -507,7 +540,7 @@ Public Member Functions</h2></td></tr>
 
 <p>The file of the target scope. </p>
 
-<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00115">115</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00130">130</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
 
 </div>
 </div>
@@ -534,6 +567,59 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="afb7a00eb42134e6b2a5ea84da21875c1" name="afb7a00eb42134e6b2a5ea84da21875c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb7a00eb42134e6b2a5ea84da21875c1">&#9670;&#160;</a></span>set_advice()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tmk::app::tui::Model::set_advice </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; std::string &gt;</td>          <td class="paramname"><span class="paramname"><em>a</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Lines of advice shown above the command (from the jobs screen or earlier runs on the board). </p>
+
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00127">127</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af7fd3ca7838216e396f8ba10a3a74f06" name="af7fd3ca7838216e396f8ba10a3a74f06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7fd3ca7838216e396f8ba10a3a74f06">&#9670;&#160;</a></span>set_run()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::app::tui::Model::set_run </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>spelling</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>One option of a rerun, in "this run": a value option takes <span class="tt">value</span>, a flag is set to the spelling (<span class="tt">value</span> empty) or cleared (<span class="tt">value</span> == "-"). </p>
+<p>False if no field has that spelling. </p>
+
+</div>
+</div>
 <a id="ab43c9f3d000e58ea41c3aa703dcee079" name="ab43c9f3d000e58ea41c3aa703dcee079"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab43c9f3d000e58ea41c3aa703dcee079">&#9670;&#160;</a></span>set_save_path()</h2>
 
@@ -557,7 +643,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00116">116</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00131">131</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
 
 </div>
 </div>
@@ -584,7 +670,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00117">117</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00132">132</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
 
 </div>
 </div>
@@ -602,6 +688,36 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2d17f6d43197f42de044c3abec90b474" name="a2d17f6d43197f42de044c3abec90b474"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d17f6d43197f42de044c3abec90b474">&#9670;&#160;</a></span>set_workdir()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tmk::app::tui::Model::set_workdir </td>
+          <td>(</td>
+          <td class="paramtype">std::string</td>          <td class="paramname"><span class="paramname"><em>d</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The folder the command runs in (a job's own, after load_args); empty: the current one. </p>
+<p>The command line then starts with <span class="tt">cd</span>. </p>
+
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00124">124</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
 
 </div>
 </div>
@@ -628,7 +744,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00118">118</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00133">133</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
 
 </div>
 </div>
@@ -657,7 +773,34 @@ Public Member Functions</h2></td></tr>
 
 <p>The scope that edits go to and that <span class="tt">s</span> saves; Tab moves it. </p>
 
-<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00105">105</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00107">107</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a27269bcebd71dbc3cd02381565c4ab0b" name="a27269bcebd71dbc3cd02381565c4ab0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27269bcebd71dbc3cd02381565c4ab0b">&#9670;&#160;</a></span>workdir()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string &amp; tmk::app::tui::Model::workdir </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="tui_8hpp_source.html#l00125">125</a> of file <a class="el" href="tui_8hpp_source.html">tui.hpp</a>.</p>
 
 </div>
 </div>

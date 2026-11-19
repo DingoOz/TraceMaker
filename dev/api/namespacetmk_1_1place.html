@@ -230,6 +230,8 @@ Functions</h2></td></tr>
 <tr class="memitem:a64d05eb30b40f058ccb2a23fb8770b51" id="r_a64d05eb30b40f058ccb2a23fb8770b51"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64d05eb30b40f058ccb2a23fb8770b51">copper_conflict</a> (const <a class="el" href="structtmk_1_1place_1_1CopperShape.html">CopperShape</a> &amp;a, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pa, const <a class="el" href="structtmk_1_1place_1_1CopperShape.html">CopperShape</a> &amp;b, <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> pb)</td></tr>
 <tr class="memdesc:a64d05eb30b40f058ccb2a23fb8770b51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copper clearance violation between two copper shapes (different nets, shared layer, max of the two needs).  <br /></td></tr>
 <tr class="memitem:a6dfa516e2b14b077002ad812af70f0e6" id="r_a6dfa516e2b14b077002ad812af70f0e6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1place_1_1Violations.html">Violations</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6dfa516e2b14b077002ad812af70f0e6">check_all</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;pl)</td></tr>
+<tr class="memitem:a86c54a86066d287a340a3a457a3d30a3" id="r_a86c54a86066d287a340a3a457a3d30a3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; int, int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86c54a86066d287a340a3a457a3d30a3">keepable_pairs</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;pl)</td></tr>
+<tr class="memdesc:a86c54a86066d287a340a3a457a3d30a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">M24 (D192): the pairs of check_all whose courtyards really overlap and whose holes and copper are clear (normalised a &lt; b, sorted): the input overlaps a closure move may keep.  <br /></td></tr>
 <tr class="memitem:a6fb6f8124b9b09e9977134d7b01f331a" id="r_a6fb6f8124b9b09e9977134d7b01f331a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1place_1_1LegaliseStats.html">LegaliseStats</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fb6f8124b9b09e9977134d7b01f331a">legalise</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;pl, bool only_illegal, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> cell=0, const std::vector&lt; int &gt; *first=nullptr)</td></tr>
 <tr class="memdesc:a6fb6f8124b9b09e9977134d7b01f331a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">only_illegal</span>: parts that are already legal (inside the board, conflict-free) stay where they are and only the others are re-placed (refine mode).  <br /></td></tr>
 <tr class="memitem:ac9abcfb7c989d49b8bad7ab167fc0d07" id="r_ac9abcfb7c989d49b8bad7ab167fc0d07"><td class="memItemLeft" align="right" valign="top">std::int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9abcfb7c989d49b8bad7ab167fc0d07">hpwl_lower_bound</a> (const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;p, const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;pl, <a class="el" href="#a402b743aad4c77535fff84c378e3b4e1">RotationModel</a> <a class="el" href="namespacetmk_1_1model.html">model</a>)</td></tr>
@@ -263,6 +265,8 @@ Functions</h2></td></tr>
 <tr class="memitem:af7efc901ead74e5f4bbe876cc6a47de3" id="r_af7efc901ead74e5f4bbe876cc6a47de3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af7efc901ead74e5f4bbe876cc6a47de3">rot90</a> (<a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> p, int r)</td></tr>
 <tr class="memdesc:af7efc901ead74e5f4bbe876cc6a47de3"><td class="mdescLeft">&#160;</td><td class="mdescRight">KiCad rotation by r * 90 degrees.  <br /></td></tr>
 <tr class="memitem:ae48e6152f0da82ac8b731486a2e6e580" id="r_ae48e6152f0da82ac8b731486a2e6e580"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae48e6152f0da82ac8b731486a2e6e580">convex_hull</a> (std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> &gt; pts)</td></tr>
+<tr class="memitem:a63c0c6a3143e5b8d435107122229830b" id="r_a63c0c6a3143e5b8d435107122229830b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63c0c6a3143e5b8d435107122229830b">courtyard_outlines</a> (const std::vector&lt; const <a class="el" href="structtmk_1_1model_1_1Graphic.html">model::Graphic</a> * &gt; &amp;gs, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> tol=20 '000)</td></tr>
+<tr class="memdesc:a63c0c6a3143e5b8d435107122229830b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Closed outlines from courtyard graphics (lines and arcs chained end to end within <span class="tt">tol</span>; rectangles, polygons and circles are outlines already), as KiCad joins a courtyard layer into polygons.  <br /></td></tr>
 <tr class="memitem:a8f2bdfe150a93a5d0c40a852db3463a7" id="r_a8f2bdfe150a93a5d0c40a852db3463a7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1geom_1_1Shape.html">Shape</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8f2bdfe150a93a5d0c40a852db3463a7">inset_convex</a> (const <a class="el" href="structtmk_1_1geom_1_1Shape.html">Shape</a> &amp;s, <a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a> t)</td></tr>
 <tr class="memdesc:a8f2bdfe150a93a5d0c40a852db3463a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inner parallel polygon of a convex polygon at distance t; a point at the centroid if it is thinner than 2t.  <br /></td></tr>
 <tr class="memitem:ac259eb55bef22013df18cea70c73fd6f" id="r_ac259eb55bef22013df18cea70c73fd6f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac259eb55bef22013df18cea70c73fd6f">power_like_name</a> (const std::string &amp;name)</td></tr>
@@ -804,6 +808,30 @@ template&lt;class Touch&gt; </div>
 
 </div>
 </div>
+<a id="a63c0c6a3143e5b8d435107122229830b" name="a63c0c6a3143e5b8d435107122229830b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63c0c6a3143e5b8d435107122229830b">&#9670;&#160;</a></span>courtyard_outlines()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::vector&lt; <a class="el" href="structtmk_1_1geom_1_1Point.html">Point</a> &gt; &gt; tmk::place::courtyard_outlines </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; const <a class="el" href="structtmk_1_1model_1_1Graphic.html">model::Graphic</a> * &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>gs</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacetmk.html#acdd8166e81c544e7a3c2faf32e8147d6">Coord</a></td>          <td class="paramname"><span class="paramname"><em>tol</em></span><span class="paramdefsep"> = </span><span class="paramdefval">20&#160;'000</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Closed outlines from courtyard graphics (lines and arcs chained end to end within <span class="tt">tol</span>; rectangles, polygons and circles are outlines already), as KiCad joins a courtyard layer into polygons. </p>
+<p>Empty when a piece does not close into an outline or a curve is present. </p>
+
+</div>
+</div>
 <a id="a81687a6b9b2c628eef55bbaed5924a47" name="a81687a6b9b2c628eef55bbaed5924a47"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a81687a6b9b2c628eef55bbaed5924a47">&#9670;&#160;</a></span>default_prior_ppm()</h2>
 
@@ -1035,6 +1063,29 @@ template&lt;class Touch&gt; </div>
 </div><div class="memdoc">
 
 <p>Inner parallel polygon of a convex polygon at distance t; a point at the centroid if it is thinner than 2t. </p>
+
+</div>
+</div>
+<a id="a86c54a86066d287a340a3a457a3d30a3" name="a86c54a86066d287a340a3a457a3d30a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86c54a86066d287a340a3a457a3d30a3">&#9670;&#160;</a></span>keepable_pairs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::pair&lt; int, int &gt; &gt; tmk::place::keepable_pairs </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1place_1_1Problem.html">Problem</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>p</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1place_1_1Placement.html">Placement</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>pl</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>M24 (D192): the pairs of check_all whose courtyards really overlap and whose holes and copper are clear (normalised a &lt; b, sorted): the input overlaps a closure move may keep. </p>
 
 </div>
 </div>

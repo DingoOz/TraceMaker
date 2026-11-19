@@ -10,7 +10,11 @@ var tui_8hpp =
       [ "tmk::app::tui::Action::quit", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42adbd73c2b545209688ed794c0d5413d5a", null ],
       [ "tmk::app::tui::Action::run", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42aa53108f7543b75adbb34afc035d4cdf6", null ],
       [ "tmk::app::tui::Action::print", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42af7531e2d0ea27233ce00b5f01c5bf335", null ],
-      [ "tmk::app::tui::Action::save", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42a43781db5c40ecc39fd718685594f0956", null ]
+      [ "tmk::app::tui::Action::save", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42a43781db5c40ecc39fd718685594f0956", null ],
+      [ "tmk::app::tui::Action::background", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42ad229bbf31eaeebc7c88897732d8b932d", null ],
+      [ "tmk::app::tui::Action::jobs", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42a27a06a9e3d5e7f67eb604a39536208c9", null ],
+      [ "tmk::app::tui::Action::options", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42a93da65a9fd0004d9477aeac024e08e15", null ],
+      [ "tmk::app::tui::Action::edit", "namespacetmk_1_1app_1_1tui.html#abf394951a6cdea7485e83aa234305b42ade95b43bceeb4b998aed4aed5cef1ae7", null ]
     ] ],
     [ "tmk::app::tui::Scope", "namespacetmk_1_1app_1_1tui.html#af62e91e46c12f1d7ccab33f622156c41", [
       [ "tmk::app::tui::Scope::run", "namespacetmk_1_1app_1_1tui.html#af62e91e46c12f1d7ccab33f622156c41aa53108f7543b75adbb34afc035d4cdf6", null ],
@@ -40,13 +44,20 @@ var tui_8hpp =
       [ "tmk::app::tui::Style::tag_file", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101eac80a13ba87b4ccfc37291b52f8d87b1b", null ],
       [ "tmk::app::tui::Style::tag_run", "namespacetmk_1_1app_1_1tui.html#a9294a8294e512f4e91903f5f6fdf101eaf5d21e93ed39e31ccedf7759fccc5cd8", null ]
     ] ],
+    [ "tmk::app::tui::draw::border", "namespacetmk_1_1app_1_1tui_1_1draw.html#a0f1757fb8feb486051de0d84fc096815", null ],
+    [ "tmk::app::tui::draw::boxed", "namespacetmk_1_1app_1_1tui_1_1draw.html#a3dfe3a68bb000c6e096a8c75d9c8defb", null ],
     [ "tmk::app::tui::display_width", "namespacetmk_1_1app_1_1tui.html#a12806bdb7911be327bf348f46bf4ddaa", null ],
+    [ "tmk::app::tui::draw::fit", "namespacetmk_1_1app_1_1tui_1_1draw.html#a6630e2c27db9984cc82cb380e95898c6", null ],
+    [ "tmk::app::tui::parse_keys", "namespacetmk_1_1app_1_1tui.html#a72945e0285d10db46933375a64c56367", null ],
     [ "tmk::app::tui::parse_options", "namespacetmk_1_1app_1_1tui.html#a6ad579d1d9a5c73d87bc9dc69f0d0a0e", null ],
     [ "tmk::app::tui::run_keys", "namespacetmk_1_1app_1_1tui.html#a20aa2fa0d706efc7f338c40e0ac4587f", null ],
     [ "tmk::app::tui::run_terminal", "namespacetmk_1_1app_1_1tui.html#a4174f010511e7b92595293dc8d60d46b", null ],
     [ "tmk::app::tui::save_options", "namespacetmk_1_1app_1_1tui.html#a45269a2f7aaddb1639db85ba04dd4071", null ],
     [ "tmk::app::tui::scope_name", "namespacetmk_1_1app_1_1tui.html#ac7445048c8baac8f26a9c18747f26979", null ],
+    [ "tmk::app::tui::shell_quote", "namespacetmk_1_1app_1_1tui.html#a477c688ed43f448d4340f931cd82954b", null ],
+    [ "tmk::app::tui::draw::short_path", "namespacetmk_1_1app_1_1tui_1_1draw.html#a896d13e9fb837cbd5240797cc837c38a", null ],
     [ "tmk::app::tui::truth", "namespacetmk_1_1app_1_1tui.html#ab0e8cf2b7b4c06cf7d8a5a58e6ee5575", null ],
+    [ "tmk::app::tui::draw::wrap", "namespacetmk_1_1app_1_1tui_1_1draw.html#ad83ccff58d7dd8f9278d963829b8d482", null ],
     [ "tmk::app::tui::key::backspace", "namespacetmk_1_1app_1_1tui_1_1key.html#ad55f21ad62b26440d872f3b30091cdf6", null ],
     [ "tmk::app::tui::key::ctrl_c", "namespacetmk_1_1app_1_1tui_1_1key.html#a58c744768c32513bff573032133310aa", null ],
     [ "tmk::app::tui::key::ctrl_u", "namespacetmk_1_1app_1_1tui_1_1key.html#ae14c6714563974e2d3807ee2151922a1", null ],

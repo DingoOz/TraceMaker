@@ -1313,6 +1313,8 @@
       
         
       
+        
+      
     
     
     
@@ -1375,6 +1377,41 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../explanation/default-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How the default route decides
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -1520,6 +1557,17 @@
     <span class="md-ellipsis">
       
         2.1 Options screen and options file (2026-10-10, D89)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-jobs-screen-and-rerun-advice-2026-11-18-d193" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Jobs screen and rerun advice (2026-11-18, D193)
       
     </span>
   </a>
@@ -2407,6 +2455,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#22-jobs-screen-and-rerun-advice-2026-11-18-d193" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Jobs screen and rerun advice (2026-11-18, D193)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2691,6 +2750,76 @@ whole command (<code>p</code>), which is explicit and reproducible.</p>
 <p>Limits: <code>route</code> only (the placer and the other subcommands have no screen); POSIX terminals only; a value option's
 choices are not offered as a list, the parser's message names them when the value is wrong; writing a file drops
 comments added by hand (the screen rewrites the file from its values).</p>
+<h3 id="22-jobs-screen-and-rerun-advice-2026-11-18-d193">2.2 Jobs screen and rerun advice (2026-11-18, D193)<a class="headerlink" href="#22-jobs-screen-and-rerun-advice-2026-11-18-d193" title="Permanent link">&para;</a></h3>
+<p><code>tracemaker tui --jobs</code> (or <code>w</code> on the options screen) lists this user's <code>route</code> runs from the live status files every
+run writes (core/live.hpp, D165): running ones first, then those of the last day (<code>a</code>: the last week). The selected
+job shows:</p>
+<ul>
+<li><strong>Progress:</strong> board, stage and round, the open connections, time used and left against its <code>--time-total</code> or <code>--time</code>,
+  variants finished, and the routed count over time as a one-line history.</li>
+<li><strong>Options:</strong> its arguments as given.</li>
+<li><strong>Advice:</strong> what to change on a rerun, each with the data it rests on (<code>app::tui::advise</code>, a pure function of the
+  job). It reads the summary the run wrote with <code>--json</code>, else its log. The rules and their sources:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>When</th>
+<th>Advice</th>
+<th>Data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>finished, 2 layers, ≥ 11.5 crossings per connection, no layer option</td>
+<td><code>--try-layers 2,4</code></td>
+<td>M26 F9: no two-layer srj20 board above 11.5 routed clean; sample152 87/87 at 4 layers (<code>bench/records/m26/layers4</code>)</td>
+</tr>
+<tr>
+<td>open, no <code>--relax</code></td>
+<td><code>--relax --time-total 3600</code></td>
+<td>srj20: one-hour relax runs closed 50 of 69 boards</td>
+</tr>
+<tr>
+<td>relax, stopped at the time limit, no warm start</td>
+<td><code>--warm-pcb</code> this result, <code>-o</code> a new file</td>
+<td>keeps the routed copper</td>
+</tr>
+<tr>
+<td>relax, ≤ 20 open, no ramp</td>
+<td>warm start and <code>--ramp-from 0.06 --ramp-step 0.02 --ramp-rounds 3</code></td>
+<td>srj20: 4 of 15 boards closed; never fewer routes (D191 F8)</td>
+</tr>
+<tr>
+<td>relax, stopped at the time limit</td>
+<td><code>--seed</code> + 1, twice the time</td>
+<td>srj20: 4 more boards</td>
+</tr>
+<tr>
+<td>always</td>
+<td>the router's own <code>why_open.next</code> lines (information)</td>
+<td>doc 20 §2.5</td>
+</tr>
+<tr>
+<td>running, no gain for ≥ 10 min and ≥ a quarter of the run</td>
+<td>information: time left</td>
+<td>live history</td>
+</tr>
+<tr>
+<td>gone (file says running, process absent), failed, complete</td>
+<td>information</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>e</code> opens the job's options on the options screen, in "this run", with the job's folder as the working folder (the
+command starts with <code>cd</code>); <code>1</code>-<code>9</code> does the same with that advice applied, and the rerun's output goes to a new
+<code>-next</code> file when it starts from the job's board. On the options screen, <code>b</code> starts the command in a process of its
+own (output in <code>OUTPUT.log</code>) and shows the jobs screen. A board named on the command line is matched against earlier
+jobs, and the advice of its last finished run is shown above the command.</p>
+<p>Limits: jobs that end in their first second leave no live file (D165), so they are not listed; a run started with <code>r</code>
+records the <code>tui</code> command line in its live file and is not listed as a route job (start it with <code>b</code>); a job that read
+<code>--config</code> shows that file in the file scope, where its values win over the job's command line.</p>
 <h2 id="3-the-board-model-and-transactions">3. The board model and transactions<a class="headerlink" href="#3-the-board-model-and-transactions" title="Permanent link">&para;</a></h2>
 <p>All stages share one <strong>board model</strong> and change it only through <strong>transactions</strong> (copy-on-write
 branches, commit only if the score improves, O(changes) rollback). This is unchanged from the clean-sheet

@@ -1311,6 +1311,8 @@
       
         
       
+        
+      
     
     
     
@@ -1370,6 +1372,41 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../explanation/default-route/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How the default route decides
+  
+
+    
+  </span>
+  
+  
+    
+  
+  
+    <span class="md-status md-status--current"></span>
+  
+
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -2150,6 +2187,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="1. Where things stand">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-two-causes-told-apart-by-the-designers-layout-2026-11-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Two causes, told apart by the designer's layout (2026-11-19)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2235,6 +2289,39 @@
     <span class="md-ellipsis">
       
         2.7 A finer lattice (asked 2026-10-30)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#28-rule-fit-relax-what-the-boards-own-copper-already-breaks-d194" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.8 Rule fit: relax what the board's own copper already breaks (D194)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#29-how-deep-a-rip-up-chain-an-open-connection-needs-tracemaker-chains" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.9 How deep a rip-up chain an open connection needs (tracemaker chains)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#210-an-exact-model-for-ball-grids-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.10 An exact model for ball grids (plan)
       
     </span>
   </a>
@@ -2354,6 +2441,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="1. Where things stand">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-two-causes-told-apart-by-the-designers-layout-2026-11-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Two causes, told apart by the designer's layout (2026-11-19)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2439,6 +2543,39 @@
     <span class="md-ellipsis">
       
         2.7 A finer lattice (asked 2026-10-30)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#28-rule-fit-relax-what-the-boards-own-copper-already-breaks-d194" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.8 Rule fit: relax what the board's own copper already breaks (D194)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#29-how-deep-a-rip-up-chain-an-open-connection-needs-tracemaker-chains" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.9 How deep a rip-up chain an open connection needs (tracemaker chains)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#210-an-exact-model-for-ball-grids-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.10 An exact model for ball grids (plan)
       
     </span>
   </a>
@@ -2531,6 +2668,30 @@ impossibly thin tracks first, then thickening them, help?</p>
 <p><strong>What "100 %" can mean.</strong> Some boards cannot be completed as placed. For those, the goal is a proof and a fix the user can act on
 (§2.4), not more search. For the rest, completion is a search problem: the srj20 plateau was the lattice's wasted room, not capacity
 (doc 05 §41).</p>
+<h3 id="11-two-causes-told-apart-by-the-designers-layout-2026-11-19">1.1 Two causes, told apart by the designer's layout (2026-11-19)<a class="headerlink" href="#11-two-causes-told-apart-by-the-designers-layout-2026-11-19" title="Permanent link">&para;</a></h3>
+<p><strong>The question</strong> (2026-11-19): some boards never reach 100 %. Rules may be relaxed and compute spent. What is the cause?</p>
+<p><strong>The designer oracle</strong> (<code>bench/records/oracle-2026-11</code>). Each PCBench board has its designer's routing. Remove some nets' copper
+from it and let the router put back only those nets, everything else fixed. Two kinds of board come out:</p>
+<ul>
+<li><strong>Search boards.</strong> The nets the router leaves open from nothing all route once the rest of the board is the designer's
+  (robomezzi, poncho, sd_wav, P8000, V2X, dorkyboard, mini_mass: 0 left; MonApollo 1 of 149, LFK78 2 of 115, TCKB 3 of 45). The
+  router can draw every route. Its own other routes are in the way.</li>
+<li><strong>Modelling boards.</strong> The router cannot put back even a random quarter of the designer's own nets (d20 60 of 117 left, fifogfx,
+  Aleste, PCIE, sizif, E3, test-jig, EtherCAT, OtterPill, DronPi). The board as designed breaks something the router is held to.</li>
+</ul>
+<p><strong>What the modelling boards break:</strong>
+- <strong>Solder-mask openings that already expose another net's pad.</strong> A card-edge connector with fingers on both sides, each opening
+  both masks: every back finger lies in a front finger's opening, so no track may leave any finger (fifogfx, 40 of 104 connections
+  open on the bare board). Solder jumpers drawn as mask graphics over two pads (test-jig, PCIE).
+- <strong>Minimums the design never had.</strong> Every PCBench board is in the KiCad 5 format, with no copper-to-edge or hole clearance. KiCad
+  10's defaults (0.5 mm, 0.25 mm) hold, and project rules are ignored on a board with legacy settings. The designers' layouts break
+  them by the hundred.
+- <strong>Class values wider than the designer drew</strong> (TCKB 0.406 mm against 0.25 mm on 90 % of the track length; OtterPill's vias).
+- <strong>Pin escapes with no slack.</strong> sizif's supply pins on a 0.4 mm QFN leave with 0.2 mm tracks that fit only on the pad's centre
+  line; the lattice misses it. One rule waived at a time shows the minimum track width (0.2 → 0.1 mm: 13 → 2 open), not the edge or
+  hole clearance, is what frees them. This one is a lattice loss, not a broken rule.</p>
+<p><strong>How much is which</strong> (<code>tracemaker chains</code>, §2.9): of the 261 open connections of the best earlier results on 21 boards, 141 do not
+route with every other route lifted (modelling), and 120 have blockers (search).</p>
 <h2 id="2-the-candidates">2. The candidates<a class="headerlink" href="#2-the-candidates" title="Permanent link">&para;</a></h2>
 <h3 id="21-a-full-relax-late-run-cheapest">2.1 A full <code>--relax-late</code> run (cheapest)<a class="headerlink" href="#21-a-full-relax-late-run-cheapest" title="Permanent link">&para;</a></h3>
 <p><code>--relax --relax-late</code>: plain rounds under the board's rules first, relax only when they stall, one budget, best legal result kept. A
@@ -2681,6 +2842,135 @@ is: (width + clearance) / 6, 25-100 µm (doc 05 §25). <code>route --pitch-scale
 11 failing tier B boards at 20 M work: 2,051 routed at the automatic pitch, 2,040 at 0.67 and 2,041 at 0.5 (2 better, 5 worse each),
 at 34 % and 117 % more CPU (<code>bench/records/complete-routing/pitch</code>). A finer lattice spends the budget on more steps per path. The
 automatic pitch stays; the room it wastes is recovered off-lattice (relax and the legaliser).</p>
+<h3 id="28-rule-fit-relax-what-the-boards-own-copper-already-breaks-d194">2.8 Rule fit: relax what the board's own copper already breaks (D194)<a class="headerlink" href="#28-rule-fit-relax-what-the-boards-own-copper-already-breaks-d194" title="Permanent link">&para;</a></h3>
+<p><code>route --fit-rules</code> (off by default; <code>src/drc/fit_rules.{hpp,cpp}</code>, <code>tracemaker fit-rules BOARD</code> prints the fit without routing).</p>
+<ul>
+<li><strong>Minimums.</strong> The DRC runs on a reference board: the input, or with <code>--fit-rules-from BOARD</code> an earlier layout of it. For
+  copper-to-edge clearance, hole clearance, minimum track width, annular ring, via diameter and drill, the rule comes down to the
+  smallest value the reference's violations measure. The class clearance comes down to the low decile of the measured gaps, never
+  under <code>--fit-clearance-floor</code> (0.09 mm): among thousands of pairs a few are slips. Fewer than three violations of a kind fit
+  nothing.</li>
+<li><strong>Class values</strong> (with a reference that has tracks): each class's track width comes down to the width that carries half of its
+  track length on the reference, and its via to the reference's most used via of that class, if legal.</li>
+<li><strong>Mask openings.</strong> A pad's solder-mask opening that already exposes another net's pad copper on that side no longer keeps tracks
+  out (<code>Obstacles::set_soft_bridged_masks</code>). When openings drawn as graphics lie over pads, <code>--soft-mask-graphics</code> (D127) is turned
+  on.</li>
+<li><strong>It only relaxes, and says so.</strong> Every change is logged and written to the summary (<code>fitted_rules</code>). The output breaks the board's
+  stated rules where the fit relaxed them, as the board or its earlier layout already did; KiCad's DRC reports those.</li>
+</ul>
+<p><strong>Measured</strong> on the 33 boards from nothing, 20 M work (<code>bench/records/oracle-2026-11</code> §4):</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">Open</th>
+<th style="text-align: right;">Complete</th>
+<th>Better / worse boards</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>base</td>
+<td style="text-align: right;">890</td>
+<td style="text-align: right;">3</td>
+<td></td>
+</tr>
+<tr>
+<td><code>--fit-rules</code> (the board's own pads)</td>
+<td style="text-align: right;">771</td>
+<td style="text-align: right;">6</td>
+<td>10 / 5</td>
+</tr>
+<tr>
+<td><code>--fit-rules-from</code> the designer's layout</td>
+<td style="text-align: right;">734</td>
+<td style="text-align: right;">8</td>
+<td>15 / 3</td>
+</tr>
+<tr>
+<td>best of base and the fit to the designer's layout</td>
+<td style="text-align: right;">700</td>
+<td style="text-align: right;">9</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>fifogfx (40 → 0), test-jig (32 → 0), PCIE (30 → 0), ErgoDone (2 → 0), sd_wav (2 → 0) and, with the designer's layout, OtterPill
+(11 → 0) complete; no earlier run had completed any of them. KiCad finds 0 unconnected and no short on each. The mask openings
+close four of them and the class values OtterPill. The clearance helps in sum (838 against 852 open without it, before the mask
+part) and hurts single boards (LeeChee 5 → 22, 58r-mxalps 0 → 5): a lower clearance makes the lattice finer (§2.7). poncho loses
+12 with 110 pad openings soft; why was not looked into. The fit is therefore a rung that keeps the better result, not a default.</p>
+<ul>
+<li><strong>Open:</strong> the copper-to-edge value is one number for the board, so fingers on the edge let tracks reach the edge anywhere
+  (<code>--fit-edge-floor</code> bounds it). An escape with no slack (§1.1) is not a rule and is not fitted.</li>
+</ul>
+<h3 id="29-how-deep-a-rip-up-chain-an-open-connection-needs-tracemaker-chains">2.9 How deep a rip-up chain an open connection needs (<code>tracemaker chains</code>)<a class="headerlink" href="#29-how-deep-a-rip-up-chain-an-open-connection-needs-tracemaker-chains" title="Permanent link">&para;</a></h3>
+<p>A measurement (<code>src/app/chains.{hpp,cpp}</code>). On a routed board, each open connection alone, the rest fixed:
+1. <strong>Blockers:</strong> the nets the router's last rejected route would have ripped, or the nets its route on the board without other
+   routes touches. The set is shrunk: a net goes back if the connection still routes.
+2. <strong>Joint:</strong> the blockers are lifted within 1 mm of the connection's route and the router routes the connection and the blockers
+   together.
+3. <strong>Chain:</strong> failing that, the connection goes in and is held, the blockers route again, and a blocker that cannot becomes the
+   next connection, to depth 4 (an ejection chain; Shin and Sangiovanni-Vincentelli, "A detailed router based on incremental
+   routing modifications: Mighty", IEEE TCAD 6(6), 1987).</p>
+<p>Every routing is the product router's, so a chain that closes is a legal board with one more connection.</p>
+<p><strong>Measured</strong> (21 boards, 261 open connections; <code>bench/records/oracle-2026-11</code> §5):</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">Connections</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>no route with every other route lifted</td>
+<td style="text-align: right;">141</td>
+</tr>
+<tr>
+<td>with blockers</td>
+<td style="text-align: right;">120</td>
+</tr>
+<tr>
+<td>of those: one blocking net / two / three or more</td>
+<td style="text-align: right;">62 / 27 / 31</td>
+</tr>
+<tr>
+<td>closed joint</td>
+<td style="text-align: right;">17</td>
+</tr>
+<tr>
+<td>closed by a chain, depth 1 / 2 / 3 / 4</td>
+<td style="text-align: right;">9 / 7 / 4 / 4</td>
+</tr>
+<tr>
+<td>not closed (still open at depth 4: 61; a lifted net left with no way: 16; too many nets: 2)</td>
+<td style="text-align: right;">79</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>The median open connection is kept out by one net, and a third of them (41 of 120) close.</li>
+<li>Routing the connection and its blockers together is the step that works; fixing the connection first loses (10 of 43 closed
+  on the 15 boards measured that way).</li>
+<li><strong>Not yet a router step.</strong> A joint re-route of each open connection with its minimal blockers is a candidate last step of the
+  default route. By the M22 rule it has to beat the same run with equal extra budget before it is adopted.</li>
+</ul>
+<h3 id="210-an-exact-model-for-ball-grids-plan">2.10 An exact model for ball grids (plan)<a class="headerlink" href="#210-an-exact-model-for-ball-grids-plan" title="Permanent link">&para;</a></h3>
+<p>Under a 0.8 mm ball grid with the srj20 rules a gap between two balls holds one track, and an interstice holds a via or a track
+crossing, not both (doc 05 §67: a cell's diagonal is 0.622 mm; a via and a track need 0.72 mm). The fan-out is then a small
+discrete problem: about (n + 1)² interstices on two layers for about 90 nets. Negotiation finds a solution only by chance, and the
+M26 candidates (reservations, costs, lanes, orders) all lost to it.</p>
+<ul>
+<li><strong>Model:</strong> one variable per net, interstice and layer (CP-SAT, or SAT with reachability as in Bayless, Hoos and Hu, "Scalable,
+  high-quality, SAT-based multi-layer escape routing", ICCAD 2016); capacity one per gap and per interstice; a via closes its
+  interstice on both layers. Built as a relaxation of the real board (every real route maps to a model route), so "no solution" is
+  a proof that two layers cannot work, and the answer to the user is to add layers (sample152 routes in 22 s on four).</li>
+<li><strong>Use:</strong> a solution gives via sites and gap sequences to the router as a guide for the fan-out; the rest is routed as today.</li>
+<li><strong>Smallest experiment:</strong> a Python prototype on one never-clean and one clean srj20 board.</li>
+<li><strong>Not built.</strong> The literature search found no published result that closes the last 1-3 % of a board against an equal-budget
+  negotiated router; this is a hypothesis.</li>
+</ul>
 <h2 id="3-order">3. Order<a class="headerlink" href="#3-order" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>§2.1 relax-late:</strong> cheap, and it answers a question left open.</li>
@@ -2758,6 +3048,24 @@ automatic pitch stays; the room it wastes is recovered off-lattice (relax and th
 <td>§2.7 finer lattice</td>
 <td>2026-10-30</td>
 <td>0.67 and 0.5 of the automatic pitch: −11 and −10 of 2,262 on 11 tier B boards, CPU +34 % and +117 %. Not adopted</td>
+<td></td>
+</tr>
+<tr>
+<td>§1.1 designer oracle</td>
+<td>2026-11-19</td>
+<td>two causes: search boards (the router's open nets route in the designer's layout) and modelling boards (the designer's own nets do not go back)</td>
+<td></td>
+</tr>
+<tr>
+<td>§2.8 rule fit (<code>--fit-rules</code>, opt-in)</td>
+<td>2026-11-19</td>
+<td>33 boards from nothing: 890 → 771 open, 3 → 6 complete (own pads); 734 and 8 with the designer's layout; six boards complete for the first time; 3-5 boards worse</td>
+<td>D194</td>
+</tr>
+<tr>
+<td>§2.9 chain measurement (<code>tracemaker chains</code>)</td>
+<td>2026-11-19</td>
+<td>261 open: 141 route on no board; of 120 with blockers 62 have one, 41 close (17 joint)</td>
 <td></td>
 </tr>
 </tbody>

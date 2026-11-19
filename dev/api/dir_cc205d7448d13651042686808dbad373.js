@@ -4,6 +4,7 @@ var dir_cc205d7448d13651042686808dbad373 =
     [ "copper.hpp", "copper_8hpp.html", "copper_8hpp" ],
     [ "coupling.hpp", "coupling_8hpp.html", "coupling_8hpp" ],
     [ "drc.hpp", "drc_8hpp.html", "drc_8hpp" ],
+    [ "fit_rules.hpp", "fit__rules_8hpp.html", "fit__rules_8hpp" ],
     [ "length.hpp", "length_8hpp.html", "length_8hpp" ],
     [ "refill.hpp", "refill_8hpp.html", "refill_8hpp" ],
     [ "rule_engine.hpp", "rule__engine_8hpp.html", "rule__engine_8hpp" ],

@@ -5,6 +5,8 @@ var structtmk_1_1place_1_1ClosureOptions =
     [ "corridor", "structtmk_1_1place_1_1ClosureOptions.html#a3da86c6c248355b70f6602003786cd68", null ],
     [ "disp_cost", "structtmk_1_1place_1_1ClosureOptions.html#a91deb5dd8c5f3fd389233d0ce111da46", null ],
     [ "explore", "structtmk_1_1place_1_1ClosureOptions.html#acb2ccfa26479e8ca6a78e9bb7433767f", null ],
+    [ "input_pairs", "structtmk_1_1place_1_1ClosureOptions.html#a62024cf3d7ab7e8ad38424149f15bb2c", null ],
+    [ "keep_overlaps", "structtmk_1_1place_1_1ClosureOptions.html#a41795667c43ae4303d57be7c61e6266f", null ],
     [ "log", "structtmk_1_1place_1_1ClosureOptions.html#a4abd570f937b179d0e6970076e6fa7c2", null ],
     [ "max_routes", "structtmk_1_1place_1_1ClosureOptions.html#afc81a768835541aa3a94d746bc85341e", null ],
     [ "on_accept", "structtmk_1_1place_1_1ClosureOptions.html#abfa67ffe46ba2ea09a402dc1a26179e5", null ],

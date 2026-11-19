@@ -8,7 +8,7 @@ var searchData=
   ['bare_5fpart_5',['bare_part',['../structtmk_1_1drc_1_1CopperItem.html#af1649890a9bfc0c8f64cc55dd53ca6a8',1,'tmk::drc::CopperItem']]],
   ['base_6',['base',['../structtmk_1_1drc_1_1DpSuffix.html#a798e77c90c84fb983ca0575fea40e363',1,'tmk::drc::DpSuffix']]],
   ['baseline_5fonly_7',['baseline_only',['../structtmk_1_1app_1_1CausesOptions.html#ab8c89d3131774a904ef5ce00a227c118',1,'tmk::app::CausesOptions']]],
-  ['baseline_5fwork_8',['baseline_work',['../structtmk_1_1app_1_1CausesOptions.html#a6fa8d2e181d530c73d36bc803dc8be59',1,'tmk::app::CausesOptions']]],
+  ['baseline_5fwork_8',['baseline_work',['../structtmk_1_1app_1_1CausesOptions.html#a6fa8d2e181d530c73d36bc803dc8be59',1,'tmk::app::CausesOptions::baseline_work'],['../structtmk_1_1app_1_1ChainsOptions.html#af7f313d52c93ab2a141fdf25ff69e229',1,'tmk::app::ChainsOptions::baseline_work']]],
   ['before_9',['before',['../structtmk_1_1passes_1_1WidenNet.html#a6f2658c961a251c22ad4659cdb236547',1,'tmk::passes::WidenNet::before'],['../structtmk_1_1place_1_1ClosureTrial.html#a99ec18401c71cc1d2c75f999c53ba54e',1,'tmk::place::ClosureTrial::before'],['../structtmk_1_1place_1_1PlaceReport.html#a4604d7cddd45021dd3e6c965f2ffbb8e',1,'tmk::place::PlaceReport::before']]],
   ['begin_10',['begin',['../structtmk_1_1sexpr_1_1Node.html#aed6de270a409d67cc2f9913bbbd6a5c4',1,'tmk::sexpr::Node']]],
   ['bend0_11',['bend0',['../structtmk_1_1route_1_1FanoutHeadOptions.html#aaf5913b859bfd8a1d73f407b2ddeca53',1,'tmk::route::FanoutHeadOptions']]],
