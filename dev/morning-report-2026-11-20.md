@@ -86,12 +86,12 @@ A95-A105 in `dev/assumptions.md`. The ones you may want to overrule:
 
 ## What is left on these boards
 
-- **d20, 129 open.** Layers change nothing on top: 27 pins are walled in by tracks of the earlier rungs. The focused repair was not
-  measured on it.
-- **Boards one to three short** (robomezzi, dorkyboard, PCIE, TCKB, V2X, LeeChee on top, Teensy_test, DronPi): each open pin sits behind a
-  neighbour's track that a repair window lifts and the router lays back the same way.
-- **Order.** PCIE completes fitted from nothing and not on top; OtterPill only from nothing with the designer's layout. The ladder has the
-  on-top order only.
+- **d20, 127 open** after `route --finish` (142 at base). Layers change nothing on top: 27 pins are walled in by tracks of the earlier
+  rungs.
+- **Still short after `route --finish` at 20 M:** robomezzi 1 (also on the stronger ladder), TCKB 3, OtterPill 3, motor 3, E3 4, V2X 4,
+  poncho 6, LFK78 8, CoreOne 10, sizif 10, MonApollo 12, EtherCAT 16; mini_mass 5 when it was stopped. The stronger ladder was only run on
+  the eight boards one or two short; these may gain from it too.
+- **OtterPill** completes only when the rules are fitted from the designer's layout, from nothing.
 - **Memory.** mini_mass at six layers: one variant on one thread reaches a 30 GB cap in 34 s, before it routes anything
   (`std::bad_alloc`). So it is the size of the search state for that board and layer count (no leak found), times eight variants. The
   router has no check of memory before it starts; a user's machine would be exhausted the same way.
