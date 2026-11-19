@@ -1400,6 +1400,14 @@ static int run_main(int argc, char** argv) {
   route->add_option("--copper-layers", r_job.copper_layers, "Route with this many copper layers (even): inner layers are added, or empty ones removed, in the output too")
       ->check(CLI::Range(2, 32));
   std::vector<int> r_try_layers;
+  bool r_finish = false;
+  std::vector<int> r_finish_layers;
+  route->add_flag("--finish", r_finish,
+                  "Rungs towards a complete board, each on top of the one before (what is routed stays): the run as given; then the open connections "
+                  "with the rules fitted to the board's own copper (--fit-rules, or --fit-rules-from when given) and repair windows; then one rung per "
+                  "--finish-layers entry. Stops at the first rung with nothing open; the summary's \"finish\" lists what each rung relaxed (doc 20 §2.12)");
+  route->add_option("--finish-layers", r_finish_layers, "With --finish: later rungs that add this many copper layers to the board's count (e.g. 2,4); none by default")
+      ->delimiter(',');
   route->add_option("--try-layers", r_try_layers,
                     "Layer-count advisor: route with each count (e.g. 2,4,6), fewest first, stop at the first that completes and write that board; "
                     "the summary's \"layers\" lists every count tried")
@@ -1887,6 +1895,14 @@ static int run_main(int argc, char** argv) {
         if (o->get_name() == "--view-token") v = "(not recorded)";  // it opens the viewer to whoever reads a shared summary or report
         if (o->get_name() == "--view-embed") v = "(not recorded)";  // the pages allowed to embed the viewer: the machine's addresses
         job.options_given.push_back({{"name", o->get_name()}, {"value", v.empty() ? std::string("on") : v}});
+      }
+      if (r_finish) {
+        if (!r_try_layers.empty()) throw std::invalid_argument("--finish and --try-layers: give one (--finish-layers adds layers as later rungs)");
+        job.log = [](const std::string& line) {
+          std::printf("%s\n", line.c_str());
+          std::fflush(stdout);
+        };
+        return tmk::app::run_finish(std::move(job), r_finish_layers).exit_code();
       }
       if (!r_try_layers.empty()) {
         if (job.copper_layers > 0) throw std::invalid_argument("--try-layers and --copper-layers: give one");

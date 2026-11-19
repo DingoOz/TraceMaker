@@ -8,7 +8,10 @@
 #include <fstream>
 #include <string>
 
+#include <nlohmann/json.hpp>
+
 #include "app/chains.hpp"
+#include "app/route_job.hpp"
 #include "drc/fit_rules.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
@@ -182,7 +185,8 @@ TEST_CASE("chains: a connection closed by lifting one net is depth 1", "[chains]
 
 // A card-edge connector with fingers on both sides, each opening both masks (PCBench fifogfx_c64cart): the back finger of net B lies
 // in the front finger's opening and the front finger of net A in the back finger's, so no track of either may leave its own pad.
-TEST_CASE("rule fit: a mask opening that already exposes another net's pad does not keep tracks out", "[fit][route]") {
+namespace {
+std::string mask_board() {
   const std::string text = R"((kicad_pcb (version 20171130) (host pcbnew 5.1.6)
   (general (thickness 1.6))
   (layers
@@ -210,6 +214,12 @@ TEST_CASE("rule fit: a mask opening that already exposes another net's pad does 
   (gr_line (start 0 20) (end 0 0) (layer Edge.Cuts) (width 0.1))
 )
 )";
+  return text;
+}
+}  // namespace
+
+TEST_CASE("rule fit: a mask opening that already exposes another net's pad does not keep tracks out", "[fit][route]") {
+  const std::string text = mask_board();
   TempDir d;
   const fs::path p = d.dir / "edge.kicad_pcb";
   std::ofstream(p) << text;
@@ -226,4 +236,32 @@ TEST_CASE("rule fit: a mask opening that already exposes another net's pad does 
   o.soft_bridged_masks = true;
   const auto fitted = route::Router(lb.board, rules, o).run();
   CHECK(fitted.routed == 2);
+}
+
+TEST_CASE("route --finish: the fitted-rules rung routes what the run as given left open, on top of it", "[fit][route][finish]") {
+  TempDir d;
+  const fs::path p = d.dir / "edge.kicad_pcb", out = d.dir / "out.kicad_pcb";
+  std::ofstream(p) << mask_board();
+  app::RouteJob job;
+  job.in = p.string();
+  job.out = out.string();
+  job.threads = 2;
+  job.variants = 2;
+  job.opt.work_budget = 300'000;
+  job.opt.gpu_device = -1;
+  const auto r = app::run_finish(job, {});
+  CHECK(r.result.routed == r.result.connections);
+  REQUIRE(r.summary.contains("finish"));
+  const auto& f = r.summary["finish"];
+  CHECK(f["complete"] == true);
+  REQUIRE(f["rungs"].size() == 2);
+  CHECK(f["rungs"][0]["open_after"] == 2);
+  CHECK(f["rungs"][1]["open_after"] == 0);
+  CHECK(f["rungs"][1].contains("fitted_rules"));
+  CHECK(fs::exists(out));
+  int files = 0;
+  for (const auto& e : fs::directory_iterator(d.dir)) files += e.path().string().find(".finish-") != std::string::npos;
+  CHECK(files == 0);  // the rungs' boards are gone
+  job.out.clear();
+  CHECK_THROWS(app::run_finish(job, {}));
 }

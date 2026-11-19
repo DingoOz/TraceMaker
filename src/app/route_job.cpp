@@ -2169,4 +2169,90 @@ RouteJobResult run_layer_advisor(RouteJob job, std::vector<int> counts) {
   return std::move(*best);
 }
 
+RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers) {
+  namespace fs = std::filesystem;
+  auto log = [&](const std::string& line) {
+    if (job.log) job.log(line);
+  };
+  if (job.out.empty()) throw std::invalid_argument("--finish: needs --output (each rung starts from the board the rung before wrote)");
+  if (job.copper_layers > 0 && !extra_layers.empty()) throw std::invalid_argument("--finish-layers and --copper-layers: give one");
+  std::sort(extra_layers.begin(), extra_layers.end());
+  extra_layers.erase(std::unique(extra_layers.begin(), extra_layers.end()), extra_layers.end());
+  const std::string final_out = job.out, final_json = job.json_out, final_items = job.items_out;
+  const fs::path stem = fs::path(final_out).replace_extension();
+  auto tmp_of = [&](int k) { return stem.string() + fmt(".finish-%d.kicad_pcb", k); };
+  auto remove_tmp = [&](const std::string& pcb) {
+    if (pcb.empty()) return;
+    for (const char* ext : {".kicad_pcb", ".kicad_pro", ".kicad_prl", ".kicad_dru"}) fs::remove(fs::path(pcb).replace_extension(ext));
+  };
+  const int layers0 = io::read_board_file(job.in).board.copper_count();
+
+  struct Rung {
+    std::string name;
+    bool fit = false;
+    int layers = 0;  // 0 = as the board
+  };
+  std::vector<Rung> rungs{{"as given", false, 0}, {"fitted rules", true, 0}};
+  for (const int add : extra_layers)
+    if (add > 0) rungs.push_back({fmt("fitted rules, %d copper layers", layers0 + add), true, layers0 + add});
+
+  nlohmann::json rows = nlohmann::json::array();
+  std::optional<RouteJobResult> best;
+  std::string best_tmp;
+  int best_open = 0;
+  for (std::size_t k = 0; k < rungs.size(); ++k) {
+    const Rung& rg = rungs[k];
+    RouteJob j = job;
+    j.out = tmp_of(static_cast<int>(k));
+    j.json_out.clear();
+    j.items_out.clear();
+    j.hold = false;
+    if (best) {
+      j.in = best_tmp;
+      j.reroute = false;  // what the rungs before routed stays
+      j.warm_pcb.clear();
+    }
+    if (rg.fit) {
+      // Fitted to the board as given, never to the copper an earlier rung laid: the router's own tracks are not evidence of what the designer accepted.
+      if (j.fit_rules_from.empty()) j.fit_rules_from = job.in;
+      j.repair = "on";
+      j.repair_opt.select = "both";
+    }
+    if (rg.layers > 0) j.copper_layers = rg.layers;
+    j.log = [&, k](const std::string& line) { log(fmt("[rung %zu] ", k + 1) + line); };
+    log(fmt("finish: rung %zu of %zu: %s%s", k + 1, rungs.size(), rg.name.c_str(), best ? fmt(" (%d open)", best_open).c_str() : ""));
+    RouteJobResult r = run_route_job(std::move(j));
+    const int open = r.unconnected_after_refill >= 0 ? r.unconnected_after_refill : r.result.connections - r.result.routed;
+    const bool kept = !best || open < best_open;
+    nlohmann::json row = {{"rung", rg.name}, {"open_before", best ? nlohmann::json(best_open) : nlohmann::json()}, {"open_after", open}, {"kept", kept},
+                          {"copper_layers", rg.layers > 0 ? rg.layers : (best ? best->summary.value("copper_layers", layers0) : layers0)},
+                          {"seconds", r.summary.value("seconds", 0.0)}};
+    if (r.summary.contains("fitted_rules")) row["fitted_rules"] = r.summary["fitted_rules"];
+    if (r.summary.contains("repair")) row["repair"] = {{"open_before", r.summary["repair"].value("open_before", 0)}, {"open_after", r.summary["repair"].value("open_after", 0)}};
+    rows.push_back(row);
+    log(fmt("finish: rung %zu (%s): %d open%s", k + 1, rg.name.c_str(), open, kept ? "" : " (no better: discarded)"));
+    const std::string tmp = tmp_of(static_cast<int>(k));
+    if (kept) {
+      remove_tmp(best_tmp);
+      best = std::move(r);
+      best_tmp = tmp;
+      best_open = open;
+    } else {
+      remove_tmp(tmp);
+    }
+    if (best_open == 0) break;
+  }
+  fs::rename(best_tmp, final_out);
+  remove_tmp(best_tmp);
+  copy_project_files(job.in, final_out);
+  log(best_open == 0 ? fmt("finish: complete after %zu rung%s; written to %s", rows.size(), rows.size() == 1 ? "" : "s", final_out.c_str())
+                     : fmt("finish: %d open after every rung; written to %s", best_open, final_out.c_str()));
+  best->summary["finish"] = {{"rungs", rows}, {"complete", best_open == 0}, {"open", best_open}};
+  best->summary["run"]["output"] = final_out;
+  best->summary["run"]["input"] = job.in;
+  if (!final_items.empty()) std::ofstream(final_items) << best->items.dump();
+  if (!final_json.empty()) std::ofstream(final_json) << best->summary.dump(1);
+  return std::move(*best);
+}
+
 }  // namespace tmk::app
