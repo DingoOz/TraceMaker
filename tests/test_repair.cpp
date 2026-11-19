@@ -157,3 +157,37 @@ TEST_CASE("repair windows: locked copper is never lifted", "[repair]") {
   CHECK(rep.steps.empty());  // nothing in any window may be lifted
   CHECK(rep.open_after == 1);
 }
+
+TEST_CASE("repair along the bare-board route: the copper the route crosses is lifted, however far from the ends", "[repair]") {
+  const auto l = load(false);
+  const auto plain = route::Router(l.board, l.rules, options()).run();
+  REQUIRE(plain.routed == 0);
+  passes::RepairOptions ro;
+  ro.select = "route";
+  ro.radii_mm = {0.5};  // the end windows would not reach the ring; they are not used
+  const auto rep = passes::repair_open(l.board, l.rules, plain, options(), ro);
+  CHECK(rep.open_after == 0);
+  CHECK(rep.no_bare_route == 0);
+  CHECK(rep.ripped_tracks.size() == 5);
+  CHECK(errors(l.board, l.rules, rep) == 0);
+  REQUIRE(rep.steps.size() == 1);  // the route crosses the ring: the first distance already lifts it
+  CHECK(rep.steps.front().along_route);
+  CHECK(rep.steps.front().radius_mm == 0.2);
+  CHECK(rep.summary().contains("no_bare_route"));
+  const auto again = passes::repair_open(l.board, l.rules, plain, options(), ro);
+  CHECK(again.work == rep.work);
+  CHECK(again.ripped_tracks == rep.ripped_tracks);
+}
+
+TEST_CASE("repair along the bare-board route: a connection that locked copper closes in is counted and left alone", "[repair]") {
+  const auto l = load(true);
+  const auto plain = route::Router(l.board, l.rules, options()).run();
+  passes::RepairOptions ro;
+  ro.select = "route";
+  const auto rep = passes::repair_open(l.board, l.rules, plain, options(), ro);
+  CHECK(!rep.changed);
+  CHECK(rep.steps.empty());
+  CHECK(rep.no_bare_route == 1);
+  CHECK(rep.open_after == 1);
+  CHECK(!passes::repair_open(l.board, l.rules, plain, options(), passes::RepairOptions{}).summary().contains("no_bare_route"));
+}

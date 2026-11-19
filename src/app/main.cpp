@@ -1338,6 +1338,12 @@ static int run_main(int argc, char** argv) {
   route->add_option("--repair-work", r_job.repair_opt.step_work, "Repair: work budget of each attempt in search expansions (default 3000000)");
   route->add_option("--repair-branches", r_job.repair_opt.max_branches, "Repair: a window that would lift more branches (the tracks and vias of one net between two pads or junctions) stops growing (default 64)");
   route->add_option("--repair-conns", r_job.repair_opt.max_conns, "Repair: open connections tried at most (default 64)");
+  route->add_option("--repair-select", r_job.repair_opt.select,
+                    "Repair: where the copper to lift is looked for. ends (default): round the two ends of the open connection; route: along the route "
+                    "the connection takes with the other nets' unlocked copper off the board (one more routing run per connection); both: route, then ends")
+      ->check(CLI::IsMember({"ends", "route", "both"}));
+  route->add_option("--repair-route-mm", r_job.repair_opt.route_radii_mm, "Repair, --repair-select route or both: distances from that route, tried in turn (default 0.2,1)")
+      ->delimiter(',');
   route->add_option("--rescue-mode", r_job.rescue_mode,
                     "How the rescue routes again with relax: warm (from the plain run's routes), fresh (from nothing) or both (warm, then fresh "
                     "while connections are open; each pass on its own budget, kept only if better; default both; doc 05 §71)")
