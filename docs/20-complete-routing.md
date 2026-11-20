@@ -330,6 +330,9 @@ boards go from 739 to 92. Aleste-520EX completes in 40 minutes (250 → 182 → 
 With three times the budget, the from-nothing rung and eight repair variants (`--work 60000000 --finish --finish-fresh --repair-variants 8
 --finish-masks --finish-layers 2,4`) seven of the eight boards that ended one or two short complete at their own layer count, DronPi,
 Teensy_test_layout and dorkyboard for the first time: **19 of the 33 boards now have a complete output**, KiCad 0 unconnected on each.
+The same command on the eleven boards the 20 M ladder left 3 to 16 short (2026-11-20) completes three more with KiCad 0 unconnected: CoreOne and
+TCKB at their own layer count, V2X with two more layers: **22 of 33**. LFK78 ends with 0 open by the router's count at six layers, but KiCad
+finds 2 unconnected items on it, so it is not counted. The other seven end 1 to 6 short.
 
 What it does not do:
 

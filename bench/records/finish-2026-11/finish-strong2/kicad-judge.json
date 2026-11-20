@@ -1,0 +1,26 @@
+{
+ "TCKB_Kicad_TCKB": {
+  "unconnected": 0,
+  "added": {
+   "clearance": 499,
+   "copper_edge_clearance": 11,
+   "hole_clearance": 199
+  }
+ },
+ "rvi_v2x_hardware_V2X": {
+  "unconnected": 0,
+  "added": {
+   "copper_edge_clearance": 9
+  }
+ },
+ "CoreOne-xCORE200-Original_CoreOne": {
+  "unconnected": 0,
+  "added": {}
+ },
+ "mechkeys_LFK78": {
+  "unconnected": 2,
+  "added": {
+   "solder_mask_bridge": 15
+  }
+ }
+}

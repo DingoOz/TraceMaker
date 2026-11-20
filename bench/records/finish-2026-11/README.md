@@ -208,6 +208,32 @@ Seven of the eight complete, all at the board's own layer count; DronPi, Teensy_
 With them **19 of the 33 boards have a complete output** (3 before). Teensy_test_layout's output has 499 clearance violations more than the unrouted
 board in KiCad: its fitted class clearance is what let it complete.
 
+### The stronger ladder on the eleven boards still short (`finish-strong2/results.jsonl`, 2026-11-20)
+
+The same command on the boards the 20 M ladder left 3 to 16 short (d20 and mini_mass left out), three at a time, each job with an address-space
+limit of 45 GB (`scripts/finishrun4.py`). No job reached the limit. "+2 layers" and "+4 layers" are over the board's own count; (x) is a rung
+that did not end with fewer open and was dropped.
+
+| Board | own layers | as given (60 M) | fitted rules | from the board as given | + pad masks | + 2 layers | + 4 layers | final | KiCad unconnected | seconds |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| TCKB_Kicad_TCKB | 2 | 21 | 5 | 1 | 0 | – | – | 0 | 0 | 1816 |
+| rvi_v2x_hardware_V2X | 2 | 9 | 3 | 3 (x) | 3 (x) | 0 | – | 0 | 0 | 1611 |
+| CoreOne-xCORE200-Original_CoreOne | 4 | 2 | 0 | – | – | – | – | 0 | 0 | 655 |
+| mechkeys_LFK78 | 2 | 32 | 18 | 19 (x) | 15 | 3 | 0 | 0 | 2 | 5892 |
+| MonApollo_analog-board | 2 | 39 | 15 | 14 | 12 | 1 | 1 (x) | 1 |  | 4956 |
+| kitspace_OtterPill | 2 | 8 | 5 | 6 (x) | 5 (x) | 2 | 2 (x) | 2 |  | 1222 |
+| motor-high-current-sensors_CurrentSensorPCB_line | 2 | 5 | 3 | 5 (x) | 3 (x) | 3 (x) | 3 (x) | 3 |  | 877 |
+| zx-sizif-512-ext_sizif512ext | 2 | 44 | 26 | 21 | 6 | 3 | 3 (x) | 3 |  | 3311 |
+| Hardware_Playground_E3_Pcb_rev0.3 | 2 | 19 | 16 | 18 (x) | 16 (x) | 4 | 4 (x) | 4 |  | 1410 |
+| poncho_fpga_fpga-dongle | 2 | 32 | 14 | 11 | 9 | 5 | 5 (x) | 5 |  | 3138 |
+| EtherCAT_shield_v1_EtherCAT_shield_v1 | 2 | 26 | 11 | 8 | 7 | 6 | 6 (x) | 6 |  | 1900 |
+
+Four of the eleven end with 0 open by the router's count: CoreOne and TCKB at their own layer count, V2X with two more layers, LFK78 with
+four more. KiCad 10.0.6 finds 0 unconnected on CoreOne, TCKB and V2X, and **2 unconnected on LFK78** (not counted as complete; not looked
+into yet). With the three, **22 of the 33 boards have a complete output**. TCKB's output has 499 clearance and 199 hole-clearance violations
+more than the unrouted board in KiCad (its fitted rules are what let it complete); V2X adds 9 copper-to-edge, CoreOne adds none. The other
+seven end 1 to 6 short (MonApollo 1, OtterPill 2, motor 3, sizif 3, E3 4, poncho 5, EtherCAT 6), against 3 to 16 after the 20 M ladder.
+
 ### The from-nothing rung (`--finish --finish-fresh --finish-masks`, 20 M)
 
 | Board | as given | fitted rules, on top | fitted rules, from the board as given | + pad masks | final |
