@@ -1,0 +1,89 @@
+{
+ "applied": {
+  "chains_closed": 0,
+  "islands_cut": 0,
+  "open_after": 4,
+  "open_before": 4,
+  "output": "",
+  "written": false
+ },
+ "baseline": {
+  "connections": 4,
+  "open": 4,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "bench/results/finish-2026-11-19/strong2/Hardware_Playground_E3_Pcb_rev0.3/out.kicad_pcb",
+ "connections": [
+  {
+   "a": "D3.2",
+   "b": "LED4.2",
+   "blockers_from": "",
+   "closed": false,
+   "depth": 0,
+   "fail": "no_path_bare",
+   "first_blockers": -1,
+   "first_nets": [],
+   "joint": false,
+   "net": "+VB",
+   "nets_lifted": 0,
+   "reason": "boxed_in",
+   "runs": 1
+  },
+  {
+   "a": "Q2.2",
+   "b": "P3.2",
+   "blockers_from": "",
+   "closed": false,
+   "depth": 0,
+   "fail": "no_path_bare",
+   "first_blockers": -1,
+   "first_nets": [],
+   "joint": false,
+   "net": "Q2_2",
+   "nets_lifted": 0,
+   "reason": "not_attempted",
+   "runs": 1
+  },
+  {
+   "a": "Q1.2",
+   "b": "P2.2",
+   "blockers_from": "",
+   "closed": false,
+   "depth": 0,
+   "fail": "no_path_bare",
+   "first_blockers": -1,
+   "first_nets": [],
+   "joint": false,
+   "net": "Q1_2",
+   "nets_lifted": 0,
+   "reason": "not_attempted",
+   "runs": 1
+  },
+  {
+   "a": "U6.2",
+   "b": "D3.2",
+   "blockers_from": "",
+   "closed": false,
+   "depth": 0,
+   "fail": "no_path_bare",
+   "first_blockers": -1,
+   "first_nets": [],
+   "joint": false,
+   "net": "+VB",
+   "nets_lifted": 0,
+   "reason": "not_attempted",
+   "runs": 1
+  }
+ ],
+ "copper_layers": 4,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "no_path_bare": 4
+ }
+}

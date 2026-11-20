@@ -1,6 +1,6 @@
 ---
 status: partly-built
-code: [src/route/legalize.cpp, src/route/cut_test.cpp, src/app/route_job.cpp, src/analysis/escape_proof.cpp, src/drc/fit_rules.cpp, src/app/chains.cpp]
+code: [src/route/legalize.cpp, src/route/cut_test.cpp, src/app/route_job.cpp, src/analysis/escape_proof.cpp, src/drc/fit_rules.cpp, src/app/chains.cpp, src/passes/repair.cpp, src/route/obstacles.cpp]
 reviewed: 2026-11-19
 ---
 
@@ -260,8 +260,7 @@ Every routing is the product router's, so a chain that closes is a legal board w
 - The median open connection is kept out by one net, and a third of them (41 of 120) close.
 - Routing the connection and its blockers together is the step that works; fixing the connection first loses (10 of 43 closed
   on the 15 boards measured that way).
-- **Not yet a router step.** A joint re-route of each open connection with its minimal blockers is a candidate last step of the
-  default route. By the M22 rule it has to beat the same run with equal extra budget before it is adopted.
+- **As a router step:** built into the repair stage and measured (§2.11). It does not beat the same run with more budget.
 
 ### 2.10 An exact model for ball grids (plan)
 
@@ -278,6 +277,110 @@ M26 candidates (reservations, costs, lanes, orders) all lost to it.
 - **Smallest experiment:** a Python prototype on one never-clean and one clean srj20 board.
 - **Not built.** The literature search found no published result that closes the last 1-3 % of a board against an equal-budget
   negotiated router; this is a hypothesis.
+
+### 2.11 Repair along the connection's route (D195)
+
+The repair stage (`route --repair on`, doc 05 §75) lifts the unlocked copper round the two ends of an open connection and routes again.
+Three options bring it to what §2.9 measured (`src/passes/repair.{hpp,cpp}`), all off by default:
+
+- `--repair-select route|both`: the copper is looked for along the route the connection takes with the other nets' unlocked copper
+  off the board, on that route's layers, at 0.2 and 1 mm from it. A connection with no such route is left alone after one run.
+- `--repair-focus`: an attempt routes the connection's net and the nets it lifted, nothing else.
+- `--repair-variants N`: N portfolio variants per attempt.
+
+Measured after a 20 M run on the 33 boards (`bench/records/finish-2026-11`): the end windows close 28 of 887 open connections for
+4.9 G expansions, the route selection 30 for 3.0 G, both 47 for 7.5 G; no board completes. The same run with three times the budget
+(0.32 G expansions more over its eight variants at most) closes 159 and completes three more boards. **Not adopted as a step of the
+default route.** It earns its place where little is open: inside the ladder of §2.12.
+
+Without focus an attempt routes everything that is open. On d20 with 129 open every one of 126 attempts ended with more open than it
+began. With focus CoreOne goes 14 → 11 and EtherCAT 20 → 15 at the same layers, where no unfocused attempt was kept.
+
+### 2.12 A ladder on top: `route --finish` (D196)
+
+Rule fit from nothing made some boards worse (§2.8). Routing only what is open, on the board the earlier run wrote, cannot: the routed
+copper stays unless a repair window lifts it, and a window is kept only when fewer connections are open.
+
+`route --finish` runs the rungs in turn, each on the output of the one before, and stops when nothing is open:
+
+1. the run as given;
+2. the rules fitted to the board as given (§2.8), with the repair of §2.11 (route and ends, focused);
+3. with `--finish-fresh`: the board as given routed with the fitted rules from the start, kept when it leaves fewer open;
+4. with `--finish-masks`: pad solder-mask openings no longer keep tracks out (§2.13);
+5. with `--finish-layers 2,4`: two, then four copper layers more than the board has.
+
+The summary's `finish.rungs` lists every rung: open before and after, layers, the fitted rules.
+
+Measured on the 33 boards with the rungs run by hand (open connections; boards complete):
+
+| | base, 20 M | 60 M, default rules | fit from nothing | rung 2 | + pad masks (22 boards run) | + 2 layers | + 4 layers |
+|---|--:|--:|--:|--:|--:|--:|--:|
+| open | 890 | 731 | 771 | 597 | – | 296 | 274 (32 boards) |
+| complete | 3 | 6 | 6 | 7 | 8 | 8 | 10 |
+
+Aleste-520EX, which had 250 open on every earlier run, goes 195 → 8 → 0 (six layers). P8000 completes at +2 layers, MicroMaple at +4.
+The ladder on top of the 60 M run completes ardfpga at rung 2 and MicroMaple at +2 layers; it was run on 14 boards before the runs were
+stopped. Best arm per board, no designer layout used: **245 open, 16 of 33 complete**; KiCad 10.0.6 finds 0 unconnected on those
+outputs it was given (12 of 13; the one with an unconnected item has a second complete output without).
+
+As one command (`route --work 20000000 --finish --finish-masks --finish-layers 2,4`) on 29 of the 30 boards open at base (one stopped):
+881 open become 219 and eight boards complete, KiCad 0 unconnected on each; six more end 1 short. d20 holds 127 of the 219: the other 28
+boards go from 739 to 92. Aleste-520EX completes in 40 minutes (250 → 182 → 159 → 1 → 0, six layers).
+
+With three times the budget, the from-nothing rung and eight repair variants (`--work 60000000 --finish --finish-fresh --repair-variants 8
+--finish-masks --finish-layers 2,4`) seven of the eight boards that ended one or two short complete at their own layer count, DronPi,
+Teensy_test_layout and dorkyboard for the first time: **19 of the 33 boards now have a complete output**, KiCad 0 unconnected on each.
+The same command on the eleven boards the 20 M ladder left 3 to 16 short (2026-11-20) completes three more with KiCad 0 unconnected: CoreOne and
+TCKB at their own layer count, V2X with two more layers: **22 of 33**. LFK78 ends with 0 open by the router's count at six layers, but KiCad
+finds 2 unconnected items on it, so it is not counted. The other seven end 1 to 6 short.
+
+What it does not do:
+
+- **Memory.** mini_mass at six layers passed 100 GB in the plain run of its fourth rung and was stopped. The ladder writes its output after
+  every rung it keeps, so a stopped ladder leaves its best board.
+
+- **Order.** PCIE completes with the rules fitted from nothing and stays 1-2 short on top. The `--finish-fresh` rung is for that: with it
+  PCIE completes in one command (30 → 2 → 0) and Teensy_test goes 3 → 1. OtterPill completes only from nothing with the designer's
+  layout as reference (11 → 9 on top, the fresh rung 11: discarded).
+- **Pins walled in by an earlier rung.** Added layers help a pin only if it can reach a via. On d20 (129 open, 27 pins walled in by
+  tracks of the rungs before) two and four layers more change nothing.
+- **Budget.** Three times the budget finishes three boards the ladder leaves one or two short. The two add up; which to spend first was
+  not measured to the end.
+
+### 2.13 Tracks through pad mask openings (D197)
+
+A pad's solder-mask opening keeps other nets' tracks out (KiCad's `solder_mask_bridge`). Nine of the 33 designer layouts run tracks
+through such openings: KiCad reports 3 to 118 bridges on them and none on the unrouted boards. On a board that opens every pad 0.2 mm
+wider than its copper, the ways between the pads of a small part are all inside openings (memsarray's microphone: the supply pads
+inside a ring of ground pads).
+
+`--fit-rules-from REF` counts the pad openings of the reference with another net's track or via in them; with three or more, pad
+openings no longer keep tracks out. `--soft-pad-masks` does the same by hand. memsarray completes for the first time; with the
+designer's layout as reference on top of rung 2, sizif goes 38 → 26 and LFK78 31 → 27.
+
+### 2.14 Complete for KiCad too: copper with no pad, and ids that repeat (D198)
+
+Two outputs were complete by the router's count and not by KiCad's (MicroMaple with four layers added: 1 unconnected item; LFK78 after the
+stronger ladder: 2). Both had a piece of a net's copper that joins no pad, left when part of a route was lifted or replaced: the router
+counts pads, KiCad counts every piece of copper. The route job now takes such a piece off before it writes the board, when the piece holds
+copper of the run or was joined to a pad in the input (`passes::padless_islands`; `--keep-islands` keeps it). The same outputs carried
+repeated item ids: every rung started the id sequence again. New ids now skip the ids the document has. MicroMaple's step run again: 1 piece
+off, router and KiCad agree. Quick tier byte-identical.
+
+### 2.15 One search's memory (D199)
+
+A search keeps a 16-byte record for every state of its window. Across mini_mass (646 x 155 mm) on eight layers that is 27 GB in one
+allocation, in each variant, which is what exhausted the machine on 2026-11-19. `route --search-mem MB` (default 4096) bounds it: over the
+limit a search takes one direction state per point, then a window drawn in towards its two ends, and only then is refused. The case that
+failed under 20 GB now peaks at 10.3 GB. The limit is a fixed number, so results do not depend on the machine.
+
+### 2.16 Rip-up chains applied (D200)
+
+`tracemaker chains` measured which nets an open connection needs lifted and whether they route again (§2.9); it now also does it.
+`chains BOARD --apply OUT` closes the open connections one after the other and writes the board when fewer are open;
+`route --finish --finish-chains` runs the same as a rung before the first added layer and after the last. A finer lattice did not help
+the boards a few short (half the pitch on four of them: no change); the chain closes MonApollo's last connection (depth 3, five nets
+lifted, KiCad 0 unconnected) and one of OtterPill's two.
 
 ## 3. Order
 
@@ -310,3 +413,9 @@ Each step:
 | §1.1 designer oracle | 2026-11-19 | two causes: search boards (the router's open nets route in the designer's layout) and modelling boards (the designer's own nets do not go back) | |
 | §2.8 rule fit (`--fit-rules`, opt-in) | 2026-11-19 | 33 boards from nothing: 890 → 771 open, 3 → 6 complete (own pads); 734 and 8 with the designer's layout; six boards complete for the first time; 3-5 boards worse | D194 |
 | §2.9 chain measurement (`tracemaker chains`) | 2026-11-19 | 261 open: 141 route on no board; of 120 with blockers 62 have one, 41 close (17 joint) | |
+| §2.11 repair along the route, focused attempts (opt-in) | 2026-11-19 | after 20 M on 33 boards: 28 (ends), 30 (route, 39 % less work), 47 (both) of 887 closed, none complete; 3× budget closes 159. Not a default step | D195 |
+| §2.12 `route --finish` (opt-in) | 2026-11-19 | one command with masks and +2, +4 layers on 29 boards: 881 → 219 open (127 on d20), 8 complete (Aleste 250 → 0); with 60 M, the from-nothing rung and 8 repair variants seven of eight near-complete boards finish: 19 of 33 have a complete output | D196 |
+| §2.13 pad mask openings from a reference (opt-in) | 2026-11-19 | 9 of 33 designer layouts have tracks in pad openings; memsarray complete, sizif 38 → 26, LFK78 31 → 27 | D197 |
+| §2.14 copper with no pad taken off; ids never repeat | 2026-11-20 | MicroMaple +2 layers: router 2 open, KiCad 2 (3 before); quick tier 30/30 identical | D198 |
+| §2.15 one search's memory limited (`--search-mem`, default 4096 MB) | 2026-11-20 | mini_mass on eight layers: 10.3 GB peak under a 20 GB limit (`bad_alloc` before); quick tier 30/30 identical | D199 |
+| §2.16 rip-up chains applied (`chains --apply`, `--finish-chains`; opt-in) | 2026-11-20 | MonApollo 1 → 0 open (KiCad 0 unconnected), OtterPill 2 → 1; half pitch on four boards: no change | D200 |

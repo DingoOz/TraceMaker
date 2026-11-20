@@ -1,0 +1,64 @@
+{
+ "applied": {
+  "chains_closed": 1,
+  "islands_cut": 1,
+  "open_after": 1,
+  "open_before": 3,
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/fine-2026-11-20/poncho_fpga_fpga-dongle/chained2.kicad_pcb",
+  "written": true
+ },
+ "baseline": {
+  "connections": 3,
+  "open": 2,
+  "routed": 1,
+  "work": 10000000
+ },
+ "board": "/home/dingo/Programming/TraceMaker-rm3/bench/results/fine-2026-11-20/poncho_fpga_fpga-dongle/chained.kicad_pcb",
+ "connections": [
+  {
+   "a": "U4.124",
+   "b": "P5.21",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 8,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "/VCCPLL"
+   ],
+   "joint": false,
+   "net": "/FPGA_IO_BANK1_12",
+   "nets_lifted": 11,
+   "reason": "boxed_in",
+   "runs": 70
+  },
+  {
+   "a": "U4.114",
+   "b": "P5.12",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 7,
+   "first_blockers": 2,
+   "first_nets": [
+    "+1V2",
+    "/TxD"
+   ],
+   "joint": false,
+   "net": "/FPGA_IO_BANK1_3",
+   "nets_lifted": 10,
+   "reason": "boxed_in",
+   "runs": 65
+  }
+ ],
+ "copper_layers": 4,
+ "options": {
+  "max_depth": 8,
+  "max_nets": 64,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "closed_depth_7": 1,
+  "too_deep": 1
+ }
+}

@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <string>
 #include <string_view>
+#include <unordered_set>
 
 #include "io/kicad/board_reader.hpp"
 
@@ -45,7 +46,7 @@ class BoardEditor {
   std::string write() const { return lb_.doc.write(); }
   void save(const std::string& path) const { lb_.doc.save(path); }
 
-  // Deterministic RFC-4122-style v4 UUID string.
+  // Deterministic RFC-4122-style v4 UUID string that no item of the document has yet.
   std::string next_uuid();
 
  private:
@@ -54,6 +55,8 @@ class BoardEditor {
   LoadedBoard& lb_;
   std::uint64_t seed_;
   std::uint64_t uuid_counter_ = 0;
+  std::unordered_set<std::string> used_ids_;  // ids in the document and the ones handed out; looked up only
+  bool ids_read_ = false;
 };
 
 // True if BoardEditor::flip_footprint mirrors every item of footprint `index` exactly: no copper on inner

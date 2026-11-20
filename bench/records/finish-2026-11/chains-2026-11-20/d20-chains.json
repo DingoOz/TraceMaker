@@ -1,0 +1,2272 @@
+{
+ "baseline": {
+  "connections": 127,
+  "open": 127,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "bench/results/finish-2026-11-19/kitspace_d20_tri_r0.3/out.kicad_pcb",
+ "connections": [
+  {
+   "a": "D38.1",
+   "b": "D39.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colr_5",
+    "colr_6"
+   ],
+   "joint": false,
+   "net": "row_2",
+   "nets_lifted": 11,
+   "reason": "boxed_in",
+   "runs": 62
+  },
+  {
+   "a": "D42.1",
+   "b": "D43.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 2,
+   "first_nets": [
+    "row_1",
+    "colr_7"
+   ],
+   "joint": false,
+   "net": "row_2",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 43
+  },
+  {
+   "a": "D98.1",
+   "b": "D97.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colr_0",
+    "colb_1"
+   ],
+   "joint": false,
+   "net": "row_6",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 53
+  },
+  {
+   "a": "D23.1",
+   "b": "D22.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colr_4",
+    "colb_5"
+   ],
+   "joint": false,
+   "net": "row_1",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 43
+  },
+  {
+   "a": "D22.1",
+   "b": "D21.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colr_4",
+    "colb_5"
+   ],
+   "joint": false,
+   "net": "row_1",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 43
+  },
+  {
+   "a": "D34.1",
+   "b": "D35.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colb_2"
+   ],
+   "joint": false,
+   "net": "row_2",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 43
+  },
+  {
+   "a": "D69.1",
+   "b": "D68.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "row_5"
+   ],
+   "joint": false,
+   "net": "row_4",
+   "nets_lifted": 13,
+   "reason": "not_attempted",
+   "runs": 69
+  },
+  {
+   "a": "D100.1",
+   "b": "D99.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 6,
+   "first_nets": [
+    "colr_2",
+    "colb_4",
+    "colr_6",
+    "colb_6",
+    "colg_13",
+    "colg_14"
+   ],
+   "joint": false,
+   "net": "row_6",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 49
+  },
+  {
+   "a": "D113.1",
+   "b": "D114.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "colg_0"
+   ],
+   "joint": false,
+   "net": "row_7",
+   "nets_lifted": 3,
+   "reason": "not_attempted",
+   "runs": 35
+  },
+  {
+   "a": "D65.4",
+   "b": "D81.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colg_0"
+   ],
+   "joint": false,
+   "net": "colr_0",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 39
+  },
+  {
+   "a": "D34.2",
+   "b": "D50.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colg_0",
+    "colr_1"
+   ],
+   "joint": false,
+   "net": "colb_1",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 29
+  },
+  {
+   "a": "D98.4",
+   "b": "D114.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colg_0"
+   ],
+   "joint": false,
+   "net": "colr_1",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 29
+  },
+  {
+   "a": "D52.2",
+   "b": "D68.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colg_2"
+   ],
+   "joint": false,
+   "net": "colb_3",
+   "nets_lifted": 7,
+   "reason": "not_attempted",
+   "runs": 60
+  },
+  {
+   "a": "D100.2",
+   "b": "D116.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colg_2",
+    "colr_3"
+   ],
+   "joint": false,
+   "net": "colb_3",
+   "nets_lifted": 7,
+   "reason": "not_attempted",
+   "runs": 43
+  },
+  {
+   "a": "D132.2",
+   "b": "D148.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "colg_0",
+    "colg_2",
+    "colr_3"
+   ],
+   "joint": false,
+   "net": "colb_3",
+   "nets_lifted": 7,
+   "reason": "not_attempted",
+   "runs": 33
+  },
+  {
+   "a": "D52.4",
+   "b": "D68.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colg_2"
+   ],
+   "joint": false,
+   "net": "colr_3",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 62
+  },
+  {
+   "a": "D164.4",
+   "b": "D180.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colg_2"
+   ],
+   "joint": false,
+   "net": "colr_3",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 62
+  },
+  {
+   "a": "D37.4",
+   "b": "D53.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "row_5",
+    "row_6",
+    "row_7"
+   ],
+   "joint": false,
+   "net": "colr_4",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 51
+  },
+  {
+   "a": "D117.4",
+   "b": "D133.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "row_6",
+    "row_7"
+   ],
+   "joint": false,
+   "net": "colr_4",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 60
+  },
+  {
+   "a": "D117.2",
+   "b": "D133.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colg_3",
+    "row_9"
+   ],
+   "joint": false,
+   "net": "colb_4",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 51
+  },
+  {
+   "a": "D117.3",
+   "b": "D133.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colg_3",
+    "colb_4"
+   ],
+   "joint": false,
+   "net": "colg_4",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 67
+  },
+  {
+   "a": "D23.4",
+   "b": "D39.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "row_1"
+   ],
+   "joint": false,
+   "net": "colr_6",
+   "nets_lifted": 11,
+   "reason": "not_attempted",
+   "runs": 62
+  },
+  {
+   "a": "D7.2",
+   "b": "D23.2",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_6"
+   ],
+   "joint": false,
+   "net": "colb_6",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 34
+  },
+  {
+   "a": "D8.3",
+   "b": "D24.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 2,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_7"
+   ],
+   "joint": false,
+   "net": "colg_7",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 34
+  },
+  {
+   "a": "D40.3",
+   "b": "D56.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colb_1",
+    "colr_7"
+   ],
+   "joint": false,
+   "net": "colg_7",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 54
+  },
+  {
+   "a": "D72.3",
+   "b": "D88.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 2,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_7"
+   ],
+   "joint": false,
+   "net": "colg_7",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 34
+  },
+  {
+   "a": "D72.2",
+   "b": "D88.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_7"
+   ],
+   "joint": false,
+   "net": "colb_7",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 56
+  },
+  {
+   "a": "D104.2",
+   "b": "D120.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colb_1",
+    "colg_6"
+   ],
+   "joint": false,
+   "net": "colb_7",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 53
+  },
+  {
+   "a": "D25.2",
+   "b": "D41.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colr_7",
+    "colr_8"
+   ],
+   "joint": false,
+   "net": "colb_8",
+   "nets_lifted": 7,
+   "reason": "not_attempted",
+   "runs": 47
+  },
+  {
+   "a": "D57.3",
+   "b": "D73.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "row_4",
+    "colr_9"
+   ],
+   "joint": false,
+   "net": "colg_8",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 57
+  },
+  {
+   "a": "D90.3",
+   "b": "D74.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_9"
+   ],
+   "joint": false,
+   "net": "colg_9",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 56
+  },
+  {
+   "a": "D133.1",
+   "b": "D134.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colg_3",
+    "colb_5"
+   ],
+   "joint": false,
+   "net": "row_8",
+   "nets_lifted": 10,
+   "reason": "not_attempted",
+   "runs": 66
+  },
+  {
+   "a": "D193.1",
+   "b": "D194.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_0"
+   ],
+   "joint": false,
+   "net": "row_12",
+   "nets_lifted": 4,
+   "reason": "not_attempted",
+   "runs": 31
+  },
+  {
+   "a": "D41.1",
+   "b": "D42.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 2,
+   "first_nets": [
+    "row_1",
+    "colr_7"
+   ],
+   "joint": false,
+   "net": "row_2",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 43
+  },
+  {
+   "a": "D43.1",
+   "b": "D44.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "row_1"
+   ],
+   "joint": false,
+   "net": "row_2",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 65
+  },
+  {
+   "a": "D56.1",
+   "b": "D57.1",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_7"
+   ],
+   "joint": false,
+   "net": "row_3",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 9
+  },
+  {
+   "a": "D70.1",
+   "b": "D69.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "row_5"
+   ],
+   "joint": false,
+   "net": "row_4",
+   "nets_lifted": 13,
+   "reason": "not_attempted",
+   "runs": 69
+  },
+  {
+   "a": "D89.1",
+   "b": "D88.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_8"
+   ],
+   "joint": false,
+   "net": "row_5",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 33
+  },
+  {
+   "a": "D103.1",
+   "b": "D104.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colb_6"
+   ],
+   "joint": false,
+   "net": "row_6",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 55
+  },
+  {
+   "a": "D66.3",
+   "b": "D82.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colb_2"
+   ],
+   "joint": false,
+   "net": "colg_1",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 33
+  },
+  {
+   "a": "D18.2",
+   "b": "D34.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colg_0",
+    "colr_1"
+   ],
+   "joint": false,
+   "net": "colb_1",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 29
+  },
+  {
+   "a": "D2.4",
+   "b": "D18.4",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "colb_2"
+   ],
+   "joint": false,
+   "net": "colr_1",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 16
+  },
+  {
+   "a": "D116.2",
+   "b": "D132.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colg_2",
+    "colr_3"
+   ],
+   "joint": false,
+   "net": "colb_3",
+   "nets_lifted": 7,
+   "reason": "not_attempted",
+   "runs": 43
+  },
+  {
+   "a": "D148.2",
+   "b": "D164.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "colg_0",
+    "colg_2",
+    "colr_3"
+   ],
+   "joint": false,
+   "net": "colb_3",
+   "nets_lifted": 7,
+   "reason": "not_attempted",
+   "runs": 33
+  },
+  {
+   "a": "D84.4",
+   "b": "D100.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colg_2"
+   ],
+   "joint": false,
+   "net": "colr_3",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 62
+  },
+  {
+   "a": "D116.4",
+   "b": "D132.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colg_2"
+   ],
+   "joint": false,
+   "net": "colr_3",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 62
+  },
+  {
+   "a": "D69.4",
+   "b": "D85.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "row_5"
+   ],
+   "joint": false,
+   "net": "colr_4",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 80
+  },
+  {
+   "a": "D101.4",
+   "b": "D117.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "row_6",
+    "row_7"
+   ],
+   "joint": false,
+   "net": "colr_4",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 60
+  },
+  {
+   "a": "D133.2",
+   "b": "D149.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "colb_1",
+    "colg_3",
+    "colb_5"
+   ],
+   "joint": false,
+   "net": "colb_4",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 45
+  },
+  {
+   "a": "D21.3",
+   "b": "D37.3",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "colb_5"
+   ],
+   "joint": true,
+   "net": "colg_4",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 16
+  },
+  {
+   "a": "D101.3",
+   "b": "D117.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colg_3",
+    "colb_4"
+   ],
+   "joint": false,
+   "net": "colg_4",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 67
+  },
+  {
+   "a": "D133.3",
+   "b": "D149.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colg_3",
+    "colb_4"
+   ],
+   "joint": false,
+   "net": "colg_4",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 67
+  },
+  {
+   "a": "D118.4",
+   "b": "D134.4",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "row_7"
+   ],
+   "joint": false,
+   "net": "colr_5",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 19
+  },
+  {
+   "a": "D39.2",
+   "b": "D55.2",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 3,
+   "first_blockers": 1,
+   "first_nets": [
+    "colg_5"
+   ],
+   "joint": false,
+   "net": "colb_6",
+   "nets_lifted": 3,
+   "reason": "not_attempted",
+   "runs": 50
+  },
+  {
+   "a": "D87.3",
+   "b": "D103.3",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "srow_9"
+   ],
+   "joint": false,
+   "net": "colg_6",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 22
+  },
+  {
+   "a": "D103.3",
+   "b": "D119.3",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "srow_9"
+   ],
+   "joint": false,
+   "net": "colg_6",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 22
+  },
+  {
+   "a": "D56.2",
+   "b": "D72.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_7"
+   ],
+   "joint": false,
+   "net": "colb_7",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 56
+  },
+  {
+   "a": "D41.4",
+   "b": "D57.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_7"
+   ],
+   "joint": false,
+   "net": "colr_8",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 37
+  },
+  {
+   "a": "D73.4",
+   "b": "D89.4",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "row_4"
+   ],
+   "joint": false,
+   "net": "colr_8",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 8
+  },
+  {
+   "a": "D73.3",
+   "b": "D89.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "row_4",
+    "colr_9"
+   ],
+   "joint": false,
+   "net": "colg_8",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 57
+  },
+  {
+   "a": "D74.3",
+   "b": "D58.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_9"
+   ],
+   "joint": false,
+   "net": "colg_9",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 56
+  },
+  {
+   "a": "D43.4",
+   "b": "D59.4",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "row_1"
+   ],
+   "joint": true,
+   "net": "colr_10",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 16
+  },
+  {
+   "a": "D163.2",
+   "b": "U3.7",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colb_1"
+   ],
+   "joint": false,
+   "net": "colb_2",
+   "nets_lifted": 4,
+   "reason": "not_attempted",
+   "runs": 41
+  },
+  {
+   "a": "J1.SH",
+   "b": "U7.5",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "latch"
+   ],
+   "joint": false,
+   "net": "vcc",
+   "nets_lifted": 7,
+   "reason": "not_attempted",
+   "runs": 48
+  },
+  {
+   "a": "J1.2",
+   "b": "U6.1",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "blank_i"
+   ],
+   "joint": false,
+   "net": "dat_i",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 11
+  },
+  {
+   "a": "U4.2",
+   "b": "Q3.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "row_2"
+   ],
+   "joint": false,
+   "net": "srow_2",
+   "nets_lifted": 11,
+   "reason": "not_attempted",
+   "runs": 94
+  },
+  {
+   "a": "D35.4",
+   "b": "U1.7",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "colb_2"
+   ],
+   "joint": false,
+   "net": "colr_2",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 16
+  },
+  {
+   "a": "D99.3",
+   "b": "U2.7",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_0"
+   ],
+   "joint": false,
+   "net": "colg_2",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 37
+  },
+  {
+   "a": "U4.3",
+   "b": "Q4.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "vcc"
+   ],
+   "joint": false,
+   "net": "srow_3",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 45
+  },
+  {
+   "a": "D148.2",
+   "b": "U3.8",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "colg_0",
+    "colg_2",
+    "colr_3"
+   ],
+   "joint": false,
+   "net": "colb_3",
+   "nets_lifted": 7,
+   "reason": "not_attempted",
+   "runs": 33
+  },
+  {
+   "a": "U4.5",
+   "b": "Q6.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_6"
+   ],
+   "joint": false,
+   "net": "srow_5",
+   "nets_lifted": 7,
+   "reason": "not_attempted",
+   "runs": 50
+  },
+  {
+   "a": "D20.4",
+   "b": "U1.8",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "colb_2",
+    "colg_2",
+    "colb_3"
+   ],
+   "joint": false,
+   "net": "colr_3",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 56
+  },
+  {
+   "a": "U5.11",
+   "b": "U4.11",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 5,
+   "first_nets": [
+    "colb_6",
+    "colr_7",
+    "colb_8",
+    "latch",
+    "row_10"
+   ],
+   "joint": false,
+   "net": "sclk",
+   "nets_lifted": 11,
+   "reason": "not_attempted",
+   "runs": 92
+  },
+  {
+   "a": "U5.4",
+   "b": "Q13.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "srow_11"
+   ],
+   "joint": false,
+   "net": "srow_12",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 69
+  },
+  {
+   "a": "U4.15",
+   "b": "Q1.1",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "vcc"
+   ],
+   "joint": true,
+   "net": "srow_0",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 5
+  },
+  {
+   "a": "D180.1",
+   "b": "Q12.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "vcc"
+   ],
+   "joint": false,
+   "net": "row_11",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 65
+  },
+  {
+   "a": "D85.1",
+   "b": "Q6.3",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "vcc"
+   ],
+   "joint": false,
+   "net": "row_5",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 13
+  },
+  {
+   "a": "D149.2",
+   "b": "U3.9",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colb_1",
+    "row_9"
+   ],
+   "joint": false,
+   "net": "colb_4",
+   "nets_lifted": 11,
+   "reason": "not_attempted",
+   "runs": 54
+  },
+  {
+   "a": "D195.1",
+   "b": "Q13.3",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "vcc"
+   ],
+   "joint": false,
+   "net": "row_12",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 12
+  },
+  {
+   "a": "U5.15",
+   "b": "Q9.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colb_5",
+    "latch"
+   ],
+   "joint": false,
+   "net": "srow_8",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 60
+  },
+  {
+   "a": "U4.11",
+   "b": "U2.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 5,
+   "first_nets": [
+    "colb_1",
+    "colb_6",
+    "colb_8",
+    "colr_9",
+    "latch"
+   ],
+   "joint": false,
+   "net": "sclk",
+   "nets_lifted": 10,
+   "reason": "not_attempted",
+   "runs": 79
+  },
+  {
+   "a": "U4.12",
+   "b": "U2.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colb_1",
+    "colr_7"
+   ],
+   "joint": false,
+   "net": "latch",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 73
+  },
+  {
+   "a": "U4.7",
+   "b": "Q8.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "vcc"
+   ],
+   "joint": false,
+   "net": "srow_7",
+   "nets_lifted": 7,
+   "reason": "not_attempted",
+   "runs": 55
+  },
+  {
+   "a": "J2.3",
+   "b": "U6.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 4,
+   "first_nets": [
+    "colb_8",
+    "latch",
+    "latch_i",
+    "sclk_i"
+   ],
+   "joint": false,
+   "net": "blank",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 66
+  },
+  {
+   "a": "U4.6",
+   "b": "Q7.1",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 4,
+   "first_blockers": 1,
+   "first_nets": [
+    "colg_5"
+   ],
+   "joint": false,
+   "net": "srow_6",
+   "nets_lifted": 7,
+   "reason": "not_attempted",
+   "runs": 60
+  },
+  {
+   "a": "D135.1",
+   "b": "Q9.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colb_8",
+    "srow_10"
+   ],
+   "joint": false,
+   "net": "row_8",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 52
+  },
+  {
+   "a": "D69.3",
+   "b": "U2.9",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 2,
+   "first_nets": [
+    "colb_1",
+    "colb_5"
+   ],
+   "joint": false,
+   "net": "colg_4",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 41
+  },
+  {
+   "a": "D134.2",
+   "b": "U3.10",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colg_0",
+    "row_9"
+   ],
+   "joint": false,
+   "net": "colb_5",
+   "nets_lifted": 10,
+   "reason": "not_attempted",
+   "runs": 59
+  },
+  {
+   "a": "U5.11",
+   "b": "U3.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "colr_7",
+    "colb_8",
+    "latch"
+   ],
+   "joint": false,
+   "net": "sclk",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 47
+  },
+  {
+   "a": "U2.21",
+   "b": "U3.21",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 6,
+   "first_nets": [
+    "colr_6",
+    "colb_8",
+    "latch",
+    "row_10",
+    "latch_i",
+    "sclk_i"
+   ],
+   "joint": false,
+   "net": "blank",
+   "nets_lifted": 18,
+   "reason": "not_attempted",
+   "runs": 87
+  },
+  {
+   "a": "U1.21",
+   "b": "U2.21",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 6,
+   "first_nets": [
+    "colr_6",
+    "colb_8",
+    "latch",
+    "row_10",
+    "latch_i",
+    "sclk_i"
+   ],
+   "joint": false,
+   "net": "blank",
+   "nets_lifted": 18,
+   "reason": "not_attempted",
+   "runs": 87
+  },
+  {
+   "a": "U2.4",
+   "b": "U1.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colb_1",
+    "colr_7"
+   ],
+   "joint": false,
+   "net": "latch",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 73
+  },
+  {
+   "a": "U2.3",
+   "b": "U1.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "colb_1",
+    "colr_7",
+    "latch"
+   ],
+   "joint": false,
+   "net": "sclk",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 59
+  },
+  {
+   "a": "D6.4",
+   "b": "U1.10",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 3,
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_4"
+   ],
+   "joint": false,
+   "net": "colr_5",
+   "nets_lifted": 3,
+   "reason": "not_attempted",
+   "runs": 49
+  },
+  {
+   "a": "D100.1",
+   "b": "Q7.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 6,
+   "first_nets": [
+    "colr_2",
+    "colb_4",
+    "colr_6",
+    "colb_6",
+    "colg_13",
+    "colg_14"
+   ],
+   "joint": false,
+   "net": "row_6",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 49
+  },
+  {
+   "a": "D70.3",
+   "b": "U2.10",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "colb_1"
+   ],
+   "joint": false,
+   "net": "colg_5",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 41
+  },
+  {
+   "a": "D41.3",
+   "b": "U2.13",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "row_5",
+    "colg_4",
+    "colr_9"
+   ],
+   "joint": false,
+   "net": "colg_8",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 58
+  },
+  {
+   "a": "D115.1",
+   "b": "Q8.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "vcc",
+    "latch"
+   ],
+   "joint": false,
+   "net": "row_7",
+   "nets_lifted": 12,
+   "reason": "not_attempted",
+   "runs": 74
+  },
+  {
+   "a": "D119.2",
+   "b": "U3.11",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colb_1"
+   ],
+   "joint": false,
+   "net": "colb_6",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 54
+  },
+  {
+   "a": "D90.2",
+   "b": "U3.14",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 3,
+   "first_nets": [
+    "row_5",
+    "colr_8",
+    "row_8"
+   ],
+   "joint": false,
+   "net": "colb_9",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 72
+  },
+  {
+   "a": "U4.12",
+   "b": "J2.4",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colr_7",
+    "colb_8"
+   ],
+   "joint": false,
+   "net": "latch",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 48
+  },
+  {
+   "a": "D150.1",
+   "b": "Q10.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 3,
+   "first_nets": [
+    "colg_4",
+    "colr_5",
+    "srow_9"
+   ],
+   "joint": false,
+   "net": "row_9",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 54
+  },
+  {
+   "a": "U1.22",
+   "b": "U2.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colb_2"
+   ],
+   "joint": false,
+   "net": "sdo_U1>sdi_U2",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 38
+  },
+  {
+   "a": "U4.11",
+   "b": "J2.5",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 4,
+   "first_nets": [
+    "colb_6",
+    "colr_7",
+    "colb_8",
+    "latch"
+   ],
+   "joint": false,
+   "net": "sclk",
+   "nets_lifted": 10,
+   "reason": "not_attempted",
+   "runs": 88
+  },
+  {
+   "a": "D165.1",
+   "b": "Q11.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "colb_8"
+   ],
+   "joint": false,
+   "net": "row_10",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 59
+  },
+  {
+   "a": "D7.4",
+   "b": "U1.11",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 3,
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_4"
+   ],
+   "joint": false,
+   "net": "colr_6",
+   "nets_lifted": 3,
+   "reason": "not_attempted",
+   "runs": 48
+  },
+  {
+   "a": "D55.3",
+   "b": "U2.11",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 3,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "colb_1"
+   ],
+   "joint": false,
+   "net": "colg_6",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 44
+  },
+  {
+   "a": "D26.3",
+   "b": "U2.14",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 2,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 4,
+   "first_nets": [
+    "row_4",
+    "row_5",
+    "colg_5",
+    "colr_5"
+   ],
+   "joint": false,
+   "net": "colg_9",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 27
+  },
+  {
+   "a": "D104.2",
+   "b": "U3.12",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colb_1",
+    "colg_6"
+   ],
+   "joint": false,
+   "net": "colb_7",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 53
+  },
+  {
+   "a": "D75.2",
+   "b": "U3.15",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "row_4",
+    "row_8"
+   ],
+   "joint": false,
+   "net": "colb_10",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 55
+  },
+  {
+   "a": "U2.21",
+   "b": "J2.3",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 6,
+   "first_nets": [
+    "colr_6",
+    "colb_8",
+    "latch",
+    "row_10",
+    "latch_i",
+    "sclk_i"
+   ],
+   "joint": false,
+   "net": "blank",
+   "nets_lifted": 18,
+   "reason": "not_attempted",
+   "runs": 87
+  },
+  {
+   "a": "D40.3",
+   "b": "U2.12",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colb_1",
+    "colr_7"
+   ],
+   "joint": false,
+   "net": "colg_7",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 54
+  },
+  {
+   "a": "U5.9",
+   "b": "J2.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colb_8",
+    "colg_9"
+   ],
+   "joint": false,
+   "net": "dat_out",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 54
+  },
+  {
+   "a": "D27.3",
+   "b": "U2.15",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "row_5",
+    "colb_4"
+   ],
+   "joint": false,
+   "net": "colg_10",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 58
+  },
+  {
+   "a": "U5.5",
+   "b": "Q14.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "row_12",
+    "srow_11"
+   ],
+   "joint": false,
+   "net": "srow_13",
+   "nets_lifted": 10,
+   "reason": "not_attempted",
+   "runs": 56
+  },
+  {
+   "a": "D11.4",
+   "b": "U1.15",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_11"
+   ],
+   "joint": true,
+   "net": "colr_10",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 15
+  },
+  {
+   "a": "U5.6",
+   "b": "Q15.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colb_1",
+    "row_13"
+   ],
+   "joint": false,
+   "net": "srow_14",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 42
+  },
+  {
+   "a": "D60.2",
+   "b": "U3.16",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "row_9"
+   ],
+   "joint": false,
+   "net": "colb_11",
+   "nets_lifted": 9,
+   "reason": "not_attempted",
+   "runs": 62
+  },
+  {
+   "a": "D28.3",
+   "b": "U2.16",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "row_5",
+    "colb_4"
+   ],
+   "joint": false,
+   "net": "colg_11",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 60
+  },
+  {
+   "a": "D45.2",
+   "b": "U3.17",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colg_11",
+    "row_9"
+   ],
+   "joint": false,
+   "net": "colb_12",
+   "nets_lifted": 10,
+   "reason": "not_attempted",
+   "runs": 63
+  },
+  {
+   "a": "D29.3",
+   "b": "U2.17",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colg_3",
+    "colb_4"
+   ],
+   "joint": false,
+   "net": "colg_12",
+   "nets_lifted": 8,
+   "reason": "not_attempted",
+   "runs": 57
+  },
+  {
+   "a": "D13.4",
+   "b": "U1.17",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "colr_11"
+   ],
+   "joint": true,
+   "net": "colr_12",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 11
+  },
+  {
+   "a": "D30.2",
+   "b": "U3.18",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 2,
+   "first_nets": [
+    "row_1",
+    "srow_11"
+   ],
+   "joint": false,
+   "net": "colb_13",
+   "nets_lifted": 3,
+   "reason": "not_attempted",
+   "runs": 22
+  },
+  {
+   "a": "D14.4",
+   "b": "U1.18",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "row_1"
+   ],
+   "joint": false,
+   "net": "colr_13",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 58
+  },
+  {
+   "a": "D15.2",
+   "b": "U3.19",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "srow_11"
+   ],
+   "joint": false,
+   "net": "colb_14",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 24
+  },
+  {
+   "a": "D15.4",
+   "b": "U1.19",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "colr_3",
+    "colr_11"
+   ],
+   "joint": false,
+   "net": "colr_14",
+   "nets_lifted": 11,
+   "reason": "not_attempted",
+   "runs": 63
+  },
+  {
+   "a": "U1.2",
+   "b": "U6.6",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "vcc",
+    "colb_1"
+   ],
+   "joint": false,
+   "net": "dat",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 59
+  }
+ ],
+ "copper_layers": 4,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "closed_depth_1": 5,
+  "closed_depth_2": 8,
+  "closed_depth_3": 3,
+  "closed_depth_4": 1,
+  "closed_joint": 5,
+  "lifted_net_no_path_bare": 12,
+  "too_deep": 93
+ }
+}

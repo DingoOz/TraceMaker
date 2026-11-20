@@ -1,0 +1,115 @@
+{
+ "applied": {
+  "chains_closed": 1,
+  "islands_cut": 0,
+  "open_after": 4,
+  "open_before": 5,
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/fine-2026-11-20/EtherCAT_shield_v1_EtherCAT_shield_v1/chained2.kicad_pcb",
+  "written": true
+ },
+ "baseline": {
+  "connections": 5,
+  "open": 5,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "/home/dingo/Programming/TraceMaker-rm3/bench/results/fine-2026-11-20/EtherCAT_shield_v1_EtherCAT_shield_v1/chained.kicad_pcb",
+ "connections": [
+  {
+   "a": "C16.1",
+   "b": "U1.56",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 1,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 3,
+   "first_nets": [
+    "Net-(R13-Pad1)",
+    "TX1_P",
+    "RX1_N"
+   ],
+   "joint": false,
+   "net": "Net-(C16-Pad1)",
+   "nets_lifted": 3,
+   "reason": "boxed_in",
+   "runs": 10
+  },
+  {
+   "a": "C12.1",
+   "b": "U1.6",
+   "blockers_from": "",
+   "closed": false,
+   "depth": 0,
+   "fail": "blockers_not_found",
+   "first_blockers": -1,
+   "first_nets": [],
+   "joint": false,
+   "net": "Net-(C12-Pad1)",
+   "nets_lifted": 0,
+   "reason": "not_attempted",
+   "runs": 2
+  },
+  {
+   "a": "U1.35",
+   "b": "J8.1",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "GPIO0"
+   ],
+   "joint": false,
+   "net": "SIO3",
+   "nets_lifted": 4,
+   "reason": "not_attempted",
+   "runs": 45
+  },
+  {
+   "a": "P1.10",
+   "b": "U1.27",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "GPIO11"
+   ],
+   "joint": false,
+   "net": "GPIO12",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 19
+  },
+  {
+   "a": "P1.8",
+   "b": "U1.28",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 2,
+   "fail": "lifted_net_no_path_bare",
+   "first_blockers": 1,
+   "first_nets": [
+    "GPIO12"
+   ],
+   "joint": false,
+   "net": "GPIO13",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 20
+  }
+ ],
+ "copper_layers": 4,
+ "options": {
+  "max_depth": 8,
+  "max_nets": 64,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "blockers_not_found": 1,
+  "closed_depth_2": 1,
+  "lifted_net_no_path_bare": 3
+ }
+}

@@ -67,6 +67,7 @@ struct RouterOptions {
   long field_after = 0;             // > 0: the cost-to-go field is built only when a search has expanded this many states (doc 05 §62)
   bool tie_deep = false;            // A* ties on f go to the state with the larger g (the deeper one) instead of the lower state index
   bool bend_states = true;          // direction in the A* state (exact bend costs) vs. parent-direction approximation
+  int search_mem_mb = 4096;         // one search's state records at most (0 = no limit): a search over it runs with one direction state per point, then in a window drawn in to fit; a connection whose two ends alone need more is not searched (D199)
   double heuristic_weight = 1.0;
   double long_weight = 0;        // D156: > 1: negotiated searches of connections at least long_weight_mm long use this heuristic weight (weighted A*); 0 = off
   double long_weight_mm = 100;
@@ -238,6 +239,7 @@ struct RouterOptions {
   bool fanout_hold = false;     // D156: with the escape plan, each open pin's straight corridor (as --escape-stubs offers it) is held by a placeholder track of its net through the strict first pass, so no other net's track or via takes it before the pin is routed; dropped when the pin is routed and before negotiation
   bool escape_stubs = false;    // with the escape plan: a pin offers the end of its (long, straight) corridor as a start point, reached by one exact off-lattice segment at a discount: parallel escapes at the pad pitch, which the lattice cannot draw
   bool soft_mask_graphics = false;  // net-less solder-mask openings drawn as footprint graphics (solder jumpers, MEMS microphones) do not keep tracks and vias out; KiCad flags what lies in them
+  bool soft_pad_masks = false;      // rule fit from a reference (doc 20 §2.13, D197): no pad's mask opening keeps tracks out
   bool soft_bridged_masks = false;  // rule fit (doc 20 §2.8): a pad's mask opening that already exposes another net's pad does not keep tracks out
   bool soft_copper_graphics = false;  // board copper graphics (polygons on a copper layer) take the net of the pads, tracks and vias of the one net they touch (a manual pour), so that net's pins inside are not enclosed and no other net may touch them
   bool via_drops = false;       // pins of dense packages may drop to a via 0.7-1.5 mm out, off the lattice, between the neighbours' tracks (the designer's supply vias), then go on on the other layer
@@ -389,6 +391,7 @@ struct RouteResult {
   std::vector<model::Track> tracks;  // new copper, in commit order
   std::vector<model::Via> vias;
   std::vector<ConnRoute> conn_routes;  // the same copper per connection (best state), for a warm start
+  long search_mem_limited = 0;         // searches that --search-mem made lighter, drew in or refused (D199)
   std::vector<ConnRoute> final_routes;  // the state the search ended in (RouterOptions::keep_final): legal, perhaps worse than the best
   int final_routed = 0;
   int connections = 0, routed = 0;

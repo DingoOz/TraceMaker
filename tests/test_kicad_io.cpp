@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <fstream>
 #include <map>
+#include <set>
 #include <nlohmann/json.hpp>
 
 #include "drc/connectivity.hpp"
@@ -422,4 +423,49 @@ TEST_CASE("flipping a KiCad 5 module: user copper names, signed arc sweeps", "[k
   CHECK(has(out, "(fp_arc (start 0 0) (end 1 0) (angle -22.5) (layer B.SilkS) (width 0.1))"));  // a sweep, not normalised
   CHECK(has(out, "(pad 1 smd rect (at 1 -2 90) (size 1 1) (layers Back B.Mask))"));
   CHECK(tmk::io::read_board(lb.doc).footprints[0].back);
+}
+
+TEST_CASE("generated ids do not repeat the ids of a board written with the same seed", "[kicad][io][editor]") {
+  // A second route on top of a board TraceMaker wrote (a warm start, `route --finish`) starts the same id sequence
+  // again. KiCad 10 reported connected nets as unconnected on boards with the repeated ids.
+  const std::string text = "(kicad_pcb (version 20221018) (generator pcbnew)\n  (general (thickness 1.6))\n"
+                           "  (layers (0 \"F.Cu\" signal) (31 \"B.Cu\" signal) (44 \"Edge.Cuts\" user))\n"
+                           "  (net 0 \"\")\n  (net 1 \"A\")\n"
+                           "  (gr_line (start 0 0) (end 50 0) (layer \"Edge.Cuts\") (stroke (width 0.1) (type solid)))\n)\n";
+  tmk::model::Track t;
+  t.a = {1'000'000, 1'000'000};
+  t.b = {5'000'000, 1'000'000};
+  t.width = 200'000;
+  t.layer = 0;
+  t.net = 1;
+  tmk::model::Via v;
+  v.pos = {5'000'000, 1'000'000};
+  v.size = 600'000;
+  v.layer_bottom = 1;
+  v.drill = 300'000;
+  v.net = 1;
+  auto lb = board_from_text(text);
+  {
+    tmk::io::BoardEditor ed(lb, 1);
+    ed.add_track(t);
+    ed.add_via(v);
+  }
+  auto lb2 = board_from_text(lb.doc.write());
+  {
+    tmk::io::BoardEditor ed(lb2, 1);
+    t.a.y = t.b.y = 3'000'000;
+    ed.add_track(t);
+    ed.add_via(v);
+  }
+  const std::string out = lb2.doc.write();
+  std::set<std::string> ids;
+  std::size_t n = 0;
+  for (std::size_t at = out.find("(uuid \""); at != std::string::npos; at = out.find("(uuid \"", at + 1), ++n)
+    ids.insert(out.substr(at + 7, 36));
+  CHECK(n == 4);
+  CHECK(ids.size() == n);
+  // The first board's ids are the ones an untouched editor gives: nothing changes for a board without earlier ids.
+  auto lb3 = board_from_text(text);
+  tmk::io::BoardEditor ed3(lb3, 1);
+  CHECK(lb.doc.write().find(ed3.next_uuid()) != std::string::npos);
 }

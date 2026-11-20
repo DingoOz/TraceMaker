@@ -1,0 +1,5306 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-20T04:47:38",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "chained.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [SCL] of R10 on F.Cu",
+                    "pos": {
+                        "x": 65.1413,
+                        "y": 38.39648
+                    },
+                    "uuid": "f1d8eba3-ae7c-4b65-ac7e-27a742f01e87"
+                },
+                {
+                    "description": "Pad 6 [SCL] of U4 on F.Cu",
+                    "pos": {
+                        "x": 64.7138,
+                        "y": 41.36148
+                    },
+                    "uuid": "7a7a446e-990c-4e40-b166-0527f7a7b7e4"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": [
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "PTH inside courtyard",
+            "items": [
+                {
+                    "description": "PTH pad 1 [GND] of J6",
+                    "pos": {
+                        "x": 50.8713,
+                        "y": 48.45148
+                    },
+                    "uuid": "489d312b-5d51-4674-8fc3-72d84b1eeab7"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "pth_inside_courtyard"
+        },
+        {
+            "description": "PTH inside courtyard",
+            "items": [
+                {
+                    "description": "PTH pad 1 [PB13] of J4",
+                    "pos": {
+                        "x": 53.1513,
+                        "y": 49.21148
+                    },
+                    "uuid": "bb973778-75d1-4b5c-920a-c2eab0ff5683"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "pth_inside_courtyard"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "PTH inside courtyard",
+            "items": [
+                {
+                    "description": "PTH pad 1 [PB14] of J3",
+                    "pos": {
+                        "x": 53.1513,
+                        "y": 34.21148
+                    },
+                    "uuid": "9311a770-fada-4b40-8733-de5a5222777f"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "pth_inside_courtyard"
+        },
+        {
+            "description": "PTH inside courtyard",
+            "items": [
+                {
+                    "description": "PTH pad 1 [VBUS] of J2",
+                    "pos": {
+                        "x": 50.8713,
+                        "y": 34.89148
+                    },
+                    "uuid": "77d7ba4e-03a7-4558-b64d-8b3e472c786f"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "pth_inside_courtyard"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [PA15] on B.Cu, length 2.0460 mm",
+                    "pos": {
+                        "x": 69.77632,
+                        "y": 46.866718
+                    },
+                    "uuid": "8457b261-f682-471f-bd36-70132fca8df6"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 49.34654,
+                        "y": 50.71104
+                    },
+                    "uuid": "00000000-0000-0000-0000-0000647f02fb"
+                },
+                {
+                    "description": "PCB text 'PB4' on B.SilkS",
+                    "pos": {
+                        "x": 49.075,
+                        "y": 34.725
+                    },
+                    "uuid": "236bb0ad-73bc-49be-9914-18830253ce8c"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 49.3186,
+                        "y": 32.81928
+                    },
+                    "uuid": "e1e1313d-7455-46aa-8a76-35cb488e984e"
+                },
+                {
+                    "description": "PCB text 'GND' on B.SilkS",
+                    "pos": {
+                        "x": 60.695,
+                        "y": 32.52
+                    },
+                    "uuid": "b984bf3d-e85f-4d6a-b566-69034fb05d43"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 49.3186,
+                        "y": 32.81928
+                    },
+                    "uuid": "e1e1313d-7455-46aa-8a76-35cb488e984e"
+                },
+                {
+                    "description": "PCB text 'GND' on F.SilkS",
+                    "pos": {
+                        "x": 57.825,
+                        "y": 32.5
+                    },
+                    "uuid": "3f0c66e2-6431-42ea-a239-582b0857c74d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 49.34654,
+                        "y": 50.71104
+                    },
+                    "uuid": "00000000-0000-0000-0000-0000647f02fb"
+                },
+                {
+                    "description": "PCB text 'PB4' on F.SilkS",
+                    "pos": {
+                        "x": 49.075,
+                        "y": 34.725
+                    },
+                    "uuid": "05984185-b518-48fb-b1f6-23d8368a5d01"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 49.3186,
+                        "y": 32.81928
+                    },
+                    "uuid": "e1e1313d-7455-46aa-8a76-35cb488e984e"
+                },
+                {
+                    "description": "PCB text 'DFU' on F.SilkS",
+                    "pos": {
+                        "x": 51.35,
+                        "y": 32.52
+                    },
+                    "uuid": "32569e2e-e53f-4a48-a287-b144ff32a258"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 92.7513,
+                        "y": 42.66148
+                    },
+                    "uuid": "c5122f39-49a1-4d5a-a516-4cfbcde619c0"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 92.7513,
+                        "y": 38.24148
+                    },
+                    "uuid": "31a1ba9d-0dc6-4a5d-88fa-cc12d8b7240e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 90.0913,
+                        "y": 44.31148
+                    },
+                    "uuid": "0599d058-5998-4282-9601-2528c332dd21"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 92.7513,
+                        "y": 37.58148
+                    },
+                    "uuid": "eca24bfc-6782-451b-b018-94bcb3e181c3"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 98.7513,
+                        "y": 45.96148
+                    },
+                    "uuid": "cdbb88b7-ee91-4e03-8c84-7aa54281e674"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 90.0913,
+                        "y": 39.23148
+                    },
+                    "uuid": "0981b07e-a25b-4b16-83dd-25ed2b20685d"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 98.7513,
+                        "y": 40.88148
+                    },
+                    "uuid": "c33017c1-92bf-4cf4-8a3c-bd3fda97451f"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 98.7513,
+                        "y": 43.42148
+                    },
+                    "uuid": "947c19a3-546d-43d0-a929-ba337b5c2f29"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 92.7513,
+                        "y": 38.12148
+                    },
+                    "uuid": "aa1243ee-ee2a-4a36-9ce4-92997a72c9f5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 90.0913,
+                        "y": 46.91148
+                    },
+                    "uuid": "574ed05d-f6f7-4cab-ba87-9c210b34c915"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 92.7513,
+                        "y": 40.12148
+                    },
+                    "uuid": "b8dc1242-9ecf-41e0-aa2c-8685a7904b0e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 92.7513,
+                        "y": 37.76148
+                    },
+                    "uuid": "c2107717-26d5-4b42-b180-df9f46a04ac5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 92.7513,
+                        "y": 37.88148
+                    },
+                    "uuid": "739e8cbf-82f3-4ac8-8da3-0fa02aa5ad47"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 92.7513,
+                        "y": 46.91148
+                    },
+                    "uuid": "01efc41f-f7be-4d76-bfa1-033be31f6717"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 98.7513,
+                        "y": 38.34148
+                    },
+                    "uuid": "47247439-a13c-48ae-86ca-6d2c038b75e5"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 90.0913,
+                        "y": 41.77148
+                    },
+                    "uuid": "9345e9fc-00c3-42fc-9803-5eeecf3ebd9a"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 92.7513,
+                        "y": 45.20148
+                    },
+                    "uuid": "489e1a14-7f1d-4ddc-b729-e1ab1d741d33"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 92.7513,
+                        "y": 37.64148
+                    },
+                    "uuid": "3f6d5730-f17f-47f8-9b2a-c2af1d814c10"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 92.7513,
+                        "y": 36.63148
+                    },
+                    "uuid": "594139c3-0538-4458-a963-04d4ec15ae15"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": 92.75514,
+                        "y": 32.82944
+                    },
+                    "uuid": "a055c0f2-42c9-4ba2-a502-a1422c078dcd"
+                },
+                {
+                    "description": "Segment of J5 on F.SilkS",
+                    "pos": {
+                        "x": 92.7513,
+                        "y": 38.00148
+                    },
+                    "uuid": "6c470150-8697-4ba2-9500-5e77d25103ac"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'LED_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'LED_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'otter'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Connector_PinHeader_2.54mm'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_DFN_QFN'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Button_Switch_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Connector_PinHeader_2.54mm'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_QFP'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Inductor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Connector_PinHeader_2.54mm'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Connector_PinHeader_2.54mm'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'otter'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'TestPoint'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'otter'",
+            "items": [
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'otter'",
+            "items": [
+                {
+                    "description": "Footprint G2",
+                    "pos": {
+                        "x": 51.0,
+                        "y": 30.2
+                    },
+                    "uuid": "00000000-0000-0000-0000-00007fffffff"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text '3V3' on B.SilkS",
+                    "pos": {
+                        "x": 26.225,
+                        "y": 34.725
+                    },
+                    "uuid": "003cf83f-a0a4-40ed-9e10-b5b2d1d1e3ba"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB13' on B.SilkS",
+                    "pos": {
+                        "x": 23.675,
+                        "y": 34.725
+                    },
+                    "uuid": "f05e886f-83ea-4658-a125-2409a64b9ce5"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB6' on B.SilkS",
+                    "pos": {
+                        "x": 44.025,
+                        "y": 34.725
+                    },
+                    "uuid": "3e171cc9-e17c-4f03-9f8b-0dac0243f33a"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB8' on B.SilkS",
+                    "pos": {
+                        "x": 33.825,
+                        "y": 34.725
+                    },
+                    "uuid": "0350c358-8370-4dec-8c87-84b6f282ac5b"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'VIN' on B.SilkS",
+                    "pos": {
+                        "x": 59.275,
+                        "y": 34.725
+                    },
+                    "uuid": "9731de7c-b36e-4480-8948-09943d501761"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB2' on B.SilkS",
+                    "pos": {
+                        "x": 38.925,
+                        "y": 34.725
+                    },
+                    "uuid": "81937812-1cde-4904-8160-f8c5338382b4"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA15' on B.SilkS",
+                    "pos": {
+                        "x": 36.425,
+                        "y": 34.725
+                    },
+                    "uuid": "ca858b29-477c-4597-9f3f-0f66820d39f9"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB4' on B.SilkS",
+                    "pos": {
+                        "x": 49.075,
+                        "y": 34.725
+                    },
+                    "uuid": "236bb0ad-73bc-49be-9914-18830253ce8c"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB5' on B.SilkS",
+                    "pos": {
+                        "x": 54.175,
+                        "y": 34.725
+                    },
+                    "uuid": "3b0283f3-e7c2-42d7-92d2-3f40709f1f4b"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text '3V3' on B.SilkS",
+                    "pos": {
+                        "x": 51.625,
+                        "y": 34.725
+                    },
+                    "uuid": "fc205204-08f2-46ed-9a20-ff8d1c9c90cb"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB3' on B.SilkS",
+                    "pos": {
+                        "x": 46.525,
+                        "y": 34.725
+                    },
+                    "uuid": "42370334-8b29-4f36-8889-cd461fff7192"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA8' on B.SilkS",
+                    "pos": {
+                        "x": 28.775,
+                        "y": 34.725
+                    },
+                    "uuid": "ccffcfc5-cd99-48b7-adc8-b816f1ff53d3"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB1' on B.SilkS",
+                    "pos": {
+                        "x": 31.275,
+                        "y": 34.725
+                    },
+                    "uuid": "cfe4d9cd-0823-4a1f-867f-ef4f10ca80d5"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'GND' on B.SilkS",
+                    "pos": {
+                        "x": 56.725,
+                        "y": 34.725
+                    },
+                    "uuid": "cbe00255-b91b-4cc6-b541-5762bae5d669"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB7' on B.SilkS",
+                    "pos": {
+                        "x": 41.475,
+                        "y": 34.725
+                    },
+                    "uuid": "f7103b41-24ef-4b18-8c12-1597f51af684"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA2' on B.SilkS",
+                    "pos": {
+                        "x": 46.6,
+                        "y": 22.5
+                    },
+                    "uuid": "42648cf8-23c9-4b8e-8667-f2b627d4ff5e"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA7' on B.SilkS",
+                    "pos": {
+                        "x": 33.9,
+                        "y": 22.5
+                    },
+                    "uuid": "6e5135f6-3fad-4864-8b2d-b5eaee064566"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA4' on B.SilkS",
+                    "pos": {
+                        "x": 41.55,
+                        "y": 22.5
+                    },
+                    "uuid": "67fbfc5b-395a-4cf9-90cc-2f24d87f1eab"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB15' on B.SilkS",
+                    "pos": {
+                        "x": 26.325,
+                        "y": 22.5
+                    },
+                    "uuid": "fdb7ef53-0236-47ba-9e78-a86efc6297b4"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA9' on B.SilkS",
+                    "pos": {
+                        "x": 59.325,
+                        "y": 22.5
+                    },
+                    "uuid": "09d2eda3-92ff-42e5-bdac-3afbfc0cb4ad"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA3' on B.SilkS",
+                    "pos": {
+                        "x": 44.075,
+                        "y": 22.5
+                    },
+                    "uuid": "96587000-2928-4e77-8d22-b9f2784691a0"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB14' on B.SilkS",
+                    "pos": {
+                        "x": 23.775,
+                        "y": 22.5
+                    },
+                    "uuid": "00da3fa7-ce2a-4a6c-971b-751f5aa7e9c8"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA5' on B.SilkS",
+                    "pos": {
+                        "x": 39.025,
+                        "y": 22.5
+                    },
+                    "uuid": "eeb8ae33-9b79-48c3-ad01-3aee72d31c1f"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA1' on B.SilkS",
+                    "pos": {
+                        "x": 49.2,
+                        "y": 22.5
+                    },
+                    "uuid": "e92f5079-a390-4305-bac9-9f92de05c875"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA10' on B.SilkS",
+                    "pos": {
+                        "x": 56.825,
+                        "y": 22.5
+                    },
+                    "uuid": "c7339667-dd91-43b9-b43a-607980d992a3"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA6' on B.SilkS",
+                    "pos": {
+                        "x": 36.475,
+                        "y": 22.45
+                    },
+                    "uuid": "18367831-3214-4d85-ab54-f5c3d0264ceb"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB12' on B.SilkS",
+                    "pos": {
+                        "x": 31.4,
+                        "y": 22.55
+                    },
+                    "uuid": "cc284038-8f37-4474-96e2-f4bb2f7ad5cc"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB9' on B.SilkS",
+                    "pos": {
+                        "x": 54.275,
+                        "y": 22.5
+                    },
+                    "uuid": "c3123c17-8c2c-456a-8d31-866d004da3a0"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB0' on B.SilkS",
+                    "pos": {
+                        "x": 28.875,
+                        "y": 22.5
+                    },
+                    "uuid": "d1d5e97d-30f7-4f8b-a53a-47ed381f79cb"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'GND' on B.SilkS",
+                    "pos": {
+                        "x": 51.725,
+                        "y": 22.5
+                    },
+                    "uuid": "543fc71f-d33d-4501-b17c-f684fbce1245"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'GND' on B.SilkS",
+                    "pos": {
+                        "x": 60.695,
+                        "y": 32.52
+                    },
+                    "uuid": "b984bf3d-e85f-4d6a-b566-69034fb05d43"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'CLK' on B.SilkS",
+                    "pos": {
+                        "x": 60.67,
+                        "y": 29.92
+                    },
+                    "uuid": "987f4869-d8e9-407b-afbf-9508631ea763"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'DIO' on B.SilkS",
+                    "pos": {
+                        "x": 60.67,
+                        "y": 27.42
+                    },
+                    "uuid": "16f8913d-2e88-43e5-a343-2acf3dbec28d"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text '3V3' on B.SilkS",
+                    "pos": {
+                        "x": 60.67,
+                        "y": 24.87
+                    },
+                    "uuid": "86ec3888-3a6e-459f-b74a-9c303b59951d"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'VIN' on B.SilkS",
+                    "pos": {
+                        "x": 21.39,
+                        "y": 23.16
+                    },
+                    "uuid": "c11d12f2-8038-4404-b1d1-e5a2daba5b94"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'GND' on B.SilkS",
+                    "pos": {
+                        "x": 21.42,
+                        "y": 33.95
+                    },
+                    "uuid": "05a9b38d-8f71-4efd-b1f0-ab202ee91317"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.5000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'DFU' on B.SilkS",
+                    "pos": {
+                        "x": 55.4,
+                        "y": 33.3
+                    },
+                    "uuid": "47ce3581-6101-4eb5-8936-494516896391"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'GND' on F.SilkS",
+                    "pos": {
+                        "x": 57.825,
+                        "y": 32.5
+                    },
+                    "uuid": "3f0c66e2-6431-42ea-a239-582b0857c74d"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'CLK' on F.SilkS",
+                    "pos": {
+                        "x": 57.85,
+                        "y": 29.9
+                    },
+                    "uuid": "f59e559a-9aba-498f-b498-86b2cb8f85b3"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'DIO' on F.SilkS",
+                    "pos": {
+                        "x": 57.85,
+                        "y": 27.4
+                    },
+                    "uuid": "8afd829d-e43f-4eb9-9739-f3b04cdae2f9"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'VIN' on F.SilkS",
+                    "pos": {
+                        "x": 59.275,
+                        "y": 34.725
+                    },
+                    "uuid": "f1a0c7be-9aef-4cb9-9a8c-a954d13c66e0"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB0' on F.SilkS",
+                    "pos": {
+                        "x": 28.83,
+                        "y": 22.41
+                    },
+                    "uuid": "80ce2c00-c7cc-4c0a-a13c-b854712affe6"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA9' on F.SilkS",
+                    "pos": {
+                        "x": 59.275,
+                        "y": 22.5
+                    },
+                    "uuid": "35af33fc-6100-4b06-852e-a5b282e93b36"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'VIN' on F.SilkS",
+                    "pos": {
+                        "x": 23.71,
+                        "y": 23.37
+                    },
+                    "uuid": "8f5fef2a-eb41-44b0-9b10-af5b3fd0c4cf"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text '3V3' on F.SilkS",
+                    "pos": {
+                        "x": 57.82,
+                        "y": 24.84
+                    },
+                    "uuid": "5cba0626-1798-4664-b6a0-650b19537cef"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA10' on F.SilkS",
+                    "pos": {
+                        "x": 56.775,
+                        "y": 22.5
+                    },
+                    "uuid": "bf3f1983-c52b-4b0c-ad84-efa1f23fd23f"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA15' on F.SilkS",
+                    "pos": {
+                        "x": 36.425,
+                        "y": 34.725
+                    },
+                    "uuid": "b542da2c-e359-4139-93fc-01170cc7a5a0"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB8' on F.SilkS",
+                    "pos": {
+                        "x": 33.825,
+                        "y": 34.725
+                    },
+                    "uuid": "802afe16-d203-42d2-b69e-67186b60499d"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA7' on F.SilkS",
+                    "pos": {
+                        "x": 33.85,
+                        "y": 22.5
+                    },
+                    "uuid": "248d783c-5784-4961-8d48-8dceb6d67a6c"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA4' on F.SilkS",
+                    "pos": {
+                        "x": 41.5,
+                        "y": 22.5
+                    },
+                    "uuid": "c00687d2-50ed-4b8d-9376-f9b89d7f401c"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'GND' on F.SilkS",
+                    "pos": {
+                        "x": 23.81,
+                        "y": 33.89
+                    },
+                    "uuid": "e0f90e82-4e0e-434e-99aa-345c8b9cab79"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'GND' on F.SilkS",
+                    "pos": {
+                        "x": 51.675,
+                        "y": 22.5
+                    },
+                    "uuid": "fc90282a-10e7-4e14-a0b7-047e2f38c43d"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB3' on F.SilkS",
+                    "pos": {
+                        "x": 46.525,
+                        "y": 34.725
+                    },
+                    "uuid": "4c3c4151-f5d5-4212-96d0-21f4add06b65"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB2' on F.SilkS",
+                    "pos": {
+                        "x": 38.925,
+                        "y": 34.725
+                    },
+                    "uuid": "bcebfe13-5ab4-4c83-8258-5e9fe39d061b"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text '3V3' on F.SilkS",
+                    "pos": {
+                        "x": 51.625,
+                        "y": 34.725
+                    },
+                    "uuid": "a69c2625-b2ce-474b-9e2d-e0446062e6f6"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB4' on F.SilkS",
+                    "pos": {
+                        "x": 49.075,
+                        "y": 34.725
+                    },
+                    "uuid": "05984185-b518-48fb-b1f6-23d8368a5d01"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB13' on F.SilkS",
+                    "pos": {
+                        "x": 23.675,
+                        "y": 34.725
+                    },
+                    "uuid": "5fdd30c5-3c15-43d0-90a0-08ac9445fdbb"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA8' on F.SilkS",
+                    "pos": {
+                        "x": 28.775,
+                        "y": 34.725
+                    },
+                    "uuid": "3440a04e-8633-4a50-b7da-88692e4a29cf"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'GND' on F.SilkS",
+                    "pos": {
+                        "x": 56.725,
+                        "y": 34.725
+                    },
+                    "uuid": "380939f2-527f-4970-86cd-94c16eb1dbe1"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB15' on F.SilkS",
+                    "pos": {
+                        "x": 26.275,
+                        "y": 22.5
+                    },
+                    "uuid": "bd4c6078-9995-45cb-84f4-628637ef2480"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB9' on F.SilkS",
+                    "pos": {
+                        "x": 54.225,
+                        "y": 22.5
+                    },
+                    "uuid": "f04d0227-b957-4c99-93db-ee6683495590"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB14' on F.SilkS",
+                    "pos": {
+                        "x": 23.725,
+                        "y": 22.5
+                    },
+                    "uuid": "5465931d-8912-4495-bf39-a33228fbd4b2"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA1' on F.SilkS",
+                    "pos": {
+                        "x": 49.23,
+                        "y": 22.5
+                    },
+                    "uuid": "d9649b01-6d0a-4e2c-961a-41d21f8efa38"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB1' on F.SilkS",
+                    "pos": {
+                        "x": 31.275,
+                        "y": 34.725
+                    },
+                    "uuid": "efd31ab5-c2bd-4731-829f-fc26c238c2e0"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA5' on F.SilkS",
+                    "pos": {
+                        "x": 38.975,
+                        "y": 22.5
+                    },
+                    "uuid": "fb0c1c85-c84b-4a36-8459-b52ccbe82e0f"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB7' on F.SilkS",
+                    "pos": {
+                        "x": 41.475,
+                        "y": 34.725
+                    },
+                    "uuid": "29746d8d-5076-4767-a3c5-70e9a4d25330"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB6' on F.SilkS",
+                    "pos": {
+                        "x": 44.025,
+                        "y": 34.725
+                    },
+                    "uuid": "cbcf0f63-5a89-4265-93c4-3bcc54984807"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text '3V3' on F.SilkS",
+                    "pos": {
+                        "x": 26.225,
+                        "y": 34.725
+                    },
+                    "uuid": "823eabfc-42b8-4e6d-a8d5-b8924fe195b7"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB12' on F.SilkS",
+                    "pos": {
+                        "x": 31.35,
+                        "y": 22.45
+                    },
+                    "uuid": "e2962e15-3b1b-4271-935b-40e7039d681c"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.5000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA2' on F.SilkS",
+                    "pos": {
+                        "x": 46.625,
+                        "y": 22.375
+                    },
+                    "uuid": "e3417bb0-1403-4214-a465-f028bb72ba4c"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PB5' on F.SilkS",
+                    "pos": {
+                        "x": 54.175,
+                        "y": 34.725
+                    },
+                    "uuid": "b37d9d8e-4c9c-4a86-b762-5f44b8d04f14"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA3' on F.SilkS",
+                    "pos": {
+                        "x": 44.025,
+                        "y": 22.5
+                    },
+                    "uuid": "9d99b56d-519a-4e05-8258-d179979d320f"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.7000 mm)",
+            "items": [
+                {
+                    "description": "PCB text 'PA6' on F.SilkS",
+                    "pos": {
+                        "x": 36.425,
+                        "y": 22.55
+                    },
+                    "uuid": "d2e3be83-fe5f-4225-8ac6-47c44977abab"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R1",
+                    "pos": {
+                        "x": 57.0913,
+                        "y": 44.11148
+                    },
+                    "uuid": "b88c56de-e7f2-4d5f-90f3-359f9657099b"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R2",
+                    "pos": {
+                        "x": 57.2813,
+                        "y": 39.11148
+                    },
+                    "uuid": "3e3c6104-9d56-48f8-9b4b-169c4348e469"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R3",
+                    "pos": {
+                        "x": 57.2613,
+                        "y": 38.01148
+                    },
+                    "uuid": "b034f795-2af6-4023-b0f4-aabde74c9c4f"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R4",
+                    "pos": {
+                        "x": 57.0713,
+                        "y": 45.31148
+                    },
+                    "uuid": "3e708720-7946-4100-a5ef-bdc62ed8513c"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of U1",
+                    "pos": {
+                        "x": 60.7013,
+                        "y": 39.88648
+                    },
+                    "uuid": "5b79291f-fe28-4908-91c3-539181fa5aca"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R8",
+                    "pos": {
+                        "x": 61.0513,
+                        "y": 38.37148
+                    },
+                    "uuid": "1c3f4381-df02-42c1-a180-37878e65f4fc"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R9",
+                    "pos": {
+                        "x": 61.0513,
+                        "y": 44.91148
+                    },
+                    "uuid": "a1c02834-d1b8-4607-9451-02f730272b41"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of U4",
+                    "pos": {
+                        "x": 64.5213,
+                        "y": 39.89148
+                    },
+                    "uuid": "05ccfef1-76aa-4dbd-ac1d-894a24af0875"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of C6",
+                    "pos": {
+                        "x": 77.6513,
+                        "y": 44.51148
+                    },
+                    "uuid": "a84a5027-78ad-4387-8ff6-e94e7dda74f5"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of C7",
+                    "pos": {
+                        "x": 65.9113,
+                        "y": 42.05148
+                    },
+                    "uuid": "bbe3f421-937b-448e-97d3-67d95397ff29"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of C8",
+                    "pos": {
+                        "x": 64.9613,
+                        "y": 43.82148
+                    },
+                    "uuid": "f982423f-8935-4931-a0bb-639ec294173e"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of C10",
+                    "pos": {
+                        "x": 62.3013,
+                        "y": 44.51148
+                    },
+                    "uuid": "329388d7-1cb1-4b2f-bc8b-ea5fa8422be1"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R10",
+                    "pos": {
+                        "x": 64.0713,
+                        "y": 38.891479
+                    },
+                    "uuid": "2ed8e601-f434-4d23-8d33-b4553d0d2872"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R11",
+                    "pos": {
+                        "x": 66.1413,
+                        "y": 37.641479
+                    },
+                    "uuid": "3b12dde9-4feb-4d2d-9bd9-e89e98034290"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R6",
+                    "pos": {
+                        "x": 78.3513,
+                        "y": 42.11148
+                    },
+                    "uuid": "b4e2734a-cb78-4d1f-a18f-94f7286907c6"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of C3",
+                    "pos": {
+                        "x": 83.5613,
+                        "y": 38.39148
+                    },
+                    "uuid": "a97b1b02-3cbd-4e86-8039-82d35c11efb7"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of U3",
+                    "pos": {
+                        "x": 83.4713,
+                        "y": 39.59148
+                    },
+                    "uuid": "472bebe2-34cd-4970-a18d-6a26aa4d77f2"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R5",
+                    "pos": {
+                        "x": 76.8813,
+                        "y": 46.20148
+                    },
+                    "uuid": "85f6fb1b-6f02-4f24-881d-2001a0947225"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R7",
+                    "pos": {
+                        "x": 78.0513,
+                        "y": 41.11148
+                    },
+                    "uuid": "04102613-9d6e-445c-bde1-b92d682e43f6"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of C4",
+                    "pos": {
+                        "x": 82.9413,
+                        "y": 43.44148
+                    },
+                    "uuid": "402bca43-5804-4a5c-b237-ae8e19df449b"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of SW1",
+                    "pos": {
+                        "x": 84.7763,
+                        "y": 46.91148
+                    },
+                    "uuid": "e527e5fd-1976-455b-a3e6-5b658b4a1dd6"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of C1",
+                    "pos": {
+                        "x": 81.4513,
+                        "y": 38.51148
+                    },
+                    "uuid": "6265d671-dbd1-400c-8e47-8940e1fb7b18"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of U2",
+                    "pos": {
+                        "x": 68.1513,
+                        "y": 37.711431
+                    },
+                    "uuid": "b86d7c2f-ab80-4c4c-b857-c2a5be7f6be7"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of L1",
+                    "pos": {
+                        "x": 85.2713,
+                        "y": 38.21148
+                    },
+                    "uuid": "d859d1e6-24c0-43d8-b7f9-5b13d053ae9b"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of C9",
+                    "pos": {
+                        "x": 73.1513,
+                        "y": 38.81148
+                    },
+                    "uuid": "b56d05bf-037e-497b-a445-aa22e4d7312f"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4000 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R13",
+                    "pos": {
+                        "x": 77.4813,
+                        "y": 46.20148
+                    },
+                    "uuid": "d004b89a-f1bc-4a9d-b997-9addaa624540"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of C5",
+                    "pos": {
+                        "x": 78.5013,
+                        "y": 45.06148
+                    },
+                    "uuid": "b570ad5d-367b-4f25-94c5-c85f2a8badba"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R12",
+                    "pos": {
+                        "x": 82.2713,
+                        "y": 42.66148
+                    },
+                    "uuid": "93b86d53-5930-4e80-92b8-1075286ae3eb"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of C11",
+                    "pos": {
+                        "x": 81.8913,
+                        "y": 43.42148
+                    },
+                    "uuid": "5748a2c8-7f4a-4507-8a03-b1a984998b39"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4000 mm)",
+            "items": [
+                {
+                    "description": "Reference field of C2",
+                    "pos": {
+                        "x": 80.9913,
+                        "y": 44.07148
+                    },
+                    "uuid": "4b30e436-1612-4cc2-8b10-d886f3239164"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of C12",
+                    "pos": {
+                        "x": 73.6513,
+                        "y": 39.61148
+                    },
+                    "uuid": "50e4f840-da0d-4492-8e52-b85584562136"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R14",
+                    "pos": {
+                        "x": 75.6513,
+                        "y": 41.31148
+                    },
+                    "uuid": "3c687ac2-8c02-454f-97ac-c73a24ec5b6a"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R15",
+                    "pos": {
+                        "x": 74.4513,
+                        "y": 40.41148
+                    },
+                    "uuid": "fe330cb3-6275-4774-92c4-3ddc8b623cbe"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Text height out of range (board setup constraints silk text height min height 0.8000 mm; actual 0.4500 mm)",
+            "items": [
+                {
+                    "description": "Reference field of R16",
+                    "pos": {
+                        "x": 74.8513,
+                        "y": 40.81148
+                    },
+                    "uuid": "7d4ab5de-48d1-46b4-8a05-c812a09ef574"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "text_height"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'VIN' on B.SilkS",
+                    "pos": {
+                        "x": 59.275,
+                        "y": 34.725
+                    },
+                    "uuid": "9731de7c-b36e-4480-8948-09943d501761"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'PB5' on B.SilkS",
+                    "pos": {
+                        "x": 54.175,
+                        "y": 34.725
+                    },
+                    "uuid": "3b0283f3-e7c2-42d7-92d2-3f40709f1f4b"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text '3V3' on B.SilkS",
+                    "pos": {
+                        "x": 51.625,
+                        "y": 34.725
+                    },
+                    "uuid": "fc205204-08f2-46ed-9a20-ff8d1c9c90cb"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'GND' on B.SilkS",
+                    "pos": {
+                        "x": 56.725,
+                        "y": 34.725
+                    },
+                    "uuid": "cbe00255-b91b-4cc6-b541-5762bae5d669"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'GND' on B.SilkS",
+                    "pos": {
+                        "x": 60.695,
+                        "y": 32.52
+                    },
+                    "uuid": "b984bf3d-e85f-4d6a-b566-69034fb05d43"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'DFU' on B.SilkS",
+                    "pos": {
+                        "x": 55.4,
+                        "y": 33.3
+                    },
+                    "uuid": "47ce3581-6101-4eb5-8936-494516896391"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'GND' on F.SilkS",
+                    "pos": {
+                        "x": 57.825,
+                        "y": 32.5
+                    },
+                    "uuid": "3f0c66e2-6431-42ea-a239-582b0857c74d"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'VIN' on F.SilkS",
+                    "pos": {
+                        "x": 59.275,
+                        "y": 34.725
+                    },
+                    "uuid": "f1a0c7be-9aef-4cb9-9a8c-a954d13c66e0"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text '3V3' on F.SilkS",
+                    "pos": {
+                        "x": 51.625,
+                        "y": 34.725
+                    },
+                    "uuid": "a69c2625-b2ce-474b-9e2d-e0446062e6f6"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'PB4' on F.SilkS",
+                    "pos": {
+                        "x": 49.075,
+                        "y": 34.725
+                    },
+                    "uuid": "05984185-b518-48fb-b1f6-23d8368a5d01"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'GND' on F.SilkS",
+                    "pos": {
+                        "x": 56.725,
+                        "y": 34.725
+                    },
+                    "uuid": "380939f2-527f-4970-86cd-94c16eb1dbe1"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "PCB text 'PB5' on F.SilkS",
+                    "pos": {
+                        "x": 54.175,
+                        "y": 34.725
+                    },
+                    "uuid": "b37d9d8e-4c9c-4a86-b762-5f44b8d04f14"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clipped by solder mask",
+            "items": [
+                {
+                    "description": "Segment of U3 on F.SilkS",
+                    "pos": {
+                        "x": 80.5213,
+                        "y": 41.20148
+                    },
+                    "uuid": "e6bb2305-127b-45f8-bdb2-167c20c4410a"
+                },
+                {
+                    "description": "Footprint G1",
+                    "pos": {
+                        "x": 41.0,
+                        "y": 26.81
+                    },
+                    "uuid": "00000000-0000-0000-0000-000000000000"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_over_copper"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "PCB text 'DFU' on F.SilkS",
+                    "pos": {
+                        "x": 51.35,
+                        "y": 32.52
+                    },
+                    "uuid": "32569e2e-e53f-4a48-a287-b144ff32a258"
+                },
+                {
+                    "description": "Segment of J2 on F.SilkS",
+                    "pos": {
+                        "x": 49.5413,
+                        "y": 33.56148
+                    },
+                    "uuid": "fbfb0058-e24d-487f-a3ce-3d9df6928879"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "PCB text 'PB4' on F.SilkS",
+                    "pos": {
+                        "x": 49.075,
+                        "y": 34.725
+                    },
+                    "uuid": "05984185-b518-48fb-b1f6-23d8368a5d01"
+                },
+                {
+                    "description": "Segment of J2 on F.SilkS",
+                    "pos": {
+                        "x": 49.5413,
+                        "y": 34.89148
+                    },
+                    "uuid": "8c156ed0-9c37-4b77-be41-dcf932463048"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        }
+    ]
+}

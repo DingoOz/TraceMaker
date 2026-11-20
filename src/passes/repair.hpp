@@ -26,11 +26,24 @@ struct RepairOptions {
   int max_conns = 64;                     // open connections tried at most (the first ones of the router's list)
   double time_limit_s = 0;                // > 0: no attempt starts after this many seconds (safety only; work decides)
   std::vector<model::NetId> keep_nets;    // nets whose copper is never lifted (coupled pairs, bus members)
+  // Where the copper to lift is looked for (doc 20 §2.11, D195). "ends": round the two ends of the open connection (the radii above).
+  // "route": along the route the connection takes with every other net's unlocked copper off the board (one more routing run per
+  // connection; a connection with no such route is left alone), on the layers that route uses. "both": along the route, then the ends.
+  std::string select = "ends";
+  std::vector<double> route_radii_mm{0.2, 1};  // "route": distance from that route's copper, tried in turn
+  // An attempt routes only the open connection's net and the nets it lifted copper of; every other net is left as it is (its open
+  // connections too). Without it each attempt routes everything that is open, and on a board with many open connections the attempt's
+  // budget goes to those: PCBench d20 with two layers added, 129 open, 126 attempts, every one ended with more open than before.
+  bool focus = false;
+  // > 1: every attempt runs this many portfolio variants (different orders and costs) on `threads` threads and takes the best; each has
+  // `step_work`. 1 = one router with the job's options, as before.
+  int variants = 1, threads = 0;
 };
 
 // One routing attempt: an open connection, a window radius, what it lifted, and whether it was kept.
 struct RepairStep {
   std::string conn;  // "NET A-B"
+  bool along_route = false;  // the window follows the connection's route on the bare board, not its ends
   double radius_mm = 0;
   int pieces = 0, tracks = 0, vias = 0;  // copper lifted (pieces: branches)
   int open_before = 0, open_after = 0;   // open connections of the board (pads not joined), before and after the attempt
@@ -47,6 +60,7 @@ struct RepairResult {
   std::vector<model::Track> tracks;
   std::vector<model::Via> vias;
   int open_before = 0, open_after = 0;
+  int no_bare_route = 0;  // "route": connections with no route even with the other nets' unlocked copper off the board
   // Of the last kept attempt (pad indices of `base`): the router's open connections and its explanations.
   std::vector<route::RouteResult::Unrouted> unrouted;
   std::vector<std::string> failures;
@@ -63,5 +77,21 @@ int open_connections(const model::Board& b, const model::DesignRules& rules);
 // Deterministic: same inputs, same result (the attempts run in order, each under a work budget).
 RepairResult repair_open(const model::Board& base, const model::DesignRules& rules, const route::RouteResult& res, const route::RouterOptions& opt,
                          const RepairOptions& ro, const std::function<void(const std::string&)>& log = {});
+
+// Copper that joins no pad after a run and is the run's doing (doc 20 §2.14, D198). Lifting part of a route can leave a piece of
+// it standing: a via and two short tracks, or a run on an inner layer whose vias went. The router counts pads, so such a board is
+// complete for it, but KiCad counts every piece of copper of a net and reports the piece as unconnected.
+// `now` is the input as it is after the run (lifted copper gone), `new_tracks` and `new_vias` the run's copper, `before` the input as
+// read. A group of touching tracks and vias with no pad, zone, graphic, arc, locked item or free via in it is cut when it holds new
+// copper, or when one of its items was joined to a pad in `before`. A group that joined no pad in the input either is the user's
+// and stays. Links are KiCad's (copper of one net that overlaps is joined), so nothing KiCad sees as connected is cut.
+struct IslandCut {
+  std::vector<int> base_tracks, base_vias;      // indices into now.tracks / now.vias, ascending
+  std::vector<char> new_track_cut, new_via_cut;  // per new track / via: 1 = cut
+  int islands = 0;
+  bool any() const { return islands > 0; }
+};
+IslandCut padless_islands(const model::Board& before, const model::Board& now, const std::vector<model::Track>& new_tracks,
+                          const std::vector<model::Via>& new_vias);
 
 }  // namespace tmk::passes

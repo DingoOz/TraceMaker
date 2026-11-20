@@ -1,0 +1,76 @@
+{
+ "applied": {
+  "chains_closed": 1,
+  "islands_cut": 0,
+  "open_after": 2,
+  "open_before": 3,
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/fine-2026-11-20/zx-sizif-512-ext_sizif512ext/chained.kicad_pcb",
+  "written": true
+ },
+ "baseline": {
+  "connections": 3,
+  "open": 3,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "bench/results/finish-2026-11-19/strong2/zx-sizif-512-ext_sizif512ext/out.kicad_pcb",
+ "connections": [
+  {
+   "a": "U11.34",
+   "b": "C32.1",
+   "blockers_from": "",
+   "closed": false,
+   "depth": 0,
+   "fail": "no_path_bare",
+   "first_blockers": -1,
+   "first_nets": [],
+   "joint": false,
+   "net": "Net-(C32-Pad1)",
+   "nets_lifted": 0,
+   "reason": "boxed_in",
+   "runs": 1
+  },
+  {
+   "a": "U11.39",
+   "b": "U7.35",
+   "blockers_from": "",
+   "closed": false,
+   "depth": 0,
+   "fail": "no_path_bare",
+   "first_blockers": -1,
+   "first_nets": [],
+   "joint": false,
+   "net": "/MIDI_CLK",
+   "nets_lifted": 0,
+   "reason": "not_attempted",
+   "runs": 1
+  },
+  {
+   "a": "U3.14",
+   "b": "U7.71",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 3,
+   "first_blockers": 1,
+   "first_nets": [
+    "/GD7"
+   ],
+   "joint": false,
+   "net": "/GD0",
+   "nets_lifted": 3,
+   "reason": "not_attempted",
+   "runs": 52
+  }
+ ],
+ "copper_layers": 4,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "closed_depth_3": 1,
+  "no_path_bare": 2
+ }
+}

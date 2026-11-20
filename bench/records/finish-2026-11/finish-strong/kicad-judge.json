@@ -1,0 +1,39 @@
+{
+ "Hardware_Playground_serial_gw_ATMEGA328P": {
+  "unconnected": 0,
+  "added": {}
+ },
+ "kitspace_teensy-fx": {
+  "unconnected": 0,
+  "added": {}
+ },
+ "DronPi_dronPi": {
+  "unconnected": 0,
+  "added": {
+   "clearance": 7,
+   "solder_mask_bridge": 3
+  }
+ },
+ "PCIE-to-MXM-Adapter_PCIEx1toMXM3.0": {
+  "unconnected": 0,
+  "added": {
+   "copper_edge_clearance": 24,
+   "solder_mask_bridge": 146
+  }
+ },
+ "KiCad-Library_Teensy_test_layout": {
+  "unconnected": 0,
+  "added": {
+   "clearance": 499,
+   "solder_mask_bridge": 3
+  }
+ },
+ "LeeChee_1800": {
+  "unconnected": 0,
+  "added": {}
+ },
+ "dorkyboard_keyboard": {
+  "unconnected": 0,
+  "added": {}
+ }
+}

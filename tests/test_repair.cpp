@@ -157,3 +157,122 @@ TEST_CASE("repair windows: locked copper is never lifted", "[repair]") {
   CHECK(rep.steps.empty());  // nothing in any window may be lifted
   CHECK(rep.open_after == 1);
 }
+
+TEST_CASE("repair along the bare-board route: the copper the route crosses is lifted, however far from the ends", "[repair]") {
+  const auto l = load(false);
+  const auto plain = route::Router(l.board, l.rules, options()).run();
+  REQUIRE(plain.routed == 0);
+  passes::RepairOptions ro;
+  ro.select = "route";
+  ro.radii_mm = {0.5};  // the end windows would not reach the ring; they are not used
+  const auto rep = passes::repair_open(l.board, l.rules, plain, options(), ro);
+  CHECK(rep.open_after == 0);
+  CHECK(rep.no_bare_route == 0);
+  CHECK(rep.ripped_tracks.size() == 5);
+  CHECK(errors(l.board, l.rules, rep) == 0);
+  REQUIRE(rep.steps.size() == 1);  // the route crosses the ring: the first distance already lifts it
+  CHECK(rep.steps.front().along_route);
+  CHECK(rep.steps.front().radius_mm == 0.2);
+  CHECK(rep.summary().contains("no_bare_route"));
+  const auto again = passes::repair_open(l.board, l.rules, plain, options(), ro);
+  CHECK(again.work == rep.work);
+  CHECK(again.ripped_tracks == rep.ripped_tracks);
+}
+
+TEST_CASE("repair along the bare-board route: a connection that locked copper closes in is counted and left alone", "[repair]") {
+  const auto l = load(true);
+  const auto plain = route::Router(l.board, l.rules, options()).run();
+  passes::RepairOptions ro;
+  ro.select = "route";
+  const auto rep = passes::repair_open(l.board, l.rules, plain, options(), ro);
+  CHECK(!rep.changed);
+  CHECK(rep.steps.empty());
+  CHECK(rep.no_bare_route == 1);
+  CHECK(rep.open_after == 1);
+  CHECK(!passes::repair_open(l.board, l.rules, plain, options(), passes::RepairOptions{}).summary().contains("no_bare_route"));
+}
+
+TEST_CASE("repair, focused: an attempt routes the connection's net and the nets it lifted, with the same result here", "[repair]") {
+  const auto l = load(false);
+  const auto plain = route::Router(l.board, l.rules, options()).run();
+  passes::RepairOptions ro;
+  ro.focus = true;
+  ro.select = "both";
+  ro.variants = 2;
+  const auto rep = passes::repair_open(l.board, l.rules, plain, options(), ro);
+  CHECK(rep.open_after == 0);
+  CHECK(rep.unrouted.empty());
+  CHECK(errors(l.board, l.rules, rep) == 0);
+}
+
+TEST_CASE("copper that joins no pad: the run's own is cut, the input's stray copper stays", "[repair][islands]") {
+  // KiCad reports a piece of a net's copper with no pad on it as unconnected, while the router, counting pads, calls the board
+  // complete (PCBench LFK78 and MicroMaple with layers added, 2026-11-20).
+  Loaded l = load(false);
+  model::Board now = l.board;  // net b's ring from pad to pad: joined to pads
+  const std::size_t ring = now.tracks.size();
+  REQUIRE(ring > 0);
+  const model::NetId nb = now.tracks[0].net;
+  auto track = [&](Coord x1, Coord y1, Coord x2, Coord y2) {
+    model::Track t = now.tracks[0];
+    t.a = {x1, y1};
+    t.b = {x2, y2};
+    t.locked = false;
+    return t;
+  };
+  Coord top = now.tracks[0].a.y;
+  for (const auto& t : now.tracks) top = std::max({top, t.a.y, t.b.y});
+  // A stray track of the input, far from everything: it joined no pad before the run either.
+  now.tracks.push_back(track(now.tracks[0].a.x, top + 3'000'000, now.tracks[0].a.x + 1'000'000, top + 3'000'000));
+  const model::Board before = now;
+
+  SECTION("new copper with no pad on it is cut; a new track on the ring is not") {
+    const std::vector<model::Track> fresh{track(now.tracks[0].a.x, top + 6'000'000, now.tracks[0].a.x + 1'000'000, top + 6'000'000),
+                                          track(now.tracks[0].a.x, now.tracks[0].a.y, now.tracks[0].a.x - 500'000, now.tracks[0].a.y)};
+    const auto cut = passes::padless_islands(before, now, fresh, {});
+    CHECK(cut.islands == 1);
+    CHECK(cut.new_track_cut == std::vector<char>{1, 0});
+    CHECK(cut.base_tracks.empty());
+  }
+  SECTION("what a lift leaves of the input is cut; the stray track is not") {
+    // The ring loses its first and last track (the ones on the pads): the middle joined pads in the input and joins none now.
+    model::Board cutb = before;
+    cutb.tracks.erase(cutb.tracks.begin() + static_cast<long>(ring) - 1);
+    cutb.tracks.erase(cutb.tracks.begin());
+    const auto cut = passes::padless_islands(before, cutb, {}, {});
+    CHECK(cut.islands == 1);
+    CHECK(cut.base_tracks.size() == ring - 2);
+    CHECK(std::find(cut.base_tracks.begin(), cut.base_tracks.end(), static_cast<int>(cutb.tracks.size()) - 1) == cut.base_tracks.end());
+    for (const int i : cut.base_tracks) CHECK(cutb.tracks[static_cast<std::size_t>(i)].net == nb);
+  }
+  SECTION("a locked piece is never cut") {
+    std::vector<model::Track> fresh{track(now.tracks[0].a.x, top + 6'000'000, now.tracks[0].a.x + 1'000'000, top + 6'000'000)};
+    model::Board lockedb = now;
+    lockedb.tracks.push_back(fresh[0]);
+    lockedb.tracks.back().locked = true;
+    fresh[0] = track(now.tracks[0].a.x + 1'000'000, top + 6'000'000, now.tracks[0].a.x + 2'000'000, top + 6'000'000);  // touches the locked one
+    CHECK(passes::padless_islands(lockedb, lockedb, fresh, {}).islands == 0);
+  }
+}
+
+TEST_CASE("search memory limit: a search over it still runs, lighter, and the connections are routed", "[route][search-mem]") {
+  // One search keeps a record per state of its window; across a large board on many layers that was 27 GB (PCBench mini_mass,
+  // eight layers). Over the limit the search takes one direction state per point; the board is routed all the same.
+  Loaded l = load(false);
+  l.board.tracks.clear();  // without net b's ring both connections are open and both can be routed
+  auto o = options();
+  const auto plain = route::Router(l.board, l.rules, o).run();
+  REQUIRE(plain.connections == 2);
+  REQUIRE(plain.routed == 2);
+  CHECK(plain.search_mem_limited == 0);
+  o.search_mem_mb = 1;
+  const auto limited = route::Router(l.board, l.rules, o).run();
+  CHECK(limited.routed == 2);
+  CHECK(limited.search_mem_limited > 0);
+  const auto again = route::Router(l.board, l.rules, o).run();
+  REQUIRE(again.tracks.size() == limited.tracks.size());
+  for (std::size_t i = 0; i < limited.tracks.size(); ++i) {
+    CHECK(again.tracks[i].a == limited.tracks[i].a);
+    CHECK(again.tracks[i].b == limited.tracks[i].b);
+  }
+}

@@ -373,6 +373,7 @@ struct Router::Impl {
     obs->set_soft_zones(opt.soft_zones);
     obs->set_soft_mask_graphics(opt.soft_mask_graphics);
     obs->set_soft_bridged_masks(opt.soft_bridged_masks);
+    obs->set_soft_pad_masks(opt.soft_pad_masks);
     obs->set_soft_copper_graphics(opt.soft_copper_graphics);
     if (opt.soft_zones) soft_fills = std::make_unique<drc::ZoneFills>(obs->copper());
     for (std::size_t n = 0; n < b.nets.size(); ++n)
@@ -1675,7 +1676,70 @@ struct Router::Impl {
     return proved;
   }
 
-  bool search(const Connection& c, const Window& w, std::vector<PathNode>& path) {
+  // The search keeps one record per state of its window (cells x layers x direction states, 16 bytes each), so a connection
+  // across a large board on many layers asks for a great deal at once: 27 GB for one search on PCBench mini_mass (646 x 155 mm,
+  // pitch 0.065 mm) with eight layers, in every variant of the portfolio (D199). A window over --search-mem is drawn in towards
+  // the box of the connection's two ends until it fits; when that box alone is over the limit the search fails and says so.
+  long mem_fast = 0, mem_cut = 0, mem_refused = 0;
+  bool mem_fast_bends = false;  // this search: one direction state per point (as the fast-bends variants), to fit the limit
+  bool limit_window(const Connection& c, Window& w) {
+    mem_fast_bends = false;
+    if (opt.search_mem_mb <= 0) return true;
+    auto cells_of = [](const Window& x) { return static_cast<std::size_t>(x.w) * static_cast<std::size_t>(x.h); };
+    auto max_cells = [&](std::size_t D) {
+      return static_cast<std::size_t>(opt.search_mem_mb) * 1024 * 1024 / (sizeof(SNode) * static_cast<std::size_t>(nl) * D);
+    };
+    if (cells_of(w) <= max_cells(opt.bend_states ? 9 : 1)) return true;
+    // First the whole window with one direction state per point: nine times less, and nothing of the board is left out.
+    if (opt.bend_states) {
+      mem_fast_bends = true;
+      if (cells_of(w) <= max_cells(1)) {
+        ++mem_fast;
+        return true;
+      }
+    }
+    // Then the window drawn in towards the box that must stay: the two ends, with a little room.
+    if (c.zone_b >= 0) {
+      ++mem_refused;
+      return false;
+    }
+    geom::Box need;
+    const auto& pa = b.pads[static_cast<std::size_t>(c.pad_a)];
+    need.add(geom::Box{pa.pos.x, pa.pos.y, pa.pos.x, pa.pos.y});
+    if (c.pad_b >= 0) {
+      const auto& pb = b.pads[static_cast<std::size_t>(c.pad_b)];
+      need.add(geom::Box{pb.pos.x, pb.pos.y, pb.pos.x, pb.pos.y});
+    }
+    const int room = 16;
+    const int bx0 = std::clamp(to_ix(need.x0) - room, w.x0, w.x0 + w.w - 1), by0 = std::clamp(to_iy(need.y0) - room, w.y0, w.y0 + w.h - 1);
+    const int bx1 = std::clamp(to_ix(need.x1) + room, w.x0, w.x0 + w.w - 1), by1 = std::clamp(to_iy(need.y1) + room, w.y0, w.y0 + w.h - 1);
+    const int wx1 = w.x0 + w.w - 1, wy1 = w.y0 + w.h - 1;
+    auto scaled = [&](int k) {  // k of 64 parts of the margins kept
+      Window x;
+      x.x0 = bx0 - (bx0 - w.x0) * k / 64;
+      x.y0 = by0 - (by0 - w.y0) * k / 64;
+      x.w = bx1 + (wx1 - bx1) * k / 64 - x.x0 + 1;
+      x.h = by1 + (wy1 - by1) * k / 64 - x.y0 + 1;
+      return x;
+    };
+    const std::size_t most = max_cells(1);
+    if (cells_of(scaled(0)) > most) {
+      ++mem_refused;
+      return false;
+    }
+    int k = 0;
+    while (k < 63 && cells_of(scaled(k + 1)) <= most) ++k;
+    w = scaled(k);
+    ++mem_cut;
+    return true;
+  }
+
+  bool search(const Connection& c, const Window& w_asked, std::vector<PathNode>& path) {
+    Window w = w_asked;
+    if (!limit_window(c, w)) {
+      last_miss = Miss::Window;
+      return false;
+    }
     struct LaneScope {  // --package-lanes applies to this search only
       bool& on;
       ~LaneScope() { on = false; }
@@ -1690,7 +1754,7 @@ struct Router::Impl {
     const Coord vd = via_diameter(net);
     const Coord vdrill = via_drill(net);
     const std::size_t cells = static_cast<std::size_t>(w.w) * static_cast<std::size_t>(w.h);
-    const std::size_t D = opt.bend_states ? 9 : 1;  // direction states per lattice point
+    const std::size_t D = opt.bend_states && !mem_fast_bends ? 9 : 1;  // direction states per lattice point
     const std::size_t states = cells * static_cast<std::size_t>(nl) * D;
     if (sn.size() < states) sn.assign(states, SNode{0, 0, -1});
     if (cstamp.size() < cells * static_cast<std::size_t>(nl)) {
@@ -7473,6 +7537,10 @@ struct Router::Impl {
     if (reach_checks) std::fprintf(stderr, "reachability checks: %ld, %ld proved unreachable, %ld cells visited%s\n", reach_checks, reach_pruned, reach_visits,
                                   opt.reach_verify ? (reach_mismatch ? ", MISMATCHES" : ", verified (0 mismatches)") : "");
     if (reach_mismatch) std::fprintf(stderr, "reachability mismatches: %ld\n", reach_mismatch);
+    res.search_mem_limited = mem_fast + mem_cut + mem_refused;
+    if (mem_fast || mem_cut || mem_refused)
+      std::fprintf(stderr, "search memory (--search-mem %d MB): %ld searches ran with one direction state per point, %ld in a window drawn in to fit, %ld could not start (a coarser --pitch or fewer layers needs less)\n",
+                   opt.search_mem_mb, mem_fast, mem_cut, mem_refused);
     if (late_checks) std::fprintf(stderr, "late reachability proofs: %ld, %ld proved no path, %ld cells visited\n", late_checks, late_proved, late_cells);
     if (field_late) std::fprintf(stderr, "fields built during a search: %ld\n", field_late);
     if (res.rescue_tried) std::fprintf(stderr, "pin rescues: %d tried, %d connections routed\n", res.rescue_tried, res.rescued);
