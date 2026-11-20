@@ -382,8 +382,8 @@ OtterPill 2, motor 3 open, as before. **Rip-up chains applied** (`tracemaker cha
 
 `route --finish --finish-chains` on MonApollo's output: as given 1, fitted rules 1, rip-up chains 0; KiCad 0 unconnected
 (`MonApollo-finish-chains.*`). **24 of 33 boards now have a complete output** (LFK78 and MonApollo added). d20 (127 open), measured
-only: 22 close one at a time (5 joint, 17 depth 1-4), 93 too deep at depth 4, 12 lift a net with no path (`d20-chains.json`); the applied
-run on d20 was still going at the commit.
+only: 22 close one at a time (5 joint, 17 depth 1-4), 93 too deep at depth 4, 12 lift a net with no path (`d20-chains.json`); applied one
+after the other (`chains --apply`, depth 4): 15 close, 127 → 111 open, KiCad 111 unconnected (`d20-apply.json`, `d20-chained.drc.json`).
 
 Memory (D199): mini_mass at eight layers on top of its six-layer result, one variant, 20 GB cap: `std::bad_alloc` in 3 s before, 10.3 GB
 peak and the run to the end after (16 searches with one direction state, 0 refused).

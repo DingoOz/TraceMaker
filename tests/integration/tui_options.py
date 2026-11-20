@@ -155,7 +155,11 @@ def main():
                 except OSError:
                     return
 
-    drain(1.0)
+    # Keys go in only once the screen is up: before that the terminal may not be in raw mode yet and they are lost (the asan
+    # build takes about 7 s to its first screen, release 0.2 s).
+    end = time.time() + 120
+    while b"tracemaker route options" not in screen and time.time() < end:
+        drain(0.2)
     for keys in (b"/soft-zones\r", b" ", b"\x1b", b"\x1b[B", b"\x1b[A", b"p"):
         os.write(master, keys)
         drain(0.4)

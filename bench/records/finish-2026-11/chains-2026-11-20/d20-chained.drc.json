@@ -1,0 +1,5329 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-20T07:51:18",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "chained.kicad_pcb",
+    "unconnected_items": [
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Via [vcc] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 118.545,
+                        "y": 135.45
+                    },
+                    "uuid": "646ede8e-16b9-46dd-8919-4c4c6df6e96a"
+                },
+                {
+                    "description": "Pad 5 [vcc] of U7 on F.Cu",
+                    "pos": {
+                        "x": 117.102995,
+                        "y": 138.509158
+                    },
+                    "uuid": "d92ca70f-2554-46c8-b870-bd8e616bed17"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [row_1] of D22 on B.Cu",
+                    "pos": {
+                        "x": 111.906947,
+                        "y": 126.270164
+                    },
+                    "uuid": "acb65fd4-c273-4f73-94a4-e9ad01cec4e7"
+                },
+                {
+                    "description": "Pad 1 [row_1] of D21 on B.Cu",
+                    "pos": {
+                        "x": 110.783161,
+                        "y": 124.324618
+                    },
+                    "uuid": "34b8fb1d-83b2-4c6b-90c0-c9eae642cbfb"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [row_1] of D22 on B.Cu",
+                    "pos": {
+                        "x": 111.906947,
+                        "y": 126.270164
+                    },
+                    "uuid": "acb65fd4-c273-4f73-94a4-e9ad01cec4e7"
+                },
+                {
+                    "description": "Pad 1 [row_1] of D23 on B.Cu",
+                    "pos": {
+                        "x": 113.030732,
+                        "y": 128.215711
+                    },
+                    "uuid": "c3451003-0efe-4f1a-ab19-2e99ce0c2e62"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [row_2] on B.Cu, length 0.4634 mm",
+                    "pos": {
+                        "x": 110.782376,
+                        "y": 120.433978
+                    },
+                    "uuid": "48f6870b-58e9-4a1e-af25-9a3aeb635aee"
+                },
+                {
+                    "description": "Track [row_2] on B.Cu, length 0.3598 mm",
+                    "pos": {
+                        "x": 109.658591,
+                        "y": 118.128591
+                    },
+                    "uuid": "9ade5cb9-888d-468d-ac93-6293df7da1c0"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [latch] on F.Cu, length 1.2709 mm",
+                    "pos": {
+                        "x": 125.275154,
+                        "y": 124.799167
+                    },
+                    "uuid": "23b016cf-5807-4024-b348-78e9291492ea"
+                },
+                {
+                    "description": "Track [row_2] on B.Cu, length 0.3237 mm",
+                    "pos": {
+                        "x": 114.15553,
+                        "y": 125.946934
+                    },
+                    "uuid": "10e1a19f-5f20-4b1c-a3a3-292ef7374b80"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Via [colr_8] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 112.35,
+                        "y": 132.4
+                    },
+                    "uuid": "8523e63f-debb-40d4-b4a9-fb3d66774ed5"
+                },
+                {
+                    "description": "Pad 1 [row_2] of D42 on B.Cu",
+                    "pos": {
+                        "x": 118.648874,
+                        "y": 134.052804
+                    },
+                    "uuid": "ea3a2721-e9ff-4b1e-8cd7-b5e07821ef39"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [row_2] of D43 on B.Cu",
+                    "pos": {
+                        "x": 119.772659,
+                        "y": 135.99835
+                    },
+                    "uuid": "4c2fce84-c222-4338-a6f3-ba4e85afb265"
+                },
+                {
+                    "description": "Pad 1 [row_2] of D42 on B.Cu",
+                    "pos": {
+                        "x": 118.648874,
+                        "y": 134.052804
+                    },
+                    "uuid": "ea3a2721-e9ff-4b1e-8cd7-b5e07821ef39"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [row_2] of D44 on B.Cu",
+                    "pos": {
+                        "x": 120.896445,
+                        "y": 137.943897
+                    },
+                    "uuid": "ed5738c6-3ff4-4186-9c81-f714ba30b516"
+                },
+                {
+                    "description": "Pad 1 [row_2] of D43 on B.Cu",
+                    "pos": {
+                        "x": 119.772659,
+                        "y": 135.99835
+                    },
+                    "uuid": "4c2fce84-c222-4338-a6f3-ba4e85afb265"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [srow_2] of Q3 on F.Cu",
+                    "pos": {
+                        "x": 114.1,
+                        "y": 129.374999
+                    },
+                    "uuid": "e909be98-bb76-4859-8e78-d9e507c485bc"
+                },
+                {
+                    "description": "Pad 2 [srow_2] of U4 on F.Cu",
+                    "pos": {
+                        "x": 117.613328,
+                        "y": 130.692339
+                    },
+                    "uuid": "72568ac4-6922-4b85-9bdf-f331311bd803"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [row_4] of D68 on B.Cu",
+                    "pos": {
+                        "x": 116.399732,
+                        "y": 122.380431
+                    },
+                    "uuid": "d267febf-925d-4296-9743-c20837527e3a"
+                },
+                {
+                    "description": "Pad 1 [row_4] of D69 on B.Cu",
+                    "pos": {
+                        "x": 117.523517,
+                        "y": 124.325978
+                    },
+                    "uuid": "91360e38-d707-47d6-ae3a-ce84faf08648"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [row_4] of D69 on B.Cu",
+                    "pos": {
+                        "x": 117.523517,
+                        "y": 124.325978
+                    },
+                    "uuid": "91360e38-d707-47d6-ae3a-ce84faf08648"
+                },
+                {
+                    "description": "Pad 1 [row_4] of D70 on B.Cu",
+                    "pos": {
+                        "x": 118.647303,
+                        "y": 126.271525
+                    },
+                    "uuid": "0ff11b5e-c52c-4da4-84d2-bf6b3fc0192b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [row_5] on B.Cu, length 0.6435 mm",
+                    "pos": {
+                        "x": 116.83,
+                        "y": 124.775
+                    },
+                    "uuid": "f66c9987-5ebe-4f6f-b0e9-692a740eda94"
+                },
+                {
+                    "description": "Pad 3 [row_5] of Q6 on F.Cu",
+                    "pos": {
+                        "x": 114.275,
+                        "y": 128.325
+                    },
+                    "uuid": "38568a3c-b6d5-47a6-89df-ae828e5c8178"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [row_5] of D88 on B.Cu",
+                    "pos": {
+                        "x": 123.141659,
+                        "y": 130.163071
+                    },
+                    "uuid": "4fb2ff6c-6faa-4972-96b4-acca6c2b4062"
+                },
+                {
+                    "description": "Pad 1 [row_5] of D89 on B.Cu",
+                    "pos": {
+                        "x": 124.265445,
+                        "y": 132.108618
+                    },
+                    "uuid": "bf06c4f3-5369-42b2-9ee1-e6f8f6d53dd9"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [row_6] of Q7 on F.Cu",
+                    "pos": {
+                        "x": 112.725,
+                        "y": 128.2
+                    },
+                    "uuid": "dd4e3347-ffb0-4ede-a315-002cbd30cb4c"
+                },
+                {
+                    "description": "Track [row_6] on In1.Cu, length 2.8709 mm",
+                    "pos": {
+                        "x": 123.165,
+                        "y": 125.685
+                    },
+                    "uuid": "fc8c47f1-ace5-40ae-a509-c82bcb452555"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [row_6] of D97 on B.Cu",
+                    "pos": {
+                        "x": 117.521947,
+                        "y": 116.544699
+                    },
+                    "uuid": "2d42c230-6a4c-4ca7-8a98-c2cef140cb42"
+                },
+                {
+                    "description": "Pad 1 [row_6] of D98 on B.Cu",
+                    "pos": {
+                        "x": 118.645732,
+                        "y": 118.490245
+                    },
+                    "uuid": "0aee632d-d00f-46f6-91a3-1601015b1f8b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [row_6] of D99 on B.Cu",
+                    "pos": {
+                        "x": 119.769517,
+                        "y": 120.435792
+                    },
+                    "uuid": "0194797f-4abc-4e02-a363-efd84ddf92b2"
+                },
+                {
+                    "description": "Track [row_6] on In1.Cu, length 1.7500 mm",
+                    "pos": {
+                        "x": 121.135,
+                        "y": 123.655
+                    },
+                    "uuid": "be5c3085-4bca-4d4d-9434-06eb246d84f8"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [row_7] on B.Cu, length 0.4418 mm",
+                    "pos": {
+                        "x": 120.892517,
+                        "y": 118.490699
+                    },
+                    "uuid": "92cab05d-9ea1-4bea-9382-695146844160"
+                },
+                {
+                    "description": "Pad 1 [row_7] of D113 on B.Cu",
+                    "pos": {
+                        "x": 119.768732,
+                        "y": 116.545152
+                    },
+                    "uuid": "fd1aa69e-9166-4ec1-bde4-16a752d64672"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [row_7] on In1.Cu, length 2.4254 mm",
+                    "pos": {
+                        "x": 122.535,
+                        "y": 123.935
+                    },
+                    "uuid": "bb0a5350-700a-4660-a67f-22b3b1f99e16"
+                },
+                {
+                    "description": "Pad 3 [row_7] of Q8 on F.Cu",
+                    "pos": {
+                        "x": 113.425,
+                        "y": 126.425
+                    },
+                    "uuid": "7b630bfe-2035-48f3-a4ed-07bd5f09a16a"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [srow_6] of Q7 on F.Cu",
+                    "pos": {
+                        "x": 112.95,
+                        "y": 127.5
+                    },
+                    "uuid": "e1bdb393-e747-4b21-ae29-a023c033a68f"
+                },
+                {
+                    "description": "Pad 6 [srow_6] of U4 on F.Cu",
+                    "pos": {
+                        "x": 120.213328,
+                        "y": 130.692339
+                    },
+                    "uuid": "52666916-cf5c-4e70-b08f-7a4fd830a56a"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [srow_7] of Q8 on F.Cu",
+                    "pos": {
+                        "x": 114.125,
+                        "y": 126.65
+                    },
+                    "uuid": "168e7c2a-83ef-44eb-93f7-eb46ef499984"
+                },
+                {
+                    "description": "Pad 7 [srow_7] of U4 on F.Cu",
+                    "pos": {
+                        "x": 120.863328,
+                        "y": 130.692339
+                    },
+                    "uuid": "0967ed90-1284-4160-81f7-c46629379982"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [colr_0] of D81 on B.Cu",
+                    "pos": {
+                        "x": 114.119859,
+                        "y": 117.150289
+                    },
+                    "uuid": "78a4470c-3415-4249-bf7a-4e3986c0d477"
+                },
+                {
+                    "description": "Track [colb_1] on B.Cu, length 0.0350 mm",
+                    "pos": {
+                        "x": 134.785,
+                        "y": 118.37
+                    },
+                    "uuid": "0ca522a8-3e62-4606-926b-10a82880eb37"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colg_1] on F.Cu, length 2.2750 mm",
+                    "pos": {
+                        "x": 115.815,
+                        "y": 119.455
+                    },
+                    "uuid": "b8c8ecf4-bdb5-4f45-a1d4-50a537741dc1"
+                },
+                {
+                    "description": "Pad 3 [colg_1] of D66 on B.Cu",
+                    "pos": {
+                        "x": 113.600911,
+                        "y": 119.444132
+                    },
+                    "uuid": "83073f00-22e0-4254-a62a-8327aed2067e"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [colb_1] of D34 on B.Cu",
+                    "pos": {
+                        "x": 109.054539,
+                        "y": 118.139681
+                    },
+                    "uuid": "0ea80976-0bb5-4c16-a7c9-094281540281"
+                },
+                {
+                    "description": "Pad 2 [colb_1] of D18 on B.Cu",
+                    "pos": {
+                        "x": 106.807753,
+                        "y": 118.139228
+                    },
+                    "uuid": "02ec177a-3c52-439c-9ab9-7336fe628199"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [colb_1] of D50 on B.Cu",
+                    "pos": {
+                        "x": 111.301324,
+                        "y": 118.140135
+                    },
+                    "uuid": "ad152794-26d4-4b37-8ecc-35c71d465b64"
+                },
+                {
+                    "description": "Pad 2 [colb_1] of D34 on B.Cu",
+                    "pos": {
+                        "x": 109.054539,
+                        "y": 118.139681
+                    },
+                    "uuid": "0ea80976-0bb5-4c16-a7c9-094281540281"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colr_1] on B.Cu, length 0.5950 mm",
+                    "pos": {
+                        "x": 117.985,
+                        "y": 120.575
+                    },
+                    "uuid": "20e37652-caa5-4da3-9463-726bb208bc46"
+                },
+                {
+                    "description": "Pad 4 [colr_1] of D114 on B.Cu",
+                    "pos": {
+                        "x": 119.737215,
+                        "y": 119.096743
+                    },
+                    "uuid": "3daf3ef2-1979-4b51-86c8-77084d8d6b9b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 7 [colb_2] of U3 on F.Cu",
+                    "pos": {
+                        "x": 128.426435,
+                        "y": 116.998143
+                    },
+                    "uuid": "9d78bfd9-dbb9-4207-8208-ba1612542085"
+                },
+                {
+                    "description": "Track [colb_2] on B.Cu, length 0.2521 mm",
+                    "pos": {
+                        "x": 128.152607,
+                        "y": 120.088856
+                    },
+                    "uuid": "06eb8ec0-268c-4188-9454-25ad3e24435b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colg_2] on In1.Cu, length 0.7920 mm",
+                    "pos": {
+                        "x": 118.51,
+                        "y": 120.575
+                    },
+                    "uuid": "f3b53964-a7ff-4fcf-ba69-f3e7918a1f79"
+                },
+                {
+                    "description": "Pad 7 [colg_2] of U2 on F.Cu",
+                    "pos": {
+                        "x": 119.011631,
+                        "y": 117.105064
+                    },
+                    "uuid": "87c5ace8-069a-45e3-9821-901a2daa254a"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colb_3] on In1.Cu, length 0.3960 mm",
+                    "pos": {
+                        "x": 115.745,
+                        "y": 121.87
+                    },
+                    "uuid": "60a5be4d-5dd3-4ad3-9f43-9fe98f01f384"
+                },
+                {
+                    "description": "Pad 2 [colb_3] of D52 on B.Cu",
+                    "pos": {
+                        "x": 113.548895,
+                        "y": 122.031228
+                    },
+                    "uuid": "45e59a83-00f0-4cbf-8feb-57bcc366e490"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [colb_3] of D100 on B.Cu",
+                    "pos": {
+                        "x": 120.289251,
+                        "y": 122.032588
+                    },
+                    "uuid": "f095e2ea-7fe1-4416-89a9-b9525ab7b1d1"
+                },
+                {
+                    "description": "Pad 2 [colb_3] of D116 on B.Cu",
+                    "pos": {
+                        "x": 122.536036,
+                        "y": 122.033042
+                    },
+                    "uuid": "e740d161-bde7-4174-8c9a-16a691a654c4"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [colb_3] of D116 on B.Cu",
+                    "pos": {
+                        "x": 122.536036,
+                        "y": 122.033042
+                    },
+                    "uuid": "e740d161-bde7-4174-8c9a-16a691a654c4"
+                },
+                {
+                    "description": "Pad 2 [colb_3] of D132 on B.Cu",
+                    "pos": {
+                        "x": 124.782822,
+                        "y": 122.033495
+                    },
+                    "uuid": "37da60f5-0517-4a45-b804-a63e950e61b3"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [colb_3] of D148 on B.Cu",
+                    "pos": {
+                        "x": 127.029607,
+                        "y": 122.033949
+                    },
+                    "uuid": "312b6be3-578f-41fa-b828-c193db57a04d"
+                },
+                {
+                    "description": "Track [colb_3] on In2.Cu, length 0.5600 mm",
+                    "pos": {
+                        "x": 127.4,
+                        "y": 120.435
+                    },
+                    "uuid": "30b3c127-b717-4db0-8285-822b7b79f241"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [colb_3] of D148 on B.Cu",
+                    "pos": {
+                        "x": 127.029607,
+                        "y": 122.033949
+                    },
+                    "uuid": "312b6be3-578f-41fa-b828-c193db57a04d"
+                },
+                {
+                    "description": "Pad 2 [colb_3] of D132 on B.Cu",
+                    "pos": {
+                        "x": 124.782822,
+                        "y": 122.033495
+                    },
+                    "uuid": "37da60f5-0517-4a45-b804-a63e950e61b3"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colb_3] on B.Cu, length 0.4900 mm",
+                    "pos": {
+                        "x": 127.89,
+                        "y": 120.435
+                    },
+                    "uuid": "52bd9988-ac5b-4c88-a8ac-163bd28dbc60"
+                },
+                {
+                    "description": "Pad 8 [colb_3] of U3 on F.Cu",
+                    "pos": {
+                        "x": 127.791435,
+                        "y": 116.998143
+                    },
+                    "uuid": "3c25195c-bd4e-4b3d-879d-839c94b3ea52"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colr_3] on B.Cu, length 0.1416 mm",
+                    "pos": {
+                        "x": 108.504074,
+                        "y": 122.985115
+                    },
+                    "uuid": "664620c2-eab0-4d11-a370-1ad9d7715d84"
+                },
+                {
+                    "description": "Pad 8 [colr_3] of U1 on F.Cu",
+                    "pos": {
+                        "x": 108.925222,
+                        "y": 117.075385
+                    },
+                    "uuid": "b88769e1-3f3d-455b-bb7b-7730cbfcb9c5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [colr_3] of D68 on B.Cu",
+                    "pos": {
+                        "x": 115.24443,
+                        "y": 122.986475
+                    },
+                    "uuid": "df6785cd-ec97-4d6e-9afa-1fa3aaea78c9"
+                },
+                {
+                    "description": "Pad 4 [colr_3] of D52 on B.Cu",
+                    "pos": {
+                        "x": 112.997645,
+                        "y": 122.986022
+                    },
+                    "uuid": "b4dd4f80-a19a-4d70-8c6a-e81b6eec2075"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [colr_3] of D100 on B.Cu",
+                    "pos": {
+                        "x": 119.738001,
+                        "y": 122.987382
+                    },
+                    "uuid": "7d81ce27-1b2a-4331-b111-87e5787e2e21"
+                },
+                {
+                    "description": "Pad 4 [colr_3] of D84 on B.Cu",
+                    "pos": {
+                        "x": 117.491215,
+                        "y": 122.986929
+                    },
+                    "uuid": "2d086010-a86a-425b-be50-d2a98a057b4b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [colr_3] of D116 on B.Cu",
+                    "pos": {
+                        "x": 121.984786,
+                        "y": 122.987836
+                    },
+                    "uuid": "7b5ac879-f923-4802-816e-6752c8fbc568"
+                },
+                {
+                    "description": "Track [colr_3] on B.Cu, length 1.0299 mm",
+                    "pos": {
+                        "x": 124.231572,
+                        "y": 122.988289
+                    },
+                    "uuid": "af99cdbf-fc1c-4e2b-bee0-23c77ae73b53"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colr_3] on In2.Cu, length 2.0294 mm",
+                    "pos": {
+                        "x": 128.31,
+                        "y": 121.73
+                    },
+                    "uuid": "5606e5a3-8a48-4d7e-bfdb-3eda33d20d26"
+                },
+                {
+                    "description": "Pad 4 [colr_3] of D180 on B.Cu",
+                    "pos": {
+                        "x": 130.971928,
+                        "y": 122.98965
+                    },
+                    "uuid": "f39c5252-e89f-4583-bc76-f709b3619fb6"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [colr_4] of D37 on B.Cu",
+                    "pos": {
+                        "x": 111.874645,
+                        "y": 124.931115
+                    },
+                    "uuid": "369991ff-4974-44ca-985a-7fccbdc431bb"
+                },
+                {
+                    "description": "Track [colr_4] on B.Cu, length 0.1719 mm",
+                    "pos": {
+                        "x": 114.12143,
+                        "y": 124.931569
+                    },
+                    "uuid": "681dcb7f-da5d-4d59-a0e1-c397c945f809"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colr_4] on B.Cu, length 0.1726 mm",
+                    "pos": {
+                        "x": 116.246193,
+                        "y": 124.81
+                    },
+                    "uuid": "a08a1bfa-6801-4494-b269-d51200553ca7"
+                },
+                {
+                    "description": "Track [colr_4] on B.Cu, length 0.1732 mm",
+                    "pos": {
+                        "x": 118.615001,
+                        "y": 124.932475
+                    },
+                    "uuid": "dca6742a-2c0f-4eda-bc53-d05c062325a2"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colr_4] on B.Cu, length 0.1738 mm",
+                    "pos": {
+                        "x": 120.738857,
+                        "y": 124.81
+                    },
+                    "uuid": "68c688d9-6e34-4d32-bda5-72e1ca26eda6"
+                },
+                {
+                    "description": "Pad 4 [colr_4] of D117 on B.Cu",
+                    "pos": {
+                        "x": 123.108572,
+                        "y": 124.933382
+                    },
+                    "uuid": "837b887d-9f07-4537-9b65-79390eb7b561"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [colr_4] of D117 on B.Cu",
+                    "pos": {
+                        "x": 123.108572,
+                        "y": 124.933382
+                    },
+                    "uuid": "837b887d-9f07-4537-9b65-79390eb7b561"
+                },
+                {
+                    "description": "Track [colr_4] on B.Cu, length 0.3865 mm",
+                    "pos": {
+                        "x": 125.355357,
+                        "y": 124.933836
+                    },
+                    "uuid": "c83bc79d-88e5-4afd-a699-5952b5ed5449"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [colb_4] of D133 on B.Cu",
+                    "pos": {
+                        "x": 125.906607,
+                        "y": 123.979042
+                    },
+                    "uuid": "ce756d1d-d7f5-4e1b-a6c0-f543854d5bea"
+                },
+                {
+                    "description": "Pad 2 [colb_4] of D117 on B.Cu",
+                    "pos": {
+                        "x": 123.659822,
+                        "y": 123.978588
+                    },
+                    "uuid": "2fce4c40-4227-40e0-8962-52d6c58d53fb"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 9 [colb_4] of U3 on F.Cu",
+                    "pos": {
+                        "x": 127.156435,
+                        "y": 116.998143
+                    },
+                    "uuid": "6d28d1ed-4fb4-4c9f-93bc-9a6a3e842ddd"
+                },
+                {
+                    "description": "Track [colb_4] on B.Cu, length 0.0795 mm",
+                    "pos": {
+                        "x": 128.153393,
+                        "y": 123.979494
+                    },
+                    "uuid": "55fc5f0c-74f3-4691-8cfe-ee992177fcc2"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colb_4] on B.Cu, length 0.0795 mm",
+                    "pos": {
+                        "x": 128.153393,
+                        "y": 123.979494
+                    },
+                    "uuid": "55fc5f0c-74f3-4691-8cfe-ee992177fcc2"
+                },
+                {
+                    "description": "Pad 2 [colb_4] of D133 on B.Cu",
+                    "pos": {
+                        "x": 125.906607,
+                        "y": 123.979042
+                    },
+                    "uuid": "ce756d1d-d7f5-4e1b-a6c0-f543854d5bea"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colg_4] on B.Cu, length 0.2629 mm",
+                    "pos": {
+                        "x": 116.725,
+                        "y": 125.37
+                    },
+                    "uuid": "a0219624-81b3-419f-8c67-689618d8d765"
+                },
+                {
+                    "description": "Pad 9 [colg_4] of U2 on F.Cu",
+                    "pos": {
+                        "x": 117.741631,
+                        "y": 117.105064
+                    },
+                    "uuid": "bcded2be-bd67-4eaa-9807-e9275bf010ac"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [colg_4] of D117 on B.Cu",
+                    "pos": {
+                        "x": 123.712624,
+                        "y": 125.282132
+                    },
+                    "uuid": "de573f74-9667-4be3-9fb5-2fa9358934fb"
+                },
+                {
+                    "description": "Track [colg_4] on B.Cu, length 0.2655 mm",
+                    "pos": {
+                        "x": 125.959409,
+                        "y": 125.282586
+                    },
+                    "uuid": "816671ac-87b7-40f4-bda9-96726ab275eb"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [colg_4] of D117 on B.Cu",
+                    "pos": {
+                        "x": 123.712624,
+                        "y": 125.282132
+                    },
+                    "uuid": "de573f74-9667-4be3-9fb5-2fa9358934fb"
+                },
+                {
+                    "description": "Pad 3 [colg_4] of D101 on B.Cu",
+                    "pos": {
+                        "x": 121.465838,
+                        "y": 125.281679
+                    },
+                    "uuid": "f2fb52ef-0272-4016-aa38-b1b91345d6c0"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 10 [colg_5] of U2 on F.Cu",
+                    "pos": {
+                        "x": 117.106631,
+                        "y": 117.105064
+                    },
+                    "uuid": "fa06f70a-ad4a-4dc2-9882-534af0165bd4"
+                },
+                {
+                    "description": "Track [colg_5] on B.Cu, length 0.1968 mm",
+                    "pos": {
+                        "x": 116.41,
+                        "y": 127.365
+                    },
+                    "uuid": "b0b3dbc6-0db1-4d72-975b-c9c69f767503"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 10 [colb_5] of U3 on F.Cu",
+                    "pos": {
+                        "x": 126.521435,
+                        "y": 116.998143
+                    },
+                    "uuid": "5710efc8-3087-4a77-8316-172d0f987aa4"
+                },
+                {
+                    "description": "Track [colb_5] on In1.Cu, length 1.5400 mm",
+                    "pos": {
+                        "x": 127.54,
+                        "y": 125.44
+                    },
+                    "uuid": "d10606a1-f28b-4878-9ef8-85e0f54b2c44"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colr_5] on B.Cu, length 1.9004 mm",
+                    "pos": {
+                        "x": 108.745,
+                        "y": 126.77
+                    },
+                    "uuid": "a822df1b-b62a-459e-a572-63b41f2e2c0d"
+                },
+                {
+                    "description": "Pad 10 [colr_5] of U1 on F.Cu",
+                    "pos": {
+                        "x": 107.655222,
+                        "y": 117.075385
+                    },
+                    "uuid": "e275a407-ed77-4de3-91ab-d249b2a2fa23"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 11 [colr_6] of U1 on F.Cu",
+                    "pos": {
+                        "x": 107.020222,
+                        "y": 117.075385
+                    },
+                    "uuid": "350a82e4-6d78-4214-b5fe-1a1d44081e81"
+                },
+                {
+                    "description": "Track [colr_6] on B.Cu, length 0.2377 mm",
+                    "pos": {
+                        "x": 109.628645,
+                        "y": 128.821301
+                    },
+                    "uuid": "8372a1bb-4f29-4e3c-b857-11cb4409f303"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [colr_6] of D39 on B.Cu",
+                    "pos": {
+                        "x": 114.122215,
+                        "y": 128.822208
+                    },
+                    "uuid": "b601b2fc-9ce6-41ec-a761-995fa90c0c34"
+                },
+                {
+                    "description": "Pad 4 [colr_6] of D23 on B.Cu",
+                    "pos": {
+                        "x": 111.87543,
+                        "y": 128.821755
+                    },
+                    "uuid": "65984dd5-bac9-46a4-bf6e-39c86d79f7d0"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colb_6] on In1.Cu, length 0.7425 mm",
+                    "pos": {
+                        "x": 125.37,
+                        "y": 128.275
+                    },
+                    "uuid": "6929eca5-33cf-4e35-af24-242bbd713d6e"
+                },
+                {
+                    "description": "Pad 11 [colb_6] of U3 on F.Cu",
+                    "pos": {
+                        "x": 125.886435,
+                        "y": 116.998143
+                    },
+                    "uuid": "cc21fe2c-45a0-4462-84bb-27da23fd47fd"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 11 [colg_6] of U2 on F.Cu",
+                    "pos": {
+                        "x": 116.471631,
+                        "y": 117.105064
+                    },
+                    "uuid": "2c198906-f5f9-4027-9f28-4d101de1efde"
+                },
+                {
+                    "description": "Track [colg_6] on In1.Cu, length 0.9405 mm",
+                    "pos": {
+                        "x": 116.165,
+                        "y": 127.995
+                    },
+                    "uuid": "e5b43d72-ed24-46d1-bbd7-0febd568420e"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [colg_6] of D103 on B.Cu",
+                    "pos": {
+                        "x": 123.713409,
+                        "y": 129.172772
+                    },
+                    "uuid": "1efa4a0b-8498-495f-bc3c-417e69e63b15"
+                },
+                {
+                    "description": "Track [colg_6] on B.Cu, length 0.2554 mm",
+                    "pos": {
+                        "x": 121.24,
+                        "y": 129.29
+                    },
+                    "uuid": "cb4c56d2-15bb-42c3-8b57-a05ba6dfdb60"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [colg_6] of D103 on B.Cu",
+                    "pos": {
+                        "x": 123.713409,
+                        "y": 129.172772
+                    },
+                    "uuid": "1efa4a0b-8498-495f-bc3c-417e69e63b15"
+                },
+                {
+                    "description": "Track [colg_6] on B.Cu, length 0.1499 mm",
+                    "pos": {
+                        "x": 125.960195,
+                        "y": 129.173225
+                    },
+                    "uuid": "6b86c514-7855-46f0-912a-fd9bfa2dce8a"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [colg_7] of D8 on B.Cu",
+                    "pos": {
+                        "x": 111.356482,
+                        "y": 131.115598
+                    },
+                    "uuid": "a4ef1516-4d36-406b-9af0-b78cb8c51dbd"
+                },
+                {
+                    "description": "Pad 3 [colg_7] of D24 on B.Cu",
+                    "pos": {
+                        "x": 113.603267,
+                        "y": 131.116051
+                    },
+                    "uuid": "dfae5d54-fc16-472b-acbd-5254c86d1540"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 12 [colg_7] of U2 on F.Cu",
+                    "pos": {
+                        "x": 115.836631,
+                        "y": 117.105064
+                    },
+                    "uuid": "677eb10f-d64a-4876-b235-230d8b8ae629"
+                },
+                {
+                    "description": "Track [colg_7] on In1.Cu, length 2.0650 mm",
+                    "pos": {
+                        "x": 113.68,
+                        "y": 131.11
+                    },
+                    "uuid": "f7e53825-9962-4a4e-9fb1-bcfb0c376846"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [colg_7] of D40 on B.Cu",
+                    "pos": {
+                        "x": 115.850053,
+                        "y": 131.116505
+                    },
+                    "uuid": "81be450c-693f-4167-8fce-b3493f009cf4"
+                },
+                {
+                    "description": "Pad 3 [colg_7] of D56 on B.Cu",
+                    "pos": {
+                        "x": 118.096838,
+                        "y": 131.116958
+                    },
+                    "uuid": "a7b552df-62f6-4ed1-aa40-f87aae758caa"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [colg_7] of D72 on B.Cu",
+                    "pos": {
+                        "x": 120.343624,
+                        "y": 131.117412
+                    },
+                    "uuid": "4c91d508-4cef-48df-b538-3819d5e1b847"
+                },
+                {
+                    "description": "Pad 3 [colg_7] of D88 on B.Cu",
+                    "pos": {
+                        "x": 122.590409,
+                        "y": 131.117865
+                    },
+                    "uuid": "f38823a5-8e11-4bfe-9916-61d7bdfe62df"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [colb_7] of D72 on B.Cu",
+                    "pos": {
+                        "x": 120.290822,
+                        "y": 129.813868
+                    },
+                    "uuid": "6aadcb0f-2387-4bf4-817f-8c166f40934e"
+                },
+                {
+                    "description": "Pad 2 [colb_7] of D88 on B.Cu",
+                    "pos": {
+                        "x": 122.537607,
+                        "y": 129.814321
+                    },
+                    "uuid": "02db72b2-d166-4e49-8b46-c2a98844c6e7"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [colb_7] of D72 on B.Cu",
+                    "pos": {
+                        "x": 120.290822,
+                        "y": 129.813868
+                    },
+                    "uuid": "6aadcb0f-2387-4bf4-817f-8c166f40934e"
+                },
+                {
+                    "description": "Pad 2 [colb_7] of D56 on B.Cu",
+                    "pos": {
+                        "x": 118.044036,
+                        "y": 129.813414
+                    },
+                    "uuid": "4656ded0-e598-409d-ae13-91d363fe4c13"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 12 [colb_7] of U3 on F.Cu",
+                    "pos": {
+                        "x": 125.251435,
+                        "y": 116.998143
+                    },
+                    "uuid": "28a948c5-7482-4a78-b922-f9f50eab1a02"
+                },
+                {
+                    "description": "Track [colb_7] on B.Cu, length 1.8996 mm",
+                    "pos": {
+                        "x": 122.78,
+                        "y": 129.71
+                    },
+                    "uuid": "5fec6331-6359-4c48-a530-0824e8689d7f"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [colb_7] of D120 on B.Cu",
+                    "pos": {
+                        "x": 127.031178,
+                        "y": 129.815228
+                    },
+                    "uuid": "6bc4717e-9f05-48be-a2e2-83665db7d8c5"
+                },
+                {
+                    "description": "Pad 2 [colb_7] of D104 on B.Cu",
+                    "pos": {
+                        "x": 124.784393,
+                        "y": 129.814775
+                    },
+                    "uuid": "e24ec144-0a24-451e-ba82-8c57a44d1d43"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [colr_8] of D41 on B.Cu",
+                    "pos": {
+                        "x": 116.369786,
+                        "y": 132.713301
+                    },
+                    "uuid": "242c1947-9fca-4fa9-9581-04d6af80ebb8"
+                },
+                {
+                    "description": "Via [colr_8] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 118.58,
+                        "y": 132.685
+                    },
+                    "uuid": "afd95eef-97e2-4de8-80b3-fe74d075d644"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [colr_8] of D89 on B.Cu",
+                    "pos": {
+                        "x": 123.110143,
+                        "y": 132.714662
+                    },
+                    "uuid": "1dec23aa-1363-441c-974f-1b0ec9020dbe"
+                },
+                {
+                    "description": "Pad 4 [colr_8] of D73 on B.Cu",
+                    "pos": {
+                        "x": 120.863357,
+                        "y": 132.714208
+                    },
+                    "uuid": "b2e08e5d-a4a1-4fad-bce9-0698e778670c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colb_8] on B.Cu, length 0.2628 mm",
+                    "pos": {
+                        "x": 114.695,
+                        "y": 132.02
+                    },
+                    "uuid": "19f5f0c9-71c7-4fcf-9b52-d402102f5ca1"
+                },
+                {
+                    "description": "Pad 2 [colb_8] of D41 on B.Cu",
+                    "pos": {
+                        "x": 116.921036,
+                        "y": 131.758507
+                    },
+                    "uuid": "9e2e415d-317c-41f7-99e6-25eaf6620e2b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 13 [colg_8] of U2 on F.Cu",
+                    "pos": {
+                        "x": 115.836631,
+                        "y": 122.665064
+                    },
+                    "uuid": "60bafbef-b60d-4917-b558-667d2b2d2873"
+                },
+                {
+                    "description": "Track [colg_8] on B.Cu, length 0.2361 mm",
+                    "pos": {
+                        "x": 114.52,
+                        "y": 133.175
+                    },
+                    "uuid": "15ea0085-b391-428b-8187-c701586df46e"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [colg_8] of D57 on B.Cu",
+                    "pos": {
+                        "x": 119.220624,
+                        "y": 133.062505
+                    },
+                    "uuid": "59fd43aa-9286-4bf9-9b9c-b63c61103548"
+                },
+                {
+                    "description": "Pad 3 [colg_8] of D73 on B.Cu",
+                    "pos": {
+                        "x": 121.467409,
+                        "y": 133.062958
+                    },
+                    "uuid": "b7c1c980-e708-47fa-81de-5ce42a76dbef"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [colg_8] of D73 on B.Cu",
+                    "pos": {
+                        "x": 121.467409,
+                        "y": 133.062958
+                    },
+                    "uuid": "b7c1c980-e708-47fa-81de-5ce42a76dbef"
+                },
+                {
+                    "description": "Pad 3 [colg_8] of D89 on B.Cu",
+                    "pos": {
+                        "x": 123.714195,
+                        "y": 133.063412
+                    },
+                    "uuid": "856fe160-42c1-4f2d-a084-13e6096dfb39"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 14 [colg_9] of U2 on F.Cu",
+                    "pos": {
+                        "x": 116.471631,
+                        "y": 122.665064
+                    },
+                    "uuid": "1b9eb143-d1f2-47ca-97df-f4ac3bdb19cc"
+                },
+                {
+                    "description": "Track [colg_9] on F.Cu, length 1.7150 mm",
+                    "pos": {
+                        "x": 118.16,
+                        "y": 134.575
+                    },
+                    "uuid": "934377e1-a282-4e6d-b9d5-09c1299ea411"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [colg_9] of D74 on B.Cu",
+                    "pos": {
+                        "x": 122.591195,
+                        "y": 135.008505
+                    },
+                    "uuid": "dffde003-32f3-4d2a-ab52-e16eb520d453"
+                },
+                {
+                    "description": "Track [colg_9] on In1.Cu, length 1.0394 mm",
+                    "pos": {
+                        "x": 120.785,
+                        "y": 135.555
+                    },
+                    "uuid": "652376f2-afd8-4d0f-8b03-b1570b495756"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [colg_9] of D90 on B.Cu",
+                    "pos": {
+                        "x": 124.83798,
+                        "y": 135.008958
+                    },
+                    "uuid": "3cfaea4d-0d5a-47ea-abc8-3322afa4e375"
+                },
+                {
+                    "description": "Pad 3 [colg_9] of D74 on B.Cu",
+                    "pos": {
+                        "x": 122.591195,
+                        "y": 135.008505
+                    },
+                    "uuid": "dffde003-32f3-4d2a-ab52-e16eb520d453"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colb_9] on In1.Cu, length 0.2970 mm",
+                    "pos": {
+                        "x": 124.775,
+                        "y": 133.7
+                    },
+                    "uuid": "8ab9baad-89bb-4e8a-91f6-e4a868064177"
+                },
+                {
+                    "description": "Pad 14 [colb_9] of U3 on F.Cu",
+                    "pos": {
+                        "x": 125.886435,
+                        "y": 122.558143
+                    },
+                    "uuid": "eb97d747-26a5-494b-83b3-09aa24f31e7d"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colb_1] on B.Cu, length 0.0495 mm",
+                    "pos": {
+                        "x": 131.67,
+                        "y": 118.02
+                    },
+                    "uuid": "a79aebb8-e9ba-4995-a0da-f06a4e0e9e7f"
+                },
+                {
+                    "description": "Pad 15 [colb_10] of U3 on F.Cu",
+                    "pos": {
+                        "x": 126.521435,
+                        "y": 122.558143
+                    },
+                    "uuid": "f2fc6c3d-5aa2-4ec0-b290-8bcd5b561a7d"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 15 [colg_10] of U2 on F.Cu",
+                    "pos": {
+                        "x": 117.106631,
+                        "y": 122.665064
+                    },
+                    "uuid": "94d2020c-1c0f-47d8-8f03-29358d7a05c3"
+                },
+                {
+                    "description": "Pad 3 [colg_10] of D27 on B.Cu",
+                    "pos": {
+                        "x": 116.974624,
+                        "y": 136.952691
+                    },
+                    "uuid": "ca66d5be-d9da-4541-b1b1-1001ae44ef8e"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colb_11] on B.Cu, length 2.0160 mm",
+                    "pos": {
+                        "x": 120.40754,
+                        "y": 137.48
+                    },
+                    "uuid": "b205e449-8dbb-49e8-b8e6-48474bd7fff2"
+                },
+                {
+                    "description": "Pad 16 [colb_11] of U3 on F.Cu",
+                    "pos": {
+                        "x": 127.156435,
+                        "y": 122.558143
+                    },
+                    "uuid": "c529ec4b-2308-4f81-989d-530a04476934"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 16 [colg_11] of U2 on F.Cu",
+                    "pos": {
+                        "x": 117.741631,
+                        "y": 122.665064
+                    },
+                    "uuid": "03018bb3-f048-46ef-8e65-20f283215167"
+                },
+                {
+                    "description": "Pad 3 [colg_11] of D28 on B.Cu",
+                    "pos": {
+                        "x": 118.098409,
+                        "y": 138.898237
+                    },
+                    "uuid": "14689cb6-03b4-4f7b-a2ac-c5c9711dd696"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 17 [colr_12] of U1 on F.Cu",
+                    "pos": {
+                        "x": 108.925222,
+                        "y": 122.635385
+                    },
+                    "uuid": "11468d67-3f3e-4a1b-828f-ccf8e83f50a7"
+                },
+                {
+                    "description": "Track [colr_12] on B.Cu, length 2.0272 mm",
+                    "pos": {
+                        "x": 116.480937,
+                        "y": 140.385
+                    },
+                    "uuid": "5fdbd1ab-fe46-4d67-abc2-95f3821b2ffa"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 17 [colb_12] of U3 on F.Cu",
+                    "pos": {
+                        "x": 127.791435,
+                        "y": 122.558143
+                    },
+                    "uuid": "2359eb02-03b0-4c17-bd4b-e3aade797adf"
+                },
+                {
+                    "description": "Track [colb_12] on B.Cu, length 0.2029 mm",
+                    "pos": {
+                        "x": 121.24,
+                        "y": 139.44
+                    },
+                    "uuid": "8df92bf7-48f7-4c45-8b55-c6fe34d9ba3b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colg_12] on B.Cu, length 0.2043 mm",
+                    "pos": {
+                        "x": 119.222195,
+                        "y": 140.843784
+                    },
+                    "uuid": "6c799a0b-5a82-43f2-9564-09a5bf1ad34f"
+                },
+                {
+                    "description": "Pad 17 [colg_12] of U2 on F.Cu",
+                    "pos": {
+                        "x": 118.376631,
+                        "y": 122.665064
+                    },
+                    "uuid": "37e8d8c4-8796-4b6d-a458-e89916115ceb"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [colb_13] on B.Cu, length 0.2439 mm",
+                    "pos": {
+                        "x": 120.05,
+                        "y": 141.505
+                    },
+                    "uuid": "a46ec30a-933a-46d2-973a-6d136be5df88"
+                },
+                {
+                    "description": "Pad 18 [colb_13] of U3 on F.Cu",
+                    "pos": {
+                        "x": 128.426435,
+                        "y": 122.558143
+                    },
+                    "uuid": "b7d8ea43-4860-4ce1-9eb2-4c4c32f1e7e8"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 18 [colr_13] of U1 on F.Cu",
+                    "pos": {
+                        "x": 109.560222,
+                        "y": 122.635385
+                    },
+                    "uuid": "261f5057-8fbf-46f3-97b0-2c1814d6dd1f"
+                },
+                {
+                    "description": "Track [colr_13] on B.Cu, length 1.9861 mm",
+                    "pos": {
+                        "x": 117.62527,
+                        "y": 142.31
+                    },
+                    "uuid": "2202462f-4f17-4b96-b35d-a68549c353df"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [colb_14] of D15 on B.Cu",
+                    "pos": {
+                        "x": 119.170178,
+                        "y": 143.430879
+                    },
+                    "uuid": "0d02b908-3552-4611-b024-6a0954d2a3ac"
+                },
+                {
+                    "description": "Pad 19 [colb_14] of U3 on F.Cu",
+                    "pos": {
+                        "x": 129.061435,
+                        "y": 122.558143
+                    },
+                    "uuid": "711e0510-69b2-49d4-9d8f-09bf55e49f79"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 19 [colr_14] of U1 on F.Cu",
+                    "pos": {
+                        "x": 110.195222,
+                        "y": 122.635385
+                    },
+                    "uuid": "018609f4-662b-4ac8-81bc-97445d0aff94"
+                },
+                {
+                    "description": "Pad 4 [colr_14] of D15 on B.Cu",
+                    "pos": {
+                        "x": 118.618928,
+                        "y": 144.385673
+                    },
+                    "uuid": "9955a1e3-8773-4dc5-9c3b-00d38dc441f5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 21 [blank] of U1 on F.Cu",
+                    "pos": {
+                        "x": 111.465222,
+                        "y": 122.635385
+                    },
+                    "uuid": "5f922f23-3b1f-4ac6-bec1-a4198e6b41a3"
+                },
+                {
+                    "description": "Pad 21 [blank] of U2 on F.Cu",
+                    "pos": {
+                        "x": 120.916631,
+                        "y": 122.665064
+                    },
+                    "uuid": "8089106a-80ef-4f5c-9208-309254e71232"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [blank] of U6 on F.Cu",
+                    "pos": {
+                        "x": 118.998423,
+                        "y": 143.457868
+                    },
+                    "uuid": "879dff12-331c-4979-b866-ba2cf1af79eb"
+                },
+                {
+                    "description": "Pad 3 [blank] of J2 on F.Cu",
+                    "pos": {
+                        "x": 117.516506,
+                        "y": 135.775001
+                    },
+                    "uuid": "c7254723-c4eb-4126-aa9b-46c1ad2faf18"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 21 [blank] of U2 on F.Cu",
+                    "pos": {
+                        "x": 120.916631,
+                        "y": 122.665064
+                    },
+                    "uuid": "8089106a-80ef-4f5c-9208-309254e71232"
+                },
+                {
+                    "description": "Pad 21 [blank] of U3 on F.Cu",
+                    "pos": {
+                        "x": 130.331435,
+                        "y": 122.558143
+                    },
+                    "uuid": "691dcd56-52c9-4750-8750-97f23109aaab"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 21 [blank] of U2 on F.Cu",
+                    "pos": {
+                        "x": 120.916631,
+                        "y": 122.665064
+                    },
+                    "uuid": "8089106a-80ef-4f5c-9208-309254e71232"
+                },
+                {
+                    "description": "Pad 3 [blank] of J2 on F.Cu",
+                    "pos": {
+                        "x": 117.516506,
+                        "y": 135.775001
+                    },
+                    "uuid": "c7254723-c4eb-4126-aa9b-46c1ad2faf18"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [latch] of U1 on F.Cu",
+                    "pos": {
+                        "x": 111.465222,
+                        "y": 117.075385
+                    },
+                    "uuid": "f498bc99-b2c2-43d2-bcff-c0742a2fd3fc"
+                },
+                {
+                    "description": "Pad 4 [latch] of U2 on F.Cu",
+                    "pos": {
+                        "x": 120.916631,
+                        "y": 117.105064
+                    },
+                    "uuid": "21e81d58-9a8f-4703-b79f-1f9fb80fa760"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [latch] on F.Cu, length 1.2000 mm",
+                    "pos": {
+                        "x": 121.625,
+                        "y": 125.729694
+                    },
+                    "uuid": "2b636f12-f733-4162-b782-caf438a6d3ac"
+                },
+                {
+                    "description": "Pad 4 [latch] of J2 on F.Cu",
+                    "pos": {
+                        "x": 117.083494,
+                        "y": 136.025001
+                    },
+                    "uuid": "8cb2b9ad-1f90-4900-84ea-3721ebf1a56d"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Via [latch] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 120.645,
+                        "y": 120.435
+                    },
+                    "uuid": "29ba6ea7-75c4-4880-9450-1d27f800d0f4"
+                },
+                {
+                    "description": "Pad 4 [latch] of U2 on F.Cu",
+                    "pos": {
+                        "x": 120.916631,
+                        "y": 117.105064
+                    },
+                    "uuid": "21e81d58-9a8f-4703-b79f-1f9fb80fa760"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [sclk] of U1 on F.Cu",
+                    "pos": {
+                        "x": 112.100222,
+                        "y": 117.075385
+                    },
+                    "uuid": "9277756c-6659-40c8-9120-acfc79a9f8e3"
+                },
+                {
+                    "description": "Pad 3 [sclk] of U2 on F.Cu",
+                    "pos": {
+                        "x": 121.551631,
+                        "y": 117.105064
+                    },
+                    "uuid": "233efb1a-1de0-474c-9eb6-e9165855f3c5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 11 [sclk] of U4 on F.Cu",
+                    "pos": {
+                        "x": 120.213328,
+                        "y": 124.792339
+                    },
+                    "uuid": "c6559fee-ed99-469e-b66f-f1ea744ec24b"
+                },
+                {
+                    "description": "Pad 11 [sclk] of U5 on F.Cu",
+                    "pos": {
+                        "x": 125.925154,
+                        "y": 124.799167
+                    },
+                    "uuid": "329a7a60-5732-4e61-9fb0-57e44610c8a4"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 11 [sclk] of U4 on F.Cu",
+                    "pos": {
+                        "x": 120.213328,
+                        "y": 124.792339
+                    },
+                    "uuid": "c6559fee-ed99-469e-b66f-f1ea744ec24b"
+                },
+                {
+                    "description": "Pad 3 [sclk] of U2 on F.Cu",
+                    "pos": {
+                        "x": 121.551631,
+                        "y": 117.105064
+                    },
+                    "uuid": "233efb1a-1de0-474c-9eb6-e9165855f3c5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 11 [sclk] of U4 on F.Cu",
+                    "pos": {
+                        "x": 120.213328,
+                        "y": 124.792339
+                    },
+                    "uuid": "c6559fee-ed99-469e-b66f-f1ea744ec24b"
+                },
+                {
+                    "description": "Pad 5 [sclk] of J2 on F.Cu",
+                    "pos": {
+                        "x": 116.650481,
+                        "y": 136.275001
+                    },
+                    "uuid": "36adaa84-a95a-4042-8d0a-3b10f9089070"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 11 [sclk] of U5 on F.Cu",
+                    "pos": {
+                        "x": 125.925154,
+                        "y": 124.799167
+                    },
+                    "uuid": "329a7a60-5732-4e61-9fb0-57e44610c8a4"
+                },
+                {
+                    "description": "Pad 3 [sclk] of U3 on F.Cu",
+                    "pos": {
+                        "x": 130.966435,
+                        "y": 116.998143
+                    },
+                    "uuid": "70b58807-c64c-4c66-ae02-54c666600aa5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [dat] of U1 on F.Cu",
+                    "pos": {
+                        "x": 112.735222,
+                        "y": 117.075385
+                    },
+                    "uuid": "9ffd1629-8787-4bf5-9dc1-e4eddb764b66"
+                },
+                {
+                    "description": "Pad 6 [dat] of U6 on F.Cu",
+                    "pos": {
+                        "x": 119.604641,
+                        "y": 143.807868
+                    },
+                    "uuid": "e3a7a256-574a-495e-b65f-b98b4216cf83"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 22 [sdo_U1>sdi_U2] of U1 on F.Cu",
+                    "pos": {
+                        "x": 112.100222,
+                        "y": 122.635385
+                    },
+                    "uuid": "ed04fba6-01cb-4dc3-8639-96784e8b258a"
+                },
+                {
+                    "description": "Pad 2 [sdo_U1>sdi_U2] of U2 on F.Cu",
+                    "pos": {
+                        "x": 122.186631,
+                        "y": 117.105064
+                    },
+                    "uuid": "b750e949-7b21-41b4-abca-7f11842958ef"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [dat_out] of J2 on F.Cu",
+                    "pos": {
+                        "x": 117.949519,
+                        "y": 135.525001
+                    },
+                    "uuid": "a3f4ddf8-d6cc-4567-b7aa-94da97443b52"
+                },
+                {
+                    "description": "Pad 9 [dat_out] of U5 on F.Cu",
+                    "pos": {
+                        "x": 127.225154,
+                        "y": 124.799167
+                    },
+                    "uuid": "58a42a0a-82f7-4392-ab4b-9cb6c845383f"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Track [row_8] on B.Cu, length 0.3721 mm",
+                    "pos": {
+                        "x": 126.510659,
+                        "y": 123.955659
+                    },
+                    "uuid": "e6eb64cb-23b7-43f4-b5b8-374708d189b9"
+                },
+                {
+                    "description": "Pad 1 [row_8] of D134 on B.Cu",
+                    "pos": {
+                        "x": 127.634445,
+                        "y": 126.273338
+                    },
+                    "uuid": "7d517cae-e23c-433c-9267-8618d18e92d7"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Via [row_8] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 127.435,
+                        "y": 128.205
+                    },
+                    "uuid": "5d29c278-b69b-4880-8ec9-05ce650d95a7"
+                },
+                {
+                    "description": "Pad 3 [row_8] of Q9 on F.Cu",
+                    "pos": {
+                        "x": 122.13,
+                        "y": 132.88
+                    },
+                    "uuid": "3e63817d-1c5b-4c1f-93f5-492ab84d73fc"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [row_9] of Q10 on F.Cu",
+                    "pos": {
+                        "x": 122.432686,
+                        "y": 134.95955
+                    },
+                    "uuid": "fa9beb89-9710-4707-a908-86f5a220fe63"
+                },
+                {
+                    "description": "Track [row_9] on B.Cu, length 0.3826 mm",
+                    "pos": {
+                        "x": 129.88123,
+                        "y": 125.89123
+                    },
+                    "uuid": "e07cf007-d95c-4e6b-a7d3-c35cbaa15cd4"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [row_10] of Q11 on F.Cu",
+                    "pos": {
+                        "x": 123.625436,
+                        "y": 133.673646
+                    },
+                    "uuid": "ea3aca8f-6627-44b7-a2c6-26c0716712dc"
+                },
+                {
+                    "description": "Track [row_10] on B.Cu, length 0.2496 mm",
+                    "pos": {
+                        "x": 131.25,
+                        "y": 124.285
+                    },
+                    "uuid": "72ce4993-48c0-4980-bdb9-3b7ff12f9610"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [row_11] of Q12 on F.Cu",
+                    "pos": {
+                        "x": 128.800112,
+                        "y": 127.852937
+                    },
+                    "uuid": "57c0e46a-c21c-4d19-90f5-a8bf718840fe"
+                },
+                {
+                    "description": "Pad 1 [row_11] of D180 on B.Cu",
+                    "pos": {
+                        "x": 132.12723,
+                        "y": 122.383606
+                    },
+                    "uuid": "a225369a-ce69-45e1-86ab-98ef71805034"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [row_12] of D193 on B.Cu",
+                    "pos": {
+                        "x": 131.002659,
+                        "y": 116.54742
+                    },
+                    "uuid": "923c29d1-261d-4bc3-aa02-8c139b8f1e46"
+                },
+                {
+                    "description": "Pad 1 [row_12] of D194 on B.Cu",
+                    "pos": {
+                        "x": 132.126445,
+                        "y": 118.492966
+                    },
+                    "uuid": "a1ef5081-ff19-46d5-80cb-657a387a5bc5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [srow_8] of Q9 on F.Cu",
+                    "pos": {
+                        "x": 122.355,
+                        "y": 132.18
+                    },
+                    "uuid": "7497603f-8408-499f-a954-9c80b6644d73"
+                },
+                {
+                    "description": "Pad 15 [srow_8] of U5 on F.Cu",
+                    "pos": {
+                        "x": 123.325154,
+                        "y": 124.799167
+                    },
+                    "uuid": "dfa451e3-0b9a-4a87-8e72-fd79d685ccdb"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [srow_12] of U5 on F.Cu",
+                    "pos": {
+                        "x": 124.625154,
+                        "y": 130.699167
+                    },
+                    "uuid": "9758ed0d-b2ac-4ab5-ae11-66a7afbfea37"
+                },
+                {
+                    "description": "Pad 1 [srow_12] of Q13 on F.Cu",
+                    "pos": {
+                        "x": 129.174785,
+                        "y": 126.781892
+                    },
+                    "uuid": "612d1d66-68b0-4a13-b269-3dfdf1ae8d8e"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 5 [srow_13] of U5 on F.Cu",
+                    "pos": {
+                        "x": 125.275154,
+                        "y": 130.699167
+                    },
+                    "uuid": "e6d032a6-101a-47d8-b9f9-4e28237f28e6"
+                },
+                {
+                    "description": "Pad 1 [srow_13] of Q14 on F.Cu",
+                    "pos": {
+                        "x": 134.274785,
+                        "y": 118.779651
+                    },
+                    "uuid": "1c82c092-9de0-4f88-a0f7-7a172396f3cd"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 6 [srow_14] of U5 on F.Cu",
+                    "pos": {
+                        "x": 125.925154,
+                        "y": 130.699167
+                    },
+                    "uuid": "c72a0fef-52e2-43bd-97f3-f0c1b2fd6ce7"
+                },
+                {
+                    "description": "Pad 1 [srow_14] of Q15 on F.Cu",
+                    "pos": {
+                        "x": 134.271916,
+                        "y": 117.334619
+                    },
+                    "uuid": "0cbf542d-50d4-4341-a2ec-04ac329c824e"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        }
+    ],
+    "violations": [
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint Q15",
+                    "pos": {
+                        "x": 133.921916,
+                        "y": 117.109619
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9115aa"
+                },
+                {
+                    "description": "Footprint U3",
+                    "pos": {
+                        "x": 128.743935,
+                        "y": 119.778143
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911a4f"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint Q5",
+                    "pos": {
+                        "x": 119.5,
+                        "y": 132.375
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9117b1"
+                },
+                {
+                    "description": "Footprint U4",
+                    "pos": {
+                        "x": 119.238328,
+                        "y": 127.742339
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9119e5"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint R2",
+                    "pos": {
+                        "x": 124.05,
+                        "y": 123.05
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9118f6"
+                },
+                {
+                    "description": "Footprint U3",
+                    "pos": {
+                        "x": 128.743935,
+                        "y": 119.778143
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911a4f"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint R2",
+                    "pos": {
+                        "x": 124.05,
+                        "y": 123.05
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9118f6"
+                },
+                {
+                    "description": "Footprint U2",
+                    "pos": {
+                        "x": 119.329131,
+                        "y": 119.885064
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911ad6"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint R2",
+                    "pos": {
+                        "x": 124.05,
+                        "y": 123.05
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9118f6"
+                },
+                {
+                    "description": "Footprint U5",
+                    "pos": {
+                        "x": 124.950154,
+                        "y": 127.749167
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911c3a"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint C3",
+                    "pos": {
+                        "x": 126.05732,
+                        "y": 132.591499
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91194a"
+                },
+                {
+                    "description": "Footprint U5",
+                    "pos": {
+                        "x": 124.950154,
+                        "y": 127.749167
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911c3a"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint U3",
+                    "pos": {
+                        "x": 128.743935,
+                        "y": 119.778143
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911a4f"
+                },
+                {
+                    "description": "Footprint R3",
+                    "pos": {
+                        "x": 130.637285,
+                        "y": 124.248768
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d988024"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Courtyards overlap",
+            "items": [
+                {
+                    "description": "Footprint U3",
+                    "pos": {
+                        "x": 128.743935,
+                        "y": 119.778143
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911a4f"
+                },
+                {
+                    "description": "Footprint Q14",
+                    "pos": {
+                        "x": 133.924785,
+                        "y": 118.554651
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d99075a"
+                }
+            ],
+            "severity": "error",
+            "type": "courtyards_overlap"
+        },
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [row_7] on F.Cu, length 0.4900 mm",
+                    "pos": {
+                        "x": 125.475,
+                        "y": 126.84
+                    },
+                    "uuid": "15b77b27-e3b7-4c70-9828-c92644c32a12"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [colb_5] on In2.Cu, length 0.6930 mm",
+                    "pos": {
+                        "x": 111.44,
+                        "y": 125.37
+                    },
+                    "uuid": "9322fee4-2955-4c9c-b66f-fd946ffbe767"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [colr_6] on In1.Cu, length 1.0850 mm",
+                    "pos": {
+                        "x": 117.215,
+                        "y": 128.8
+                    },
+                    "uuid": "3398f48d-60ee-46e2-bdc2-1d9934b2bbd7"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [colg_6] on In1.Cu, length 0.7425 mm",
+                    "pos": {
+                        "x": 112.595,
+                        "y": 129.115
+                    },
+                    "uuid": "9aeaefd3-0c39-4f7b-a2b0-894f55f06c7d"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [row_1] on In1.Cu, length 1.3364 mm",
+                    "pos": {
+                        "x": 118.72,
+                        "y": 138.95
+                    },
+                    "uuid": "57c25032-614b-4a0c-9514-be161ffa4c3f"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [colg_1] on B.Cu, length 1.0144 mm",
+                    "pos": {
+                        "x": 109.107341,
+                        "y": 120.457659
+                    },
+                    "uuid": "3999be2e-f3d5-4fb9-bb49-46b1813a3cff"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [vcc] on In1.Cu, length 0.9100 mm",
+                    "pos": {
+                        "x": 129.43,
+                        "y": 120.61
+                    },
+                    "uuid": "e68872c2-5d5c-4d72-865f-05794f55aa40"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [vcc] on F.Cu, length 0.1400 mm",
+                    "pos": {
+                        "x": 132.545,
+                        "y": 122.815
+                    },
+                    "uuid": "cbc8771a-86d7-409d-ac40-4958b78f5e24"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [colb_1] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 133.875,
+                        "y": 117.81
+                    },
+                    "uuid": "d161e113-d002-42f6-8316-734da05cb3ba"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Via is not connected or connected on only one layer",
+            "items": [
+                {
+                    "description": "Via [colr_11] on F.Cu - B.Cu",
+                    "pos": {
+                        "x": 116.2,
+                        "y": 139.44
+                    },
+                    "uuid": "c602c322-1f64-4d9e-9160-3e1988e05c1c"
+                }
+            ],
+            "severity": "warning",
+            "type": "via_dangling"
+        },
+        {
+            "description": "Track has unconnected end",
+            "items": [
+                {
+                    "description": "Track [vcc] on F.Cu, length 0.9288 mm",
+                    "pos": {
+                        "x": 119.753815,
+                        "y": 123.471185
+                    },
+                    "uuid": "a1c76abe-33c6-4cfb-9787-c0f0f45aab6c"
+                }
+            ],
+            "severity": "warning",
+            "type": "track_dangling"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q2",
+                    "pos": {
+                        "x": 114.625,
+                        "y": 130.825
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91185f"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q5",
+                    "pos": {
+                        "x": 119.5,
+                        "y": 132.375
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9117b1"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_conn'",
+            "items": [
+                {
+                    "description": "Footprint J1",
+                    "pos": {
+                        "x": 120.130795,
+                        "y": 139.296542
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911581"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D1",
+                    "pos": {
+                        "x": 103.463583,
+                        "y": 116.845
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912e30"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D90",
+                    "pos": {
+                        "x": 124.811579,
+                        "y": 134.357186
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912ae2"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D17",
+                    "pos": {
+                        "x": 105.710368,
+                        "y": 116.845453
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912b33"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D2",
+                    "pos": {
+                        "x": 104.587368,
+                        "y": 118.790547
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912b57"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D3",
+                    "pos": {
+                        "x": 105.711154,
+                        "y": 120.736093
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912b0c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D4",
+                    "pos": {
+                        "x": 106.834939,
+                        "y": 122.68164
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912e7b"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D5",
+                    "pos": {
+                        "x": 107.958725,
+                        "y": 124.627186
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912e57"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D6",
+                    "pos": {
+                        "x": 109.08251,
+                        "y": 126.572733
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90eca2"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D7",
+                    "pos": {
+                        "x": 110.206296,
+                        "y": 128.518279
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ecc9"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D8",
+                    "pos": {
+                        "x": 111.330081,
+                        "y": 130.463826
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ed1d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D9",
+                    "pos": {
+                        "x": 112.453866,
+                        "y": 132.409372
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9124d9"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D10",
+                    "pos": {
+                        "x": 113.577652,
+                        "y": 134.354919
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912203"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D11",
+                    "pos": {
+                        "x": 114.701437,
+                        "y": 136.300465
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912707"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D12",
+                    "pos": {
+                        "x": 115.825223,
+                        "y": 138.246012
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ed74"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D13",
+                    "pos": {
+                        "x": 116.949008,
+                        "y": 140.191558
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ed4a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D14",
+                    "pos": {
+                        "x": 118.072794,
+                        "y": 142.137105
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9126b9"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D15",
+                    "pos": {
+                        "x": 119.196579,
+                        "y": 144.082651
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912128"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D18",
+                    "pos": {
+                        "x": 106.834154,
+                        "y": 118.791
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ea5f"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D19",
+                    "pos": {
+                        "x": 107.957939,
+                        "y": 120.736547
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912251"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D20",
+                    "pos": {
+                        "x": 109.081725,
+                        "y": 122.682093
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912671"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D21",
+                    "pos": {
+                        "x": 110.20551,
+                        "y": 124.62764
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91283c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D22",
+                    "pos": {
+                        "x": 111.329296,
+                        "y": 126.573186
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912410"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D23",
+                    "pos": {
+                        "x": 112.453081,
+                        "y": 128.518733
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912890"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D24",
+                    "pos": {
+                        "x": 113.576866,
+                        "y": 130.464279
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912170"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D25",
+                    "pos": {
+                        "x": 114.700652,
+                        "y": 132.409826
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91292c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D26",
+                    "pos": {
+                        "x": 115.824437,
+                        "y": 134.355372
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9121bb"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D27",
+                    "pos": {
+                        "x": 116.948223,
+                        "y": 136.300919
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9128de"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D28",
+                    "pos": {
+                        "x": 118.072008,
+                        "y": 138.246465
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9128ba"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D29",
+                    "pos": {
+                        "x": 119.195794,
+                        "y": 140.192012
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9125db"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D30",
+                    "pos": {
+                        "x": 120.319579,
+                        "y": 142.137558
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ecf0"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D33",
+                    "pos": {
+                        "x": 107.957154,
+                        "y": 116.845907
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912305"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D34",
+                    "pos": {
+                        "x": 109.08094,
+                        "y": 118.791453
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91243a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D35",
+                    "pos": {
+                        "x": 110.204725,
+                        "y": 120.737
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912197"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D36",
+                    "pos": {
+                        "x": 111.32851,
+                        "y": 122.682547
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9122bd"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D37",
+                    "pos": {
+                        "x": 112.452296,
+                        "y": 124.628093
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9123c8"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D38",
+                    "pos": {
+                        "x": 113.576081,
+                        "y": 126.57364
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912521"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D39",
+                    "pos": {
+                        "x": 114.699866,
+                        "y": 128.519186
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9125b7"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D40",
+                    "pos": {
+                        "x": 115.823652,
+                        "y": 130.464733
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912818"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D41",
+                    "pos": {
+                        "x": 116.947437,
+                        "y": 132.410279
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9129d7"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D42",
+                    "pos": {
+                        "x": 118.071223,
+                        "y": 134.355826
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9123a1"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D43",
+                    "pos": {
+                        "x": 119.195008,
+                        "y": 136.301372
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912734"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D44",
+                    "pos": {
+                        "x": 120.318794,
+                        "y": 138.246919
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91237d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D45",
+                    "pos": {
+                        "x": 121.442579,
+                        "y": 140.192465
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912974"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D49",
+                    "pos": {
+                        "x": 110.203939,
+                        "y": 116.84636
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912863"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D50",
+                    "pos": {
+                        "x": 111.327725,
+                        "y": 118.791907
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912abb"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D51",
+                    "pos": {
+                        "x": 112.45151,
+                        "y": 120.737453
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9127cd"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D52",
+                    "pos": {
+                        "x": 113.575296,
+                        "y": 122.683
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912299"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D53",
+                    "pos": {
+                        "x": 114.699081,
+                        "y": 124.628547
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9122e1"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D54",
+                    "pos": {
+                        "x": 115.822866,
+                        "y": 126.574093
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9123ec"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D55",
+                    "pos": {
+                        "x": 116.946652,
+                        "y": 128.51964
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9124fd"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D56",
+                    "pos": {
+                        "x": 118.070437,
+                        "y": 130.465186
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9127a3"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D57",
+                    "pos": {
+                        "x": 119.194223,
+                        "y": 132.410733
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9127f4"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D58",
+                    "pos": {
+                        "x": 120.318008,
+                        "y": 134.356279
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912998"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D59",
+                    "pos": {
+                        "x": 121.441794,
+                        "y": 136.301826
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912a97"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D60",
+                    "pos": {
+                        "x": 122.565579,
+                        "y": 138.247372
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91214c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D65",
+                    "pos": {
+                        "x": 112.450725,
+                        "y": 116.846814
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9124af"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D66",
+                    "pos": {
+                        "x": 113.57451,
+                        "y": 118.79236
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9121df"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D67",
+                    "pos": {
+                        "x": 114.698296,
+                        "y": 120.737907
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91264a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D68",
+                    "pos": {
+                        "x": 115.822081,
+                        "y": 122.683453
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912950"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D69",
+                    "pos": {
+                        "x": 116.945866,
+                        "y": 124.629
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912a4c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D70",
+                    "pos": {
+                        "x": 118.069652,
+                        "y": 126.574547
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91222d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D71",
+                    "pos": {
+                        "x": 119.193437,
+                        "y": 128.520093
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912593"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D72",
+                    "pos": {
+                        "x": 120.317223,
+                        "y": 130.46564
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912329"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D73",
+                    "pos": {
+                        "x": 121.441008,
+                        "y": 132.411186
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9126dd"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D74",
+                    "pos": {
+                        "x": 122.564794,
+                        "y": 134.356733
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912a28"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D75",
+                    "pos": {
+                        "x": 123.688579,
+                        "y": 136.302279
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912275"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D81",
+                    "pos": {
+                        "x": 114.69751,
+                        "y": 116.847267
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912695"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D82",
+                    "pos": {
+                        "x": 115.821296,
+                        "y": 118.792814
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912a73"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D83",
+                    "pos": {
+                        "x": 116.945081,
+                        "y": 120.73836
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912908"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D84",
+                    "pos": {
+                        "x": 118.068866,
+                        "y": 122.683907
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912626"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D85",
+                    "pos": {
+                        "x": 119.192652,
+                        "y": 124.629453
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912602"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D86",
+                    "pos": {
+                        "x": 120.316437,
+                        "y": 126.575
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91256c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D87",
+                    "pos": {
+                        "x": 121.440222,
+                        "y": 128.520547
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912359"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D88",
+                    "pos": {
+                        "x": 122.564008,
+                        "y": 130.466093
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912482"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D89",
+                    "pos": {
+                        "x": 123.687794,
+                        "y": 132.41164
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91245e"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D103",
+                    "pos": {
+                        "x": 123.687008,
+                        "y": 128.521
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91277f"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D97",
+                    "pos": {
+                        "x": 116.944296,
+                        "y": 116.847721
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91275b"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D98",
+                    "pos": {
+                        "x": 118.068081,
+                        "y": 118.793267
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ec78"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D99",
+                    "pos": {
+                        "x": 119.191866,
+                        "y": 120.738814
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ec54"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D100",
+                    "pos": {
+                        "x": 120.315652,
+                        "y": 122.68436
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ec30"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D101",
+                    "pos": {
+                        "x": 121.439437,
+                        "y": 124.629907
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ec0c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D102",
+                    "pos": {
+                        "x": 122.563223,
+                        "y": 126.575453
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ebe8"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D104",
+                    "pos": {
+                        "x": 124.810794,
+                        "y": 130.466547
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ebc4"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D105",
+                    "pos": {
+                        "x": 125.934579,
+                        "y": 132.412093
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90eb9d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D113",
+                    "pos": {
+                        "x": 119.191081,
+                        "y": 116.848174
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90eb79"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D114",
+                    "pos": {
+                        "x": 120.314866,
+                        "y": 118.793721
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912548"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D115",
+                    "pos": {
+                        "x": 121.438652,
+                        "y": 120.739267
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90eb37"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D116",
+                    "pos": {
+                        "x": 122.562437,
+                        "y": 122.684814
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90eb13"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D117",
+                    "pos": {
+                        "x": 123.686223,
+                        "y": 124.63036
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90eaef"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D118",
+                    "pos": {
+                        "x": 124.810008,
+                        "y": 126.575907
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90eacb"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D119",
+                    "pos": {
+                        "x": 125.933794,
+                        "y": 128.521453
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90eaa7"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D120",
+                    "pos": {
+                        "x": 127.057579,
+                        "y": 130.467
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d90ea83"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D129",
+                    "pos": {
+                        "x": 121.437866,
+                        "y": 116.848628
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9120a1"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D130",
+                    "pos": {
+                        "x": 122.561652,
+                        "y": 118.794174
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91207a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D131",
+                    "pos": {
+                        "x": 123.685437,
+                        "y": 120.739721
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912056"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D132",
+                    "pos": {
+                        "x": 124.809223,
+                        "y": 122.685267
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d912032"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D133",
+                    "pos": {
+                        "x": 125.933008,
+                        "y": 124.630814
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91200b"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D134",
+                    "pos": {
+                        "x": 127.056794,
+                        "y": 126.57636
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911fe7"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D135",
+                    "pos": {
+                        "x": 128.180579,
+                        "y": 128.521907
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911fc3"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D145",
+                    "pos": {
+                        "x": 123.684652,
+                        "y": 116.849081
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911f9c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D146",
+                    "pos": {
+                        "x": 124.808437,
+                        "y": 118.794628
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911f78"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D147",
+                    "pos": {
+                        "x": 125.932223,
+                        "y": 120.740174
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911f54"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D148",
+                    "pos": {
+                        "x": 127.056008,
+                        "y": 122.685721
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911f30"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D149",
+                    "pos": {
+                        "x": 128.179794,
+                        "y": 124.631266
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911f0c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D150",
+                    "pos": {
+                        "x": 129.303579,
+                        "y": 126.576814
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911ee8"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D161",
+                    "pos": {
+                        "x": 125.931437,
+                        "y": 116.849535
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911ec4"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D162",
+                    "pos": {
+                        "x": 127.055223,
+                        "y": 118.795081
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911ea0"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D163",
+                    "pos": {
+                        "x": 128.179008,
+                        "y": 120.740628
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911e7c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D164",
+                    "pos": {
+                        "x": 129.302794,
+                        "y": 122.686174
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911e58"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D165",
+                    "pos": {
+                        "x": 130.426579,
+                        "y": 124.631721
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911e34"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D177",
+                    "pos": {
+                        "x": 128.178223,
+                        "y": 116.849988
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911e0d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D178",
+                    "pos": {
+                        "x": 129.302008,
+                        "y": 118.795535
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911de9"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D179",
+                    "pos": {
+                        "x": 130.425794,
+                        "y": 120.741081
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911dc5"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D180",
+                    "pos": {
+                        "x": 131.549579,
+                        "y": 122.686628
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911da1"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D193",
+                    "pos": {
+                        "x": 130.425008,
+                        "y": 116.850442
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911d7d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D194",
+                    "pos": {
+                        "x": 131.548794,
+                        "y": 118.795988
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911d59"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D195",
+                    "pos": {
+                        "x": 132.672579,
+                        "y": 120.741535
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911d35"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D209",
+                    "pos": {
+                        "x": 132.671794,
+                        "y": 116.850895
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911d11"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D210",
+                    "pos": {
+                        "x": 133.795579,
+                        "y": 118.796442
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911ced"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_led'",
+            "items": [
+                {
+                    "description": "Footprint D225",
+                    "pos": {
+                        "x": 134.918579,
+                        "y": 116.851349
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911cc9"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_misc'",
+            "items": [
+                {
+                    "description": "Footprint U5",
+                    "pos": {
+                        "x": 124.950154,
+                        "y": 127.749167
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911c3a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q13",
+                    "pos": {
+                        "x": 129.544641,
+                        "y": 126.591283
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911bf5"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_misc'",
+            "items": [
+                {
+                    "description": "Footprint U1",
+                    "pos": {
+                        "x": 109.877722,
+                        "y": 119.855385
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911b8a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_misc'",
+            "items": [
+                {
+                    "description": "Footprint U2",
+                    "pos": {
+                        "x": 119.329131,
+                        "y": 119.885064
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911ad6"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_misc'",
+            "items": [
+                {
+                    "description": "Footprint U3",
+                    "pos": {
+                        "x": 128.743935,
+                        "y": 119.778143
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911a4f"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_misc'",
+            "items": [
+                {
+                    "description": "Footprint U4",
+                    "pos": {
+                        "x": 119.238328,
+                        "y": 127.742339
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9119e5"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint C1",
+                    "pos": {
+                        "x": 129.590875,
+                        "y": 125.261203
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d990648"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint C2",
+                    "pos": {
+                        "x": 114.235477,
+                        "y": 124.507532
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911974"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Capacitor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint C3",
+                    "pos": {
+                        "x": 126.05732,
+                        "y": 132.591499
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91194a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint R1",
+                    "pos": {
+                        "x": 112.816343,
+                        "y": 124.265544
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911920"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint R2",
+                    "pos": {
+                        "x": 124.05,
+                        "y": 123.05
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9118f6"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Resistor_SMD'",
+            "items": [
+                {
+                    "description": "Footprint R3",
+                    "pos": {
+                        "x": 130.637285,
+                        "y": 124.248768
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d988024"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q1",
+                    "pos": {
+                        "x": 111.6,
+                        "y": 126.3
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005de6b2e2"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q3",
+                    "pos": {
+                        "x": 114.45,
+                        "y": 129.599999
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911826"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q4",
+                    "pos": {
+                        "x": 120.425,
+                        "y": 134.3
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005de62c35"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q6",
+                    "pos": {
+                        "x": 114.625,
+                        "y": 128.325
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911778"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q7",
+                    "pos": {
+                        "x": 112.725,
+                        "y": 127.85
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91173f"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q8",
+                    "pos": {
+                        "x": 113.775,
+                        "y": 126.425
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911706"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q9",
+                    "pos": {
+                        "x": 122.13,
+                        "y": 132.53
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9116cd"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q10",
+                    "pos": {
+                        "x": 122.432686,
+                        "y": 134.60955
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911694"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q11",
+                    "pos": {
+                        "x": 123.625436,
+                        "y": 133.323646
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91165b"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q12",
+                    "pos": {
+                        "x": 128.625112,
+                        "y": 128.156046
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d91161f"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q14",
+                    "pos": {
+                        "x": 133.924785,
+                        "y": 118.554651
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d99075a"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'Package_TO_SOT_SMD'",
+            "items": [
+                {
+                    "description": "Footprint Q15",
+                    "pos": {
+                        "x": 133.921916,
+                        "y": 117.109619
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d9115aa"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_conn'",
+            "items": [
+                {
+                    "description": "Footprint J2",
+                    "pos": {
+                        "x": 117.3,
+                        "y": 135.900001
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d911560"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_misc'",
+            "items": [
+                {
+                    "description": "Footprint U6",
+                    "pos": {
+                        "x": 119.466532,
+                        "y": 143.34708
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d943753"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "The current configuration does not include the footprint library 'gkl_misc'",
+            "items": [
+                {
+                    "description": "Footprint U7",
+                    "pos": {
+                        "x": 117.267995,
+                        "y": 138.794946
+                    },
+                    "uuid": "00000000-0000-0000-0000-00005d943769"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_issues"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segment of Q3 on F.SilkS",
+                    "pos": {
+                        "x": 114.8,
+                        "y": 130.209999
+                    },
+                    "uuid": "06dfc965-bf82-4bc9-851d-fa7e0e484486"
+                },
+                {
+                    "description": "Segment of Q2 on F.SilkS",
+                    "pos": {
+                        "x": 114.275,
+                        "y": 130.215
+                    },
+                    "uuid": "801d3a40-547e-41ee-bf7a-55adb000ec18"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segment of Q3 on F.SilkS",
+                    "pos": {
+                        "x": 113.64,
+                        "y": 128.989999
+                    },
+                    "uuid": "6aabef23-47b9-4d3d-bc82-a5851d63fdae"
+                },
+                {
+                    "description": "Segment of Q6 on F.SilkS",
+                    "pos": {
+                        "x": 115.435,
+                        "y": 128.935
+                    },
+                    "uuid": "dedca4b1-32b7-404c-88a8-0bb56e53d1a9"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segment of Q7 on F.SilkS",
+                    "pos": {
+                        "x": 113.335,
+                        "y": 127.04
+                    },
+                    "uuid": "c3f0ab2e-6f3d-4edd-a881-959fa5b51885"
+                },
+                {
+                    "description": "Segment of Q8 on F.SilkS",
+                    "pos": {
+                        "x": 114.585,
+                        "y": 127.035
+                    },
+                    "uuid": "d7c2560c-0fbf-4f0e-ab18-849e57f9c562"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segment of Q8 on F.SilkS",
+                    "pos": {
+                        "x": 114.585,
+                        "y": 127.035
+                    },
+                    "uuid": "d7c2560c-0fbf-4f0e-ab18-849e57f9c562"
+                },
+                {
+                    "description": "Segment of Q7 on F.SilkS",
+                    "pos": {
+                        "x": 112.115,
+                        "y": 127.04
+                    },
+                    "uuid": "e63b5a25-e140-4893-88f1-02b71adca942"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segment of U5 on F.SilkS",
+                    "pos": {
+                        "x": 127.675154,
+                        "y": 129.949167
+                    },
+                    "uuid": "0d01c232-83ab-4dfd-95fc-e7b3c0474248"
+                },
+                {
+                    "description": "Segment of Q12 on F.SilkS",
+                    "pos": {
+                        "x": 128.748387,
+                        "y": 129.162527
+                    },
+                    "uuid": "3302749f-bf67-4590-8a5a-c91ba11ecbb3"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        },
+        {
+            "description": "Silkscreen clearance",
+            "items": [
+                {
+                    "description": "Segment of U5 on F.SilkS",
+                    "pos": {
+                        "x": 127.675154,
+                        "y": 129.949167
+                    },
+                    "uuid": "0d01c232-83ab-4dfd-95fc-e7b3c0474248"
+                },
+                {
+                    "description": "Segment of Q12 on F.SilkS",
+                    "pos": {
+                        "x": 127.691837,
+                        "y": 128.552527
+                    },
+                    "uuid": "5f7590b4-e58d-41e3-8fae-c4a0cbe25bf7"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_overlap"
+        }
+    ]
+}

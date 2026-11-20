@@ -380,7 +380,7 @@ failed under 20 GB now peaks at 10.3 GB. The limit is a fixed number, so results
 `chains BOARD --apply OUT` closes the open connections one after the other and writes the board when fewer are open;
 `route --finish --finish-chains` runs the same as a rung before the first added layer and after the last. A finer lattice did not help
 the boards a few short (half the pitch on four of them: no change); the chain closes MonApollo's last connection (depth 3, five nets
-lifted, KiCad 0 unconnected) and one of OtterPill's two.
+lifted, KiCad 0 unconnected) and one of OtterPill's two; poncho goes 5 → 1 in two passes and d20 127 → 111.
 
 ## 3. Order
 
