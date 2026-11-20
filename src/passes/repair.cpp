@@ -8,6 +8,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <tuple>
 
 #include "drc/connectivity.hpp"
 #include "drc/copper.hpp"
@@ -537,6 +538,103 @@ RepairResult repair_open(const model::Board& base, const model::DesignRules& rul
   for (std::size_t i = 0; i < base_v_gone.size(); ++i)
     if (base_v_gone[i]) out.ripped_vias.push_back(static_cast<int>(i));
   out.seconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count();
+  return out;
+}
+
+namespace {
+
+// Per item of the board's copper model: 1 when its group of touching copper holds something that anchors it (see padless_islands).
+struct Anchored {
+  CopperIndex ci;
+  drc::Connectivity con;
+  std::vector<char> root_anchored;
+  explicit Anchored(const model::Board& b) : ci(b), con(drc::compute_connectivity(b, ci.cm, *ci.grid, true)), root_anchored(ci.cm.items.size(), 0) {
+    for (std::size_t i = 0; i < ci.cm.items.size(); ++i) {
+      const auto& it = ci.cm.items[i];
+      bool anchor = it.net <= 0;
+      if (it.kind == ItemKind::Track) anchor = anchor || b.tracks[static_cast<std::size_t>(it.index)].locked;
+      else if (it.kind == ItemKind::Via) anchor = anchor || b.vias[static_cast<std::size_t>(it.index)].locked || b.vias[static_cast<std::size_t>(it.index)].free;
+      else anchor = true;  // pads, zone fills, graphics, arcs
+      if (anchor) root_anchored[static_cast<std::size_t>(con.root[i])] = 1;
+    }
+  }
+  bool anchored(std::size_t item) const { return root_anchored[static_cast<std::size_t>(con.root[item])] != 0; }
+};
+
+using TrackKey = std::tuple<Coord, Coord, Coord, Coord, int, Coord, NetId>;
+using ViaKey = std::tuple<Coord, Coord, int, int, NetId>;
+TrackKey key_of(const model::Track& t) { return {t.a.x, t.a.y, t.b.x, t.b.y, t.layer, t.width, t.net}; }
+ViaKey key_of(const model::Via& v) { return {v.pos.x, v.pos.y, v.layer_top, v.layer_bottom, v.net}; }
+
+}  // namespace
+
+IslandCut padless_islands(const model::Board& before, const model::Board& now, const std::vector<model::Track>& new_tracks,
+                          const std::vector<model::Via>& new_vias) {
+  IslandCut out;
+  out.new_track_cut.assign(new_tracks.size(), 0);
+  out.new_via_cut.assign(new_vias.size(), 0);
+  model::Board all = now;
+  all.tracks.insert(all.tracks.end(), new_tracks.begin(), new_tracks.end());
+  all.vias.insert(all.vias.end(), new_vias.begin(), new_vias.end());
+  const Anchored an(all);
+  // Groups with no anchor, by root: their items, and whether one of them is new.
+  std::map<int, std::vector<std::size_t>> groups;
+  for (std::size_t i = 0; i < an.ci.cm.items.size(); ++i) {
+    const auto& it = an.ci.cm.items[i];
+    if (it.bare_of >= 0 || an.anchored(i)) continue;
+    groups[an.con.root[i]].push_back(i);
+  }
+  if (groups.empty()) return out;
+  const std::size_t nt = now.tracks.size(), nv = now.vias.size();
+  // What was joined to a pad in the input, by geometry (the indices of `before` and `now` differ by the lifted items).
+  std::set<TrackKey> was_track;
+  std::set<ViaKey> was_via;
+  bool before_read = false;
+  auto read_before = [&] {
+    if (before_read) return;
+    before_read = true;
+    const Anchored ab(before);
+    for (std::size_t i = 0; i < ab.ci.cm.items.size(); ++i) {
+      const auto& it = ab.ci.cm.items[i];
+      if (it.bare_of >= 0 || !ab.anchored(i)) continue;
+      if (it.kind == ItemKind::Track) was_track.insert(key_of(before.tracks[static_cast<std::size_t>(it.index)]));
+      if (it.kind == ItemKind::Via) was_via.insert(key_of(before.vias[static_cast<std::size_t>(it.index)]));
+    }
+  };
+  for (const auto& [root, items] : groups) {
+    bool cut = false;
+    for (const std::size_t i : items) {
+      const auto& it = an.ci.cm.items[i];
+      const auto idx = static_cast<std::size_t>(it.index);
+      if ((it.kind == ItemKind::Track && idx >= nt) || (it.kind == ItemKind::Via && idx >= nv)) cut = true;
+    }
+    if (!cut) {
+      read_before();
+      for (const std::size_t i : items) {
+        const auto& it = an.ci.cm.items[i];
+        const auto idx = static_cast<std::size_t>(it.index);
+        if (it.kind == ItemKind::Track && was_track.count(key_of(now.tracks[idx]))) cut = true;
+        if (it.kind == ItemKind::Via && was_via.count(key_of(now.vias[idx]))) cut = true;
+      }
+    }
+    if (!cut) continue;
+    ++out.islands;
+    for (const std::size_t i : items) {
+      const auto& it = an.ci.cm.items[i];
+      const auto idx = static_cast<std::size_t>(it.index);
+      if (it.kind == ItemKind::Track) {
+        if (idx < nt) out.base_tracks.push_back(static_cast<int>(idx));
+        else out.new_track_cut[idx - nt] = 1;
+      } else if (it.kind == ItemKind::Via) {
+        if (idx < nv) out.base_vias.push_back(static_cast<int>(idx));
+        else out.new_via_cut[idx - nv] = 1;
+      }
+    }
+  }
+  std::sort(out.base_tracks.begin(), out.base_tracks.end());
+  out.base_tracks.erase(std::unique(out.base_tracks.begin(), out.base_tracks.end()), out.base_tracks.end());
+  std::sort(out.base_vias.begin(), out.base_vias.end());
+  out.base_vias.erase(std::unique(out.base_vias.begin(), out.base_vias.end()), out.base_vias.end());
   return out;
 }
 

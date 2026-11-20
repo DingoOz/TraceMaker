@@ -323,6 +323,15 @@ OPTIONS:
                               vias of one net between two pads or junctions) stops growing
                               (default 64)
           --repair-conns INT  Repair: open connections tried at most (default 64)
+          --search-mem INT:NONNEGATIVE
+                              Memory one search may take for its state, in MB, in every variant
+                              running at once (default 4096; 0 = no limit). A search over it
+                              runs with one direction state per point (as the fast-bends
+                              variants), then in a window drawn in to fit; a connection whose
+                              two ends alone need more is left open
+          --keep-islands      Keep copper that joins no pad after the run (default: a piece of
+                              a route this run left standing, with no pad on it, is taken off;
+                              KiCad reports such a piece as unconnected)
           --repair-focus      Repair: an attempt routes only the open connection's net and the
                               nets it lifted copper of (default: everything that is open)
           --repair-variants INT:INT in [1 - 64]
@@ -424,6 +433,10 @@ OPTIONS:
                               then one rung per --finish-layers entry. Stops at the first rung
                               with nothing open; the summary's "finish" lists what each rung
                               relaxed (doc 20 §2.12)
+          --finish-chains     With --finish: a rung before the added layers, and one after the
+                              last, that lifts the nets in the way of each open connection and
+                              routes them again (rip-up chains, as tracemaker chains --apply);
+                              kept when it leaves fewer open
           --finish-fresh      With --finish: a rung after the fitted rules that routes the
                               board as given with the fitted rules from the start, kept when it
                               leaves fewer open
@@ -958,6 +971,9 @@ OPTIONS:
           --rip-mm FLOAT:FLOAT in [0 - 100]
                               A blocking net's copper is lifted within this distance of the new
                               route, mm (default 1; 0 = the whole net)
+          --apply TEXT        Put the chains that close on the board, one open connection after
+                              the other, and write it here (only when fewer connections are
+                              open than on the input)
           --threads INT:INT in [1 - 256]
                               Open connections measured at once (the result does not depend on
                               it; default 8)

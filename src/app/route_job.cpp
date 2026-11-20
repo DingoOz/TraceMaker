@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "app/route_job.hpp"
 
+#include "app/chains.hpp"
+
 #include <cstdlib>
 #include <algorithm>
 #include <bit>
@@ -1198,6 +1200,8 @@ RouteJobResult run_route_job(RouteJob job) {
   nlohmann::json repair_summary;
   std::optional<model::Board> board_before_repair;  // the input as read, for the report's DRC "before" when the repair lifted some of it
   nlohmann::json removed_items;                      // the input's tracks and vias the repair lifted, in the --emit-items layout
+  route::RouteResult gone_input;                     // the same copper as items
+  int islands_cut = 0;                               // groups of copper that joined no pad after the run, taken off (D198)
   if (job.repair != "off" && (job.repair == "on" || input_copper) && res.routed < res.connections && job.time_total_s > 0 && total_left() < kMinStage)
     log(fmt("repair: skipped, --time-total (%.0f s) is used up", job.time_total_s));
   else if (job.repair != "off" && (job.repair == "on" || input_copper) && res.routed < res.connections) {
@@ -1225,10 +1229,9 @@ RouteJobResult run_route_job(RouteJob job) {
     if (rep.changed) {
       board_before_repair = lb.board;
       // The lifted copper of the input, for --emit-items (the KiCad plugin removes it from the open board in the same commit).
-      route::RouteResult gone;
-      for (const int i : rep.ripped_tracks) gone.tracks.push_back(lb.board.tracks[static_cast<std::size_t>(i)]);
-      for (const int i : rep.ripped_vias) gone.vias.push_back(lb.board.vias[static_cast<std::size_t>(i)]);
-      removed_items = items_json(lb.board, gone);
+      for (const int i : rep.ripped_tracks) gone_input.tracks.push_back(lb.board.tracks[static_cast<std::size_t>(i)]);
+      for (const int i : rep.ripped_vias) gone_input.vias.push_back(lb.board.vias[static_cast<std::size_t>(i)]);
+      removed_items = items_json(lb.board, gone_input);
       // The lifted copper of the input leaves the document and the models (route_board is lb.board or a copy of it with rule areas
       // added, so their track and via indices agree).
       model::Board* models[2] = {&lb.board, route_board == &with_rules ? &with_rules : nullptr};
@@ -1252,6 +1255,46 @@ RouteJobResult run_route_job(RouteJob job) {
             repair_summary["kept"].get<int>(), rep.open_before, rep.open_after, rep.ripped_tracks.size(), rep.ripped_vias.size(), rep.seconds));
     if (opt.sink) opt.sink->publish(server::stage("repair", "end", fmt("open %d -> %d", rep.open_before, rep.open_after)));
     route_t0 = std::chrono::steady_clock::now();  // the repair had a time limit of its own; the refill repair below gets its own too
+  }
+  // Copper the run left joined to no pad (doc 20 §2.14, D198): a piece of a route whose other part was lifted, here or in an earlier
+  // rung of `route --finish`. The router counts pads and calls the board complete; KiCad reports the piece as unconnected.
+  if (!job.keep_islands) {
+    const model::Board& before = board_before_repair ? *board_before_repair : lb.board;
+    const auto cut = passes::padless_islands(before, lb.board, res.tracks, res.vias);
+    if (cut.any()) {
+      islands_cut = cut.islands;
+      std::size_t new_gone = 0;
+      if (!cut.base_tracks.empty() || !cut.base_vias.empty()) {
+        if (!board_before_repair) board_before_repair = lb.board;
+        for (const int i : cut.base_tracks) gone_input.tracks.push_back(lb.board.tracks[static_cast<std::size_t>(i)]);
+        for (const int i : cut.base_vias) gone_input.vias.push_back(lb.board.vias[static_cast<std::size_t>(i)]);
+        removed_items = items_json(lb.board, gone_input);
+        model::Board* models[2] = {&lb.board, route_board == &with_rules ? &with_rules : nullptr};
+        for (const int i : cut.base_tracks)
+          if (lb.board.tracks[static_cast<std::size_t>(i)].node != sexpr::kNoNode) lb.doc.remove(lb.board.tracks[static_cast<std::size_t>(i)].node);
+        for (const int i : cut.base_vias)
+          if (lb.board.vias[static_cast<std::size_t>(i)].node != sexpr::kNoNode) lb.doc.remove(lb.board.vias[static_cast<std::size_t>(i)].node);
+        for (model::Board* m : models) {
+          if (!m) continue;
+          for (auto it = cut.base_tracks.rbegin(); it != cut.base_tracks.rend(); ++it) m->tracks.erase(m->tracks.begin() + *it);
+          for (auto it = cut.base_vias.rbegin(); it != cut.base_vias.rend(); ++it) m->vias.erase(m->vias.begin() + *it);
+        }
+      }
+      std::vector<model::Track> kt;
+      std::vector<model::Via> kv;
+      for (std::size_t i = 0; i < res.tracks.size(); ++i)
+        if (!cut.new_track_cut[i]) kt.push_back(res.tracks[i]);
+      for (std::size_t i = 0; i < res.vias.size(); ++i)
+        if (!cut.new_via_cut[i]) kv.push_back(res.vias[i]);
+      new_gone = res.tracks.size() - kt.size() + res.vias.size() - kv.size();
+      if (new_gone > 0) {
+        res.tracks = std::move(kt);
+        res.vias = std::move(kv);
+        res.conn_routes.clear();  // no longer the copper of the routes of one plan
+      }
+      log(fmt("%d pieces of copper that joined no pad taken off: %zu tracks and vias of the input, %zu of this run", cut.islands,
+              cut.base_tracks.size() + cut.base_vias.size(), new_gone));
+    }
   }
   // Soft zones (doc 05 §36): the router cut through stale fills and trusted them for connectivity. Refill them for
   // the new copper as KiCad will, count what is still unconnected, and route those connections again with the
@@ -1961,6 +2004,7 @@ RouteJobResult run_route_job(RouteJob job) {
   if (!advice_summary.is_null()) out.summary["advice"] = advice_summary;
   if (!rescue_summary.is_null()) out.summary["rescue"] = rescue_summary;
   if (!repair_summary.is_null()) out.summary["repair"] = repair_summary;
+  if (islands_cut > 0) out.summary["islands_cut"] = islands_cut;
   if (!why_open.is_null()) out.summary["why_open"] = why_open;
   if (!fit_summary.is_null()) out.summary["fitted_rules"] = fit_summary;
   if (!cr_classes.empty()) out.summary["component_rule_net_classes"] = cr_classes;
@@ -2178,7 +2222,7 @@ RouteJobResult run_layer_advisor(RouteJob job, std::vector<int> counts) {
   return std::move(*best);
 }
 
-RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool masks_rung, bool fresh_rung) {
+RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool masks_rung, bool fresh_rung, bool chains_rung) {
   namespace fs = std::filesystem;
   auto log = [&](const std::string& line) {
     if (job.log) job.log(line);
@@ -2202,14 +2246,19 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
     int layers = 0;  // 0 = as the board
     bool masks = false;
     bool fresh = false;  // from the board as given, not on top of the rung before
+    bool chains = false; // no routing run: the rip-up chains that close are put on the board (app::measure_chains, D200)
   };
   std::vector<Rung> rungs{{"as given", false, 0, false}, {"fitted rules", true, 0, false}};
   // On top is not always the better order: with other rules the whole board may route where the earlier copper is in the way (PCBench
   // PCIE: 0 open fitted from nothing, 1-2 on top). Kept, like every rung, only when fewer connections are open.
   if (fresh_rung) rungs.push_back({"fitted rules, from the board as given", true, 0, false, true});
   if (masks_rung) rungs.push_back({"fitted rules, pad mask openings open to tracks", true, 0, true});
+  // Rip-up chains before a layer is added, and once more after the last layer: a connection left by the order of the routing
+  // closes when its blockers move, and that is cheaper than a layer (PCBench MonApollo: 1 open after six rungs, 0 after its chain).
+  if (chains_rung) rungs.push_back({"rip-up chains", false, 0, false, false, true});
   for (const int add : extra_layers)
     if (add > 0) rungs.push_back({fmt("fitted rules%s, %d copper layers", masks_rung ? ", pad mask openings open to tracks" : "", layers0 + add), true, layers0 + add, masks_rung});
+  if (chains_rung && !extra_layers.empty()) rungs.push_back({"rip-up chains", false, 0, false, false, true});
 
   nlohmann::json rows = nlohmann::json::array();
   std::optional<RouteJobResult> best;
@@ -2217,6 +2266,41 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
   int best_open = 0;
   for (std::size_t k = 0; k < rungs.size(); ++k) {
     const Rung& rg = rungs[k];
+    if (rg.chains) {
+      const std::string tmp = tmp_of(static_cast<int>(k));
+      log(fmt("finish: rung %zu of %zu: %s (%d open)", k + 1, rungs.size(), rg.name.c_str(), best_open));
+      const auto t0 = std::chrono::steady_clock::now();
+      ChainsOptions co;
+      co.seed = job.opt.seed;
+      co.apply_out = tmp;
+      const nlohmann::json cj = measure_chains(best_tmp, co, false);
+      const auto& ap = cj["applied"];
+      const bool written = ap.value("written", false);
+      const int open = written ? ap.value("open_after", best_open) : best_open;
+      const bool kept = written && open < best_open;
+      rows.push_back({{"rung", rg.name}, {"open_before", best_open}, {"open_after", open}, {"kept", kept},
+                      {"copper_layers", best->summary.value("copper_layers", layers0)}, {"chains", cj["tally"]},
+                      {"seconds", std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count()}});
+      log(fmt("finish: rung %zu (%s): %d open%s", k + 1, rg.name.c_str(), open, kept ? "" : " (no better: discarded)"));
+      if (kept) {
+        copy_project_files(best_tmp, tmp);
+        remove_tmp(best_tmp);
+        best_tmp = tmp;
+        best_open = open;
+        // The summary of the rung before, with the counts of the board as it is now.
+        const int conns = best->summary.value("connections", 0);
+        best->summary["open"] = open;
+        best->summary["routed"] = conns - open;
+        if (conns > 0) best->summary["completion_pct"] = 100.0 * (conns - open) / conns;
+        best->summary.erase("failures");
+        fs::copy_file(best_tmp, final_out, fs::copy_options::overwrite_existing);
+        copy_project_files(job.in, final_out);
+      } else {
+        remove_tmp(tmp);
+      }
+      if (best_open == 0) break;
+      continue;
+    }
     RouteJob j = job;
     j.out = tmp_of(static_cast<int>(k));
     j.json_out.clear();

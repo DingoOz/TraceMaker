@@ -360,3 +360,30 @@ fifogfx (40) is the card-edge case of D194. DronPi and PCIE have 1 each (under t
 - `finish/results.jsonl`, `finish/kicad-judge.json`: `route --finish` end to end, and KiCad on its seven complete outputs.
 - `ontop/kicad-judge.json`: KiCad 10.0.6 on the newly complete outputs (unconnected items; violations added over the unrouted board).
 - `scripts/`: the run scripts (`ROOT` = the repository; the binaries were frozen copies of the build at each step).
+
+## Complete for KiCad too, and rip-up chains applied (2026-11-20)
+
+**LFK78** run again with the stronger ladder and the clean-up of copper that joins no pad (D198): 32 → 18 → 15 → 3 (four layers) → 0 (six
+layers), 5,601 s; one piece taken off on each layer rung (3 and 2 tracks and vias of the rung before). KiCad 10.0.6: 0 unconnected, no
+repeated id (`finish-strong3/`). Before the fix the same ladder ended 0 for the router and 2 for KiCad.
+
+**Half the lattice pitch** on top of the best output of four boards (20 M, fitted rules, focused repair): MonApollo 1, robomezzi 1,
+OtterPill 2, motor 3 open, as before. **Rip-up chains applied** (`tracemaker chains --apply`, D200) on the same outputs, KiCad's count
+(`chains-2026-11-20/`):
+
+| board | after the ladder | chains (depth 4) | again, depth 8 |
+|---|--:|--:|--:|
+| MonApollo_analog-board | 1 | **0** | |
+| kitspace_OtterPill | 2 | 1 | |
+| zx-sizif-512-ext | 3 | 2 | 2 |
+| Hardware_Playground_E3 | 4 | 4 (all `no_path_bare`) | |
+| poncho_fpga | 5 | 3 | **1** |
+| EtherCAT_shield_v1 | 6 | 5 | 5 (router 4) |
+
+`route --finish --finish-chains` on MonApollo's output: as given 1, fitted rules 1, rip-up chains 0; KiCad 0 unconnected
+(`MonApollo-finish-chains.*`). **24 of 33 boards now have a complete output** (LFK78 and MonApollo added). d20 (127 open), measured
+only: 22 close one at a time (5 joint, 17 depth 1-4), 93 too deep at depth 4, 12 lift a net with no path (`d20-chains.json`); the applied
+run on d20 was still going at the commit.
+
+Memory (D199): mini_mass at eight layers on top of its six-layer result, one variant, 20 GB cap: `std::bad_alloc` in 3 s before, 10.3 GB
+peak and the run to the end after (16 searches with one direction state, 0 refused).

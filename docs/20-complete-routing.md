@@ -358,6 +358,30 @@ inside a ring of ground pads).
 openings no longer keep tracks out. `--soft-pad-masks` does the same by hand. memsarray completes for the first time; with the
 designer's layout as reference on top of rung 2, sizif goes 38 → 26 and LFK78 31 → 27.
 
+### 2.14 Complete for KiCad too: copper with no pad, and ids that repeat (D198)
+
+Two outputs were complete by the router's count and not by KiCad's (MicroMaple with four layers added: 1 unconnected item; LFK78 after the
+stronger ladder: 2). Both had a piece of a net's copper that joins no pad, left when part of a route was lifted or replaced: the router
+counts pads, KiCad counts every piece of copper. The route job now takes such a piece off before it writes the board, when the piece holds
+copper of the run or was joined to a pad in the input (`passes::padless_islands`; `--keep-islands` keeps it). The same outputs carried
+repeated item ids: every rung started the id sequence again. New ids now skip the ids the document has. MicroMaple's step run again: 1 piece
+off, router and KiCad agree. Quick tier byte-identical.
+
+### 2.15 One search's memory (D199)
+
+A search keeps a 16-byte record for every state of its window. Across mini_mass (646 x 155 mm) on eight layers that is 27 GB in one
+allocation, in each variant, which is what exhausted the machine on 2026-11-19. `route --search-mem MB` (default 4096) bounds it: over the
+limit a search takes one direction state per point, then a window drawn in towards its two ends, and only then is refused. The case that
+failed under 20 GB now peaks at 10.3 GB. The limit is a fixed number, so results do not depend on the machine.
+
+### 2.16 Rip-up chains applied (D200)
+
+`tracemaker chains` measured which nets an open connection needs lifted and whether they route again (§2.9); it now also does it.
+`chains BOARD --apply OUT` closes the open connections one after the other and writes the board when fewer are open;
+`route --finish --finish-chains` runs the same as a rung before the first added layer and after the last. A finer lattice did not help
+the boards a few short (half the pitch on four of them: no change); the chain closes MonApollo's last connection (depth 3, five nets
+lifted, KiCad 0 unconnected) and one of OtterPill's two.
+
 ## 3. Order
 
 1. **§2.1 relax-late:** cheap, and it answers a question left open.
@@ -392,3 +416,6 @@ Each step:
 | §2.11 repair along the route, focused attempts (opt-in) | 2026-11-19 | after 20 M on 33 boards: 28 (ends), 30 (route, 39 % less work), 47 (both) of 887 closed, none complete; 3× budget closes 159. Not a default step | D195 |
 | §2.12 `route --finish` (opt-in) | 2026-11-19 | one command with masks and +2, +4 layers on 29 boards: 881 → 219 open (127 on d20), 8 complete (Aleste 250 → 0); with 60 M, the from-nothing rung and 8 repair variants seven of eight near-complete boards finish: 19 of 33 have a complete output | D196 |
 | §2.13 pad mask openings from a reference (opt-in) | 2026-11-19 | 9 of 33 designer layouts have tracks in pad openings; memsarray complete, sizif 38 → 26, LFK78 31 → 27 | D197 |
+| §2.14 copper with no pad taken off; ids never repeat | 2026-11-20 | MicroMaple +2 layers: router 2 open, KiCad 2 (3 before); quick tier 30/30 identical | D198 |
+| §2.15 one search's memory limited (`--search-mem`, default 4096 MB) | 2026-11-20 | mini_mass on eight layers: 10.3 GB peak under a 20 GB limit (`bad_alloc` before); quick tier 30/30 identical | D199 |
+| §2.16 rip-up chains applied (`chains --apply`, `--finish-chains`; opt-in) | 2026-11-20 | MonApollo 1 → 0 open (KiCad 0 unconnected), OtterPill 2 → 1; half pitch on four boards: no change | D200 |

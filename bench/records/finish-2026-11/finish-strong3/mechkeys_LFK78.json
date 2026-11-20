@@ -1,0 +1,634 @@
+{
+ "bundle_conns": 0,
+ "bundle_groups": 0,
+ "bundle_lanes": 0,
+ "bundle_spines": 0,
+ "completion_pct": 100.0,
+ "connections": 3,
+ "copper_layers": 6,
+ "escape_corridor_mm": 0.0,
+ "escape_corridors": 0,
+ "escape_reclaimed": 0,
+ "expansions": 62364223,
+ "failures": [],
+ "finish": {
+  "complete": true,
+  "open": 0,
+  "rungs": [
+   {
+    "copper_layers": 2,
+    "kept": true,
+    "open_after": 32,
+    "open_before": null,
+    "rung": "as given",
+    "seconds": 334.946470947
+   },
+   {
+    "copper_layers": 2,
+    "fitted_rules": {
+     "bridged_mask_openings": 2,
+     "changes": [],
+     "reference": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/mechkeys_LFK78/unrouted.kicad_pcb",
+     "violations": 3
+    },
+    "kept": true,
+    "open_after": 18,
+    "open_before": 32,
+    "repair": {
+     "open_after": 18,
+     "open_before": 23
+    },
+    "rung": "fitted rules",
+    "seconds": 1970.84878107
+   },
+   {
+    "copper_layers": 2,
+    "fitted_rules": {
+     "bridged_mask_openings": 2,
+     "changes": [],
+     "reference": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/mechkeys_LFK78/unrouted.kicad_pcb",
+     "violations": 3
+    },
+    "kept": false,
+    "open_after": 19,
+    "open_before": 18,
+    "repair": {
+     "open_after": 19,
+     "open_before": 32
+    },
+    "rung": "fitted rules, from the board as given",
+    "seconds": 1058.408934694
+   },
+   {
+    "copper_layers": 2,
+    "fitted_rules": {
+     "bridged_mask_openings": 2,
+     "changes": [],
+     "reference": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/mechkeys_LFK78/unrouted.kicad_pcb",
+     "violations": 3
+    },
+    "kept": true,
+    "open_after": 15,
+    "open_before": 18,
+    "repair": {
+     "open_after": 15,
+     "open_before": 16
+    },
+    "rung": "fitted rules, pad mask openings open to tracks",
+    "seconds": 1094.410242939
+   },
+   {
+    "copper_layers": 4,
+    "fitted_rules": {
+     "bridged_mask_openings": 2,
+     "changes": [],
+     "reference": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/mechkeys_LFK78/unrouted.kicad_pcb",
+     "violations": 3
+    },
+    "kept": true,
+    "open_after": 3,
+    "open_before": 15,
+    "repair": {
+     "open_after": 3,
+     "open_before": 6
+    },
+    "rung": "fitted rules, pad mask openings open to tracks, 4 copper layers",
+    "seconds": 906.232734533
+   },
+   {
+    "copper_layers": 6,
+    "fitted_rules": {
+     "bridged_mask_openings": 2,
+     "changes": [],
+     "reference": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/mechkeys_LFK78/unrouted.kicad_pcb",
+     "violations": 3
+    },
+    "kept": true,
+    "open_after": 0,
+    "open_before": 3,
+    "repair": {
+     "open_after": 0,
+     "open_before": 2
+    },
+    "rung": "fitted rules, pad mask openings open to tracks, 6 copper layers",
+    "seconds": 235.663659322
+   }
+  ]
+ },
+ "fitted_rules": {
+  "bridged_mask_openings": 2,
+  "changes": [],
+  "reference": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/mechkeys_LFK78/unrouted.kicad_pcb",
+  "violations": 3
+ },
+ "islands_cut": 1,
+ "line_crossings": 0,
+ "open": 0,
+ "package_pin_edges": 0,
+ "pitch_mm": 0.095,
+ "repair": {
+  "attempts": 1,
+  "kept": 1,
+  "lifted_tracks": 296,
+  "lifted_vias": 75,
+  "no_bare_route": 0,
+  "open_after": 0,
+  "open_before": 2,
+  "seconds": 12.002344885,
+  "steps": [
+   {
+    "along_route": true,
+    "branches": 38,
+    "connection": "R_CB4 U3.10-RGB28.1",
+    "kept": true,
+    "open_after": 0,
+    "open_before": 2,
+    "radius_mm": 0.2,
+    "split": false,
+    "tracks": 296,
+    "vias": 75,
+    "work": 19689196
+   }
+  ],
+  "work": 20057269
+ },
+ "rescue": {
+  "adopted": true,
+  "connections": 3,
+  "mode": "both",
+  "passes": [
+   {
+    "adopted": true,
+    "mode": "warm",
+    "relaxed_stages": [
+     {
+      "clearance_lowered_mm": 0.0762,
+      "routed": 3
+     },
+     {
+      "clearance_lowered_mm": 0.0381,
+      "routed": 1
+     }
+    ],
+    "routed": 1,
+    "seconds": 108.299998143
+   },
+   {
+    "adopted": false,
+    "mode": "fresh",
+    "relaxed_stages": [
+     {
+      "clearance_lowered_mm": 0.0762,
+      "routed": 3
+     },
+     {
+      "clearance_lowered_mm": 0.0381,
+      "routed": 1
+     }
+    ],
+    "routed": 1,
+    "seconds": 109.877960585
+   }
+  ],
+  "routed_after": 1,
+  "routed_before": 0,
+  "seconds": 218.177958728
+ },
+ "routed": 3,
+ "run": {
+  "board": "out.finish-4.kicad_pcb",
+  "date": "2026-11-20T04:28:46Z",
+  "input": "/home/dingo/Programming/TraceMaker-rm3/bench/data/freerouting/scripts/benchmark/fixtures/PCBench/mechkeys_LFK78/unrouted.kicad_pcb",
+  "options": [
+   {
+    "name": "--output",
+    "value": "/home/dingo/Programming/TraceMaker-rm3/bench/results/finish-2026-11-19/strong3/mechkeys_LFK78/out.kicad_pcb"
+   },
+   {
+    "name": "--time",
+    "value": "3600"
+   },
+   {
+    "name": "--work",
+    "value": "60000000"
+   },
+   {
+    "name": "--seed",
+    "value": "1"
+   },
+   {
+    "name": "--no-gpu",
+    "value": "true"
+   },
+   {
+    "name": "--repair-variants",
+    "value": "8"
+   },
+   {
+    "name": "--no-kb",
+    "value": "true"
+   },
+   {
+    "name": "--threads",
+    "value": "8"
+   },
+   {
+    "name": "--variants",
+    "value": "8"
+   },
+   {
+    "name": "--finish",
+    "value": "true"
+   },
+   {
+    "name": "--finish-fresh",
+    "value": "true"
+   },
+   {
+    "name": "--finish-masks",
+    "value": "true"
+   },
+   {
+    "name": "--finish-layers",
+    "value": "2,4"
+   },
+   {
+    "name": "--view",
+    "value": "true"
+   },
+   {
+    "name": "--view-port",
+    "value": "11200"
+   },
+   {
+    "name": "--json",
+    "value": "/home/dingo/Programming/TraceMaker-rm3/bench/results/finish-2026-11-19/strong3/mechkeys_LFK78/out.json"
+   }
+  ],
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/finish-2026-11-19/strong3/mechkeys_LFK78/out.kicad_pcb",
+  "seed": 1,
+  "threads": 8,
+  "time_limit_s": 3600.0,
+  "time_total_s": 0.0,
+  "variants": 8,
+  "version": "0.12.1",
+  "work_budget": 60000000
+ },
+ "seconds": 235.663659322,
+ "style": {
+  "acute_angles": 0,
+  "arcs": 0,
+  "bends": 157,
+  "bends_per_connection": 2.4921,
+  "connections": 63,
+  "detour_length_mm": 1625.672956,
+  "detour_octile_mm": 1564.995532,
+  "detour_ratio": 1.0388,
+  "length_mm": 1625.672956,
+  "long_detours": 2,
+  "off_angle_segments": 16,
+  "segments": 242,
+  "short_segments": 17,
+  "stair_steps": 1,
+  "vias": 27
+ },
+ "time_limited": false,
+ "tracks": 242,
+ "tunnels": 0,
+ "variant": 0,
+ "variant_name": "rescue (warm): exact bends, shortest first",
+ "variant_seconds": 0.329752209,
+ "variants": [
+  {
+   "best": true,
+   "name": "exact bends, shortest first",
+   "routed": 0,
+   "seconds": 4.955542986,
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "fast bends, shortest first, crowded source",
+   "routed": 0,
+   "seconds": 2.832961006,
+   "variant": 1
+  },
+  {
+   "best": false,
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "routed": 0,
+   "seconds": 0.666593771,
+   "variant": 2
+  },
+  {
+   "best": false,
+   "name": "fast bends, jittered order, escape plan",
+   "routed": 0,
+   "seconds": 3.684691908,
+   "variant": 3
+  },
+  {
+   "best": false,
+   "name": "exact bends, jittered order",
+   "routed": 0,
+   "seconds": 5.004379265,
+   "variant": 4
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "routed": 0,
+   "seconds": 0.65155902,
+   "variant": 5
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "routed": 0,
+   "seconds": 3.454824587,
+   "variant": 6
+  },
+  {
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
+   "routed": 0,
+   "seconds": 2.750875158,
+   "variant": 7
+  },
+  {
+   "best": true,
+   "name": "exact bends, shortest first",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 1,
+   "seconds": 0.329752209,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "fast bends, shortest first, crowded source",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 1,
+   "seconds": 0.279889115,
+   "stage": "rescue",
+   "variant": 1
+  },
+  {
+   "best": false,
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 1,
+   "seconds": 0.267692218,
+   "stage": "rescue",
+   "variant": 2
+  },
+  {
+   "best": false,
+   "name": "fast bends, jittered order, escape plan",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 1,
+   "seconds": 0.366673619,
+   "stage": "rescue",
+   "variant": 3
+  },
+  {
+   "best": false,
+   "name": "exact bends, jittered order",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 1,
+   "seconds": 0.31223662,
+   "stage": "rescue",
+   "variant": 4
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 1,
+   "seconds": 0.278169844,
+   "stage": "rescue",
+   "variant": 5
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 1,
+   "seconds": 0.371243707,
+   "stage": "rescue",
+   "variant": 6
+  },
+  {
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
+   "rescue_kept": true,
+   "rescue_mode": "warm",
+   "routed": 1,
+   "seconds": 0.289923895,
+   "stage": "rescue",
+   "variant": 7
+  },
+  {
+   "best": true,
+   "name": "exact bends, shortest first",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 1,
+   "seconds": 0.313710263,
+   "stage": "rescue",
+   "variant": 0
+  },
+  {
+   "best": false,
+   "name": "fast bends, shortest first, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 1,
+   "seconds": 0.308326467,
+   "stage": "rescue",
+   "variant": 1
+  },
+  {
+   "best": false,
+   "name": "fast bends, longest first (2x pitch on large boards)",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 1,
+   "seconds": 0.296677613,
+   "stage": "rescue",
+   "variant": 2
+  },
+  {
+   "best": false,
+   "name": "fast bends, jittered order, escape plan",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 1,
+   "seconds": 0.367907385,
+   "stage": "rescue",
+   "variant": 3
+  },
+  {
+   "best": false,
+   "name": "exact bends, jittered order",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 1,
+   "seconds": 0.308646407,
+   "stage": "rescue",
+   "variant": 4
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap vias (2x pitch on large boards, half pitch on small ones), crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 1,
+   "seconds": 0.266492598,
+   "stage": "rescue",
+   "variant": 5
+  },
+  {
+   "best": false,
+   "name": "fast bends, cheap crossings, escape plan, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 1,
+   "seconds": 0.347135377,
+   "stage": "rescue",
+   "variant": 6
+  },
+  {
+   "best": false,
+   "name": "fast bends, dear vias, crowded source",
+   "rescue_kept": false,
+   "rescue_mode": "fresh",
+   "routed": 1,
+   "seconds": 0.310717765,
+   "stage": "rescue",
+   "variant": 7
+  }
+ ],
+ "vias": 27,
+ "work": {
+  "cleanup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "first_pass": {
+   "cell_checks": 12952558,
+   "commits": 9,
+   "expansions": 7991648,
+   "field_cells": 204945606,
+   "fields": 13,
+   "fixed_checks": 8429173,
+   "flood_cells": 12050010,
+   "rips": 0,
+   "searches": 17
+  },
+  "negotiation": {
+   "cell_checks": 13486877,
+   "commits": 63,
+   "expansions": 41722445,
+   "field_cells": 1425453204,
+   "fields": 83,
+   "fixed_checks": 729750,
+   "flood_cells": 600120,
+   "rips": 0,
+   "searches": 83
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 26439435,
+   "commits": 72,
+   "expansions": 49714093,
+   "field_cells": 1630398810,
+   "fields": 96,
+   "fixed_checks": 9158923,
+   "flood_cells": 12650130,
+   "rips": 0,
+   "searches": 100
+  }
+ },
+ "work_all_variants": {
+  "cleanup": {
+   "cell_checks": 6953416,
+   "commits": 32,
+   "expansions": 26259317,
+   "field_cells": 745028640,
+   "fields": 64,
+   "fixed_checks": 0,
+   "flood_cells": 320064,
+   "rips": 0,
+   "searches": 64
+  },
+  "first_pass": {
+   "cell_checks": 203073734,
+   "commits": 136,
+   "expansions": 47801354,
+   "field_cells": 3447540240,
+   "fields": 280,
+   "fixed_checks": 102411480,
+   "flood_cells": 192600136,
+   "rips": 0,
+   "searches": 344
+  },
+  "negotiation": {
+   "cell_checks": 217848038,
+   "commits": 1012,
+   "expansions": 313176732,
+   "field_cells": 23039225664,
+   "fields": 1420,
+   "fixed_checks": 8788976,
+   "flood_cells": 9761952,
+   "rips": 0,
+   "searches": 1420
+  },
+  "setup": {
+   "cell_checks": 0,
+   "commits": 0,
+   "expansions": 0,
+   "field_cells": 0,
+   "fields": 0,
+   "fixed_checks": 0,
+   "flood_cells": 0,
+   "rips": 0,
+   "searches": 0
+  },
+  "total": {
+   "cell_checks": 427875188,
+   "commits": 1180,
+   "expansions": 387237403,
+   "field_cells": 27231794544,
+   "fields": 1764,
+   "fixed_checks": 111200456,
+   "flood_cells": 202682152,
+   "rips": 0,
+   "searches": 1828
+  }
+ }
+}

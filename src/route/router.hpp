@@ -67,6 +67,7 @@ struct RouterOptions {
   long field_after = 0;             // > 0: the cost-to-go field is built only when a search has expanded this many states (doc 05 §62)
   bool tie_deep = false;            // A* ties on f go to the state with the larger g (the deeper one) instead of the lower state index
   bool bend_states = true;          // direction in the A* state (exact bend costs) vs. parent-direction approximation
+  int search_mem_mb = 4096;         // one search's state records at most (0 = no limit): a search over it runs with one direction state per point, then in a window drawn in to fit; a connection whose two ends alone need more is not searched (D199)
   double heuristic_weight = 1.0;
   double long_weight = 0;        // D156: > 1: negotiated searches of connections at least long_weight_mm long use this heuristic weight (weighted A*); 0 = off
   double long_weight_mm = 100;
@@ -390,6 +391,7 @@ struct RouteResult {
   std::vector<model::Track> tracks;  // new copper, in commit order
   std::vector<model::Via> vias;
   std::vector<ConnRoute> conn_routes;  // the same copper per connection (best state), for a warm start
+  long search_mem_limited = 0;         // searches that --search-mem made lighter, drew in or refused (D199)
   std::vector<ConnRoute> final_routes;  // the state the search ended in (RouterOptions::keep_final): legal, perhaps worse than the best
   int final_routed = 0;
   int connections = 0, routed = 0;

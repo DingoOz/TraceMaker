@@ -15,6 +15,7 @@
 #include "drc/fit_rules.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
+#include "passes/repair.hpp"
 #include "route/obstacles.hpp"
 #include "route/router.hpp"
 
@@ -181,6 +182,21 @@ TEST_CASE("chains: a connection closed by lifting one net is depth 1", "[chains]
   CHECK(j["tally"]["closed_joint"] == 1);
   o.threads = 4;
   CHECK(app::measure_chains(p.string(), o, false) == j);
+
+  // Applied (D200): the board is written with the chain on it; routed as it is, nothing is open, and no id repeats.
+  o.threads = 1;
+  o.apply_out = (d.dir / "applied.kicad_pcb").string();
+  const auto ja = app::measure_chains(p.string(), o, false);
+  INFO(ja["applied"].dump(1));
+  CHECK(ja["applied"]["chains_closed"] == 1);
+  CHECK(ja["applied"]["open_before"] == 1);
+  CHECK(ja["applied"]["open_after"] == 0);
+  REQUIRE(ja["applied"]["written"] == true);
+  const auto lb = io::read_board_file(o.apply_out);
+  CHECK(passes::open_connections(lb.board, io::read_design_rules(o.apply_out)) == 0);
+  o.apply_out.clear();
+  const auto after = app::measure_chains((d.dir / "applied.kicad_pcb").string(), o, false);
+  CHECK(after["baseline"]["open"] == 0);
 }
 
 // A card-edge connector with fingers on both sides, each opening both masks (PCBench fifogfx_c64cart): the back finger of net B lies

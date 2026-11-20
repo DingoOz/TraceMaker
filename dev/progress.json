@@ -1113,6 +1113,18 @@
         {
           "text": "G8 what the ladder leaves: pins walled in by earlier rungs (d20), boards one or two short, the from-nothing order as a rung; finish the stopped runs (ladder on 60 M, focused repair on 33 boards)",
           "done": false
+        },
+        {
+          "text": "G9 complete for KiCad too (D198): copper that joins no pad after a run is taken off (--keep-islands keeps it), generated ids never repeat the document's; MicroMaple +2 layers: router and KiCad agree; quick tier 30/30 identical",
+          "done": true
+        },
+        {
+          "text": "G10 one search's memory limited (D199): route --search-mem, default 4096 MB; mini_mass on eight layers peaks at 10.3 GB under a 20 GB limit (bad_alloc before); quick tier 30/30 identical",
+          "done": true
+        },
+        {
+          "text": "G11 rip-up chains applied (D200): chains --apply, route --finish --finish-chains; MonApollo 1 -> 0 (KiCad 0), poncho 5 -> 1, OtterPill 2 -> 1; LFK78 complete for KiCad with D198; 24 of 33 complete",
+          "done": true
         }
       ]
     }

@@ -1,0 +1,46 @@
+{
+ "applied": {
+  "chains_closed": 1,
+  "islands_cut": 0,
+  "open_after": 0,
+  "open_before": 1,
+  "output": "bench/results/fine-2026-11-20/MonApollo_analog-board/chained.kicad_pcb",
+  "written": true
+ },
+ "baseline": {
+  "connections": 1,
+  "open": 1,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "bench/results/finish-2026-11-19/strong2/MonApollo_analog-board/out.kicad_pcb",
+ "connections": [
+  {
+   "a": "J3.13",
+   "b": "U36.7",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 3,
+   "first_blockers": 2,
+   "first_nets": [
+    "DB3",
+    "OSCB MOD"
+   ],
+   "joint": false,
+   "net": "DB5",
+   "nets_lifted": 5,
+   "reason": "boxed_in",
+   "runs": 49
+  }
+ ],
+ "copper_layers": 4,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "closed_depth_3": 1
+ }
+}

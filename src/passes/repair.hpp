@@ -78,4 +78,20 @@ int open_connections(const model::Board& b, const model::DesignRules& rules);
 RepairResult repair_open(const model::Board& base, const model::DesignRules& rules, const route::RouteResult& res, const route::RouterOptions& opt,
                          const RepairOptions& ro, const std::function<void(const std::string&)>& log = {});
 
+// Copper that joins no pad after a run and is the run's doing (doc 20 §2.14, D198). Lifting part of a route can leave a piece of
+// it standing: a via and two short tracks, or a run on an inner layer whose vias went. The router counts pads, so such a board is
+// complete for it, but KiCad counts every piece of copper of a net and reports the piece as unconnected.
+// `now` is the input as it is after the run (lifted copper gone), `new_tracks` and `new_vias` the run's copper, `before` the input as
+// read. A group of touching tracks and vias with no pad, zone, graphic, arc, locked item or free via in it is cut when it holds new
+// copper, or when one of its items was joined to a pad in `before`. A group that joined no pad in the input either is the user's
+// and stays. Links are KiCad's (copper of one net that overlaps is joined), so nothing KiCad sees as connected is cut.
+struct IslandCut {
+  std::vector<int> base_tracks, base_vias;      // indices into now.tracks / now.vias, ascending
+  std::vector<char> new_track_cut, new_via_cut;  // per new track / via: 1 = cut
+  int islands = 0;
+  bool any() const { return islands > 0; }
+};
+IslandCut padless_islands(const model::Board& before, const model::Board& now, const std::vector<model::Track>& new_tracks,
+                          const std::vector<model::Via>& new_vias);
+
 }  // namespace tmk::passes

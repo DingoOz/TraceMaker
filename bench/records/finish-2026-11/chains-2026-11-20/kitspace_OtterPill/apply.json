@@ -1,0 +1,61 @@
+{
+ "applied": {
+  "chains_closed": 1,
+  "islands_cut": 0,
+  "open_after": 1,
+  "open_before": 2,
+  "output": "bench/results/fine-2026-11-20/kitspace_OtterPill/chained.kicad_pcb",
+  "written": true
+ },
+ "baseline": {
+  "connections": 2,
+  "open": 2,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "bench/results/finish-2026-11-19/strong2/kitspace_OtterPill/out.kicad_pcb",
+ "connections": [
+  {
+   "a": "U4.6",
+   "b": "R10.2",
+   "blockers_from": "",
+   "closed": false,
+   "depth": 0,
+   "fail": "no_path_bare",
+   "first_blockers": -1,
+   "first_nets": [],
+   "joint": false,
+   "net": "SCL",
+   "nets_lifted": 0,
+   "reason": "boxed_in",
+   "runs": 1
+  },
+  {
+   "a": "U1.4",
+   "b": "U2.32",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 2,
+   "first_blockers": 1,
+   "first_nets": [
+    "USB_P"
+   ],
+   "joint": false,
+   "net": "USB_N",
+   "nets_lifted": 2,
+   "reason": "not_attempted",
+   "runs": 16
+  }
+ ],
+ "copper_layers": 4,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "closed_depth_2": 1,
+  "no_path_bare": 1
+ }
+}

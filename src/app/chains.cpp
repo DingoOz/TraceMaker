@@ -12,8 +12,10 @@
 #include <vector>
 
 #include "drc/refill.hpp"
+#include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
+#include "passes/repair.hpp"
 #include "route/router.hpp"
 
 namespace tmk::app {
@@ -102,7 +104,7 @@ bool is_open(const route::RouteResult& r, const Conn& c) {
 }  // namespace
 
 json measure_chains(const std::string& path, const ChainsOptions& opt, bool print) {
-  const auto lb = io::read_board_file(path);
+  auto lb = io::read_board_file(path);
   const auto rules = io::read_design_rules(opt.rules_from.empty() ? path : opt.rules_from);
   model::Board board = lb.board;
 
@@ -302,16 +304,83 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
     return true;
   };
 
-  std::atomic<std::size_t> next_i{0};
-  std::vector<std::thread> pool;
-  for (int t = 0; t < std::max(1, opt.threads); ++t)
-    pool.emplace_back([&] {
-      for (std::size_t i; (i = next_i++) < rows.size();) {
-        model::Board cur = board;
-        rows[i].closed = close(cur, conn_of(first.unrouted[i]), 1, rows[i]);
-      }
-    });
-  for (auto& t : pool) t.join();
+  const bool apply = !opt.apply_out.empty();
+  json applied;
+  if (apply) {
+    // One after the other on one board: a chain that closes changes the board the next one is closed on. What a chain held (so its
+    // own deeper levels route round it) is free again for the next chain; only the file's locked copper stays locked.
+    for (std::size_t i = 0; i < rows.size(); ++i) {
+      const auto& u = first.unrouted[i];
+      model::Board cur = board;
+      rows[i].closed = close(cur, conn_of(u), 1, rows[i]);
+      if (!rows[i].closed) continue;
+      for (auto& t : cur.tracks)
+        if (t.node == sexpr::kNoNode) t.locked = false;
+      for (auto& v : cur.vias)
+        if (v.node == sexpr::kNoNode) v.locked = false;
+      board = std::move(cur);
+      --base_open[u.net];
+      base_pairs.erase(std::minmax(u.pad_a, u.pad_b));
+    }
+    // The board as written: the file's copper that is still there keeps its place in the document, the rest is new.
+    std::set<sexpr::NodeId> left;
+    std::vector<model::Track> new_tracks;
+    std::vector<model::Via> new_vias;
+    for (const auto& t : board.tracks) {
+      if (t.node != sexpr::kNoNode) left.insert(t.node);
+      else new_tracks.push_back(t);
+    }
+    for (const auto& v : board.vias) {
+      if (v.node != sexpr::kNoNode) left.insert(v.node);
+      else new_vias.push_back(v);
+    }
+    model::Board now = lb.board;
+    std::erase_if(now.tracks, [&](const model::Track& t) { return !left.count(t.node); });
+    std::erase_if(now.vias, [&](const model::Via& v) { return !left.count(v.node); });
+    const auto cut = passes::padless_islands(lb.board, now, new_tracks, new_vias);
+    std::set<sexpr::NodeId> cut_nodes;
+    for (const int k : cut.base_tracks) cut_nodes.insert(now.tracks[static_cast<std::size_t>(k)].node);
+    for (const int k : cut.base_vias) cut_nodes.insert(now.vias[static_cast<std::size_t>(k)].node);
+    model::Board fin = now;
+    std::erase_if(fin.tracks, [&](const model::Track& t) { return cut_nodes.count(t.node) > 0; });
+    std::erase_if(fin.vias, [&](const model::Via& v) { return cut_nodes.count(v.node) > 0; });
+    std::vector<model::Track> add_t;
+    std::vector<model::Via> add_v;
+    for (std::size_t k = 0; k < new_tracks.size(); ++k)
+      if (!cut.new_track_cut[k]) add_t.push_back(new_tracks[k]);
+    for (std::size_t k = 0; k < new_vias.size(); ++k)
+      if (!cut.new_via_cut[k]) add_v.push_back(new_vias[k]);
+    model::Board check = fin;
+    check.tracks.insert(check.tracks.end(), add_t.begin(), add_t.end());
+    check.vias.insert(check.vias.end(), add_v.begin(), add_v.end());
+    const int open_before = passes::open_connections(lb.board, rules), open_after = passes::open_connections(check, rules);
+    int closed = 0;
+    for (const auto& r : rows) closed += r.closed ? 1 : 0;
+    const bool write = open_after < open_before;
+    if (write) {
+      io::BoardEditor ed(lb, opt.seed);
+      for (std::size_t k = lb.board.tracks.size(); k-- > 0;)
+        if (!left.count(lb.board.tracks[k].node) || cut_nodes.count(lb.board.tracks[k].node)) ed.remove_track(k);
+      for (std::size_t k = lb.board.vias.size(); k-- > 0;)
+        if (!left.count(lb.board.vias[k].node) || cut_nodes.count(lb.board.vias[k].node)) ed.remove_via(k);
+      for (const auto& t : add_t) ed.add_track(t);
+      for (const auto& v : add_v) ed.add_via(v);
+      ed.save(opt.apply_out);
+    }
+    applied = {{"chains_closed", closed}, {"open_before", open_before}, {"open_after", open_after}, {"written", write},
+               {"islands_cut", cut.islands}, {"output", write ? opt.apply_out : std::string()}};
+  } else {
+    std::atomic<std::size_t> next_i{0};
+    std::vector<std::thread> pool;
+    for (int t = 0; t < std::max(1, opt.threads); ++t)
+      pool.emplace_back([&] {
+        for (std::size_t i; (i = next_i++) < rows.size();) {
+          model::Board cur = board;
+          rows[i].closed = close(cur, conn_of(first.unrouted[i]), 1, rows[i]);
+        }
+      });
+    for (auto& t : pool) t.join();
+  }
 
   std::map<std::string, int> tally;
   json conns = json::array();
@@ -328,9 +397,13 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
   out["options"] = {{"work", opt.work}, {"max_depth", opt.max_depth}, {"max_nets", opt.max_nets}, {"rip_mm", opt.rip_mm}};
   out["tally"] = tally;
   out["connections"] = conns;
+  if (apply) out["applied"] = applied;
   if (print) {
     std::printf("%s: the router routes %d more on the board as it is and leaves %zu open (%ld work)\n", path.c_str(), first.routed, first.unrouted.size(), opt.baseline_work);
     for (const auto& [k, n] : tally) std::printf("  %-26s %5d\n", k.c_str(), n);
+    if (apply)
+      std::printf("applied: %d chains closed, open %d -> %d; %s\n", applied["chains_closed"].get<int>(), applied["open_before"].get<int>(), applied["open_after"].get<int>(),
+                  applied["written"].get<bool>() ? ("written to " + opt.apply_out).c_str() : "not written (no fewer open than the input)");
   }
   return out;
 }

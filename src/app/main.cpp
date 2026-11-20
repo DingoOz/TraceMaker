@@ -1351,6 +1351,8 @@ static int run_main(int argc, char** argv) {
   route->add_option("--repair-work", r_job.repair_opt.step_work, "Repair: work budget of each attempt in search expansions (default 3000000)");
   route->add_option("--repair-branches", r_job.repair_opt.max_branches, "Repair: a window that would lift more branches (the tracks and vias of one net between two pads or junctions) stops growing (default 64)");
   route->add_option("--repair-conns", r_job.repair_opt.max_conns, "Repair: open connections tried at most (default 64)");
+  route->add_option("--search-mem", r_job.opt.search_mem_mb, "Memory one search may take for its state, in MB, in every variant running at once (default 4096; 0 = no limit). A search over it runs with one direction state per point (as the fast-bends variants), then in a window drawn in to fit; a connection whose two ends alone need more is left open")->check(CLI::NonNegativeNumber);
+  route->add_flag("--keep-islands", r_job.keep_islands, "Keep copper that joins no pad after the run (default: a piece of a route this run left standing, with no pad on it, is taken off; KiCad reports such a piece as unconnected)");
   route->add_flag("--repair-focus", r_job.repair_opt.focus, "Repair: an attempt routes only the open connection's net and the nets it lifted copper of (default: everything that is open)");
   route->add_option("--repair-variants", r_job.repair_opt.variants, "Repair: portfolio variants run for each attempt, the best taken (default 1: one router with the run's options)")->check(CLI::Range(1, 64));
   route->add_option("--repair-select", r_job.repair_opt.select,
@@ -1415,12 +1417,13 @@ static int run_main(int argc, char** argv) {
   route->add_option("--copper-layers", r_job.copper_layers, "Route with this many copper layers (even): inner layers are added, or empty ones removed, in the output too")
       ->check(CLI::Range(2, 32));
   std::vector<int> r_try_layers;
-  bool r_finish = false, r_finish_masks = false, r_finish_fresh = false;
+  bool r_finish = false, r_finish_masks = false, r_finish_fresh = false, r_finish_chains = false;
   std::vector<int> r_finish_layers;
   route->add_flag("--finish", r_finish,
                   "Rungs towards a complete board, each on top of the one before (what is routed stays): the run as given; then the open connections "
                   "with the rules fitted to the board's own copper (--fit-rules, or --fit-rules-from when given) and repair windows; then one rung per "
                   "--finish-layers entry. Stops at the first rung with nothing open; the summary's \"finish\" lists what each rung relaxed (doc 20 §2.12)");
+  route->add_flag("--finish-chains", r_finish_chains, "With --finish: a rung before the added layers, and one after the last, that lifts the nets in the way of each open connection and routes them again (rip-up chains, as tracemaker chains --apply); kept when it leaves fewer open");
   route->add_flag("--finish-fresh", r_finish_fresh, "With --finish: a rung after the fitted rules that routes the board as given with the fitted rules from the start, kept when it leaves fewer open");
   route->add_flag("--finish-masks", r_finish_masks, "With --finish: a rung after the fitted rules where pad solder-mask openings no longer keep tracks out (--soft-pad-masks)");
   route->add_option("--finish-layers", r_finish_layers, "With --finish: later rungs that add this many copper layers to the board's count (e.g. 2,4); none by default")
@@ -1671,6 +1674,7 @@ static int run_main(int argc, char** argv) {
   chains_cmd->add_option("--max-depth", ch_opt.max_depth, "Chains deeper than this are given up (default 4)")->check(CLI::Range(1, 16));
   chains_cmd->add_option("--max-nets", ch_opt.max_nets, "Chains that lift more nets than this are given up (default 32)")->check(CLI::Range(1, 1000));
   chains_cmd->add_option("--rip-mm", ch_opt.rip_mm, "A blocking net's copper is lifted within this distance of the new route, mm (default 1; 0 = the whole net)")->check(CLI::Range(0.0, 100.0));
+  chains_cmd->add_option("--apply", ch_opt.apply_out, "Put the chains that close on the board, one open connection after the other, and write it here (only when fewer connections are open than on the input)");
   chains_cmd->add_option("--threads", ch_opt.threads, "Open connections measured at once (the result does not depend on it; default 8)")->check(CLI::Range(1, 256));
   chains_cmd->add_option("--seed", ch_opt.seed, "Router seed (default 1)");
   chains_cmd->add_flag("--soft-zones", ch_opt.soft_zones, "Zone fills do not block other nets (as route --soft-zones)");
@@ -1919,7 +1923,7 @@ static int run_main(int argc, char** argv) {
           std::printf("%s\n", line.c_str());
           std::fflush(stdout);
         };
-        return tmk::app::run_finish(std::move(job), r_finish_layers, r_finish_masks, r_finish_fresh).exit_code();
+        return tmk::app::run_finish(std::move(job), r_finish_layers, r_finish_masks, r_finish_fresh, r_finish_chains).exit_code();
       }
       if (!r_try_layers.empty()) {
         if (job.copper_layers > 0) throw std::invalid_argument("--try-layers and --copper-layers: give one");

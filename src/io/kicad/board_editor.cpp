@@ -4,6 +4,7 @@
 #include <charconv>
 #include <cmath>
 #include <cstdio>
+#include <string_view>
 
 #include "core/rng.hpp"
 
@@ -21,13 +22,37 @@ std::string format_angle(double deg) {
   return std::string(buf, res.ptr);
 }
 
+// The ids already in the document: (uuid "...") of KiCad 7 and later, (tstamp ...) of KiCad 6.
+static void collect_ids(const std::string& text, std::unordered_set<std::string>& out) {
+  for (const std::string_view key : {std::string_view("(uuid "), std::string_view("(tstamp ")}) {
+    for (std::size_t at = text.find(key); at != std::string::npos; at = text.find(key, at + 1)) {
+      std::size_t a = at + key.size();
+      const std::size_t e = text.find(')', a);
+      if (e == std::string::npos) break;
+      std::size_t b = e;
+      while (a < b && (text[a] == '"' || text[a] == ' ')) ++a;
+      while (b > a && (text[b - 1] == '"' || text[b - 1] == ' ')) --b;
+      out.emplace(text.substr(a, b - a));
+    }
+  }
+}
+
 std::string BoardEditor::next_uuid() {
+  // A board TraceMaker wrote before carries ids from the same seed and counter (a warm start, `route --finish`, a
+  // repair on top): without this the new items would repeat them, and KiCad's connectivity goes wrong on duplicate ids.
+  // The set is only looked up, never iterated, so the output does not depend on its order.
+  if (!ids_read_) {
+    collect_ids(lb_.doc.write(), used_ids_);
+    ids_read_ = true;
+  }
   const RngStream s(seed_, 0xED17u, 0);
-  const U32x4 b = s.block(uuid_counter_++);
-  char out[40];
-  std::snprintf(out, sizeof out, "%08x-%04x-4%03x-%04x-%04x%08x", b.v[0], b.v[1] >> 16, b.v[1] & 0x0FFFu,
-                (b.v[2] >> 16 & 0x3FFFu) | 0x8000u, b.v[2] & 0xFFFFu, b.v[3]);
-  return out;
+  for (;;) {
+    const U32x4 b = s.block(uuid_counter_++);
+    char out[40];
+    std::snprintf(out, sizeof out, "%08x-%04x-4%03x-%04x-%04x%08x", b.v[0], b.v[1] >> 16, b.v[1] & 0x0FFFu,
+                  (b.v[2] >> 16 & 0x3FFFu) | 0x8000u, b.v[2] & 0xFFFFu, b.v[3]);
+    if (used_ids_.emplace(out).second) return out;
+  }
 }
 
 std::string BoardEditor::net_expr(model::NetId net) const {

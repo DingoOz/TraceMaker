@@ -1,0 +1,115 @@
+{
+ "applied": {
+  "chains_closed": 2,
+  "islands_cut": 2,
+  "open_after": 3,
+  "open_before": 5,
+  "output": "/home/dingo/Programming/TraceMaker-rm3/bench/results/fine-2026-11-20/poncho_fpga_fpga-dongle/chained.kicad_pcb",
+  "written": true
+ },
+ "baseline": {
+  "connections": 5,
+  "open": 5,
+  "routed": 0,
+  "work": 10000000
+ },
+ "board": "bench/results/finish-2026-11-19/strong2/poncho_fpga_fpga-dongle/out.kicad_pcb",
+ "connections": [
+  {
+   "a": "U4.124",
+   "b": "P5.21",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "/VCCPLL"
+   ],
+   "joint": false,
+   "net": "/FPGA_IO_BANK1_12",
+   "nets_lifted": 5,
+   "reason": "boxed_in",
+   "runs": 35
+  },
+  {
+   "a": "U4.114",
+   "b": "P5.12",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 2,
+   "first_nets": [
+    "+1V2",
+    "/TxD"
+   ],
+   "joint": false,
+   "net": "/FPGA_IO_BANK1_3",
+   "nets_lifted": 6,
+   "reason": "not_attempted",
+   "runs": 32
+  },
+  {
+   "a": "U4.66",
+   "b": "R41.2",
+   "blockers_from": "bare",
+   "closed": false,
+   "depth": 4,
+   "fail": "too_deep",
+   "first_blockers": 1,
+   "first_nets": [
+    "/iCE40-SDO"
+   ],
+   "joint": false,
+   "net": "/iCE40-CRESET",
+   "nets_lifted": 4,
+   "reason": "not_attempted",
+   "runs": 32
+  },
+  {
+   "a": "P3.20",
+   "b": "U4.98",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 4,
+   "first_blockers": 1,
+   "first_nets": [
+    "/RAM_D0"
+   ],
+   "joint": false,
+   "net": "/SPI_CLK",
+   "nets_lifted": 5,
+   "reason": "not_attempted",
+   "runs": 68
+  },
+  {
+   "a": "P3.18",
+   "b": "U4.97",
+   "blockers_from": "bare",
+   "closed": true,
+   "depth": 1,
+   "first_blockers": 1,
+   "first_nets": [
+    "/RAM_A3"
+   ],
+   "joint": true,
+   "net": "/SPI_MISO",
+   "nets_lifted": 1,
+   "reason": "not_attempted",
+   "runs": 29
+  }
+ ],
+ "copper_layers": 4,
+ "options": {
+  "max_depth": 4,
+  "max_nets": 32,
+  "rip_mm": 1.0,
+  "work": 2000000
+ },
+ "tally": {
+  "closed_depth_4": 1,
+  "closed_joint": 1,
+  "too_deep": 3
+ }
+}

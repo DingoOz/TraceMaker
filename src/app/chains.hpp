@@ -34,6 +34,10 @@ struct ChainsOptions {
   std::uint64_t seed = 1;
   bool fill_planes = true;          // as `causes`
   bool soft_zones = false;
+  // Not only measured: the chains that close are put on the board, one open connection after the other (each on the board the ones
+  // before left), and the board is written here (doc 20 §2.16, D200). It is written only when fewer connections are open than on the
+  // input and every net that was lifted is joined as it was; copper left with no pad on it is taken off (D198).
+  std::string apply_out;
 };
 
 // Measures the chain of every open connection of `board` and returns the report (also printed as a table when `print`).

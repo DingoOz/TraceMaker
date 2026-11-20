@@ -82,6 +82,8 @@ struct RouteJob {
   // board, whose copper the plain run cannot move); "on": also on a board routed from nothing here; "off".
   std::string repair = "auto";
   passes::RepairOptions repair_opt;
+  // Copper that joins no pad after the run, and is the run's doing, is taken off (passes::padless_islands, D198). true keeps it.
+  bool keep_islands = false;
   // --only-net / --skip-net patterns (KiCad wildcards or regular expressions, as net-class patterns): only_nets keeps the nets that
   // match any pattern, skip_nets leaves those that match unrouted. Resolved against the board into RouterOptions::skip_nets.
   std::vector<std::string> only_nets, skip_nets;
@@ -191,7 +193,7 @@ RouteJobResult run_layer_advisor(RouteJob job, std::vector<int> counts);
 // leaves fewer open. With `masks_rung`, a rung before the layers lets tracks through pad solder-mask openings (RouterOptions::soft_pad_masks), and the layer
 // rungs keep that. The ladder stops at the first rung with nothing open; a rung that does not lower the open count is discarded (rule 4). The summary's
 // "finish" lists every rung with what it relaxed. Needs an output path.
-RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool masks_rung = false, bool fresh_rung = false);
+RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool masks_rung = false, bool fresh_rung = false, bool chains_rung = false);
 
 // Buses (doc 05 §38): the groups `specs` ("NAME=PATTERN") name on the board, then, with `detect`, the groups found in
 // the net names that share no net with an earlier group. Each group gets the skew limit of the board's custom
