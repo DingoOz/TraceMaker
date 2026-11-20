@@ -117,11 +117,32 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a2d0230c081c19a0aeb928ff8b428bea5" id="r_a2d0230c081c19a0aeb928ff8b428bea5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d0230c081c19a0aeb928ff8b428bea5">fill_planes</a> = true</td></tr>
 <tr class="memdesc:a2d0230c081c19a0aeb928ff8b428bea5"><td class="mdescLeft">&#160;</td><td class="mdescRight">as <span class="tt">causes</span>  <br /></td></tr>
 <tr class="memitem:a2f17daf4b3f026bbf6f4b530313f8f33" id="r_a2f17daf4b3f026bbf6f4b530313f8f33"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f17daf4b3f026bbf6f4b530313f8f33">soft_zones</a> = false</td></tr>
+<tr class="memitem:a0d74051ef6064de2fde3a28be180609c" id="r_a0d74051ef6064de2fde3a28be180609c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0d74051ef6064de2fde3a28be180609c">apply_out</a></td></tr>
+<tr class="memdesc:a0d74051ef6064de2fde3a28be180609c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Not only measured: the chains that close are put on the board, one open connection after the other (each on the board the ones before left), and the board is written here (doc 20 §2.16, D200).  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="chains_8hpp_source.html#l00025">25</a> of file <a class="el" href="chains_8hpp_source.html">chains.hpp</a>.</p>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
+<a id="a0d74051ef6064de2fde3a28be180609c" name="a0d74051ef6064de2fde3a28be180609c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d74051ef6064de2fde3a28be180609c">&#9670;&#160;</a></span>apply_out</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string tmk::app::ChainsOptions::apply_out</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Not only measured: the chains that close are put on the board, one open connection after the other (each on the board the ones before left), and the board is written here (doc 20 §2.16, D200). </p>
+<p>It is written only when fewer connections are open than on the input and every net that was lifted is joined as it was; copper left with no pad on it is taken off (D198). </p>
+
+<p class="definition">Definition at line <a class="el" href="chains_8hpp_source.html#l00040">40</a> of file <a class="el" href="chains_8hpp_source.html">chains.hpp</a>.</p>
+
+</div>
+</div>
 <a id="af7f313d52c93ab2a141fdf25ff69e229" name="af7f313d52c93ab2a141fdf25ff69e229"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af7f313d52c93ab2a141fdf25ff69e229">&#9670;&#160;</a></span>baseline_work</h2>
 

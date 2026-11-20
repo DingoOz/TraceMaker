@@ -46,6 +46,7 @@ var structtmk_1_1route_1_1RouteResult =
     [ "restarts", "structtmk_1_1route_1_1RouteResult.html#aed5b6d0591a19f0038455727ff2ff7f8", null ],
     [ "rips", "structtmk_1_1route_1_1RouteResult.html#a6ea614b5745e6e21da700d29ed45b7b9", null ],
     [ "routed", "structtmk_1_1route_1_1RouteResult.html#ae37f950278158c1255fe286f4fb81762", null ],
+    [ "search_mem_limited", "structtmk_1_1route_1_1RouteResult.html#ae108a0917a792cfded7685da503863b2", null ],
     [ "seconds", "structtmk_1_1route_1_1RouteResult.html#af47d3dfda3c2a20d84a2736e62b8576b", null ],
     [ "tidied", "structtmk_1_1route_1_1RouteResult.html#a262a1cbe5e8ee2d287ff7090ffeb710f", null ],
     [ "tightest_cut", "structtmk_1_1route_1_1RouteResult.html#a246f87387c359a1345853fba53f2123f", null ],

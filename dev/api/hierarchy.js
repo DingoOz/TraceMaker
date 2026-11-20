@@ -128,6 +128,7 @@ var hierarchy =
     [ "tmk::drc::Hole", "structtmk_1_1drc_1_1Hole.html", null ],
     [ "tmk::crules::ImpedancePlan", "structtmk_1_1crules_1_1ImpedancePlan.html", null ],
     [ "tmk::crules::Instance", "structtmk_1_1crules_1_1Instance.html", null ],
+    [ "tmk::passes::IslandCut", "structtmk_1_1passes_1_1IslandCut.html", null ],
     [ "tmk::drc::ItemGraph", "structtmk_1_1drc_1_1ItemGraph.html", null ],
     [ "tmk::app::tui::Job", "structtmk_1_1app_1_1tui_1_1Job.html", null ],
     [ "tmk::app::tui::JobSlot", "structtmk_1_1app_1_1tui_1_1JobSlot.html", null ],

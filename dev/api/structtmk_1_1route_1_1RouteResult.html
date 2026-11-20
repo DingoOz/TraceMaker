@@ -107,6 +107,8 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:afe80c8d02364f18a5906bd26dc0a655e" id="r_afe80c8d02364f18a5906bd26dc0a655e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe80c8d02364f18a5906bd26dc0a655e">vias</a></td></tr>
 <tr class="memitem:ab5f6809bdc921dbee9f4e911c464965e" id="r_ab5f6809bdc921dbee9f4e911c464965e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1route_1_1ConnRoute.html">ConnRoute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5f6809bdc921dbee9f4e911c464965e">conn_routes</a></td></tr>
 <tr class="memdesc:ab5f6809bdc921dbee9f4e911c464965e"><td class="mdescLeft">&#160;</td><td class="mdescRight">the same copper per connection (best state), for a warm start  <br /></td></tr>
+<tr class="memitem:ae108a0917a792cfded7685da503863b2" id="r_ae108a0917a792cfded7685da503863b2"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae108a0917a792cfded7685da503863b2">search_mem_limited</a> = 0</td></tr>
+<tr class="memdesc:ae108a0917a792cfded7685da503863b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">searches that &ndash;search-mem made lighter, drew in or refused (D199)  <br /></td></tr>
 <tr class="memitem:ab7921e29e6add7087f6cb11634f23447" id="r_ab7921e29e6add7087f6cb11634f23447"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1route_1_1ConnRoute.html">ConnRoute</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7921e29e6add7087f6cb11634f23447">final_routes</a></td></tr>
 <tr class="memdesc:ab7921e29e6add7087f6cb11634f23447"><td class="mdescLeft">&#160;</td><td class="mdescRight">the state the search ended in (<a class="el" href="structtmk_1_1route_1_1RouterOptions.html#a5746a659a12c2f457c317ac7811b5ece" title="also return the live state at the end of the run (RouteResult::final_routes)">RouterOptions::keep_final</a>): legal, perhaps worse than the best  <br /></td></tr>
 <tr class="memitem:aa4a5a6f7b3cef71bdf0a19c02877d40e" id="r_aa4a5a6f7b3cef71bdf0a19c02877d40e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4a5a6f7b3cef71bdf0a19c02877d40e">final_routed</a> = 0</td></tr>
@@ -204,7 +206,7 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00388">388</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00390">390</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
 <a id="ab564dd929ef56d60f3ab73f3d253cd80" name="ab564dd929ef56d60f3ab73f3d253cd80"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab564dd929ef56d60f3ab73f3d253cd80">&#9670;&#160;</a></span>blind_vias</h2>
@@ -220,7 +222,7 @@ Public Attributes</h2></td></tr>
 
 <p>blind/buried vias placed </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00422">422</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00425">425</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -236,7 +238,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00419">419</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00422">422</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -254,7 +256,7 @@ Public Attributes</h2></td></tr>
 
 <p>Bundle escapes (&ndash;bundle-escape): groups found, groups with a spine, connections in them, lanes placed (in the state returned). </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00419">419</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00422">422</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -270,7 +272,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00419">419</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00422">422</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -286,7 +288,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00419">419</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00422">422</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -304,7 +306,7 @@ Public Attributes</h2></td></tr>
 
 <p>Buses: connections routed as a lane of their group (leaders and the members that followed one), and connections of a group routed otherwise ("left the bus"), in the state returned. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00417">417</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00420">420</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -320,7 +322,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00417">417</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00420">420</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -338,7 +340,7 @@ Public Attributes</h2></td></tr>
 
 <p>obstacle caches freed to stay under <a class="el" href="structtmk_1_1route_1_1RouterOptions.html#a0bb87e12be543d6555a7c7be04710be6" title="Bound on the memory of the per-class fixed-obstacle caches (MB per router; 0 = none).">RouterOptions::class_cache_mb</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00456">456</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00459">459</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -356,7 +358,7 @@ Public Attributes</h2></td></tr>
 
 <p>the same copper per connection (best state), for a warm start </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00391">391</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00393">393</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -372,7 +374,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00394">394</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00397">397</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -390,7 +392,7 @@ Public Attributes</h2></td></tr>
 
 <p>searches that proved the source boxed in (no larger window tried) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00398">398</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00401">401</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -408,7 +410,7 @@ Public Attributes</h2></td></tr>
 
 <p>end-game retry (D155): connections tried, and routed </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00407">407</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00410">410</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -424,7 +426,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00407">407</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00410">410</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -442,7 +444,7 @@ Public Attributes</h2></td></tr>
 
 <p>total length of the corridors reserved (centrelines, version 1) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00423">423</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00426">426</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -460,7 +462,7 @@ Public Attributes</h2></td></tr>
 
 <p>escape corridors reserved (M9) // nets brought into their custom length range by meanders // differential pairs routed coupled // connections improved by the clean-up pass </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00432">432</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00435">435</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -478,7 +480,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;escape-persist: corridors given back to the pins of a ripped-up connection </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00429">429</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00432">432</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -496,7 +498,7 @@ Public Attributes</h2></td></tr>
 
 <p>With escape_report: per ring of the deep arrays (index 0 = perimeter), {pins to route, pins with every connection routed}. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00435">435</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00438">438</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -512,7 +514,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00395">395</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00398">398</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -530,7 +532,7 @@ Public Attributes</h2></td></tr>
 
 <p>one line per unrouted connection </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00442">442</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00445">445</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -548,7 +550,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;fanout-heads: pins given a head before routing </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00430">430</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00433">433</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -566,7 +568,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;fanout-hold: placeholder tracks laid along open pins' corridors before the strict pass (all strict passes) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00431">431</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00434">434</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -582,7 +584,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00393">393</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00396">396</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -600,7 +602,7 @@ Public Attributes</h2></td></tr>
 
 <p>the state the search ended in (<a class="el" href="structtmk_1_1route_1_1RouterOptions.html#a5746a659a12c2f457c317ac7811b5ece" title="also return the live state at the end of the run (RouteResult::final_routes)">RouterOptions::keep_final</a>): legal, perhaps worse than the best </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00392">392</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00395">395</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -616,7 +618,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00414">414</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00417">417</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -634,7 +636,7 @@ Public Attributes</h2></td></tr>
 
 <p>pairs of connections whose straight pad-to-pad lines cross (M26 F9): a two-layer board with many per connection may need more layers </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00424">424</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00427">427</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -652,7 +654,7 @@ Public Attributes</h2></td></tr>
 
 <p>open connections closed by the regional rebuild (doc 16 F4) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00404">404</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00407">407</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -670,7 +672,7 @@ Public Attributes</h2></td></tr>
 
 <p>micro vias placed </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00421">421</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00424">424</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -688,7 +690,7 @@ Public Attributes</h2></td></tr>
 
 <p>connections routed at the neck-down width </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00401">401</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00404">404</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -706,7 +708,7 @@ Public Attributes</h2></td></tr>
 
 <p>attempts skipped because an identical attempt already failed </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00399">399</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00402">402</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -724,7 +726,7 @@ Public Attributes</h2></td></tr>
 
 <p>fixed-obstacle caches the router made (one per set of class values, track width and via size) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00457">457</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00460">460</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -740,7 +742,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00410">410</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00413">413</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -758,7 +760,7 @@ Public Attributes</h2></td></tr>
 
 <p>With cut_report: lines across the board that more nets must cross than tracks fit, and the tightest line. </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00437">437</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00440">440</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -776,7 +778,7 @@ Public Attributes</h2></td></tr>
 
 <p>spanning-tree edges between two pins of one dense package, for nets with 3+ pins there (&ndash;radial-supply makes them rarer) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00425">425</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00428">428</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -794,7 +796,7 @@ Public Attributes</h2></td></tr>
 
 <p>pairs coupled by the wider retry (<a class="el" href="structtmk_1_1route_1_1RouterOptions.html#a75a3d0477960002ce4490398319dcce8" title="A pair that finds no coupled path is tried once more with legs of up to this reach and pad exits (0 =...">RouterOptions::pair_retry_leg</a>) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00413">413</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00416">416</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -812,7 +814,7 @@ Public Attributes</h2></td></tr>
 
 <p>the part of <span class="tt"><a class="el" href="#ab8dd829a46da230ceccb31463a5500cf">expansions</a></span> spent in coupled pair searches (closed states and leg checks) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00396">396</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00399">399</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -828,7 +830,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00411">411</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00414">414</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -846,7 +848,7 @@ Public Attributes</h2></td></tr>
 
 <p>pair attempts skipped because the pair searches had spent <a class="el" href="structtmk_1_1route_1_1RouterOptions.html#a04a897ff8923caa623fcb7e9fbfa9700" title="Coupled pair searches stop once they have spent this share of the budget (the work budget,...">RouterOptions::pair_share</a> of the budget </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00412">412</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00415">415</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -862,7 +864,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00397">397</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00400">400</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -878,7 +880,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00441">441</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00444">444</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -896,7 +898,7 @@ Public Attributes</h2></td></tr>
 
 <p>pad-to-plane connections re-planned to a nearby pad already on the plane (D155) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00406">406</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00409">409</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -912,7 +914,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00405">405</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00408">408</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -930,7 +932,7 @@ Public Attributes</h2></td></tr>
 
 <p>pin rescues (D155): radii tried, and connections routed by one </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00405">405</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00408">408</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -946,7 +948,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00403">403</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00406">406</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -962,7 +964,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00397">397</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00400">400</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -977,6 +979,24 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00397">397</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ae108a0917a792cfded7685da503863b2" name="ae108a0917a792cfded7685da503863b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae108a0917a792cfded7685da503863b2">&#9670;&#160;</a></span>search_mem_limited</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">long tmk::route::RouteResult::search_mem_limited = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>searches that &ndash;search-mem made lighter, drew in or refused (D199) </p>
 
 <p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00394">394</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
@@ -994,7 +1014,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00439">439</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00442">442</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1012,7 +1032,7 @@ Public Attributes</h2></td></tr>
 
 <p>connections shortened by tidy sweeps </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00408">408</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00411">411</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1028,7 +1048,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00438">438</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00441">441</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1046,7 +1066,7 @@ Public Attributes</h2></td></tr>
 
 <p>the wall-clock limit (&ndash;time), not the work budget, ended a search: the result depends on machine speed </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00455">455</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00458">458</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1064,7 +1084,7 @@ Public Attributes</h2></td></tr>
 
 <p>new copper, in commit order </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00389">389</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00391">391</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1082,7 +1102,7 @@ Public Attributes</h2></td></tr>
 
 <p>package tunnels placed (&ndash;package-tunnels) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00420">420</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00423">423</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1100,7 +1120,7 @@ Public Attributes</h2></td></tr>
 
 <p>transactional negotiation: routes with victims tried, and kept </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00409">409</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00412">412</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1116,7 +1136,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00409">409</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00412">412</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1132,7 +1152,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00454">454</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00457">457</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1150,7 +1170,7 @@ Public Attributes</h2></td></tr>
 
 <p>connections routed by the via retry (D153) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00400">400</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00403">403</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1168,7 +1188,7 @@ Public Attributes</h2></td></tr>
 
 <p>routing attempts after a via move </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00428">428</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00431">431</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1186,7 +1206,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;via-shove: stuck connections routed after moving another net's via </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00427">427</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00430">430</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1202,7 +1222,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00390">390</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00392">392</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1220,7 +1240,7 @@ Public Attributes</h2></td></tr>
 
 <p>connections routed at their preferred width (<a class="el" href="structtmk_1_1route_1_1RouterOptions.html#ab428bd0e8a1569f0b97163ae4d64fd2d" title="Preferred widths (doc 05 §79, D184): a connection of one of these nets is first searched strictly at ...">RouterOptions::preferred_widths</a>) </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00402">402</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00405">405</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1238,7 +1258,7 @@ Public Attributes</h2></td></tr>
 
 <p>&ndash;window-escalate: whole-board windows given to searches that hit their window's edge </p>
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00426">426</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00429">429</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>
@@ -1254,7 +1274,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00440">440</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="router_8hpp_source.html#l00443">443</a> of file <a class="el" href="router_8hpp_source.html">router.hpp</a>.</p>
 
 </div>
 </div>

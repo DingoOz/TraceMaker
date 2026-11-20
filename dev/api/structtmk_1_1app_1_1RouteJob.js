@@ -34,6 +34,7 @@ var structtmk_1_1app_1_1RouteJob =
     [ "items_out", "structtmk_1_1app_1_1RouteJob.html#a8c724944e321799ca1cd9cd1dccbcbea", null ],
     [ "json_out", "structtmk_1_1app_1_1RouteJob.html#a70f1fdfd6051d3c62cb4ef579f8999c6", null ],
     [ "kb_path", "structtmk_1_1app_1_1RouteJob.html#a7278534473e1b7c27164bc563471bf74", null ],
+    [ "keep_islands", "structtmk_1_1app_1_1RouteJob.html#ac4e6cde0d1b3960cfd0ee00dade0e8fe", null ],
     [ "layer_costs", "structtmk_1_1app_1_1RouteJob.html#a50bc561d84cb48e8e697034dfeb293dc", null ],
     [ "layer_diag_pen", "structtmk_1_1app_1_1RouteJob.html#a079c0d61b35fb1f6c073387d1eb8fced", null ],
     [ "layer_dir", "structtmk_1_1app_1_1RouteJob.html#a00b2545315c95a36c1df57da989ddd23", null ],

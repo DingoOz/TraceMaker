@@ -102,6 +102,8 @@ Classes</h2></td></tr>
 <tr class="memitem:RepairStep" id="r_RepairStep"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1RepairStep.html">RepairStep</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One routing attempt: an open connection, a window radius, what it lifted, and whether it was kept.  <a href="structtmk_1_1passes_1_1RepairStep.html#details">More...</a><br /></td></tr>
 <tr class="memitem:RepairResult" id="r_RepairResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1RepairResult.html">RepairResult</a></td></tr>
+<tr class="memitem:IslandCut" id="r_IslandCut"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1IslandCut.html">IslandCut</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copper that joins no pad after a run and is the run's doing (doc 20 §2.14, D198).  <a href="structtmk_1_1passes_1_1IslandCut.html#details">More...</a><br /></td></tr>
 <tr class="memitem:StitchOptions" id="r_StitchOptions"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1StitchOptions.html">StitchOptions</a></td></tr>
 <tr class="memitem:StitchReturn" id="r_StitchReturn"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1StitchReturn.html">StitchReturn</a></td></tr>
 <tr class="memitem:StitchResult" id="r_StitchResult"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtmk_1_1passes_1_1StitchResult.html">StitchResult</a></td></tr>
@@ -125,6 +127,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a8663223534d94b9d75b45a543781e375"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open connections of <span class="tt">b</span>, counted as the router does: per net, the groups of its pads that copper joins, less one.  <br /></td></tr>
 <tr class="memitem:a7984fff7ce4986b0e945c0a841439348" id="r_a7984fff7ce4986b0e945c0a841439348"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1passes_1_1RepairResult.html">RepairResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7984fff7ce4986b0e945c0a841439348">repair_open</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;base, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const <a class="el" href="structtmk_1_1route_1_1RouteResult.html">route::RouteResult</a> &amp;res, const <a class="el" href="structtmk_1_1route_1_1RouterOptions.html">route::RouterOptions</a> &amp;opt, const <a class="el" href="structtmk_1_1passes_1_1RepairOptions.html">RepairOptions</a> &amp;ro, const std::function&lt; void(const std::string &amp;)&gt; &amp;log={})</td></tr>
 <tr class="memdesc:a7984fff7ce4986b0e945c0a841439348"><td class="mdescLeft">&#160;</td><td class="mdescRight">Repairs the board <span class="tt">base</span> with the new copper of <span class="tt">res</span> (a run of <span class="tt">opt</span> on <span class="tt">base</span>).  <br /></td></tr>
+<tr class="memitem:aee3b2f7b2bd91b335d63960ed8b5178f" id="r_aee3b2f7b2bd91b335d63960ed8b5178f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1passes_1_1IslandCut.html">IslandCut</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee3b2f7b2bd91b335d63960ed8b5178f">padless_islands</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;before, const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;now, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;new_tracks, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt; &amp;new_vias)</td></tr>
 <tr class="memitem:a23e68691017894926218e1fac6ac95c3" id="r_a23e68691017894926218e1fac6ac95c3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1passes_1_1StitchResult.html">StitchResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23e68691017894926218e1fac6ac95c3">stitch_vias</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;board, const <a class="el" href="structtmk_1_1model_1_1DesignRules.html">model::DesignRules</a> &amp;rules, const <a class="el" href="structtmk_1_1passes_1_1StitchOptions.html">StitchOptions</a> &amp;opt)</td></tr>
 <tr class="memdesc:a23e68691017894926218e1fac6ac95c3"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">board</span> holds the routed copper (the run's new tracks and vias appended).  <br /></td></tr>
 <tr class="memitem:ad9c8875a09d7cf6713ded3307309d89d" id="r_ad9c8875a09d7cf6713ded3307309d89d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtmk_1_1passes_1_1StyleReport.html">StyleReport</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9c8875a09d7cf6713ded3307309d89d">measure_style</a> (const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;b, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;tracks, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1ArcTrack.html">model::ArcTrack</a> &gt; &amp;arcs, const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt; &amp;vias, const <a class="el" href="structtmk_1_1passes_1_1StyleOptions.html">StyleOptions</a> &amp;opt={})</td></tr>
@@ -287,6 +290,37 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Open connections of <span class="tt">b</span>, counted as the router does: per net, the groups of its pads that copper joins, less one. </p>
+
+</div>
+</div>
+<a id="aee3b2f7b2bd91b335d63960ed8b5178f" name="aee3b2f7b2bd91b335d63960ed8b5178f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee3b2f7b2bd91b335d63960ed8b5178f">&#9670;&#160;</a></span>padless_islands()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtmk_1_1passes_1_1IslandCut.html">IslandCut</a> tmk::passes::padless_islands </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>before</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtmk_1_1model_1_1Board.html">model::Board</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>now</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Track.html">model::Track</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>new_tracks</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>new_vias</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>

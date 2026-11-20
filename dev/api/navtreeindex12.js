@@ -1,5 +1,15 @@
 var NAVTREEINDEX12 =
 {
+"structtmk_1_1crules_1_1ProximityPairs.html#aa053fa8cf16142eed4292d0f51ee8e3c":[0,0,0,6,14,5],
+"structtmk_1_1crules_1_1ProximityPairs.html#aa053fa8cf16142eed4292d0f51ee8e3c":[1,0,0,5,14,5],
+"structtmk_1_1crules_1_1ProximityPairs.html#ab258bbfa33abfc329c85171d159296b4":[0,0,0,6,14,4],
+"structtmk_1_1crules_1_1ProximityPairs.html#ab258bbfa33abfc329c85171d159296b4":[1,0,0,5,14,4],
+"structtmk_1_1crules_1_1ProximityPairs.html#aba841dc7b1e3496b4c6b5d313cf5f2d1":[0,0,0,6,14,2],
+"structtmk_1_1crules_1_1ProximityPairs.html#aba841dc7b1e3496b4c6b5d313cf5f2d1":[1,0,0,5,14,2],
+"structtmk_1_1crules_1_1ProximityPairs.html#af5c5b3421d485930f89a318b38b5981c":[0,0,0,6,14,0],
+"structtmk_1_1crules_1_1ProximityPairs.html#af5c5b3421d485930f89a318b38b5981c":[1,0,0,5,14,0],
+"structtmk_1_1crules_1_1ProximityPairs.html#afb85da28791077406b01778662317105":[0,0,0,6,14,3],
+"structtmk_1_1crules_1_1ProximityPairs.html#afb85da28791077406b01778662317105":[1,0,0,5,14,3],
 "structtmk_1_1crules_1_1Role.html":[0,0,0,6,7],
 "structtmk_1_1crules_1_1Role.html":[1,0,0,5,7],
 "structtmk_1_1crules_1_1Role.html#a125fd73ac865d26b079d0e8d975a44f4":[0,0,0,6,7,0],
@@ -239,15 +249,5 @@ var NAVTREEINDEX12 =
 "structtmk_1_1drc_1_1FittedRule.html":[0,0,0,7,14],
 "structtmk_1_1drc_1_1FittedRule.html":[1,0,0,6,14],
 "structtmk_1_1drc_1_1FittedRule.html#a082d3bda95516f8bd58cf5fcda2c3001":[0,0,0,7,14,2],
-"structtmk_1_1drc_1_1FittedRule.html#a082d3bda95516f8bd58cf5fcda2c3001":[1,0,0,6,14,2],
-"structtmk_1_1drc_1_1FittedRule.html#a89e622f968b8af24928f7af48999cdb6":[0,0,0,7,14,0],
-"structtmk_1_1drc_1_1FittedRule.html#a89e622f968b8af24928f7af48999cdb6":[1,0,0,6,14,0],
-"structtmk_1_1drc_1_1FittedRule.html#aa2ecf6ed10a2b50438b9a12fbab70af0":[0,0,0,7,14,3],
-"structtmk_1_1drc_1_1FittedRule.html#aa2ecf6ed10a2b50438b9a12fbab70af0":[1,0,0,6,14,3],
-"structtmk_1_1drc_1_1FittedRule.html#ad9e294ad8c8701e1f0d2fdc118ad4888":[0,0,0,7,14,4],
-"structtmk_1_1drc_1_1FittedRule.html#ad9e294ad8c8701e1f0d2fdc118ad4888":[1,0,0,6,14,4],
-"structtmk_1_1drc_1_1FittedRule.html#aedde89f8c51129ccffda3b7b71661142":[0,0,0,7,14,1],
-"structtmk_1_1drc_1_1FittedRule.html#aedde89f8c51129ccffda3b7b71661142":[1,0,0,6,14,1],
-"structtmk_1_1drc_1_1Flashing.html":[0,0,0,7,7],
-"structtmk_1_1drc_1_1Flashing.html":[1,0,0,6,7]
+"structtmk_1_1drc_1_1FittedRule.html#a082d3bda95516f8bd58cf5fcda2c3001":[1,0,0,6,14,2]
 };

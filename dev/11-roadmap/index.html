@@ -2471,9 +2471,9 @@ every later milestone can be watched while it is built.</p>
 </tr>
 <tr>
 <td>M27</td>
-<td><strong>Boards that never complete: tell modelling from search, and fit the rules</strong> (2026-11-19, doc 18 §22, doc 20 §1.1 and §2.8-§2.10, D194)</td>
-<td>G1 designer oracle: put the designer's own nets back in the designer's layout; G2 <code>route --fit-rules</code>: relax what the board's own copper already breaks, mask openings included; G3 <code>tracemaker chains</code>: blockers and chain depth of every open connection; G4 joint re-route of an open connection with its minimal blockers as a last step of the default route; G5 escapes with no slack laid off the lattice; G6 exact interstice model for ball grids; G7 the fit as a rung of the default ladder (keep the better result)</td>
-<td>G2: of the 33 failing PCBench boards from nothing at 20 M, ≥ 6 complete with the fit against 3 without, KiCad 0 unconnected and no short on each (met: 6 and 8). G4: beats the same run with equal extra budget on the search boards. <code>quick</code> byte-identical with the options off</td>
+<td><strong>Boards that never complete: tell modelling from search, and fit the rules</strong> (2026-11-19, doc 18 §22, doc 20 §1.1 and §2.8-§2.13, D194-D197)</td>
+<td>G1 designer oracle: put the designer's own nets back in the designer's layout; G2 <code>route --fit-rules</code>: relax what the board's own copper already breaks, mask openings included; G3 <code>tracemaker chains</code>: blockers and chain depth of every open connection; G4 joint re-route of an open connection with its minimal blockers as a last step of the default route; G5 escapes with no slack laid off the lattice; G6 exact interstice model for ball grids; G7 the fit as a rung of a ladder: <code>route --finish</code> (D196), with repair along the route (D195) and pad mask openings from a reference (D197); G8 what the ladder leaves</td>
+<td>G2: of the 33 failing PCBench boards from nothing at 20 M, ≥ 6 complete with the fit against 3 without, KiCad 0 unconnected and no short on each (met: 6 and 8). G4: beats the same run with equal extra budget on the search boards (not met: 30-47 of 887 closed against 159 for three times the budget). G7: 19 of 33 have a complete output (3 before); best arm per board 245 open of 890. <code>quick</code> byte-identical with the options off</td>
 </tr>
 </tbody>
 </table>

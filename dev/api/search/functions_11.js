@@ -76,11 +76,12 @@ var searchData=
   ['run_73',['run',['../classtmk_1_1analysis_1_1EscapeAnalyser.html#a03c34ced9429f761b3434c2ecf304c57',1,'tmk::analysis::EscapeAnalyser::run()'],['../classtmk_1_1place_1_1detail_1_1Annealer.html#ac3481e930d8e09c195a565fdb90121a2',1,'tmk::place::detail::Annealer::run()'],['../classtmk_1_1route_1_1Router.html#a9f99722561a5af81604f4a6dcb104866',1,'tmk::route::Router::run()']]],
   ['run_5fdaemon_74',['run_daemon',['../namespacetmk_1_1session.html#aab78d7a88568da048b378240b5a8d51c',1,'tmk::session']]],
   ['run_5fdrc_75',['run_drc',['../namespacetmk_1_1drc.html#a65dbead7747b642204eae3d310ad85d8',1,'tmk::drc']]],
-  ['run_5fjsonl_76',['run_jsonl',['../namespacetmk_1_1session.html#a3c0f4c8fd0b2fa77e2c69a9ddb100162',1,'tmk::session']]],
-  ['run_5fkeys_77',['run_keys',['../namespacetmk_1_1app_1_1tui.html#a20aa2fa0d706efc7f338c40e0ac4587f',1,'tmk::app::tui::run_keys(Model &amp;m, const std::string &amp;keys)'],['../namespacetmk_1_1app_1_1tui.html#ac952f9a07534a3c009c2e763de4b71f6',1,'tmk::app::tui::run_keys(JobsModel &amp;m, const std::string &amp;keys)']]],
-  ['run_5flayer_5fadvisor_78',['run_layer_advisor',['../namespacetmk_1_1app.html#a257511015fa231832028fd1fa05e08ab',1,'tmk::app']]],
-  ['run_5fmcp_79',['run_mcp',['../namespacetmk_1_1session.html#aeb5ab755c05de800db1ed6c0ad4683fc',1,'tmk::session']]],
-  ['run_5fprocess_80',['run_process',['../namespacetmk_1_1advice.html#af4d6578f29cb1548827a470acd1a99a7',1,'tmk::advice']]],
-  ['run_5froute_5fjob_81',['run_route_job',['../namespacetmk_1_1app.html#a73ef09b838a1f15a08bc83053aaa92dd',1,'tmk::app']]],
-  ['run_5fterminal_82',['run_terminal',['../namespacetmk_1_1app_1_1tui.html#a4174f010511e7b92595293dc8d60d46b',1,'tmk::app::tui::run_terminal(Model &amp;m)'],['../namespacetmk_1_1app_1_1tui.html#a6de12c034bf44e4a97e0de08c728cef3',1,'tmk::app::tui::run_terminal(JobsModel &amp;m)']]]
+  ['run_5ffinish_76',['run_finish',['../namespacetmk_1_1app.html#a82c9bc043c01f2927760cac89e93c1ac',1,'tmk::app']]],
+  ['run_5fjsonl_77',['run_jsonl',['../namespacetmk_1_1session.html#a3c0f4c8fd0b2fa77e2c69a9ddb100162',1,'tmk::session']]],
+  ['run_5fkeys_78',['run_keys',['../namespacetmk_1_1app_1_1tui.html#a20aa2fa0d706efc7f338c40e0ac4587f',1,'tmk::app::tui::run_keys(Model &amp;m, const std::string &amp;keys)'],['../namespacetmk_1_1app_1_1tui.html#ac952f9a07534a3c009c2e763de4b71f6',1,'tmk::app::tui::run_keys(JobsModel &amp;m, const std::string &amp;keys)']]],
+  ['run_5flayer_5fadvisor_79',['run_layer_advisor',['../namespacetmk_1_1app.html#a257511015fa231832028fd1fa05e08ab',1,'tmk::app']]],
+  ['run_5fmcp_80',['run_mcp',['../namespacetmk_1_1session.html#aeb5ab755c05de800db1ed6c0ad4683fc',1,'tmk::session']]],
+  ['run_5fprocess_81',['run_process',['../namespacetmk_1_1advice.html#af4d6578f29cb1548827a470acd1a99a7',1,'tmk::advice']]],
+  ['run_5froute_5fjob_82',['run_route_job',['../namespacetmk_1_1app.html#a73ef09b838a1f15a08bc83053aaa92dd',1,'tmk::app']]],
+  ['run_5fterminal_83',['run_terminal',['../namespacetmk_1_1app_1_1tui.html#a4174f010511e7b92595293dc8d60d46b',1,'tmk::app::tui::run_terminal(Model &amp;m)'],['../namespacetmk_1_1app_1_1tui.html#a6de12c034bf44e4a97e0de08c728cef3',1,'tmk::app::tui::run_terminal(JobsModel &amp;m)']]]
 ];

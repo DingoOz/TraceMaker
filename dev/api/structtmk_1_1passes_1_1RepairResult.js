@@ -3,6 +3,7 @@ var structtmk_1_1passes_1_1RepairResult =
     [ "summary", "structtmk_1_1passes_1_1RepairResult.html#a769f98ee7a7fbb25e0c7d66d9a44bd10", null ],
     [ "changed", "structtmk_1_1passes_1_1RepairResult.html#a6f8388fe9d0f0c321b6b9b4742c3cd6d", null ],
     [ "failures", "structtmk_1_1passes_1_1RepairResult.html#a02d8c61aacf838c1fa5dcfbb7e9ed994", null ],
+    [ "no_bare_route", "structtmk_1_1passes_1_1RepairResult.html#a927ee4806705e296bd7918a7bdd3e1ca", null ],
     [ "open_after", "structtmk_1_1passes_1_1RepairResult.html#a952d3cccf80c8bdf1ade2578d6f97b5b", null ],
     [ "open_before", "structtmk_1_1passes_1_1RepairResult.html#ac0e4b352fbe5d1c89622ad76466c44c2", null ],
     [ "ripped_tracks", "structtmk_1_1passes_1_1RepairResult.html#a8d9c6e976b382776c42f1b17f821b7e4", null ],

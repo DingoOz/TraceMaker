@@ -2328,6 +2328,72 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#211-repair-along-the-connections-route-d195" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.11 Repair along the connection's route (D195)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#212-a-ladder-on-top-route-finish-d196" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.12 A ladder on top: route --finish (D196)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#213-tracks-through-pad-mask-openings-d197" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.13 Tracks through pad mask openings (D197)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#214-complete-for-kicad-too-copper-with-no-pad-and-ids-that-repeat-d198" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.14 Complete for KiCad too: copper with no pad, and ids that repeat (D198)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#215-one-searchs-memory-d199" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.15 One search's memory (D199)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#216-rip-up-chains-applied-d200" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.16 Rip-up chains applied (D200)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2576,6 +2642,72 @@
     <span class="md-ellipsis">
       
         2.10 An exact model for ball grids (plan)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#211-repair-along-the-connections-route-d195" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.11 Repair along the connection's route (D195)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#212-a-ladder-on-top-route-finish-d196" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.12 A ladder on top: route --finish (D196)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#213-tracks-through-pad-mask-openings-d197" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.13 Tracks through pad mask openings (D197)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#214-complete-for-kicad-too-copper-with-no-pad-and-ids-that-repeat-d198" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.14 Complete for KiCad too: copper with no pad, and ids that repeat (D198)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#215-one-searchs-memory-d199" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.15 One search's memory (D199)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#216-rip-up-chains-applied-d200" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.16 Rip-up chains applied (D200)
       
     </span>
   </a>
@@ -2953,8 +3085,7 @@ part) and hurts single boards (LeeChee 5 → 22, 58r-mxalps 0 → 5): a lower cl
 <li>The median open connection is kept out by one net, and a third of them (41 of 120) close.</li>
 <li>Routing the connection and its blockers together is the step that works; fixing the connection first loses (10 of 43 closed
   on the 15 boards measured that way).</li>
-<li><strong>Not yet a router step.</strong> A joint re-route of each open connection with its minimal blockers is a candidate last step of the
-  default route. By the M22 rule it has to beat the same run with equal extra budget before it is adopted.</li>
+<li><strong>As a router step:</strong> built into the repair stage and measured (§2.11). It does not beat the same run with more budget.</li>
 </ul>
 <h3 id="210-an-exact-model-for-ball-grids-plan">2.10 An exact model for ball grids (plan)<a class="headerlink" href="#210-an-exact-model-for-ball-grids-plan" title="Permanent link">&para;</a></h3>
 <p>Under a 0.8 mm ball grid with the srj20 rules a gap between two balls holds one track, and an interstice holds a via or a track
@@ -2971,6 +3102,125 @@ M26 candidates (reservations, costs, lanes, orders) all lost to it.</p>
 <li><strong>Not built.</strong> The literature search found no published result that closes the last 1-3 % of a board against an equal-budget
   negotiated router; this is a hypothesis.</li>
 </ul>
+<h3 id="211-repair-along-the-connections-route-d195">2.11 Repair along the connection's route (D195)<a class="headerlink" href="#211-repair-along-the-connections-route-d195" title="Permanent link">&para;</a></h3>
+<p>The repair stage (<code>route --repair on</code>, doc 05 §75) lifts the unlocked copper round the two ends of an open connection and routes again.
+Three options bring it to what §2.9 measured (<code>src/passes/repair.{hpp,cpp}</code>), all off by default:</p>
+<ul>
+<li><code>--repair-select route|both</code>: the copper is looked for along the route the connection takes with the other nets' unlocked copper
+  off the board, on that route's layers, at 0.2 and 1 mm from it. A connection with no such route is left alone after one run.</li>
+<li><code>--repair-focus</code>: an attempt routes the connection's net and the nets it lifted, nothing else.</li>
+<li><code>--repair-variants N</code>: N portfolio variants per attempt.</li>
+</ul>
+<p>Measured after a 20 M run on the 33 boards (<code>bench/records/finish-2026-11</code>): the end windows close 28 of 887 open connections for
+4.9 G expansions, the route selection 30 for 3.0 G, both 47 for 7.5 G; no board completes. The same run with three times the budget
+(0.32 G expansions more over its eight variants at most) closes 159 and completes three more boards. <strong>Not adopted as a step of the
+default route.</strong> It earns its place where little is open: inside the ladder of §2.12.</p>
+<p>Without focus an attempt routes everything that is open. On d20 with 129 open every one of 126 attempts ended with more open than it
+began. With focus CoreOne goes 14 → 11 and EtherCAT 20 → 15 at the same layers, where no unfocused attempt was kept.</p>
+<h3 id="212-a-ladder-on-top-route-finish-d196">2.12 A ladder on top: <code>route --finish</code> (D196)<a class="headerlink" href="#212-a-ladder-on-top-route-finish-d196" title="Permanent link">&para;</a></h3>
+<p>Rule fit from nothing made some boards worse (§2.8). Routing only what is open, on the board the earlier run wrote, cannot: the routed
+copper stays unless a repair window lifts it, and a window is kept only when fewer connections are open.</p>
+<p><code>route --finish</code> runs the rungs in turn, each on the output of the one before, and stops when nothing is open:</p>
+<ol>
+<li>the run as given;</li>
+<li>the rules fitted to the board as given (§2.8), with the repair of §2.11 (route and ends, focused);</li>
+<li>with <code>--finish-fresh</code>: the board as given routed with the fitted rules from the start, kept when it leaves fewer open;</li>
+<li>with <code>--finish-masks</code>: pad solder-mask openings no longer keep tracks out (§2.13);</li>
+<li>with <code>--finish-layers 2,4</code>: two, then four copper layers more than the board has.</li>
+</ol>
+<p>The summary's <code>finish.rungs</code> lists every rung: open before and after, layers, the fitted rules.</p>
+<p>Measured on the 33 boards with the rungs run by hand (open connections; boards complete):</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">base, 20 M</th>
+<th style="text-align: right;">60 M, default rules</th>
+<th style="text-align: right;">fit from nothing</th>
+<th style="text-align: right;">rung 2</th>
+<th style="text-align: right;">+ pad masks (22 boards run)</th>
+<th style="text-align: right;">+ 2 layers</th>
+<th style="text-align: right;">+ 4 layers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>open</td>
+<td style="text-align: right;">890</td>
+<td style="text-align: right;">731</td>
+<td style="text-align: right;">771</td>
+<td style="text-align: right;">597</td>
+<td style="text-align: right;">–</td>
+<td style="text-align: right;">296</td>
+<td style="text-align: right;">274 (32 boards)</td>
+</tr>
+<tr>
+<td>complete</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">10</td>
+</tr>
+</tbody>
+</table>
+<p>Aleste-520EX, which had 250 open on every earlier run, goes 195 → 8 → 0 (six layers). P8000 completes at +2 layers, MicroMaple at +4.
+The ladder on top of the 60 M run completes ardfpga at rung 2 and MicroMaple at +2 layers; it was run on 14 boards before the runs were
+stopped. Best arm per board, no designer layout used: <strong>245 open, 16 of 33 complete</strong>; KiCad 10.0.6 finds 0 unconnected on those
+outputs it was given (12 of 13; the one with an unconnected item has a second complete output without).</p>
+<p>As one command (<code>route --work 20000000 --finish --finish-masks --finish-layers 2,4</code>) on 29 of the 30 boards open at base (one stopped):
+881 open become 219 and eight boards complete, KiCad 0 unconnected on each; six more end 1 short. d20 holds 127 of the 219: the other 28
+boards go from 739 to 92. Aleste-520EX completes in 40 minutes (250 → 182 → 159 → 1 → 0, six layers).</p>
+<p>With three times the budget, the from-nothing rung and eight repair variants (<code>--work 60000000 --finish --finish-fresh --repair-variants 8
+--finish-masks --finish-layers 2,4</code>) seven of the eight boards that ended one or two short complete at their own layer count, DronPi,
+Teensy_test_layout and dorkyboard for the first time: <strong>19 of the 33 boards now have a complete output</strong>, KiCad 0 unconnected on each.
+The same command on the eleven boards the 20 M ladder left 3 to 16 short (2026-11-20) completes three more with KiCad 0 unconnected: CoreOne and
+TCKB at their own layer count, V2X with two more layers: <strong>22 of 33</strong>. LFK78 ends with 0 open by the router's count at six layers, but KiCad
+finds 2 unconnected items on it, so it is not counted. The other seven end 1 to 6 short.</p>
+<p>What it does not do:</p>
+<ul>
+<li>
+<p><strong>Memory.</strong> mini_mass at six layers passed 100 GB in the plain run of its fourth rung and was stopped. The ladder writes its output after
+  every rung it keeps, so a stopped ladder leaves its best board.</p>
+</li>
+<li>
+<p><strong>Order.</strong> PCIE completes with the rules fitted from nothing and stays 1-2 short on top. The <code>--finish-fresh</code> rung is for that: with it
+  PCIE completes in one command (30 → 2 → 0) and Teensy_test goes 3 → 1. OtterPill completes only from nothing with the designer's
+  layout as reference (11 → 9 on top, the fresh rung 11: discarded).</p>
+</li>
+<li><strong>Pins walled in by an earlier rung.</strong> Added layers help a pin only if it can reach a via. On d20 (129 open, 27 pins walled in by
+  tracks of the rungs before) two and four layers more change nothing.</li>
+<li><strong>Budget.</strong> Three times the budget finishes three boards the ladder leaves one or two short. The two add up; which to spend first was
+  not measured to the end.</li>
+</ul>
+<h3 id="213-tracks-through-pad-mask-openings-d197">2.13 Tracks through pad mask openings (D197)<a class="headerlink" href="#213-tracks-through-pad-mask-openings-d197" title="Permanent link">&para;</a></h3>
+<p>A pad's solder-mask opening keeps other nets' tracks out (KiCad's <code>solder_mask_bridge</code>). Nine of the 33 designer layouts run tracks
+through such openings: KiCad reports 3 to 118 bridges on them and none on the unrouted boards. On a board that opens every pad 0.2 mm
+wider than its copper, the ways between the pads of a small part are all inside openings (memsarray's microphone: the supply pads
+inside a ring of ground pads).</p>
+<p><code>--fit-rules-from REF</code> counts the pad openings of the reference with another net's track or via in them; with three or more, pad
+openings no longer keep tracks out. <code>--soft-pad-masks</code> does the same by hand. memsarray completes for the first time; with the
+designer's layout as reference on top of rung 2, sizif goes 38 → 26 and LFK78 31 → 27.</p>
+<h3 id="214-complete-for-kicad-too-copper-with-no-pad-and-ids-that-repeat-d198">2.14 Complete for KiCad too: copper with no pad, and ids that repeat (D198)<a class="headerlink" href="#214-complete-for-kicad-too-copper-with-no-pad-and-ids-that-repeat-d198" title="Permanent link">&para;</a></h3>
+<p>Two outputs were complete by the router's count and not by KiCad's (MicroMaple with four layers added: 1 unconnected item; LFK78 after the
+stronger ladder: 2). Both had a piece of a net's copper that joins no pad, left when part of a route was lifted or replaced: the router
+counts pads, KiCad counts every piece of copper. The route job now takes such a piece off before it writes the board, when the piece holds
+copper of the run or was joined to a pad in the input (<code>passes::padless_islands</code>; <code>--keep-islands</code> keeps it). The same outputs carried
+repeated item ids: every rung started the id sequence again. New ids now skip the ids the document has. MicroMaple's step run again: 1 piece
+off, router and KiCad agree. Quick tier byte-identical.</p>
+<h3 id="215-one-searchs-memory-d199">2.15 One search's memory (D199)<a class="headerlink" href="#215-one-searchs-memory-d199" title="Permanent link">&para;</a></h3>
+<p>A search keeps a 16-byte record for every state of its window. Across mini_mass (646 x 155 mm) on eight layers that is 27 GB in one
+allocation, in each variant, which is what exhausted the machine on 2026-11-19. <code>route --search-mem MB</code> (default 4096) bounds it: over the
+limit a search takes one direction state per point, then a window drawn in towards its two ends, and only then is refused. The case that
+failed under 20 GB now peaks at 10.3 GB. The limit is a fixed number, so results do not depend on the machine.</p>
+<h3 id="216-rip-up-chains-applied-d200">2.16 Rip-up chains applied (D200)<a class="headerlink" href="#216-rip-up-chains-applied-d200" title="Permanent link">&para;</a></h3>
+<p><code>tracemaker chains</code> measured which nets an open connection needs lifted and whether they route again (§2.9); it now also does it.
+<code>chains BOARD --apply OUT</code> closes the open connections one after the other and writes the board when fewer are open;
+<code>route --finish --finish-chains</code> runs the same as a rung before the first added layer and after the last. A finer lattice did not help
+the boards a few short (half the pitch on four of them: no change); the chain closes MonApollo's last connection (depth 3, five nets
+lifted, KiCad 0 unconnected) and one of OtterPill's two.</p>
 <h2 id="3-order">3. Order<a class="headerlink" href="#3-order" title="Permanent link">&para;</a></h2>
 <ol>
 <li><strong>§2.1 relax-late:</strong> cheap, and it answers a question left open.</li>
@@ -3067,6 +3317,42 @@ M26 candidates (reservations, costs, lanes, orders) all lost to it.</p>
 <td>2026-11-19</td>
 <td>261 open: 141 route on no board; of 120 with blockers 62 have one, 41 close (17 joint)</td>
 <td></td>
+</tr>
+<tr>
+<td>§2.11 repair along the route, focused attempts (opt-in)</td>
+<td>2026-11-19</td>
+<td>after 20 M on 33 boards: 28 (ends), 30 (route, 39 % less work), 47 (both) of 887 closed, none complete; 3× budget closes 159. Not a default step</td>
+<td>D195</td>
+</tr>
+<tr>
+<td>§2.12 <code>route --finish</code> (opt-in)</td>
+<td>2026-11-19</td>
+<td>one command with masks and +2, +4 layers on 29 boards: 881 → 219 open (127 on d20), 8 complete (Aleste 250 → 0); with 60 M, the from-nothing rung and 8 repair variants seven of eight near-complete boards finish: 19 of 33 have a complete output</td>
+<td>D196</td>
+</tr>
+<tr>
+<td>§2.13 pad mask openings from a reference (opt-in)</td>
+<td>2026-11-19</td>
+<td>9 of 33 designer layouts have tracks in pad openings; memsarray complete, sizif 38 → 26, LFK78 31 → 27</td>
+<td>D197</td>
+</tr>
+<tr>
+<td>§2.14 copper with no pad taken off; ids never repeat</td>
+<td>2026-11-20</td>
+<td>MicroMaple +2 layers: router 2 open, KiCad 2 (3 before); quick tier 30/30 identical</td>
+<td>D198</td>
+</tr>
+<tr>
+<td>§2.15 one search's memory limited (<code>--search-mem</code>, default 4096 MB)</td>
+<td>2026-11-20</td>
+<td>mini_mass on eight layers: 10.3 GB peak under a 20 GB limit (<code>bad_alloc</code> before); quick tier 30/30 identical</td>
+<td>D199</td>
+</tr>
+<tr>
+<td>§2.16 rip-up chains applied (<code>chains --apply</code>, <code>--finish-chains</code>; opt-in)</td>
+<td>2026-11-20</td>
+<td>MonApollo 1 → 0 open (KiCad 0 unconnected), OtterPill 2 → 1; half pitch on four boards: no change</td>
+<td>D200</td>
 </tr>
 </tbody>
 </table>

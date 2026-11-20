@@ -102,6 +102,8 @@ $(function(){initNavTree('structtmk_1_1passes_1_1RepairStep.html','','structtmk_
 Public Attributes</h2></td></tr>
 <tr class="memitem:a950fe3c246cd7a3cf9608077523c7a70" id="r_a950fe3c246cd7a3cf9608077523c7a70"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a950fe3c246cd7a3cf9608077523c7a70">conn</a></td></tr>
 <tr class="memdesc:a950fe3c246cd7a3cf9608077523c7a70"><td class="mdescLeft">&#160;</td><td class="mdescRight">"NET A-B"  <br /></td></tr>
+<tr class="memitem:aebe86fd05d7fb946d3c5210b255f4ef0" id="r_aebe86fd05d7fb946d3c5210b255f4ef0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebe86fd05d7fb946d3c5210b255f4ef0">along_route</a> = false</td></tr>
+<tr class="memdesc:aebe86fd05d7fb946d3c5210b255f4ef0"><td class="mdescLeft">&#160;</td><td class="mdescRight">the window follows the connection's route on the bare board, not its ends  <br /></td></tr>
 <tr class="memitem:aed418117f59c359f2f8d896ae4dcfcef" id="r_aed418117f59c359f2f8d896ae4dcfcef"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed418117f59c359f2f8d896ae4dcfcef">radius_mm</a> = 0</td></tr>
 <tr class="memitem:aed4561f3725ea51259c46063f2552a06" id="r_aed4561f3725ea51259c46063f2552a06"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed4561f3725ea51259c46063f2552a06">pieces</a> = 0</td></tr>
 <tr class="memitem:a20621cb32002ec59a4eaf31b5d3ba263" id="r_a20621cb32002ec59a4eaf31b5d3ba263"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a20621cb32002ec59a4eaf31b5d3ba263">tracks</a> = 0</td></tr>
@@ -118,8 +120,26 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>One routing attempt: an open connection, a window radius, what it lifted, and whether it was kept. </p>
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00032">32</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00044">44</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
+<a id="aebe86fd05d7fb946d3c5210b255f4ef0" name="aebe86fd05d7fb946d3c5210b255f4ef0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebe86fd05d7fb946d3c5210b255f4ef0">&#9670;&#160;</a></span>along_route</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::passes::RepairStep::along_route = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>the window follows the connection's route on the bare board, not its ends </p>
+
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00046">46</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a950fe3c246cd7a3cf9608077523c7a70" name="a950fe3c246cd7a3cf9608077523c7a70"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a950fe3c246cd7a3cf9608077523c7a70">&#9670;&#160;</a></span>conn</h2>
 
@@ -134,7 +154,7 @@ Public Attributes</h2></td></tr>
 
 <p>"NET A-B" </p>
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00033">33</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00045">45</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -150,7 +170,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00038">38</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00051">51</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -168,7 +188,7 @@ Public Attributes</h2></td></tr>
 
 <p>open connections of the board (pads not joined), before and after the attempt </p>
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00036">36</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00049">49</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -184,7 +204,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00036">36</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00049">49</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -200,7 +220,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00035">35</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00048">48</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -216,7 +236,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00034">34</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00047">47</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -234,7 +254,7 @@ Public Attributes</h2></td></tr>
 
 <p>some pads that were joined came apart </p>
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00037">37</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00050">50</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -250,7 +270,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00035">35</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00048">48</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -268,7 +288,7 @@ Public Attributes</h2></td></tr>
 
 <p>copper lifted (pieces: branches) </p>
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00035">35</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00048">48</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -284,7 +304,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00039">39</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00052">52</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>

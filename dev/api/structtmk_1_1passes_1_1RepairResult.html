@@ -110,6 +110,8 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a023abf5b9b73d11530d4de10ea7c9d24" id="r_a023abf5b9b73d11530d4de10ea7c9d24"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1model_1_1Via.html">model::Via</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a023abf5b9b73d11530d4de10ea7c9d24">vias</a></td></tr>
 <tr class="memitem:ac0e4b352fbe5d1c89622ad76466c44c2" id="r_ac0e4b352fbe5d1c89622ad76466c44c2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac0e4b352fbe5d1c89622ad76466c44c2">open_before</a> = 0</td></tr>
 <tr class="memitem:a952d3cccf80c8bdf1ade2578d6f97b5b" id="r_a952d3cccf80c8bdf1ade2578d6f97b5b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a952d3cccf80c8bdf1ade2578d6f97b5b">open_after</a> = 0</td></tr>
+<tr class="memitem:a927ee4806705e296bd7918a7bdd3e1ca" id="r_a927ee4806705e296bd7918a7bdd3e1ca"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a927ee4806705e296bd7918a7bdd3e1ca">no_bare_route</a> = 0</td></tr>
+<tr class="memdesc:a927ee4806705e296bd7918a7bdd3e1ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">"route": connections with no route even with the other nets' unlocked copper off the board  <br /></td></tr>
 <tr class="memitem:ab88ada059a6ffa34a36b63599de8c121" id="r_ab88ada059a6ffa34a36b63599de8c121"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtmk_1_1route_1_1RouteResult_1_1Unrouted.html">route::RouteResult::Unrouted</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab88ada059a6ffa34a36b63599de8c121">unrouted</a></td></tr>
 <tr class="memdesc:ab88ada059a6ffa34a36b63599de8c121"><td class="mdescLeft">&#160;</td><td class="mdescRight">Of the last kept attempt (pad indices of <span class="tt">base</span>): the router's open connections and its explanations.  <br /></td></tr>
 <tr class="memitem:a02d8c61aacf838c1fa5dcfbb7e9ed994" id="r_a02d8c61aacf838c1fa5dcfbb7e9ed994"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a02d8c61aacf838c1fa5dcfbb7e9ed994">failures</a></td></tr>
@@ -119,7 +121,7 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00042">42</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00055">55</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
 <a id="a769f98ee7a7fbb25e0c7d66d9a44bd10" name="a769f98ee7a7fbb25e0c7d66d9a44bd10"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a769f98ee7a7fbb25e0c7d66d9a44bd10">&#9670;&#160;</a></span>summary()</h2>
@@ -151,7 +153,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00043">43</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00056">56</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -167,7 +169,25 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00052">52</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00066">66</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a927ee4806705e296bd7918a7bdd3e1ca" name="a927ee4806705e296bd7918a7bdd3e1ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a927ee4806705e296bd7918a7bdd3e1ca">&#9670;&#160;</a></span>no_bare_route</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::passes::RepairResult::no_bare_route = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>"route": connections with no route even with the other nets' unlocked copper off the board </p>
+
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00063">63</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -183,7 +203,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00049">49</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00062">62</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -199,7 +219,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00049">49</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00062">62</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -217,7 +237,7 @@ Public Attributes</h2></td></tr>
 
 <p>The board's own tracks and vias that were lifted (indices into the <span class="tt">base</span> board given), ascending. </p>
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00045">45</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00058">58</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -233,7 +253,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00045">45</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00058">58</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -249,7 +269,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00055">55</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00069">69</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -265,7 +285,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00053">53</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00067">67</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -283,7 +303,7 @@ Public Attributes</h2></td></tr>
 
 <p>The new copper after the repair: what is left of the run's new copper, then the repair's, in commit order. </p>
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00047">47</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00060">60</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -301,7 +321,7 @@ Public Attributes</h2></td></tr>
 
 <p>Of the last kept attempt (pad indices of <span class="tt">base</span>): the router's open connections and its explanations. </p>
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00051">51</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00065">65</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -317,7 +337,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00048">48</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00061">61</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>
@@ -333,7 +353,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00054">54</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00068">68</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>

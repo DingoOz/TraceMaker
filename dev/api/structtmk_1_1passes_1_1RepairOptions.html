@@ -109,11 +109,39 @@ Public Attributes</h2></td></tr>
 <tr class="memdesc:ad4e0c814f16d0435c395a298f16e78da"><td class="mdescLeft">&#160;</td><td class="mdescRight">&gt; 0: no attempt starts after this many seconds (safety only; work decides)  <br /></td></tr>
 <tr class="memitem:a3a8dc6e91a204fcf4a177d07e8a8d1d9" id="r_a3a8dc6e91a204fcf4a177d07e8a8d1d9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="namespacetmk_1_1model.html#a61db1ff7bad5e8c323a7f6c48aa8407c">model::NetId</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a8dc6e91a204fcf4a177d07e8a8d1d9">keep_nets</a></td></tr>
 <tr class="memdesc:a3a8dc6e91a204fcf4a177d07e8a8d1d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">nets whose copper is never lifted (coupled pairs, bus members)  <br /></td></tr>
+<tr class="memitem:ab541f12e75c696d460b66c3b34d7999d" id="r_ab541f12e75c696d460b66c3b34d7999d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab541f12e75c696d460b66c3b34d7999d">select</a> = &quot;ends&quot;</td></tr>
+<tr class="memdesc:ab541f12e75c696d460b66c3b34d7999d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Where the copper to lift is looked for (doc 20 §2.11, D195).  <br /></td></tr>
+<tr class="memitem:a2bf8fea9560c33abada479baa24a7d76" id="r_a2bf8fea9560c33abada479baa24a7d76"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2bf8fea9560c33abada479baa24a7d76">route_radii_mm</a> {0.2, 1}</td></tr>
+<tr class="memdesc:a2bf8fea9560c33abada479baa24a7d76"><td class="mdescLeft">&#160;</td><td class="mdescRight">"route": distance from that route's copper, tried in turn  <br /></td></tr>
+<tr class="memitem:a82b7f7ad96de10383994db345d5ded49" id="r_a82b7f7ad96de10383994db345d5ded49"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82b7f7ad96de10383994db345d5ded49">focus</a> = false</td></tr>
+<tr class="memdesc:a82b7f7ad96de10383994db345d5ded49"><td class="mdescLeft">&#160;</td><td class="mdescRight">An attempt routes only the open connection's net and the nets it lifted copper of; every other net is left as it is (its open connections too).  <br /></td></tr>
+<tr class="memitem:aaf859c96e3a1c6935a51bd4cd736b527" id="r_aaf859c96e3a1c6935a51bd4cd736b527"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf859c96e3a1c6935a51bd4cd736b527">variants</a> = 1</td></tr>
+<tr class="memdesc:aaf859c96e3a1c6935a51bd4cd736b527"><td class="mdescLeft">&#160;</td><td class="mdescRight">&gt; 1: every attempt runs this many portfolio variants (different orders and costs) on <span class="tt"><a class="el" href="#a57cb8e18e8232afce68944c3257a4c62">threads</a></span> threads and takes the best; each has <span class="tt"><a class="el" href="#ae9c11a966bf4ab9fdb4452897bd12abd" title="work budget of each routing attempt (search expansions, rule 5)">step_work</a></span>.  <br /></td></tr>
+<tr class="memitem:a57cb8e18e8232afce68944c3257a4c62" id="r_a57cb8e18e8232afce68944c3257a4c62"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57cb8e18e8232afce68944c3257a4c62">threads</a> = 0</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
 <p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00022">22</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
+<a id="a82b7f7ad96de10383994db345d5ded49" name="a82b7f7ad96de10383994db345d5ded49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82b7f7ad96de10383994db345d5ded49">&#9670;&#160;</a></span>focus</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tmk::passes::RepairOptions::focus = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>An attempt routes only the open connection's net and the nets it lifted copper of; every other net is left as it is (its open connections too). </p>
+<p>Without it each attempt routes everything that is open, and on a board with many open connections the attempt's budget goes to those: PCBench d20 with two layers added, 129 open, 126 attempts, every one ended with more open than before. </p>
+
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00037">37</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+
+</div>
+</div>
 <a id="a3a8dc6e91a204fcf4a177d07e8a8d1d9" name="a3a8dc6e91a204fcf4a177d07e8a8d1d9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3a8dc6e91a204fcf4a177d07e8a8d1d9">&#9670;&#160;</a></span>keep_nets</h2>
 
@@ -186,6 +214,43 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a2bf8fea9560c33abada479baa24a7d76" name="a2bf8fea9560c33abada479baa24a7d76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2bf8fea9560c33abada479baa24a7d76">&#9670;&#160;</a></span>route_radii_mm</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;double&gt; tmk::passes::RepairOptions::route_radii_mm {0.2, 1}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>"route": distance from that route's copper, tried in turn </p>
+
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00033">33</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+
+</div>
+</div>
+<a id="ab541f12e75c696d460b66c3b34d7999d" name="ab541f12e75c696d460b66c3b34d7999d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab541f12e75c696d460b66c3b34d7999d">&#9670;&#160;</a></span>select</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string tmk::passes::RepairOptions::select = &quot;ends&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Where the copper to lift is looked for (doc 20 §2.11, D195). </p>
+<p>"ends": round the two ends of the open connection (the radii above). "route": along the route the connection takes with every other net's unlocked copper off the board (one more routing run per connection; a connection with no such route is left alone), on the layers that route uses. "both": along the route, then the ends. </p>
+
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00032">32</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+
+</div>
+</div>
 <a id="ae9c11a966bf4ab9fdb4452897bd12abd" name="ae9c11a966bf4ab9fdb4452897bd12abd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae9c11a966bf4ab9fdb4452897bd12abd">&#9670;&#160;</a></span>step_work</h2>
 
@@ -204,6 +269,22 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a57cb8e18e8232afce68944c3257a4c62" name="a57cb8e18e8232afce68944c3257a4c62"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57cb8e18e8232afce68944c3257a4c62">&#9670;&#160;</a></span>threads</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::passes::RepairOptions::threads = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00040">40</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+
+</div>
+</div>
 <a id="ad4e0c814f16d0435c395a298f16e78da" name="ad4e0c814f16d0435c395a298f16e78da"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad4e0c814f16d0435c395a298f16e78da">&#9670;&#160;</a></span>time_limit_s</h2>
 
@@ -219,6 +300,25 @@ Public Attributes</h2></td></tr>
 <p>&gt; 0: no attempt starts after this many seconds (safety only; work decides) </p>
 
 <p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00027">27</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
+
+</div>
+</div>
+<a id="aaf859c96e3a1c6935a51bd4cd736b527" name="aaf859c96e3a1c6935a51bd4cd736b527"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf859c96e3a1c6935a51bd4cd736b527">&#9670;&#160;</a></span>variants</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::passes::RepairOptions::variants = 1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>&gt; 1: every attempt runs this many portfolio variants (different orders and costs) on <span class="tt"><a class="el" href="#a57cb8e18e8232afce68944c3257a4c62">threads</a></span> threads and takes the best; each has <span class="tt"><a class="el" href="#ae9c11a966bf4ab9fdb4452897bd12abd" title="work budget of each routing attempt (search expansions, rule 5)">step_work</a></span>. </p>
+<p>1 = one router with the job's options, as before. </p>
+
+<p class="definition">Definition at line <a class="el" href="repair_8hpp_source.html#l00040">40</a> of file <a class="el" href="repair_8hpp_source.html">repair.hpp</a>.</p>
 
 </div>
 </div>

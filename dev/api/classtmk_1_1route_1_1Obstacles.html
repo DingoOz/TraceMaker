@@ -153,6 +153,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:abee58207b170329c9da445dbbc8ac9cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Net-less solder-mask openings drawn as footprint graphics (a solder-jumper's bridge, a MEMS microphone's pad group) no longer keep copper out; KiCad's mask checks flag what then lies in them (judgement, not a short).  <br /></td></tr>
 <tr class="memitem:ae965bad618107e097ee7fb5a56373a8f" id="r_ae965bad618107e097ee7fb5a56373a8f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae965bad618107e097ee7fb5a56373a8f">set_soft_bridged_masks</a> (bool on)</td></tr>
 <tr class="memdesc:ae965bad618107e097ee7fb5a56373a8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rule fit (doc 20 §2.8): a pad's solder-mask opening that already exposes another net's pad copper on that side no longer keeps tracks out.  <br /></td></tr>
+<tr class="memitem:a837385d24a76d8570a0ef8876cfd0440" id="r_a837385d24a76d8570a0ef8876cfd0440"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a837385d24a76d8570a0ef8876cfd0440">set_soft_pad_masks</a> (bool on)</td></tr>
+<tr class="memdesc:a837385d24a76d8570a0ef8876cfd0440"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rule fit from a reference layout (doc 20 §2.13, D197): no pad's solder-mask opening keeps tracks or vias out.  <br /></td></tr>
+<tr class="memitem:aafd105f959fc4d8a25debc7ca7cb339e" id="r_aafd105f959fc4d8a25debc7ca7cb339e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aafd105f959fc4d8a25debc7ca7cb339e">mask_openings_over_tracks</a> () const</td></tr>
+<tr class="memdesc:aafd105f959fc4d8a25debc7ca7cb339e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pad openings (both sides) that a track or via of another net of this board lies in, on that side's outer layer.  <br /></td></tr>
 <tr class="memitem:ace2bf32fb4f4376e25047a2b7fdc79ef" id="r_ace2bf32fb4f4376e25047a2b7fdc79ef"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace2bf32fb4f4376e25047a2b7fdc79ef">bridged_mask_openings</a> () const</td></tr>
 <tr class="memdesc:ace2bf32fb4f4376e25047a2b7fdc79ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pad openings that already expose another net's pad (both sides).  <br /></td></tr>
 <tr class="memitem:ab214d33473de2df334ea635e953486ca" id="r_ab214d33473de2df334ea635e953486ca"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab214d33473de2df334ea635e953486ca">mask_graphics_over_pads</a> () const</td></tr>
@@ -744,6 +748,25 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="aafd105f959fc4d8a25debc7ca7cb339e" name="aafd105f959fc4d8a25debc7ca7cb339e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafd105f959fc4d8a25debc7ca7cb339e">&#9670;&#160;</a></span>mask_openings_over_tracks()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tmk::route::Obstacles::mask_openings_over_tracks </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pad openings (both sides) that a track or via of another net of this board lies in, on that side's outer layer. </p>
+
+</div>
+</div>
 <a id="a191fcf6f442bcb9e763e76df54a5bd12" name="a191fcf6f442bcb9e763e76df54a5bd12"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a191fcf6f442bcb9e763e76df54a5bd12">&#9670;&#160;</a></span>needs_exact_routing()</h2>
 
@@ -1109,7 +1132,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Reference path: test probes against every edge of a zone fill instead of the fill's edge index (the answers are the same; tests/test_design_rules.cpp). </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00126">126</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00133">133</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1136,7 +1159,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00123">123</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00130">130</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1196,7 +1219,7 @@ Static Public Attributes</h2></td></tr>
 <p>Net-less copper drawn as BOARD graphics (an EasyEDA import's pours as polygons on a copper layer) is fixed copper that no track may touch, and pins inside it are enclosed; soft, it is ignored like a zone fill (KiCad then flags what touches it). </p>
 <p>Off by default. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00117">117</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00124">124</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1227,6 +1250,36 @@ Static Public Attributes</h2></td></tr>
 <p>Off by default. </p>
 
 <p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00104">104</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a837385d24a76d8570a0ef8876cfd0440" name="a837385d24a76d8570a0ef8876cfd0440"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a837385d24a76d8570a0ef8876cfd0440">&#9670;&#160;</a></span>set_soft_pad_masks()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tmk::route::Obstacles::set_soft_pad_masks </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>on</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Rule fit from a reference layout (doc 20 §2.13, D197): no pad's solder-mask opening keeps tracks or vias out. </p>
+<p>Turned on when the reference itself runs other nets' tracks through pad openings (mask_openings_over_tracks): a board whose pads open 0.2 mm wider than their copper leaves no way between the pads of a MEMS microphone or a fine-pitch part that the designer's own tracks take (PCBench memsarray_mems_modules). KiCad reports solder_mask_bridge there, as on the reference. Off by default. </p>
+
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00114">114</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1316,7 +1369,7 @@ Static Public Attributes</h2></td></tr>
 <p>Vias keep clear of SMD pads narrower than <span class="tt">max_pad</span> (any net, net-class clearance), as if they were another net's copper; larger pads (exposed thermal pads) still take vias. </p>
 <p>set_pad_via_exempt(true) lifts this around the checks of one deliberate via in pad (the router's &ndash;via-in-pad). </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00122">122</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00129">129</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1343,7 +1396,7 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00118">118</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00125">125</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1617,7 +1670,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00128">128</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00135">135</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1684,7 +1737,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00128">128</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00135">135</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1700,7 +1753,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00128">128</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00135">135</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
@@ -1726,7 +1779,7 @@ Static Public Attributes</h2></td></tr>
 
 <p>Rejection counters (diagnostics): outside board, copper, holes/edges/keepouts. </p>
 
-<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00128">128</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="obstacles_8hpp_source.html#l00135">135</a> of file <a class="el" href="obstacles_8hpp_source.html">obstacles.hpp</a>.</p>
 
 </div>
 </div>
