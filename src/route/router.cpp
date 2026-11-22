@@ -26,6 +26,7 @@
 #include <sstream>
 #include <deque>
 #include <set>
+#include <unordered_set>
 #include <thread>
 #include <unordered_map>
 
@@ -134,8 +135,14 @@ struct Router::Impl {
   std::vector<std::int64_t> cell_hist;  // history cost per cell (valid when cstamp matches)
   std::uint32_t gen = 0;
   // (net and width, layer-cell key) blocked by FIXED copper after exact-check failures (routed copper changes,
-  // so conflicts with it are not learned permanently).
-  std::set<std::pair<std::int64_t, std::int64_t>> learned_block;
+  // so conflicts with it are not learned permanently). Probed once per newly stamped cell in cell_cost, so it
+  // is a flat hash set, not an ordered tree; membership semantics are unchanged.
+  struct PairHash {
+    std::size_t operator()(const std::pair<std::int64_t, std::int64_t>& p) const noexcept {
+      return static_cast<std::size_t>(splitmix64(static_cast<std::uint64_t>(p.first) ^ splitmix64(static_cast<std::uint64_t>(p.second))));
+    }
+  };
+  std::unordered_set<std::pair<std::int64_t, std::int64_t>, PairHash> learned_block;
   std::int64_t block_owner(NetId net) const { return static_cast<std::int64_t>(net) * 10'000'000 + track_width(net) / 1000; }
 
   // ---- negotiation state ----
@@ -2803,12 +2810,10 @@ struct Router::Impl {
   int rip_cap = 0;  // per-connection rip limit (opt.max_rips_per_connection, raised by diversified restarts)
   long nogood_skips = 0;
   std::uint64_t window_signature(const geom::Box& box) {
-    std::uint64_t h = 0x9E3779B97F4A7C15ull;
-    std::vector<int> ids;
-    obs->routed_items_in(box, ids);
-    std::sort(ids.begin(), ids.end());
-    for (int id : ids) h = splitmix64(h ^ static_cast<std::uint64_t>(id));
-    return h;
+    // Geometric, not id-based: identical copper re-committed after a rip carries fresh item ids, and an id
+    // hash would call the same situation new, so the nogood below would miss it (see
+    // Obstacles::routed_signature_in).
+    return obs->routed_signature_in(box);
   }
   std::unordered_map<std::int64_t, Point> start_stub, target_stub;  // lattice point -> escape point (pad centre if none)
   std::unordered_map<std::int64_t, int> start_drop, target_drop;    // lattice point -> the pad's layer, when its stub is the via of a via drop

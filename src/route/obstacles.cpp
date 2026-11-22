@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "route/obstacles.hpp"
 
+#include "core/rng.hpp"
 #include "drc/coupling.hpp"
 
 #include <array>
@@ -1270,6 +1271,29 @@ void Obstacles::routed_items_in(const geom::Box& box, std::vector<int>& out) con
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
     if (!it.removed && it.box.intersects(box)) out.push_back(id);
   });
+}
+
+std::uint64_t Obstacles::routed_signature_in(const geom::Box& box) const {
+  std::uint64_t acc = 0;
+  rgrid_->query(box, [&](int id) {
+    const auto& it = cm_.items[static_cast<std::size_t>(id)];
+    if (it.removed || !it.box.intersects(box)) return;
+    std::uint64_t h = 0x9E3779B97F4A7C15ull;
+    auto mix = [&h](std::uint64_t v) { h = splitmix64(h ^ v); };
+    mix(static_cast<std::uint64_t>(it.kind) + 0x100ull * static_cast<std::uint64_t>(it.net));
+    mix(it.layers);
+    mix(static_cast<std::uint64_t>(it.width));
+    for (const auto& sh : it.shapes) {
+      mix(static_cast<std::uint64_t>(sh.r) ^ (sh.closed ? 0x9E3779B9ull : 0ull));
+      mix(sh.pts.size());
+      for (const auto& p : sh.pts) {
+        mix(static_cast<std::uint64_t>(p.x));
+        mix(static_cast<std::uint64_t>(p.y));
+      }
+    }
+    acc += splitmix64(h);  // sum, not xor: duplicate items must not cancel out
+  });
+  return acc;
 }
 
 long double zone_fill_area(const drc::CopperModel& cm, const std::vector<int>& items) {
