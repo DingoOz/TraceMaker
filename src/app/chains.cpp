@@ -309,18 +309,26 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
   if (apply) {
     // One after the other on one board: a chain that closes changes the board the next one is closed on. What a chain held (so its
     // own deeper levels route round it) is free again for the next chain; only the file's locked copper stays locked.
-    for (std::size_t i = 0; i < rows.size(); ++i) {
-      const auto& u = first.unrouted[i];
-      model::Board cur = board;
-      rows[i].closed = close(cur, conn_of(u), 1, rows[i]);
-      if (!rows[i].closed) continue;
-      for (auto& t : cur.tracks)
-        if (t.node == sexpr::kNoNode) t.locked = false;
-      for (auto& v : cur.vias)
-        if (v.node == sexpr::kNoNode) v.locked = false;
-      board = std::move(cur);
-      --base_open[u.net];
-      base_pairs.erase(std::minmax(u.pad_a, u.pad_b));
+    // Further sweeps retry the connections still open on the board the sweeps before left (see apply_sweeps).
+    for (int sweep = 0; sweep < opt.apply_sweeps; ++sweep) {
+      bool closed_any = false;
+      for (std::size_t i = 0; i < rows.size(); ++i) {
+        if (rows[i].closed) continue;
+        const auto& u = first.unrouted[i];
+        model::Board cur = board;
+        rows[i].fail.clear();
+        rows[i].closed = close(cur, conn_of(u), 1, rows[i]);
+        if (!rows[i].closed) continue;
+        closed_any = true;
+        for (auto& t : cur.tracks)
+          if (t.node == sexpr::kNoNode) t.locked = false;
+        for (auto& v : cur.vias)
+          if (v.node == sexpr::kNoNode) v.locked = false;
+        board = std::move(cur);
+        --base_open[u.net];
+        base_pairs.erase(std::minmax(u.pad_a, u.pad_b));
+      }
+      if (!closed_any) break;
     }
     // The board as written: the file's copper that is still there keeps its place in the document, the rest is new.
     std::set<sexpr::NodeId> left;
@@ -394,7 +402,7 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
     if (!r.closed) c["fail"] = r.fail;
     conns.push_back(std::move(c));
   }
-  out["options"] = {{"work", opt.work}, {"max_depth", opt.max_depth}, {"max_nets", opt.max_nets}, {"rip_mm", opt.rip_mm}};
+  out["options"] = {{"work", opt.work}, {"max_depth", opt.max_depth}, {"max_nets", opt.max_nets}, {"rip_mm", opt.rip_mm}, {"apply_sweeps", opt.apply_sweeps}};
   out["tally"] = tally;
   out["connections"] = conns;
   if (apply) out["applied"] = applied;

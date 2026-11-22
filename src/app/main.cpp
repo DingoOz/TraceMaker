@@ -1675,6 +1675,7 @@ static int run_main(int argc, char** argv) {
   chains_cmd->add_option("--max-nets", ch_opt.max_nets, "Chains that lift more nets than this are given up (default 32)")->check(CLI::Range(1, 1000));
   chains_cmd->add_option("--rip-mm", ch_opt.rip_mm, "A blocking net's copper is lifted within this distance of the new route, mm (default 1; 0 = the whole net)")->check(CLI::Range(0.0, 100.0));
   chains_cmd->add_option("--apply", ch_opt.apply_out, "Put the chains that close on the board, one open connection after the other, and write it here (only when fewer connections are open than on the input)");
+  chains_cmd->add_option("--apply-sweeps", ch_opt.apply_sweeps, "With --apply: passes over the connections still open, each on the board the passes before left (default 1)")->check(CLI::Range(1, 8));
   chains_cmd->add_option("--threads", ch_opt.threads, "Open connections measured at once (the result does not depend on it; default 8)")->check(CLI::Range(1, 256));
   chains_cmd->add_option("--seed", ch_opt.seed, "Router seed (default 1)");
   chains_cmd->add_flag("--soft-zones", ch_opt.soft_zones, "Zone fills do not block other nets (as route --soft-zones)");

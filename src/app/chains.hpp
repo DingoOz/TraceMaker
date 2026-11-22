@@ -38,6 +38,10 @@ struct ChainsOptions {
   // before left), and the board is written here (doc 20 §2.16, D200). It is written only when fewer connections are open than on the
   // input and every net that was lifted is joined as it was; copper left with no pad on it is taken off (D198).
   std::string apply_out;
+  // Applied mode only: how many passes over the still-open connections. A chain that fails on the board as it was may close on
+  // the board the chains before it left (and one that closed may have been blocking a later one), so a second sweep is the
+  // bounded form of backtracking over chain order. 1 = the D200 behaviour.
+  int apply_sweeps = 1;
 };
 
 // Measures the chain of every open connection of `board` and returns the report (also printed as a table when `print`).
