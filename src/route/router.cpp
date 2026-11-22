@@ -129,7 +129,84 @@ struct Router::Impl {
     std::int32_t parent;
   };
   static constexpr std::uint32_t kGenMask = 0x0FFFFFFFu;
-  std::vector<SNode> sn;
+  // The state records of a search, behind one face in two stores. Dense (the default): one vector sized to the largest
+  // window seen, exactly as it has always been. Paged (--paged-nodes): blocks of 2^16 records (1 MB), allocated on first
+  // touch and stamped with the search generation that cleared them, so a search pays only for the states it touches and
+  // a new search clears nothing up front: a block whose stamp is not the current generation is cleared when next
+  // touched, and an untouched state reads as the never-written record {0, 0, -1}, whose tag matches no live generation.
+  // The --search-mem budget binds the paged store at touch time: a block allocated past the budget still serves the
+  // expansion that asked for it (the overshoot is bounded by one expansion's new blocks) and flags the overflow, and
+  // the search then stops as Miss::Budget -- the refusal D199 ends at, reached only when the memory is really touched.
+  struct NodeStore {
+    static constexpr std::size_t kBlockShift = 16;
+    static constexpr std::size_t kBlock = std::size_t{1} << kBlockShift;  // states per block
+    struct Block {
+      std::uint32_t epoch = 0;  // the search generation the records were cleared for (0 = none)
+      std::array<SNode, kBlock> v;
+    };
+    bool paged = false;
+    std::vector<SNode> dense;
+    std::vector<std::unique_ptr<Block>> blocks;  // the block directory (paged only)
+    std::uint32_t epoch = 0;                     // the current search generation (paged only)
+    std::size_t budget = 0;                      // bytes the blocks may take (0 = no limit)
+    std::size_t used = 0;                        // bytes the blocks take now
+    bool overflowed = false;                     // a block was allocated past the budget in this search
+
+    // Once per search, before the generation is bumped: the dense store grows as it always has; the paged store
+    // sizes its directory to the window's states and takes the search's budget. Neither clears anything here.
+    void prepare(bool use_paged, std::size_t states, std::size_t budget_bytes) {
+      paged = use_paged;
+      if (!paged) {
+        if (dense.size() < states) dense.assign(states, SNode{0, 0, -1});
+        return;
+      }
+      budget = budget_bytes;
+      const std::size_t need = (states + kBlock - 1) / kBlock;
+      if (blocks.size() < need) blocks.resize(need);
+    }
+    // Once per search, with the search's generation: the paged store takes it as its epoch (its blocks then clear
+    // lazily as they are touched); the dense store needs nothing (its records carry the generation in the tag).
+    void begin(std::uint32_t gen_now) {
+      epoch = gen_now;
+      overflowed = false;
+    }
+    // The generation wrapped: every record is stale. The dense store is filled, as before; the paged store's blocks
+    // are unstamped, so each one clears on its next touch instead of all of them being filled at once.
+    void clear_all() {
+      if (!paged) {
+        std::fill(dense.begin(), dense.end(), SNode{0, 0, -1});
+        return;
+      }
+      for (auto& b : blocks)
+        if (b) b->epoch = 0;
+    }
+    SNode& operator[](std::size_t i) {
+      if (!paged) return dense[i];
+      Block* b = blocks[i >> kBlockShift].get();
+      if (!b) {
+        auto nb = std::make_unique<Block>();
+        used += sizeof(Block);
+        if (budget > 0 && used > budget) overflowed = true;
+        b = nb.get();
+        blocks[i >> kBlockShift] = std::move(nb);
+      }
+      if (b->epoch != epoch) {
+        b->v.fill(SNode{0, 0, -1});
+        b->epoch = epoch;
+      }
+      return b->v[i & (kBlock - 1)];
+    }
+    const SNode& operator[](std::size_t i) const {
+      if (!paged) return dense[i];
+      const Block* b = blocks[i >> kBlockShift].get();
+      if (!b || b->epoch != epoch) {
+        static const SNode kUntouched{0, 0, -1};
+        return kUntouched;
+      }
+      return b->v[i & (kBlock - 1)];
+    }
+  };
+  NodeStore sn;
   std::vector<std::uint32_t> cstamp, vstamp;
   std::vector<std::uint8_t> cell_state, via_state;  // 0 unknown, 1 free, 2 blocked (valid when stamp matches)
   std::vector<std::int64_t> cell_hist;  // history cost per cell (valid when cstamp matches)
@@ -1692,6 +1769,9 @@ struct Router::Impl {
   bool limit_window(const Connection& c, Window& w) {
     mem_fast_bends = false;
     if (opt.search_mem_mb <= 0) return true;
+    // The paged store's footprint follows the states a search touches, not the window's worst case, so none of the
+    // degradations below is pre-empted by geometry: the same budget binds in the store, at touch time (NodeStore).
+    if (opt.paged_nodes) return true;
     auto cells_of = [](const Window& x) { return static_cast<std::size_t>(x.w) * static_cast<std::size_t>(x.h); };
     auto max_cells = [&](std::size_t D) {
       return static_cast<std::size_t>(opt.search_mem_mb) * 1024 * 1024 / (sizeof(SNode) * static_cast<std::size_t>(nl) * D);
@@ -1763,7 +1843,7 @@ struct Router::Impl {
     const std::size_t cells = static_cast<std::size_t>(w.w) * static_cast<std::size_t>(w.h);
     const std::size_t D = opt.bend_states && !mem_fast_bends ? 9 : 1;  // direction states per lattice point
     const std::size_t states = cells * static_cast<std::size_t>(nl) * D;
-    if (sn.size() < states) sn.assign(states, SNode{0, 0, -1});
+    sn.prepare(opt.paged_nodes, states, opt.search_mem_mb > 0 ? static_cast<std::size_t>(opt.search_mem_mb) * 1024 * 1024 : 0);
     if (cstamp.size() < cells * static_cast<std::size_t>(nl)) {
       cstamp.assign(cells * static_cast<std::size_t>(nl), 0);
       cell_state.resize(cells * static_cast<std::size_t>(nl));
@@ -1774,13 +1854,14 @@ struct Router::Impl {
       via_state.resize(cells);
     }
     if (++gen > kGenMask) {
-      std::fill(sn.begin(), sn.end(), SNode{0, 0, -1});
+      sn.clear_all();
       std::fill(cstamp.begin(), cstamp.end(), 0u);
       std::fill(vstamp.begin(), vstamp.end(), 0u);
       std::fill(rstamp.begin(), rstamp.end(), 0u);
       std::fill(bstamp.begin(), bstamp.end(), 0u);
       gen = 1;
     }
+    sn.begin(gen);
     const Endpoint src = pad_cells(w, c.pad_a);
     const Endpoint dst = c.pad_b >= 0 ? pad_cells(w, c.pad_b) : Endpoint{};
     if (src.cells.empty() || (c.pad_b >= 0 && dst.cells.empty())) return false;
@@ -2030,6 +2111,7 @@ struct Router::Impl {
       push(g0, g0 + h(l, w.x0 + cx, w.y0 + cy), s);
     }
     long expanded = 0;
+    bool mem_out = false;  // the paged store passed the --search-mem budget in this search
     const long exp_cap = search_cap();
     const bool coupled_net = obs->coupling_net(net);  // KiCad's pair-gap coupling is checked on every step (doc 05 §59)
     std::size_t goal = SIZE_MAX;
@@ -2069,6 +2151,10 @@ struct Router::Impl {
         break;
       }
       if (++expanded > exp_cap) break;
+      if (sn.overflowed) {  // --paged-nodes: the states this search really touched passed --search-mem: refuse, as D199's last step
+        mem_out = true;
+        break;
+      }
       if (late_proof && !late_done && expanded >= opt.reach_after) {
         late_done = true;
         run_late_proof();
@@ -2205,7 +2291,7 @@ struct Router::Impl {
     if (goal == SIZE_MAX) {
       // Open list exhausted without reaching the window edge: the source is boxed in, so a larger window
       // cannot help (Contour's boxed-in terminal test).
-      last_miss = expanded > exp_cap ? Miss::Budget : touched_edge ? Miss::Window : Miss::Enclosed;
+      last_miss = expanded > exp_cap || mem_out ? Miss::Budget : touched_edge ? Miss::Window : Miss::Enclosed;
       if (proved) {
         last_miss = proved_edge ? Miss::Window : Miss::Enclosed;
         miss_target = proved == 2 && !proved_edge;

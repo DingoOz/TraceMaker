@@ -68,6 +68,7 @@ struct RouterOptions {
   bool tie_deep = false;            // A* ties on f go to the state with the larger g (the deeper one) instead of the lower state index
   bool bend_states = true;          // direction in the A* state (exact bend costs) vs. parent-direction approximation
   int search_mem_mb = 4096;         // one search's state records at most (0 = no limit): a search over it runs with one direction state per point, then in a window drawn in to fit; a connection whose two ends alone need more is not searched (D199)
+  bool paged_nodes = false;         // --paged-nodes: the search's state records live in a sparse paged store (blocks of 2^16 records, allocated and cleared lazily per search generation) instead of one dense vector sized to the window, so a search's footprint follows the states it touches and the D199 degradations are not pre-empted by the window's worst case; search_mem_mb still bounds the store, at touch time, and a search that touches more state than the budget holds is not completed (D199's last step)
   double heuristic_weight = 1.0;
   double long_weight = 0;        // D156: > 1: negotiated searches of connections at least long_weight_mm long use this heuristic weight (weighted A*); 0 = off
   double long_weight_mm = 100;
