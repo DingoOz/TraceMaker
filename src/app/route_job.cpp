@@ -2222,7 +2222,7 @@ RouteJobResult run_layer_advisor(RouteJob job, std::vector<int> counts) {
   return std::move(*best);
 }
 
-RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool masks_rung, bool fresh_rung, bool chains_rung) {
+RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool masks_rung, bool fresh_rung, bool chains_rung, bool guard_walls) {
   namespace fs = std::filesystem;
   auto log = [&](const std::string& line) {
     if (job.log) job.log(line);
@@ -2264,6 +2264,7 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
   std::optional<RouteJobResult> best;
   std::string best_tmp;
   int best_open = 0;
+  int best_walled = 0;  // walled-in pins on the best board so far (guard_walls only; chains rungs leave it stale, see the keep rule)
   for (std::size_t k = 0; k < rungs.size(); ++k) {
     const Rung& rg = rungs[k];
     if (rg.chains) {
@@ -2324,20 +2325,31 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
     log(fmt("finish: rung %zu of %zu: %s%s", k + 1, rungs.size(), rg.name.c_str(), best ? fmt(" (%d open)", best_open).c_str() : ""));
     RouteJobResult r = run_route_job(std::move(j));
     const int open = r.unconnected_after_refill >= 0 ? r.unconnected_after_refill : r.result.connections - r.result.routed;
-    const bool kept = !best || open < best_open;
+    // DR-22: a rung can lower the open count while walling open pins in with the copper it just laid, and a walled pin is one no
+    // later rung can reach. The rung's summary already carries the proof (why_open: EscapeAnalyser over the pins left open), so
+    // with guard_walls the keep rule prices each walled pin as one extra open and breaks price ties toward fewer open. Chains
+    // rungs are not priced: they rip copper up rather than lay it, and their result carries no why_open.
+    const int walled = r.summary.contains("why_open") ? r.summary["why_open"].value("walled_in", 0) : 0;
+    const bool kept = !best || (guard_walls ? (open + walled < best_open + best_walled || (open + walled == best_open + best_walled && open < best_open))
+                                            : open < best_open);
     nlohmann::json row = {{"rung", rg.name}, {"open_before", best ? nlohmann::json(best_open) : nlohmann::json()}, {"open_after", open}, {"kept", kept},
                           {"copper_layers", rg.layers > 0 ? rg.layers : (best ? best->summary.value("copper_layers", layers0) : layers0)},
                           {"seconds", r.summary.value("seconds", 0.0)}};
+    if (guard_walls) row["walled_in"] = walled;
     if (r.summary.contains("fitted_rules")) row["fitted_rules"] = r.summary["fitted_rules"];
     if (r.summary.contains("repair")) row["repair"] = {{"open_before", r.summary["repair"].value("open_before", 0)}, {"open_after", r.summary["repair"].value("open_after", 0)}};
     rows.push_back(row);
-    log(fmt("finish: rung %zu (%s): %d open%s", k + 1, rg.name.c_str(), open, kept ? "" : " (no better: discarded)"));
+    if (guard_walls)
+      log(fmt("finish: rung %zu (%s): %d open, %d walled in%s", k + 1, rg.name.c_str(), open, walled, kept ? "" : " (no better: discarded)"));
+    else
+      log(fmt("finish: rung %zu (%s): %d open%s", k + 1, rg.name.c_str(), open, kept ? "" : " (no better: discarded)"));
     const std::string tmp = tmp_of(static_cast<int>(k));
     if (kept) {
       remove_tmp(best_tmp);
       best = std::move(r);
       best_tmp = tmp;
       best_open = open;
+      best_walled = walled;
       // The output is written after every rung that is kept: a ladder stopped part-way (time, memory) leaves its best board, not nothing.
       fs::copy_file(best_tmp, final_out, fs::copy_options::overwrite_existing);
       copy_project_files(job.in, final_out);
@@ -2350,6 +2362,7 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
   log(best_open == 0 ? fmt("finish: complete after %zu rung%s; written to %s", rows.size(), rows.size() == 1 ? "" : "s", final_out.c_str())
                      : fmt("finish: %d open after every rung; written to %s", best_open, final_out.c_str()));
   best->summary["finish"] = {{"rungs", rows}, {"complete", best_open == 0}, {"open", best_open}};
+  if (guard_walls) best->summary["finish"]["walled_in"] = best_walled;
   best->summary["run"]["output"] = final_out;
   best->summary["run"]["input"] = job.in;
   if (!final_items.empty()) std::ofstream(final_items) << best->items.dump();
