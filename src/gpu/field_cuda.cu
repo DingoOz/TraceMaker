@@ -35,7 +35,7 @@ __global__ void sweep_kernel(const std::uint8_t* pass, std::int32_t* d, int w, i
   std::int32_t prev = kFieldInf;
   int local = 0;
   while (x >= 0 && y >= 0 && x < w && y < h) {
-    const int i = y * w + x;
+    const std::int64_t i = static_cast<std::int64_t>(y) * w + x;  // w*h alone can overflow int
     if (!pass[i]) {
       prev = kFieldInf;
     } else {
@@ -53,8 +53,8 @@ __global__ void sweep_kernel(const std::uint8_t* pass, std::int32_t* d, int w, i
   if (local) *changed = 1;
 }
 
-__global__ void via_kernel(const std::uint8_t* pass, const std::uint8_t* via_pass, std::int32_t* d, int n, int layers, std::int32_t via, int* changed) {
-  const int i = blockIdx.x * blockDim.x + threadIdx.x;
+__global__ void via_kernel(const std::uint8_t* pass, const std::uint8_t* via_pass, std::int32_t* d, std::int64_t n, int layers, std::int32_t via, int* changed) {
+  const std::int64_t i = static_cast<std::int64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
   if (i >= n || !via_pass[i]) return;
   std::int32_t best = kFieldInf;
   for (int l = 0; l < layers; ++l) best = min(best, d[l * n + i]);
@@ -66,8 +66,8 @@ __global__ void via_kernel(const std::uint8_t* pass, const std::uint8_t* via_pas
     }
 }
 
-__global__ void init_kernel(const std::uint8_t* target, std::int32_t* d, int total) {
-  const int i = blockIdx.x * blockDim.x + threadIdx.x;
+__global__ void init_kernel(const std::uint8_t* target, std::int32_t* d, std::int64_t total) {
+  const std::int64_t i = static_cast<std::int64_t>(blockIdx.x) * blockDim.x + threadIdx.x;
   if (i < total) d[i] = target[i] ? 0 : kFieldInf;
 }
 
@@ -103,9 +103,10 @@ GpuStatus field_gpu(int cuda_index, const FieldProblem& p, std::vector<std::int3
   cudaMemcpyAsync(dvia, p.via_pass, n, cudaMemcpyHostToDevice, s);
   cudaMemcpyAsync(dtgt, p.target, total, cudaMemcpyHostToDevice, s);
   const int threads = 128;
-  init_kernel<<<static_cast<unsigned>((total + threads - 1) / threads), threads, 0, s>>>(dtgt, dd, static_cast<int>(total));
+  init_kernel<<<static_cast<unsigned>((total + threads - 1) / threads), threads, 0, s>>>(dtgt, dd, static_cast<std::int64_t>(total));
   static const int dirs[8][2] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, -1}, {1, -1}, {-1, 1}};
-  for (int round = 0; round < 100000; ++round) {
+  int changed = 1;  // until a round changes nothing, the field is not converged
+  for (int round = 0; round < p.max_rounds; ++round) {
     cudaMemsetAsync(dchanged, 0, sizeof(int), s);
     for (int l = 0; l < p.layers; ++l)
       for (const auto& dd2 : dirs) {
@@ -115,8 +116,8 @@ GpuStatus field_gpu(int cuda_index, const FieldProblem& p, std::vector<std::int3
             (dd2[0] && dd2[1]) ? p.diag : p.step, dchanged);
       }
     if (p.layers > 1)
-      via_kernel<<<static_cast<unsigned>((n + threads - 1) / threads), threads, 0, s>>>(dpass, dvia, dd, static_cast<int>(n), p.layers, p.via, dchanged);
-    int changed = 0;
+      via_kernel<<<static_cast<unsigned>((n + threads - 1) / threads), threads, 0, s>>>(dpass, dvia, dd, static_cast<std::int64_t>(n), p.layers, p.via, dchanged);
+    changed = 0;
     cudaMemcpyAsync(&changed, dchanged, sizeof(int), cudaMemcpyDeviceToHost, s);
     if (cudaStreamSynchronize(s) != cudaSuccess) {
       cudaGetLastError();
@@ -124,6 +125,10 @@ GpuStatus field_gpu(int cuda_index, const FieldProblem& p, std::vector<std::int3
       return {false, "kernel failed"};
     }
     if (!changed) break;
+  }
+  if (changed) {  // the round bound was reached while the field was still changing: not a result
+    cleanup();
+    return {false, "CUDA field did not converge"};
   }
   out.resize(total);
   cudaMemcpyAsync(out.data(), dd, total * sizeof(std::int32_t), cudaMemcpyDeviceToHost, s);

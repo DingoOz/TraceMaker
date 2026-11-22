@@ -201,6 +201,47 @@ TEST_CASE("cost-to-go field: a winding corridor needing many rounds matches CPU"
   if (ran == 0) SKIP("no device could execute a field");
 }
 
+TEST_CASE("cost-to-go field: hitting the round cap is a failure, not a field", "[gpu][field]") {
+  // The winding corridor below needs many rounds, so a one-round cap is reached while the field is
+  // still changing. That must come back as !ok with `out` empty (the caller then uses the CPU field),
+  // never as a half-converged field reported as success. The cap is the CUDA backend's contract: the
+  // CPU field ignores it and Metal keeps its own, so other backends skip.
+  if (tmk::gpu::compiled_backend() != tmk::gpu::Backend::Cuda) SKIP("the round cap is CUDA-only");
+  const auto devices = tmk::gpu::list_devices();
+  if (devices.empty()) SKIP("no GPU devices visible");
+  const int w = 300, h = 81;
+  const std::size_t n = static_cast<std::size_t>(w) * static_cast<std::size_t>(h);
+  std::vector<std::uint8_t> pass(n * 2, 1), via(n, 0), target(n * 2, 0);
+  for (int y = 1; y < h; y += 2)
+    for (int x = 0; x < w; ++x)
+      if (x != ((y / 2) % 2 == 0 ? w - 1 : 0)) pass[static_cast<std::size_t>(y * w + x)] = 0;
+  via[n - 1] = 1;  // the second layer is reached only at the far end of the corridor
+  target[0] = 1;
+  const tmk::gpu::FieldProblem p{w, h, 2, 75'000, 106'066, 3'000'000, pass.data(), via.data(), target.data()};
+  std::vector<std::int32_t> expected;
+  const int rounds = tmk::gpu::field_cpu(p, expected);
+  REQUIRE(rounds > 32);
+  int ran = 0;
+  for (const auto& dev : devices) {
+    std::vector<std::int32_t> got;
+    const auto st = tmk::gpu::field_gpu(dev.index, p, got);
+    if (!st.ok) {
+      WARN(dev.name << ": " << st.error);
+      continue;  // this device cannot execute the problem at all; it proves nothing about the cap
+    }
+    INFO(dev.name);
+    CHECK(got == expected);  // the default cap returns the exact field on this same device
+    tmk::gpu::FieldProblem capped = p;
+    capped.max_rounds = 1;
+    std::vector<std::int32_t> partial;
+    const auto st2 = tmk::gpu::field_gpu(dev.index, capped, partial);
+    CHECK(!st2.ok);          // cap reached while still changing: a failure...
+    CHECK(partial.empty());  // ...with no half-converged field handed back
+    ++ran;
+  }
+  if (ran == 0) SKIP("no device could execute a field");
+}
+
 TEST_CASE("cost-to-go field: concurrent callers have independent state", "[gpu][field]") {
   const auto devices = tmk::gpu::list_devices();
   if (devices.empty()) SKIP("no GPU devices visible");
