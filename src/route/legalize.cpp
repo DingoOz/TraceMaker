@@ -319,7 +319,7 @@ LegalizeResult legalize_routes(const model::Board& board, const model::DesignRul
             cons.push_back({Kind::CornerSeg, -1, s.a, s.b, pd.cx, pd.cy, req + pd.hx});
           } else {
             // The closest points of a segment and a convex pad: an end of the segment (PointPad) or a corner of the inner rectangle.
-            for (const auto [sx, sy] : {std::pair{-1.0, -1.0}, {1.0, -1.0}, {1.0, 1.0}, {-1.0, 1.0}}) {
+            for (const auto& [sx, sy] : {std::pair{-1.0, -1.0}, {1.0, -1.0}, {1.0, 1.0}, {-1.0, 1.0}}) {
               if ((sy > 0 && pd.hy < 1e-9) || (sx > 0 && pd.hx < 1e-9)) continue;  // an oval's inner rectangle is a line: two corners
               const double lx = sx * pd.hx, ly = sy * pd.hy;
               cons.push_back({Kind::CornerSeg, -1, s.a, s.b, pd.cx + pd.ca * lx - pd.sa * ly, pd.cy + pd.sa * lx + pd.ca * ly, req + pd.rr});

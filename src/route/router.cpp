@@ -6084,24 +6084,35 @@ struct Router::Impl {
         if (na >= nb) continue;
         const bool named = obs->rules().coupled_diff_pair(na, nb);
         if (!named && !((opt.pair_skew > 0 || !opt.pair_net_skew.empty()) && pair_wanted(na, nb))) continue;
-        auto mxs = named ? obs->rules().skew_constraint(na) : std::nullopt;
+        // The limit is kept as a flag and a plain value: it is only read once `have` is set.
+        bool have = false;
+        Coord limit = 0;
+        if (const auto rule = named ? obs->rules().skew_constraint(na) : std::nullopt) {
+          limit = *rule;
+          have = true;
+        }
         // A custom rule of the board wins; then the pair's own limit (component rules); then --pair-skew-mm.
-        if (!mxs)
+        if (!have)
           for (std::size_t k = 0; k < opt.pair_nets.size() && k < opt.pair_net_skew.size(); ++k)
-            if (opt.pair_net_skew[k] > 0 && ((opt.pair_nets[k].first == na && opt.pair_nets[k].second == nb) || (opt.pair_nets[k].first == nb && opt.pair_nets[k].second == na)))
-              mxs = opt.pair_net_skew[k];
-        if (!mxs && opt.pair_skew > 0 && pair_wanted(na, nb)) mxs = opt.pair_skew;
+            if (opt.pair_net_skew[k] > 0 && ((opt.pair_nets[k].first == na && opt.pair_nets[k].second == nb) || (opt.pair_nets[k].first == nb && opt.pair_nets[k].second == na))) {
+              limit = opt.pair_net_skew[k];
+              have = true;
+            }
+        if (!have && opt.pair_skew > 0 && pair_wanted(na, nb)) {
+          limit = opt.pair_skew;
+          have = true;
+        }
         if (std::getenv("TM_DEBUG_TUNE"))
           std::fprintf(stderr, "skew pair %s/%s: rule %s\n", b.nets[static_cast<std::size_t>(na)].name.c_str(), b.nets[static_cast<std::size_t>(nb)].name.c_str(),
-                       mxs ? "yes" : "no");
-        if (!mxs) continue;
+                       have ? "yes" : "no");
+        if (!have) continue;
         const double A = net_length(la), B = net_length(lb);
-        if (std::getenv("TM_DEBUG_TUNE")) std::fprintf(stderr, "  lengths %.3f / %.3f mm, max skew %.3f\n", A / 1e6, B / 1e6, nm_to_mm(*mxs));
+        if (std::getenv("TM_DEBUG_TUNE")) std::fprintf(stderr, "  lengths %.3f / %.3f mm, max skew %.3f\n", A / 1e6, B / 1e6, nm_to_mm(limit));
         // KiCad measures a little more than the track sum (vias, length inside pads): aim at half the limit.
-        if (std::fabs(A - B) <= static_cast<double>(*mxs) / 2) { ++tuned; continue; }
+        if (std::fabs(A - B) <= static_cast<double>(limit) / 2) { ++tuned; continue; }
         const bool a_short = A < B;
         const double longer = std::max(A, B);
-        const auto mn = static_cast<Coord>(longer - static_cast<double>(*mxs) / 4), mx = static_cast<Coord>(longer + static_cast<double>(*mxs) / 4);
+        const auto mn = static_cast<Coord>(longer - static_cast<double>(limit) / 4), mx = static_cast<Coord>(longer + static_cast<double>(limit) / 4);
         if (tune_net(a_short ? na : nb, a_short ? la : lb, mn, mx)) ++tuned;
       }
     return tuned;

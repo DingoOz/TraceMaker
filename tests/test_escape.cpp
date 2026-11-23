@@ -207,7 +207,7 @@ TEST_CASE("escape flow: a 6 x 6 array escapes on its pad layer within every chan
   auto pos = [&](int i, int j) { return Point{i * pitch, j * pitch}; };
   for (int j = 0; j < 6; ++j)
     for (int i = 0; i < 6; ++i)
-      for (const auto [di, dj] : {std::pair{1, 0}, std::pair{0, 1}}) {
+      for (const auto& [di, dj] : {std::pair{1, 0}, std::pair{0, 1}}) {
         if (i + di >= 6 || j + dj >= 6) continue;
         int n = 0;
         for (const auto& c : plan) n += crosses_middle(tail_of(c), pos(i, j), pos(i + di, j + dj));

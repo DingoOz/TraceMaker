@@ -139,7 +139,7 @@ TEST_CASE("cost-to-go field: thin grids, blocked targets and reused buffers matc
   int ran = 0;
   for (const auto& dev : devices) {
     if (!tmk::gpu::has_free_memory(dev.index, 1 << 20)) continue;
-    for (const auto [w, h] : {std::pair{1, 1}, std::pair{1, 9}, std::pair{9, 1}, std::pair{7, 5}}) {
+    for (const auto& [w, h] : {std::pair{1, 1}, std::pair{1, 9}, std::pair{9, 1}, std::pair{7, 5}}) {
       const std::size_t n = static_cast<std::size_t>(w * h);
       std::vector<std::uint8_t> pass(n * 3, 1), via(n, 1), target(n * 3, 0);
       pass[n / 2] = 0;

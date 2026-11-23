@@ -1280,12 +1280,12 @@ std::uint64_t Obstacles::routed_signature_in(const geom::Box& box) const {
     if (it.removed || !it.box.intersects(box)) return;
     std::uint64_t h = 0x9E3779B97F4A7C15ull;
     auto mix = [&h](std::uint64_t v) { h = splitmix64(h ^ v); };
-    mix(static_cast<std::uint64_t>(it.kind) + 0x100ull * static_cast<std::uint64_t>(it.net));
+    mix(static_cast<std::uint64_t>(it.kind) + std::uint64_t{0x100} * static_cast<std::uint64_t>(it.net));
     mix(it.layers);
     mix(static_cast<std::uint64_t>(it.width));
     for (const auto& sh : it.shapes) {
       mix(static_cast<std::uint64_t>(sh.r) ^ (sh.closed ? 0x9E3779B9ull : 0ull));
-      mix(sh.pts.size());
+      mix(static_cast<std::uint64_t>(sh.pts.size()));
       if (sh.pts.size() == 2) {
         // A segment's two endpoints carry no orientation (Shape::segment stores them in call order), so the same copper
         // committed in reverse must hash identically or the signature differs for identical geometry and nogoods miss.
