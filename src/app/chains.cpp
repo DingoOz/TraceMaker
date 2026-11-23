@@ -313,16 +313,29 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
       }
     }
     // Pair closure (doc 13 G6): a lifted net's differential partner lifts with it, or the re-route below would split the
-    // pair. A partner whose copper is locked simply does not lift (lift_copper skips locked items), so the pair is then
-    // routed around, never split. The closure may push the chain past max_nets; the check below then fails it loudly.
-    for (bool grew = true; grew;) {
-      grew = false;
-      for (const auto n : std::vector<model::NetId>(lift.begin(), lift.end()))
-        if (static_cast<std::size_t>(n) < pair_partner.size())
-          if (const auto p = pair_partner[static_cast<std::size_t>(n)]; p > 0 && p != self && !lift.count(p)) {
-            lift.insert(p);
-            grew = true;
-          }
+    // pair. A partner is added only when it has copper that can actually lift — at least one unlocked track, arc or via
+    // on this board. A partner with nothing liftable (no copper at all, or only locked copper) is left out and not
+    // charged against max_nets below: none of it would move, so leaving it out splits nothing, and a chain must not
+    // fail for a lift that cannot happen. A partner that does lift goes back coupled with its half: the runs route
+    // with base.diff_pairs, and both halves are in their route sets. The closure may push the chain past max_nets;
+    // the check below then fails it loudly.
+    {
+      std::set<model::NetId> liftable;
+      for (const auto& t : cur.tracks)
+        if (!t.locked) liftable.insert(t.net);
+      for (const auto& t : cur.arcs)
+        if (!t.locked) liftable.insert(t.net);
+      for (const auto& v : cur.vias)
+        if (!v.locked) liftable.insert(v.net);
+      for (bool grew = true; grew;) {
+        grew = false;
+        for (const auto n : std::vector<model::NetId>(lift.begin(), lift.end()))
+          if (static_cast<std::size_t>(n) < pair_partner.size())
+            if (const auto p = pair_partner[static_cast<std::size_t>(n)]; p > 0 && p != self && !lift.count(p) && liftable.count(p)) {
+              lift.insert(p);
+              grew = true;
+            }
+      }
     }
     if (depth == 1) {
       row.first_blockers = static_cast<int>(lift.size());
