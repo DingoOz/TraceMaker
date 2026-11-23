@@ -5,13 +5,17 @@
 #include <atomic>
 #include <cmath>
 #include <cstdio>
+#include <fstream>
 #include <functional>
 #include <map>
+#include <numeric>
 #include <set>
+#include <stdexcept>
 #include <thread>
 #include <vector>
 
 #include "drc/refill.hpp"
+#include "drc/rule_engine.hpp"
 #include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
@@ -159,6 +163,21 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
   // What the baseline run routed stays: the chains are measured on the board with it.
   add_copper(board, first);
 
+  // Differential pairs by KiCad's name rule (the same match the rule engine makes): a chain must never lift one half of a
+  // pair without the other — the lifted half would be re-routed as a single and the pair silently split (doc 13 G6).
+  std::vector<model::NetId> pair_partner(board.nets.size(), 0);
+  {
+    std::map<std::string, model::NetId> by_name;
+    for (const auto& n : board.nets) by_name[n.name] = n.id;
+    for (const auto& n : board.nets) {
+      if (n.id == 0) continue;
+      const auto dp = drc::match_dp_suffix(n.name);
+      if (dp.polarity == 0) continue;
+      if (const auto it = by_name.find(dp.complement); it != by_name.end() && it->second != 0)
+        pair_partner[static_cast<std::size_t>(n.id)] = it->second;
+    }
+  }
+
   // Connections open before any chain: a lifted net is back when it has no more open than it had (the target, one fewer).
   std::map<std::string, int> base_open;
   std::set<std::pair<int, int>> base_pairs;
@@ -175,8 +194,57 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
     int depth = 0, lifted = 0, first_blockers = -1, runs = 0;
     std::string fail, blockers_from;
     std::vector<std::string> first_nets;
+    std::string cause;   // the `causes` class of this connection, when a report was given
+    bool skip = false;   // the report proves rearrangement cannot close it: never attempted
   };
   std::vector<Row> rows(first.unrouted.size());
+
+  // Attempt order: baseline order, unless a `causes` report reorders it. A chain attempt costs dozens of router runs;
+  // spending them on a connection the report proves cannot close by rearrangement (its pads cannot escape, or it does not
+  // route even on the bare board) is waste — the 2026-11 census found 14 such connections among 218 residual opens.
+  std::vector<std::size_t> attempt_order(rows.size());
+  std::iota(attempt_order.begin(), attempt_order.end(), std::size_t{0});
+  if (!opt.causes_path.empty()) {
+    std::ifstream in(opt.causes_path);
+    if (!in) throw std::runtime_error("chains: cannot read the causes report " + opt.causes_path);
+    json report;
+    try {
+      in >> report;
+    } catch (const std::exception& e) {
+      throw std::runtime_error("chains: cannot parse the causes report " + opt.causes_path + ": " + e.what());
+    }
+    std::map<std::string, std::string> cause_of;
+    for (const auto& c : report.value("connections", json::array())) {
+      const std::string a = c.value("a", ""), b = c.value("b", "");
+      cause_of[c.value("net", "") + "\x1f" + std::min(a, b) + "\x1f" + std::max(a, b)] = c.value("cause", "");
+    }
+    auto priority = [](const std::string& cause) {
+      if (cause == "through_traffic") return 0;
+      if (cause == "package_fanout") return 1;
+      if (cause == "channel") return 2;
+      if (cause == "near_and_far") return 3;
+      return 4;
+    };
+    std::size_t matched = 0;
+    for (std::size_t i = 0; i < rows.size(); ++i) {
+      const auto& u = first.unrouted[i];
+      const auto it = cause_of.find(u.net + "\x1f" + std::min(u.a, u.b) + "\x1f" + std::max(u.a, u.b));
+      if (it == cause_of.end()) continue;
+      ++matched;
+      rows[i].cause = it->second;
+      if (it->second == "no_path_bare" || it->second == "pin_cannot_escape") {
+        rows[i].skip = true;
+        rows[i].fail = "causes_" + it->second;
+      }
+    }
+    if (!cause_of.empty() && matched == 0)
+      throw std::runtime_error("chains: the causes report " + opt.causes_path +
+                               " names none of this board's open connections (a report for another board?)");
+    std::stable_sort(attempt_order.begin(), attempt_order.end(), [&](std::size_t x, std::size_t y) {
+      const int px = rows[x].skip ? 5 : priority(rows[x].cause), py = rows[y].skip ? 5 : priority(rows[y].cause);
+      return px < py;
+    });
+  }
 
   // Closes `c` on `cur` (changed only on success) at chain depth `depth` (1 = the open connection itself).
   std::function<bool(model::Board&, const Conn&, int, Row&)> close = [&](model::Board& cur, const Conn& c, int depth, Row& row) -> bool {
@@ -236,6 +304,18 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
         fewer.erase(n);
         if (try_route(fewer)) lift = std::move(fewer);
       }
+    }
+    // Pair closure (doc 13 G6): a lifted net's differential partner lifts with it, or the re-route below would split the
+    // pair. A partner whose copper is locked simply does not lift (lift_copper skips locked items), so the pair is then
+    // routed around, never split. The closure may push the chain past max_nets; the check below then fails it loudly.
+    for (bool grew = true; grew;) {
+      grew = false;
+      for (const auto n : std::vector<model::NetId>(lift.begin(), lift.end()))
+        if (static_cast<std::size_t>(n) < pair_partner.size())
+          if (const auto p = pair_partner[static_cast<std::size_t>(n)]; p > 0 && p != self && !lift.count(p)) {
+            lift.insert(p);
+            grew = true;
+          }
     }
     if (depth == 1) {
       row.first_blockers = static_cast<int>(lift.size());
@@ -312,8 +392,8 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
     // Further sweeps retry the connections still open on the board the sweeps before left (see apply_sweeps).
     for (int sweep = 0; sweep < opt.apply_sweeps; ++sweep) {
       bool closed_any = false;
-      for (std::size_t i = 0; i < rows.size(); ++i) {
-        if (rows[i].closed) continue;
+      for (const std::size_t i : attempt_order) {
+        if (rows[i].closed || rows[i].skip) continue;
         const auto& u = first.unrouted[i];
         model::Board cur = board;
         rows[i].fail.clear();
@@ -382,7 +462,9 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
     std::vector<std::thread> pool;
     for (int t = 0; t < std::max(1, opt.threads); ++t)
       pool.emplace_back([&] {
-        for (std::size_t i; (i = next_i++) < rows.size();) {
+        for (std::size_t k; (k = next_i++) < attempt_order.size();) {
+          const std::size_t i = attempt_order[k];
+          if (rows[i].skip) continue;
           model::Board cur = board;
           rows[i].closed = close(cur, conn_of(first.unrouted[i]), 1, rows[i]);
         }
@@ -400,9 +482,10 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
     json c{{"net", u.net}, {"a", u.a}, {"b", u.b}, {"reason", u.reason}, {"closed", r.closed}, {"depth", r.depth}, {"nets_lifted", r.lifted},
            {"first_blockers", r.first_blockers}, {"joint", r.joint}, {"first_nets", r.first_nets}, {"blockers_from", r.blockers_from}, {"runs", r.runs}};
     if (!r.closed) c["fail"] = r.fail;
+    if (!r.cause.empty()) c["cause"] = r.cause;
     conns.push_back(std::move(c));
   }
-  out["options"] = {{"work", opt.work}, {"max_depth", opt.max_depth}, {"max_nets", opt.max_nets}, {"rip_mm", opt.rip_mm}, {"apply_sweeps", opt.apply_sweeps}};
+  out["options"] = {{"work", opt.work}, {"max_depth", opt.max_depth}, {"max_nets", opt.max_nets}, {"rip_mm", opt.rip_mm}, {"apply_sweeps", opt.apply_sweeps}, {"causes", opt.causes_path}};
   out["tally"] = tally;
   out["connections"] = conns;
   if (apply) out["applied"] = applied;
