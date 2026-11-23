@@ -134,9 +134,13 @@ struct Router::Impl {
   // touch and stamped with the search generation that cleared them, so a search pays only for the states it touches and
   // a new search clears nothing up front: a block whose stamp is not the current generation is cleared when next
   // touched, and an untouched state reads as the never-written record {0, 0, -1}, whose tag matches no live generation.
-  // The --search-mem budget binds the paged store at touch time: a block allocated past the budget still serves the
-  // expansion that asked for it (the overshoot is bounded by one expansion's new blocks) and flags the overflow, and
-  // the search then stops as Miss::Budget -- the refusal D199 ends at, reached only when the memory is really touched.
+  // The --search-mem budget binds the paged store at touch time, per search: it counts the blocks a search newly
+  // allocates, measured from the snapshot of `used` taken when the search began, not the blocks the store retains
+  // from earlier searches (the option is one search's state records at most). A block allocated past the budget
+  // still serves the expansion that asked for it (the overshoot is bounded by one expansion's new blocks) and flags
+  // the overflow, and the search then stops as Miss::Budget -- the refusal D199 ends at, reached only when the
+  // memory is really touched. Retained blocks are never freed between searches; they are bounded by the largest
+  // window's directory, the same bound as the dense vector.
   struct NodeStore {
     static constexpr std::size_t kBlockShift = 16;
     static constexpr std::size_t kBlock = std::size_t{1} << kBlockShift;  // states per block
@@ -148,9 +152,10 @@ struct Router::Impl {
     std::vector<SNode> dense;
     std::vector<std::unique_ptr<Block>> blocks;  // the block directory (paged only)
     std::uint32_t epoch = 0;                     // the current search generation (paged only)
-    std::size_t budget = 0;                      // bytes the blocks may take (0 = no limit)
+    std::size_t budget = 0;                      // bytes of blocks one search may newly allocate (0 = no limit)
     std::size_t used = 0;                        // bytes the blocks take now
-    bool overflowed = false;                     // a block was allocated past the budget in this search
+    std::size_t used_at_begin = 0;               // `used` when the current search began (the budget counts from here)
+    bool overflowed = false;                     // this search's newly allocated blocks passed the budget
 
     // Once per search, before the generation is bumped: the dense store grows as it always has; the paged store
     // sizes its directory to the window's states and takes the search's budget. Neither clears anything here.
@@ -169,6 +174,7 @@ struct Router::Impl {
     void begin(std::uint32_t gen_now) {
       epoch = gen_now;
       overflowed = false;
+      used_at_begin = used;  // the budget binds this search's own allocations, not the store's retained blocks
     }
     // The generation wrapped: every record is stale. The dense store is filled, as before; the paged store's blocks
     // are unstamped, so each one clears on its next touch instead of all of them being filled at once.
@@ -186,7 +192,7 @@ struct Router::Impl {
       if (!b) {
         auto nb = std::make_unique<Block>();
         used += sizeof(Block);
-        if (budget > 0 && used > budget) overflowed = true;
+        if (budget > 0 && used - used_at_begin > budget) overflowed = true;
         b = nb.get();
         blocks[i >> kBlockShift] = std::move(nb);
       }
