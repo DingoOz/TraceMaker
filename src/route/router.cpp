@@ -2252,10 +2252,12 @@ struct Router::Impl {
       // Extra via costs are nonnegative. With blind or micro vias the check always runs: they are tried only
       // where the through via is found blocked, so a skipped check would change which vias the search considers.
       auto via_useful = [&] {
+        const NodeStore& csn = sn;  // a probe: read through the const face, or the paged store faults in (and
+                                    // charges to this search's budget) a 1 MB block for every untouched state
         for (int l2 = 0; l2 < nl; ++l2) {
           if (l2 == l || (!layer_ok(net, l2) && !target(l2, ci))) continue;
           const std::size_t ns = sidx(l2, ci, kNoDir);
-          if ((sn[ns].tag & kGenMask) != gen || sn[ns].g > gs + via_cost) return true;
+          if ((csn[ns].tag & kGenMask) != gen || csn[ns].g > gs + via_cost) return true;
         }
         return false;
       };
