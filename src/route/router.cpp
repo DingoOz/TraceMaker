@@ -1775,10 +1775,20 @@ struct Router::Impl {
   bool limit_window(const Connection& c, Window& w) {
     mem_fast_bends = false;
     if (opt.search_mem_mb <= 0) return true;
-    // The paged store's footprint follows the states a search touches, not the window's worst case, so none of the
-    // degradations below is pre-empted by geometry: the same budget binds in the store, at touch time (NodeStore).
-    if (opt.paged_nodes) return true;
     auto cells_of = [](const Window& x) { return static_cast<std::size_t>(x.w) * static_cast<std::size_t>(x.h); };
+    // The paged store's footprint follows the states a search touches, not the window's worst case, so none of the
+    // degradations below is pre-empted by geometry: the same budget binds in the store, at touch time, against the
+    // blocks the search itself allocates (NodeStore). One geometric bound does remain: a state index is 31 bits
+    // wide (SNode::parent is int32, and the open list's tie-deep key masks the index to 31 bits), so a window past
+    // that many states cannot be searched at all -- refuse it here, as below, instead of letting indices alias.
+    if (opt.paged_nodes) {
+      const std::size_t states = cells_of(w) * static_cast<std::size_t>(nl) * static_cast<std::size_t>(opt.bend_states ? 9 : 1);
+      if (states > static_cast<std::size_t>(std::numeric_limits<std::int32_t>::max())) {
+        ++mem_refused;
+        return false;
+      }
+      return true;
+    }
     auto max_cells = [&](std::size_t D) {
       return static_cast<std::size_t>(opt.search_mem_mb) * 1024 * 1024 / (sizeof(SNode) * static_cast<std::size_t>(nl) * D);
     };
