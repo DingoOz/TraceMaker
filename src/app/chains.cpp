@@ -134,6 +134,7 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
   base.seed = opt.seed;
   base.soft_zones = soft;
   base.gpu_device = -1;
+  base.diff_pairs = true;  // a chain that lifts a pair puts it back coupled, never as two singles (doc 13 G6)
   base.time_limit_s = 3600;  // a safety net: the budgets are the stop (rule 5)
   // Routes only `only` (every net when empty) on a copy of `b` whose copper is all locked: nothing but the lifted copper ever moves.
   auto run = [&](const model::Board& b, long work, const std::set<std::string>& only) {
@@ -163,8 +164,9 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
   // What the baseline run routed stays: the chains are measured on the board with it.
   add_copper(board, first);
 
-  // Differential pairs by KiCad's name rule (the same match the rule engine makes): a chain must never lift one half of a
-  // pair without the other — the lifted half would be re-routed as a single and the pair silently split (doc 13 G6).
+  // Differential pairs by KiCad's name rule (the same match the rule engine makes, so this map and the router's own
+  // pair detection agree): a chain never lifts one half of a pair without the other, and the runs route with coupled
+  // pair routing on, so what is lifted together goes back together (doc 13 G6).
   std::vector<model::NetId> pair_partner(board.nets.size(), 0);
   {
     std::map<std::string, model::NetId> by_name;
@@ -259,7 +261,12 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
     };
     auto try_route = [&](const std::set<model::NetId>& nets) {
       ++row.runs;
-      auto r = run(without(nets), opt.work, {c.net});
+      std::set<std::string> only{c.net};
+      // The connection's own pair half, when this probe lifts it too: the two are routed together, so the route the
+      // probe finds (and the chain may commit below) is the coupled one (doc 13 G6).
+      if (static_cast<std::size_t>(self) < pair_partner.size())
+        if (const auto p = pair_partner[static_cast<std::size_t>(self)]; p > 0 && nets.count(p)) only.insert(cur.nets[static_cast<std::size_t>(p)].name);
+      auto r = run(without(nets), opt.work, only);
       const bool ok = !is_open(r, c);
       if (ok) kept = std::move(r), have = true;
       return ok;
@@ -337,6 +344,11 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
       else lift_copper(joint, lift, [](const Piece&) { return true; });
       std::set<std::string> together{c.net};
       for (const auto n : lift) together.insert(joint.nets[static_cast<std::size_t>(n)].name);
+      // The connection's own pair half belongs in the route set too, lifted or not (it is charged only if the closure
+      // lifted it): with both halves before it the router couples them, and a half with no open connection of its own
+      // is left alone by the run.
+      if (static_cast<std::size_t>(self) < pair_partner.size())
+        if (const auto p = pair_partner[static_cast<std::size_t>(self)]; p > 0) together.insert(joint.nets[static_cast<std::size_t>(p)].name);
       ++row.runs;
       const auto r = run(joint, 2 * opt.work, together);
       bool all = !is_open(r, c);
