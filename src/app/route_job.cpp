@@ -1890,7 +1890,16 @@ RouteJobResult run_route_job(RouteJob job) {
     analysis::EscapeOptions eo;
     eo.soft = opt.soft_zones;
     eo.via_in_pad = opt.via_in_pad;
-    const analysis::EscapeAnalyser ea(lb.board, rules, eo);
+    // The board the proof runs over: as given, or -- for a finish rung priced by the wall guard -- the board this
+    // route produced (the input plus the copper it laid), so the walls counted are the ones this route made
+    // (hardening #8). Standalone jobs keep the as-given board (doc 20 §2.4).
+    model::Board output_board;
+    if (job.why_open_output) {
+      output_board = lb.board;
+      output_board.tracks.insert(output_board.tracks.end(), res.tracks.begin(), res.tracks.end());
+      output_board.vias.insert(output_board.vias.end(), res.vias.begin(), res.vias.end());
+    }
+    const analysis::EscapeAnalyser ea(job.why_open_output ? output_board : lb.board, rules, eo);
     std::vector<int> pads;
     for (const auto& u : res.unrouted)
       for (const int p : {u.pad_a, u.pad_b})
@@ -2227,10 +2236,11 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
   auto log = [&](const std::string& line) {
     if (job.log) job.log(line);
   };
-  // DR-22 guard hygiene: the guard prices rungs from each rung's why_open proof. With --no-why-open no rung carries one, every
-  // walled count below reads 0, and the guard silently degenerates to the plain open-count rule. Say so, loudly, once.
+  // DR-22: the guard prices each rung by a wall proof over the board the rung produced (hardening #8). Rung jobs
+  // therefore run with why_open on and why_open_output set, whatever --no-why-open says about the report: say so,
+  // loudly, once, when the two were combined.
   if (guard_walls && !job.why_open)
-    log("finish: WARNING: --finish-guard-walls has no wall data (--no-why-open): every rung's walled_in reads 0 and the guard is inert; rungs are priced on open count alone");
+    log("finish: --finish-guard-walls prices rungs by a wall proof over each rung's output board; the proofs are computed even with --no-why-open");
   if (job.out.empty()) throw std::invalid_argument("--finish: needs --output (each rung starts from the board the rung before wrote)");
   if (job.copper_layers > 0 && !extra_layers.empty()) throw std::invalid_argument("--finish-layers and --copper-layers: give one");
   std::sort(extra_layers.begin(), extra_layers.end());
@@ -2268,10 +2278,34 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
   std::optional<RouteJobResult> best;
   std::string best_tmp;
   int best_open = 0;
-  int best_walled = 0;     // the guard's wall price of the best board so far (guard_walls only)
-  bool walled_stale = false;  // a kept chains rung changed the best board without a wall proof: best_walled prices the
-                              // pre-chains board until the next routing rung's why_open (a proof over its input, which is
-                              // exactly the current best board) re-prices it — see the adoption at the keep rule
+  int best_walled = 0;              // the guard's wall price of the best board so far (guard_walls only)
+  bool best_walled_proved = false;  // best_walled is a proof over the current best board (guard_walls only)
+  // A wall proof over a board file itself: a minimal route job whose why_open classifies the board's own open
+  // pins against its own copper, at its own layer count. Used after a kept chains rung -- the one rung kind that
+  // changes the best board without running a route, so no rung summary carries its walls (hardening #8).
+  auto prove_walls = [&](const std::string& board_file) -> std::optional<int> {
+    RouteJob pj = job;
+    const std::string proof_out = stem.string() + ".proof.kicad_pcb";
+    pj.in = board_file;
+    pj.out = proof_out;
+    pj.json_out.clear();
+    pj.items_out.clear();
+    pj.hold = false;
+    pj.reroute = false;
+    pj.warm_pcb.clear();
+    pj.copper_layers = 0;
+    pj.repair = "off";
+    pj.rescue = false;
+    pj.why_open = true;
+    pj.why_open_output = false;
+    pj.opt.work_budget = 1;
+    pj.log = nullptr;
+    RouteJobResult pr = run_route_job(std::move(pj));
+    remove_tmp(proof_out);
+    if (pr.summary.contains("why_open")) return pr.summary["why_open"].value("walled_in", 0);
+    if (pr.result.connections > 0 && pr.result.routed >= pr.result.connections) return 0;
+    return std::nullopt;
+  };
   for (std::size_t k = 0; k < rungs.size(); ++k) {
     const Rung& rg = rungs[k];
     if (rg.chains) {
@@ -2295,7 +2329,15 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
         remove_tmp(best_tmp);
         best_tmp = tmp;
         best_open = open;
-        if (guard_walls) walled_stale = true;  // the best board just changed under chains and no rung has proved its walls
+        if (guard_walls) {
+          // Chains changed the best board without a route: re-price it with a proof over the board as it now is.
+          if (const auto w = prove_walls(best_tmp)) {
+            best_walled = *w;
+            best_walled_proved = true;
+          } else {
+            best_walled_proved = false;
+          }
+        }
         // The summary of the rung before, with the counts of the board as it is now.
         const int conns = best->summary.value("connections", 0);
         best->summary["open"] = open;
@@ -2311,6 +2353,10 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
       continue;
     }
     RouteJob j = job;
+    if (guard_walls) {
+      j.why_open = true;         // the guard prices from proofs even under --no-why-open
+      j.why_open_output = true;  // and each proof is over the board the rung produces (hardening #8)
+    }
     j.out = tmp_of(static_cast<int>(k));
     j.json_out.clear();
     j.items_out.clear();
@@ -2334,22 +2380,10 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
     RouteJobResult r = run_route_job(std::move(j));
     const int open = r.unconnected_after_refill >= 0 ? r.unconnected_after_refill : r.result.connections - r.result.routed;
     // DR-22: a rung can lower the open count while walling open pins in with the copper it just laid, and a walled pin is one no
-    // later rung can reach. The rung's summary already carries the proof (why_open: EscapeAnalyser over the pins left open), so
+    // later rung can reach. The rung's summary already carries the proof (why_open: EscapeAnalyser over the pins left open, run over the board the rung produced), so
     // with guard_walls the keep rule prices each walled pin as one extra open and breaks price ties toward fewer open. Chains
-    // rungs are not priced: they rip copper up rather than lay it, and their result carries no why_open.
+    // rungs are not priced: they rip copper up rather than lay it, and a kept one re-prices the best board where it lands (prove_walls above).
     const int walled = r.summary.contains("why_open") ? r.summary["why_open"].value("walled_in", 0) : 0;
-    if (guard_walls && walled_stale) {
-      // Re-price the best board before comparing. This rung's why_open is a proof over its INPUT board, and a non-fresh rung's
-      // input is exactly the current best board (j.in = best_tmp above) — the board the kept chains rung left. Adopting the
-      // rung's own walled as best_walled therefore prices the best board exactly, within the guard's semantics (the guard
-      // never holds a proof over a rung's OUTPUT board; the incoming rung's walled likewise prices the board it started
-      // from). The only routing rungs that can follow a chains rung are the layer rungs: the fresh rung, whose input is the
-      // board as given rather than the best board, is always ordered before any chains rung, so no rung can adopt a proof
-      // over the wrong board here. With both sides now priced against proofs over the same board, the wall terms match and
-      // this rung is in effect kept iff it lowers the open count — the honest consequence of having no output-board proof.
-      best_walled = walled;
-      walled_stale = false;
-    }
     const bool kept = !best || (guard_walls ? (open + walled < best_open + best_walled || (open + walled == best_open + best_walled && open < best_open))
                                             : open < best_open);
     nlohmann::json row = {{"rung", rg.name}, {"open_before", best ? nlohmann::json(best_open) : nlohmann::json()}, {"open_after", open}, {"kept", kept},
@@ -2369,7 +2403,19 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
       best = std::move(r);
       best_tmp = tmp;
       best_open = open;
-      best_walled = walled;
+      if (guard_walls) {
+        // The rung's walled prices the board it produced, which is now the best board: adopt it as its price.
+        if (open == 0) {
+          best_walled = 0;
+          best_walled_proved = true;
+        } else if (best->summary.contains("why_open")) {
+          // best owns the rung's summary now (r was moved from above): read it there, not from the husk.
+          best_walled = walled;
+          best_walled_proved = true;
+        } else {
+          best_walled_proved = false;
+        }
+      }
       // The output is written after every rung that is kept: a ladder stopped part-way (time, memory) leaves its best board, not nothing.
       fs::copy_file(best_tmp, final_out, fs::copy_options::overwrite_existing);
       copy_project_files(job.in, final_out);
@@ -2382,14 +2428,9 @@ RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool mask
   log(best_open == 0 ? fmt("finish: complete after %zu rung%s; written to %s", rows.size(), rows.size() == 1 ? "" : "s", final_out.c_str())
                      : fmt("finish: %d open after every rung; written to %s", best_open, final_out.c_str()));
   best->summary["finish"] = {{"rungs", rows}, {"complete", best_open == 0}, {"open", best_open}};
-  if (guard_walls && !walled_stale) best->summary["finish"]["walled_in"] = best_walled;
-  if (guard_walls && walled_stale) {
-    // The ladder ended on a kept chains rung, so no proof over the final board exists. best_walled still prices the
-    // pre-chains board; reporting it here would state another board's walls as this board's fact. Omit the key instead
-    // (absent = not proved for the final board) and say so in the log. Substituting the last computed proof was rejected
-    // for the same reason: it prices a different board.
-    log(fmt("finish: walled_in omitted from the summary: the last kept rung was rip-up chains and no later routing rung proved the final board's walls (the stale count %d priced the pre-chains board)", best_walled));
-  }
+  if (guard_walls && best_walled_proved) best->summary["finish"]["walled_in"] = best_walled;
+  if (guard_walls && !best_walled_proved)
+    log("finish: walled_in omitted from the summary: no wall proof of the final board could be computed");
   best->summary["run"]["output"] = final_out;
   best->summary["run"]["input"] = job.in;
   if (!final_items.empty()) std::ofstream(final_items) << best->items.dump();

@@ -119,6 +119,9 @@ struct RouteJob {
   // (--time again, and --work again with a work budget); the better result is kept. --no-rescue turns it off.
   bool rescue = true;
   bool why_open = true;  // explain open connections: pins the fixed copper walls in (doc 20 §2.4); --no-why-open
+  bool why_open_output = false;  // run the why_open proof over the board the route produced (input + its own tracks and
+                                 // vias) instead of the board as given; set on finish rungs priced by the wall guard
+                                 // (hardening #8). Standalone jobs leave it off: their why_open explains the board as placed.
   std::string rescue_mode = "both";  // --rescue-mode: warm (relax from the plain run's routes), fresh (from nothing), both (warm, then fresh; D163)
   // --time-total S (D186, M23 E6): one wall-clock limit for the whole job. Every stage that otherwise gets --time again (the relax rescue's
   // passes, advisor rounds, repair windows, the refill and thermal repairs) gets at most what is left, and a stage with under a second left

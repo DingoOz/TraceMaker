@@ -1428,7 +1428,7 @@ static int run_main(int argc, char** argv) {
   route->add_flag("--finish-fresh", r_finish_fresh, "With --finish: a rung after the fitted rules that routes the board as given with the fitted rules from the start, kept when it leaves fewer open");
   route->add_flag("--finish-masks", r_finish_masks, "With --finish: a rung after the fitted rules where pad solder-mask openings no longer keep tracks out (--soft-pad-masks)");
   route->add_flag("--finish-guard-walls", r_finish_guard_walls,
-                  "With --finish: keep a routing rung only when open + walled-in pins improves (DR-22: a rung's own copper can wall the pins it leaves open in, and no later rung can reach a walled pin; priced from the rung's why-open analysis, so it does nothing with --no-why-open). Chains rungs are not priced");
+                  "With --finish: keep a routing rung only when open + walled-in pins improves (DR-22: a rung's own copper can wall the pins it leaves open in, and no later rung can reach a walled pin; priced from a wall proof over each rung's output board, computed even with --no-why-open). Chains rungs are not priced; a kept one re-prices the best board");
   route->add_option("--finish-layers", r_finish_layers, "With --finish: later rungs that add this many copper layers to the board's count (e.g. 2,4); none by default")
       ->delimiter(',');
   route->add_option("--try-layers", r_try_layers,
