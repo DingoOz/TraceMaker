@@ -152,13 +152,13 @@ struct Router::Impl {
     std::vector<SNode> dense;
     std::vector<std::unique_ptr<Block>> blocks;  // the block directory (paged only)
     std::uint32_t epoch = 0;                     // the current search generation (paged only)
-    std::size_t budget = 0;                      // bytes of blocks one search may newly allocate (0 = no limit)
+    std::size_t budget = 0;                      // bytes of blocks one search may touch (0 = no limit)
     std::size_t used = 0;                        // bytes the blocks take now
-    std::size_t used_at_begin = 0;               // `used` when the current search began (the budget counts from here)
-    bool overflowed = false;                     // this search's newly allocated blocks passed the budget
+    std::size_t touched = 0;                    // bytes of blocks this search has stamped for its generation (the budget counts these)
+    bool overflowed = false;                     // this search touched more blocks than the budget holds
 
     // Once per search, before the generation is bumped: the dense store grows as it always has; the paged store
-    // sizes its directory to the window's states and takes the search's budget. Neither clears anything here.
+    // sizes its directory to the window's states and takes the search's budget; retained blocks past that budget are released (below).
     void prepare(bool use_paged, std::size_t states, std::size_t budget_bytes) {
       paged = use_paged;
       if (!paged) {
@@ -166,6 +166,13 @@ struct Router::Impl {
         return;
       }
       budget = budget_bytes;
+      // A hard cap on what the store retains between searches (hardening #15): a search's records are dead once
+      // it ends and blocks are only kept to be reused, so when what is retained passes the budget the blocks are
+      // released outright, instead of searches over disjoint regions growing the store back towards dense size.
+      if (budget_bytes > 0 && used > budget_bytes) {
+        blocks.clear();
+        used = 0;
+      }
       const std::size_t need = (states + kBlock - 1) / kBlock;
       if (blocks.size() < need) blocks.resize(need);
     }
@@ -174,7 +181,7 @@ struct Router::Impl {
     void begin(std::uint32_t gen_now) {
       epoch = gen_now;
       overflowed = false;
-      used_at_begin = used;  // the budget binds this search's own allocations, not the store's retained blocks
+      touched = 0;  // the budget binds the blocks this search itself touches, wherever they came from (hardening #15)
     }
     // The generation wrapped: every record is stale. The dense store is filled, as before; the paged store's blocks
     // are unstamped, so each one clears on its next touch instead of all of them being filled at once.
@@ -192,13 +199,17 @@ struct Router::Impl {
       if (!b) {
         auto nb = std::make_unique<Block>();
         used += sizeof(Block);
-        if (budget > 0 && used - used_at_begin > budget) overflowed = true;
         b = nb.get();
         blocks[i >> kBlockShift] = std::move(nb);
       }
       if (b->epoch != epoch) {
         b->v.fill(SNode{0, 0, -1});
         b->epoch = epoch;
+        // The budget counts the blocks a search touches (stamps for its generation), not only the ones it
+        // happens to allocate first: whether a block was already retained by an earlier search over the same
+        // ground must not decide whether this search is over budget (hardening #15).
+        touched += sizeof(Block);
+        if (budget > 0 && touched > budget) overflowed = true;
       }
       return b->v[i & (kBlock - 1)];
     }
@@ -1774,23 +1785,37 @@ struct Router::Impl {
   bool mem_fast_bends = false;  // this search: one direction state per point (as the fast-bends variants), to fit the limit
   bool limit_window(const Connection& c, Window& w) {
     mem_fast_bends = false;
-    if (opt.search_mem_mb <= 0) return true;
     auto cells_of = [](const Window& x) { return static_cast<std::size_t>(x.w) * static_cast<std::size_t>(x.h); };
-    // The paged store's footprint follows the states a search touches, not the window's worst case, so none of the
-    // degradations below is pre-empted by geometry: the same budget binds in the store, at touch time, against the
-    // blocks the search itself allocates (NodeStore). One geometric bound does remain: a state index is 31 bits
-    // wide (SNode::parent is int32, and the open list's tie-deep key masks the index to 31 bits), so a window past
-    // that many states cannot be searched at all -- refuse it here, as below, instead of letting indices alias.
-    if (opt.paged_nodes) {
-      const std::size_t states = cells_of(w) * static_cast<std::size_t>(nl) * static_cast<std::size_t>(opt.bend_states ? 9 : 1);
-      if (states > static_cast<std::size_t>(std::numeric_limits<std::int32_t>::max())) {
-        ++mem_refused;
-        return false;
+    // One geometric bound binds ahead of every budget question: a state index is 31 bits wide (SNode::parent is
+    // int32, and the open list's tie-deep key masks the index to 31 bits), so a window past that many states
+    // cannot be searched at all. On the paths that never draw the window in (the paged store, and any search
+    // with no memory budget) the bound is enforced here, before the budget early return below: a window that
+    // only fits at one direction state per point is searched that way -- the fast-bends degradation -- rather
+    // than refused, and only a window past even that is refused (hardening #12, #15). The dense budgeted path
+    // enforces the same bound inside max_cells, so its own degradation ladder (fast bends, then drawing the
+    // window in) decides how a too-large window is searched.
+    if (opt.paged_nodes || opt.search_mem_mb <= 0) {
+      auto states_of = [&](std::size_t D) { return cells_of(w) * static_cast<std::size_t>(nl) * D; };
+      const std::size_t kIndexMax = static_cast<std::size_t>(std::numeric_limits<std::int32_t>::max());
+      if (states_of(opt.bend_states ? 9 : 1) > kIndexMax) {
+        if (opt.bend_states && states_of(1) <= kIndexMax)
+          mem_fast_bends = true;
+        else {
+          ++mem_refused;
+          return false;
+        }
       }
-      return true;
     }
+    // The paged store's footprint follows the states a search touches, not the window's worst case, so none of
+    // the degradations below is pre-empted by geometry for it: the same budget binds in the store, at touch
+    // time, against the blocks the search itself touches (NodeStore).
+    if (opt.paged_nodes) return true;
+    if (opt.search_mem_mb <= 0) return true;
     auto max_cells = [&](std::size_t D) {
-      return static_cast<std::size_t>(opt.search_mem_mb) * 1024 * 1024 / (sizeof(SNode) * static_cast<std::size_t>(nl) * D);
+      // The budget's cells and the 31-bit index's, whichever binds first (hardening #15).
+      const std::size_t by_budget = static_cast<std::size_t>(opt.search_mem_mb) * 1024 * 1024 / (sizeof(SNode) * static_cast<std::size_t>(nl) * D);
+      const std::size_t by_index = static_cast<std::size_t>(std::numeric_limits<std::int32_t>::max()) / (static_cast<std::size_t>(nl) * D);
+      return std::min(by_budget, by_index);
     };
     if (cells_of(w) <= max_cells(opt.bend_states ? 9 : 1)) return true;
     // First the whole window with one direction state per point: nine times less, and nothing of the board is left out.
