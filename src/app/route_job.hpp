@@ -119,6 +119,9 @@ struct RouteJob {
   // (--time again, and --work again with a work budget); the better result is kept. --no-rescue turns it off.
   bool rescue = true;
   bool why_open = true;  // explain open connections: pins the fixed copper walls in (doc 20 §2.4); --no-why-open
+  bool why_open_output = false;  // run the why_open proof over the board the route produced (input + its own tracks and
+                                 // vias) instead of the board as given; set on finish rungs priced by the wall guard
+                                 // (hardening #8). Standalone jobs leave it off: their why_open explains the board as placed.
   std::string rescue_mode = "both";  // --rescue-mode: warm (relax from the plain run's routes), fresh (from nothing), both (warm, then fresh; D163)
   // --time-total S (D186, M23 E6): one wall-clock limit for the whole job. Every stage that otherwise gets --time again (the relax rescue's
   // passes, advisor rounds, repair windows, the refill and thermal repairs) gets at most what is left, and a stage with under a second left
@@ -192,8 +195,11 @@ RouteJobResult run_layer_advisor(RouteJob job, std::vector<int> counts);
 // With `fresh_rung`, a rung after the second routes the board as given with the fitted rules from the start (not on top) and is kept when it
 // leaves fewer open. With `masks_rung`, a rung before the layers lets tracks through pad solder-mask openings (RouterOptions::soft_pad_masks), and the layer
 // rungs keep that. The ladder stops at the first rung with nothing open; a rung that does not lower the open count is discarded (rule 4). The summary's
-// "finish" lists every rung with what it relaxed. Needs an output path.
-RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool masks_rung = false, bool fresh_rung = false, bool chains_rung = false);
+// "finish" lists every rung with what it relaxed. Needs an output path. With `guard_walls` (DR-22), a routing rung is kept only when
+// open + walled-in pins improves over the best board so far: a rung's own copper can wall the pins it leaves open in, and no later rung
+// can reach a walled pin, so the plain open-count rule keeps boards that are worse than they look.
+RouteJobResult run_finish(RouteJob job, std::vector<int> extra_layers, bool masks_rung = false, bool fresh_rung = false, bool chains_rung = false,
+                          bool guard_walls = false);
 
 // Buses (doc 05 §38): the groups `specs` ("NAME=PATTERN") name on the board, then, with `detect`, the groups found in
 // the net names that share no net with an earlier group. Each group gets the skew limit of the board's custom

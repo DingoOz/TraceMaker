@@ -15,6 +15,8 @@
 // connection still routes), so it is minimal, not minimum. A connection the chain has put in is held: deeper levels route around it
 // (else two nets swap places for ever). There is no backtracking: a chain that fails here might close in another
 // order. Every routing is the product router's, so a chain that closes is a legal board with one more connection routed.
+// A chain never lifts one half of a differential pair without the other (the pair would be silently split). Given a
+// `causes` report for the board, connections it proves unclosable by rearrangement are skipped, not attempted.
 #include <cstdint>
 #include <string>
 
@@ -38,6 +40,14 @@ struct ChainsOptions {
   // before left), and the board is written here (doc 20 §2.16, D200). It is written only when fewer connections are open than on the
   // input and every net that was lifted is joined as it was; copper left with no pad on it is taken off (D198).
   std::string apply_out;
+  // Applied mode only: how many passes over the still-open connections. A chain that fails on the board as it was may close on
+  // the board the chains before it left (and one that closed may have been blocking a later one), so a second sweep is the
+  // bounded form of backtracking over chain order. 1 = the D200 behaviour.
+  int apply_sweeps = 1;
+  // A `causes` report (tracemaker causes --json) for the same board: connections it proves cannot be closed by rearranging
+  // copper (no_path_bare, pin_cannot_escape) are not attempted at all, and the rest are attempted in cause order, the ones
+  // rearrangement can fix first. Empty = every connection attempted in baseline order.
+  std::string causes_path;
 };
 
 // Measures the chain of every open connection of `board` and returns the report (also printed as a table when `print`).

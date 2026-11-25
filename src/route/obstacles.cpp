@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "route/obstacles.hpp"
 
+#include "core/rng.hpp"
 #include "drc/coupling.hpp"
 
 #include <array>
@@ -1270,6 +1271,44 @@ void Obstacles::routed_items_in(const geom::Box& box, std::vector<int>& out) con
     const auto& it = cm_.items[static_cast<std::size_t>(id)];
     if (!it.removed && it.box.intersects(box)) out.push_back(id);
   });
+}
+
+std::uint64_t Obstacles::routed_signature_in(const geom::Box& box) const {
+  std::uint64_t acc = 0;
+  rgrid_->query(box, [&](int id) {
+    const auto& it = cm_.items[static_cast<std::size_t>(id)];
+    if (it.removed || !it.box.intersects(box)) return;
+    std::uint64_t h = 0x9E3779B97F4A7C15ull;
+    auto mix = [&h](std::uint64_t v) { h = splitmix64(h ^ v); };
+    mix(static_cast<std::uint64_t>(it.kind) + std::uint64_t{0x100} * static_cast<std::uint64_t>(it.net));
+    mix(it.layers);
+    mix(static_cast<std::uint64_t>(it.width));
+    for (const auto& sh : it.shapes) {
+      mix(static_cast<std::uint64_t>(sh.r) ^ (sh.closed ? 0x9E3779B9ull : 0ull));
+      mix(static_cast<std::uint64_t>(sh.pts.size()));
+      if (sh.pts.size() == 2) {
+        // A segment's two endpoints carry no orientation (Shape::segment stores them in call order), so the same copper
+        // committed in reverse must hash identically or the signature differs for identical geometry and nogoods miss.
+        // Fold the endpoints in canonical order: lexicographically smaller point (x, then y) first. Shapes with any other
+        // point count keep their stored order: polygons and arcs are orientation-bearing.
+        const auto& a = sh.pts[0];
+        const auto& b = sh.pts[1];
+        const auto& lo = (b.x < a.x || (b.x == a.x && b.y < a.y)) ? b : a;
+        const auto& hi = (&lo == &a) ? b : a;
+        mix(static_cast<std::uint64_t>(lo.x));
+        mix(static_cast<std::uint64_t>(lo.y));
+        mix(static_cast<std::uint64_t>(hi.x));
+        mix(static_cast<std::uint64_t>(hi.y));
+      } else {
+        for (const auto& p : sh.pts) {
+          mix(static_cast<std::uint64_t>(p.x));
+          mix(static_cast<std::uint64_t>(p.y));
+        }
+      }
+    }
+    acc += splitmix64(h);  // sum, not xor: duplicate items must not cancel out
+  });
+  return acc;
 }
 
 long double zone_fill_area(const drc::CopperModel& cm, const std::vector<int>& items) {

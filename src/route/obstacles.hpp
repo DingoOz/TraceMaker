@@ -79,6 +79,10 @@ class Obstacles {
   bool needs_exact_routing() const { return re_->needs_exact_routing(); }
   // Ids of live routed items whose box meets `box`.
   void routed_items_in(const geom::Box& box, std::vector<int>& out) const;
+  // Order- and id-independent geometric signature of the live routed copper meeting `box`: the same physical
+  // copper always yields the same value, however it was committed. Item ids are append-only and change when
+  // identical copper is re-committed after a rip, so an id hash cannot serve as a situation key.
+  std::uint64_t routed_signature_in(const geom::Box& box) const;
 
   const drc::CopperModel& copper() const { return cm_; }
   // Copper text as the model holds it: one estimated rectangle per line (copper index, rectangle).

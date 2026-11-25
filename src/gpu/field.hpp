@@ -22,6 +22,10 @@ struct FieldProblem {
   const std::uint8_t* pass = nullptr;          // [layers][h][w]: 1 = may be entered
   const std::uint8_t* via_pass = nullptr;      // [h][w]: 1 = a via may be placed (all layers)
   const std::uint8_t* target = nullptr;        // [layers][h][w]: 1 = distance 0
+  int max_rounds = 100000;                     // GPU sweep rounds at most. Reaching the bound without a fixpoint is a
+                                               // failure (field_gpu returns !ok and the caller uses the CPU field),
+                                               // never a half-converged result. The CPU field ignores it (it iterates
+                                               // to the fixpoint and returns the round count); Metal keeps its own cap.
 };
 
 // CPU reference. `out` is resized to layers*h*w. Returns the number of sweep rounds. The sweeps that change row run a row

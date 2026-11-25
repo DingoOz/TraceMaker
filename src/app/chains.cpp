@@ -5,13 +5,17 @@
 #include <atomic>
 #include <cmath>
 #include <cstdio>
+#include <fstream>
 #include <functional>
 #include <map>
+#include <numeric>
 #include <set>
+#include <stdexcept>
 #include <thread>
 #include <vector>
 
 #include "drc/refill.hpp"
+#include "drc/rule_engine.hpp"
 #include "io/kicad/board_editor.hpp"
 #include "io/kicad/board_reader.hpp"
 #include "io/kicad/project_reader.hpp"
@@ -130,6 +134,7 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
   base.seed = opt.seed;
   base.soft_zones = soft;
   base.gpu_device = -1;
+  base.diff_pairs = true;  // a chain that lifts a pair puts it back coupled, never as two singles (doc 13 G6)
   base.time_limit_s = 3600;  // a safety net: the budgets are the stop (rule 5)
   // Routes only `only` (every net when empty) on a copy of `b` whose copper is all locked: nothing but the lifted copper ever moves.
   auto run = [&](const model::Board& b, long work, const std::set<std::string>& only) {
@@ -159,6 +164,22 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
   // What the baseline run routed stays: the chains are measured on the board with it.
   add_copper(board, first);
 
+  // Differential pairs by KiCad's name rule (the same match the rule engine makes, so this map and the router's own
+  // pair detection agree): a chain never lifts one half of a pair without the other, and the runs route with coupled
+  // pair routing on, so what is lifted together goes back together (doc 13 G6).
+  std::vector<model::NetId> pair_partner(board.nets.size(), 0);
+  {
+    std::map<std::string, model::NetId> by_name;
+    for (const auto& n : board.nets) by_name[n.name] = n.id;
+    for (const auto& n : board.nets) {
+      if (n.id == 0) continue;
+      const auto dp = drc::match_dp_suffix(n.name);
+      if (dp.polarity == 0) continue;
+      if (const auto it = by_name.find(dp.complement); it != by_name.end() && it->second != 0)
+        pair_partner[static_cast<std::size_t>(n.id)] = it->second;
+    }
+  }
+
   // Connections open before any chain: a lifted net is back when it has no more open than it had (the target, one fewer).
   std::map<std::string, int> base_open;
   std::set<std::pair<int, int>> base_pairs;
@@ -175,8 +196,58 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
     int depth = 0, lifted = 0, first_blockers = -1, runs = 0;
     std::string fail, blockers_from;
     std::vector<std::string> first_nets;
+    std::string cause;   // the `causes` class of this connection, when a report was given
+    bool skip = false;   // the report proves rearrangement cannot close it: never attempted
+    bool co_closed = false;  // closed as a side effect of another connection's chain on the same board (apply only)
   };
   std::vector<Row> rows(first.unrouted.size());
+
+  // Attempt order: baseline order, unless a `causes` report reorders it. A chain attempt costs dozens of router runs;
+  // spending them on a connection the report proves cannot close by rearrangement (its pads cannot escape, or it does not
+  // route even on the bare board) is waste — the 2026-11 census found 14 such connections among 218 residual opens.
+  std::vector<std::size_t> attempt_order(rows.size());
+  std::iota(attempt_order.begin(), attempt_order.end(), std::size_t{0});
+  if (!opt.causes_path.empty()) {
+    std::ifstream in(opt.causes_path);
+    if (!in) throw std::runtime_error("chains: cannot read the causes report " + opt.causes_path);
+    json report;
+    try {
+      in >> report;
+    } catch (const std::exception& e) {
+      throw std::runtime_error("chains: cannot parse the causes report " + opt.causes_path + ": " + e.what());
+    }
+    std::map<std::string, std::string> cause_of;
+    for (const auto& c : report.value("connections", json::array())) {
+      const std::string a = c.value("a", ""), b = c.value("b", "");
+      cause_of[c.value("net", "") + "\x1f" + std::min(a, b) + "\x1f" + std::max(a, b)] = c.value("cause", "");
+    }
+    auto priority = [](const std::string& cause) {
+      if (cause == "through_traffic") return 0;
+      if (cause == "package_fanout") return 1;
+      if (cause == "channel") return 2;
+      if (cause == "near_and_far") return 3;
+      return 4;
+    };
+    std::size_t matched = 0;
+    for (std::size_t i = 0; i < rows.size(); ++i) {
+      const auto& u = first.unrouted[i];
+      const auto it = cause_of.find(u.net + "\x1f" + std::min(u.a, u.b) + "\x1f" + std::max(u.a, u.b));
+      if (it == cause_of.end()) continue;
+      ++matched;
+      rows[i].cause = it->second;
+      if (it->second == "no_path_bare" || it->second == "pin_cannot_escape") {
+        rows[i].skip = true;
+        rows[i].fail = "causes_" + it->second;
+      }
+    }
+    if (!cause_of.empty() && matched == 0)
+      throw std::runtime_error("chains: the causes report " + opt.causes_path +
+                               " names none of this board's open connections (a report for another board?)");
+    std::stable_sort(attempt_order.begin(), attempt_order.end(), [&](std::size_t x, std::size_t y) {
+      const int px = rows[x].skip ? 5 : priority(rows[x].cause), py = rows[y].skip ? 5 : priority(rows[y].cause);
+      return px < py;
+    });
+  }
 
   // Closes `c` on `cur` (changed only on success) at chain depth `depth` (1 = the open connection itself).
   std::function<bool(model::Board&, const Conn&, int, Row&)> close = [&](model::Board& cur, const Conn& c, int depth, Row& row) -> bool {
@@ -191,7 +262,12 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
     };
     auto try_route = [&](const std::set<model::NetId>& nets) {
       ++row.runs;
-      auto r = run(without(nets), opt.work, {c.net});
+      std::set<std::string> only{c.net};
+      // The connection's own pair half, when this probe lifts it too: the two are routed together, so the route the
+      // probe finds (and the chain may commit below) is the coupled one (doc 13 G6).
+      if (static_cast<std::size_t>(self) < pair_partner.size())
+        if (const auto p = pair_partner[static_cast<std::size_t>(self)]; p > 0 && nets.count(p)) only.insert(cur.nets[static_cast<std::size_t>(p)].name);
+      auto r = run(without(nets), opt.work, only);
       const bool ok = !is_open(r, c);
       if (ok) kept = std::move(r), have = true;
       return ok;
@@ -237,6 +313,31 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
         if (try_route(fewer)) lift = std::move(fewer);
       }
     }
+    // Pair closure (doc 13 G6): a lifted net's differential partner lifts with it, or the re-route below would split the
+    // pair. A partner is added only when it has copper that can actually lift — at least one unlocked track, arc or via
+    // on this board. A partner with nothing liftable (no copper at all, or only locked copper) is left out and not
+    // charged against max_nets below: none of it would move, so leaving it out splits nothing, and a chain must not
+    // fail for a lift that cannot happen. A partner that does lift goes back coupled with its half: the runs route
+    // with base.diff_pairs, and both halves are in their route sets. The closure may push the chain past max_nets;
+    // the check below then fails it loudly.
+    {
+      std::set<model::NetId> liftable;
+      for (const auto& t : cur.tracks)
+        if (!t.locked) liftable.insert(t.net);
+      for (const auto& t : cur.arcs)
+        if (!t.locked) liftable.insert(t.net);
+      for (const auto& v : cur.vias)
+        if (!v.locked) liftable.insert(v.net);
+      for (bool grew = true; grew;) {
+        grew = false;
+        for (const auto n : std::vector<model::NetId>(lift.begin(), lift.end()))
+          if (static_cast<std::size_t>(n) < pair_partner.size())
+            if (const auto p = pair_partner[static_cast<std::size_t>(n)]; p > 0 && p != self && !lift.count(p) && liftable.count(p)) {
+              lift.insert(p);
+              grew = true;
+            }
+      }
+    }
     if (depth == 1) {
       row.first_blockers = static_cast<int>(lift.size());
       row.blockers_from = from;
@@ -248,15 +349,30 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
       return false;
     }
     const auto mine = pieces(kept.tracks, kept.vias);
+    // The predicate for the rip-limited lifts below (the joint board and the next board): a piece lifts when it
+    // lies near the kept route -- except a piece of a net whose pair partner is also in play (in the lift set, or
+    // the target net itself), which lifts whole. Half-lifting one side of a pair leaves its remains fixed while
+    // its partner re-routes, so the pair splits; and where kept already carries the partner's coupled route, the
+    // remains end up duplicated under it (hardening #11).
+    auto near_or_paired = [&](const Piece& pc) {
+      if (static_cast<std::size_t>(pc.net) < pair_partner.size())
+        if (const auto q = pair_partner[static_cast<std::size_t>(pc.net)]; q > 0 && (q == self || lift.count(q))) return true;
+      return near_any(pc, mine, rip);
+    };
     // First the connection and its blockers together, the blockers lifted near its route and the rest of the board fixed: the router's
     // own negotiation settles who takes which way. Putting the connection in first and holding it (below) fixes its route before the
     // blockers have had a say, and a blocker left with no way at all is the commonest failure of that order.
     if (depth == 1) {
       model::Board joint = cur;
-      if (rip > 0) lift_copper(joint, lift, [&](const Piece& p) { return near_any(p, mine, rip); });
+      if (rip > 0) lift_copper(joint, lift, near_or_paired);
       else lift_copper(joint, lift, [](const Piece&) { return true; });
       std::set<std::string> together{c.net};
       for (const auto n : lift) together.insert(joint.nets[static_cast<std::size_t>(n)].name);
+      // The connection's own pair half belongs in the route set too, lifted or not (it is charged only if the closure
+      // lifted it): with both halves before it the router couples them, and a half with no open connection of its own
+      // is left alone by the run.
+      if (static_cast<std::size_t>(self) < pair_partner.size())
+        if (const auto p = pair_partner[static_cast<std::size_t>(self)]; p > 0) together.insert(joint.nets[static_cast<std::size_t>(p)].name);
       ++row.runs;
       const auto r = run(joint, 2 * opt.work, together);
       bool all = !is_open(r, c);
@@ -271,7 +387,7 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
     }
     // The board with the connection in and the blockers lifted near it.
     model::Board next = cur;
-    if (rip > 0) lift_copper(next, lift, [&](const Piece& p) { return near_any(p, mine, rip); });
+    if (rip > 0) lift_copper(next, lift, near_or_paired);
     else lift_copper(next, lift, [](const Piece&) { return true; });
     add_copper(next, kept, true);
     // The lifted nets route again, together; the ones that do not are closed one by one, a level down.
@@ -309,18 +425,45 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
   if (apply) {
     // One after the other on one board: a chain that closes changes the board the next one is closed on. What a chain held (so its
     // own deeper levels route round it) is free again for the next chain; only the file's locked copper stays locked.
-    for (std::size_t i = 0; i < rows.size(); ++i) {
-      const auto& u = first.unrouted[i];
-      model::Board cur = board;
-      rows[i].closed = close(cur, conn_of(u), 1, rows[i]);
-      if (!rows[i].closed) continue;
-      for (auto& t : cur.tracks)
-        if (t.node == sexpr::kNoNode) t.locked = false;
-      for (auto& v : cur.vias)
-        if (v.node == sexpr::kNoNode) v.locked = false;
-      board = std::move(cur);
-      --base_open[u.net];
-      base_pairs.erase(std::minmax(u.pad_a, u.pad_b));
+    // Further sweeps retry the connections still open on the board the sweeps before left (see apply_sweeps).
+    for (int sweep = 0; sweep < opt.apply_sweeps; ++sweep) {
+      bool closed_any = false;
+      for (const std::size_t i : attempt_order) {
+        if (rows[i].closed || rows[i].skip) continue;
+        const auto& u = first.unrouted[i];
+        model::Board cur = board;
+        rows[i].fail.clear();
+        rows[i].closed = close(cur, conn_of(u), 1, rows[i]);
+        if (!rows[i].closed) continue;
+        closed_any = true;
+        for (auto& t : cur.tracks)
+          if (t.node == sexpr::kNoNode) t.locked = false;
+        for (auto& v : cur.vias)
+          if (v.node == sexpr::kNoNode) v.locked = false;
+        board = std::move(cur);
+        --base_open[u.net];
+        base_pairs.erase(std::minmax(u.pad_a, u.pad_b));
+        // A chain can close more than its own connection: the joint run routes the target's pair partner with
+        // it, and a blocker closed a level down stays closed. Those rows are closed on this board now -- mark
+        // them, with the board's open set re-derived as the evidence (a one-expansion run routes nothing), or
+        // the sweep would run their chains against copper that already closes them and report them open
+        // (hardening #14).
+        {
+          const auto now_open = run(board, 1, {});
+          std::set<std::pair<int, int>> open_now;
+          for (const auto& v : now_open.unrouted) open_now.insert(std::minmax(v.pad_a, v.pad_b));
+          for (std::size_t j = 0; j < first.unrouted.size(); ++j) {
+            if (rows[j].closed) continue;
+            const auto& w = first.unrouted[j];
+            if (open_now.count(std::minmax(w.pad_a, w.pad_b))) continue;
+            rows[j].closed = true;
+            rows[j].co_closed = true;
+            --base_open[w.net];
+            base_pairs.erase(std::minmax(w.pad_a, w.pad_b));
+          }
+        }
+      }
+      if (!closed_any) break;
     }
     // The board as written: the file's copper that is still there keeps its place in the document, the rest is new.
     std::set<sexpr::NodeId> left;
@@ -374,7 +517,9 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
     std::vector<std::thread> pool;
     for (int t = 0; t < std::max(1, opt.threads); ++t)
       pool.emplace_back([&] {
-        for (std::size_t i; (i = next_i++) < rows.size();) {
+        for (std::size_t k; (k = next_i++) < attempt_order.size();) {
+          const std::size_t i = attempt_order[k];
+          if (rows[i].skip) continue;
           model::Board cur = board;
           rows[i].closed = close(cur, conn_of(first.unrouted[i]), 1, rows[i]);
         }
@@ -387,14 +532,16 @@ json measure_chains(const std::string& path, const ChainsOptions& opt, bool prin
   for (std::size_t i = 0; i < rows.size(); ++i) {
     const auto& u = first.unrouted[i];
     const auto& r = rows[i];
-    const std::string key = r.closed ? (r.joint ? "closed_joint" : "closed_depth_" + std::to_string(r.depth)) : r.fail;
+    const std::string key = r.closed ? (r.co_closed ? "co_closed" : (r.joint ? "closed_joint" : "closed_depth_" + std::to_string(r.depth))) : r.fail;
     ++tally[key];
     json c{{"net", u.net}, {"a", u.a}, {"b", u.b}, {"reason", u.reason}, {"closed", r.closed}, {"depth", r.depth}, {"nets_lifted", r.lifted},
            {"first_blockers", r.first_blockers}, {"joint", r.joint}, {"first_nets", r.first_nets}, {"blockers_from", r.blockers_from}, {"runs", r.runs}};
     if (!r.closed) c["fail"] = r.fail;
+    if (r.co_closed) c["co_closed"] = true;
+    if (!r.cause.empty()) c["cause"] = r.cause;
     conns.push_back(std::move(c));
   }
-  out["options"] = {{"work", opt.work}, {"max_depth", opt.max_depth}, {"max_nets", opt.max_nets}, {"rip_mm", opt.rip_mm}};
+  out["options"] = {{"work", opt.work}, {"max_depth", opt.max_depth}, {"max_nets", opt.max_nets}, {"rip_mm", opt.rip_mm}, {"apply_sweeps", opt.apply_sweeps}, {"causes", opt.causes_path}};
   out["tally"] = tally;
   out["connections"] = conns;
   if (apply) out["applied"] = applied;
