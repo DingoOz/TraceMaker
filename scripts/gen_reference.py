@@ -34,7 +34,7 @@ def help_text(binary: str, name: str, args: list[str]) -> str:
 def subcommands(top_help: str) -> list[str]:
     names, inside = [], False
     for line in top_help.split("\n"):
-        if line.startswith("SUBCOMMANDS:"):
+        if line.strip().lower() == "subcommands:":
             inside = True
             continue
         if inside:
